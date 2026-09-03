@@ -7,6 +7,22 @@ export const dynamic = 'force-static';
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = ['', '/directory', '/villages', '/families', '/heritage', '/updates', '/emergency', '/about'];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0);
+  const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number }>();
+
+  for (const business of businesses) {
+    const locality = localities.find((item) => item.name === (business.locality || 'مركز نقادة'));
+    const category = categories.find((item) => item.name === business.category);
+    if (!locality || !category) continue;
+    const key = `${locality.slug}::${category.slug}`;
+    const current = comboCounts.get(key);
+    comboCounts.set(key, {
+      localitySlug: locality.slug,
+      categorySlug: category.slug,
+      count: (current?.count || 0) + 1,
+    });
+  }
+
+  const localCategoryPages = [...comboCounts.values()].filter((item) => item.count >= 3);
 
   return [
     ...base.map((path) => ({
@@ -26,6 +42,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date('2026-09-04'),
       changeFrequency: 'monthly' as const,
       priority: item.businessCount >= 5 ? 0.75 : 0.65,
+    })),
+    ...localCategoryPages.map((item) => ({
+      url: `${siteConfig.url}/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`,
+      lastModified: new Date('2026-09-04'),
+      changeFrequency: 'monthly' as const,
+      priority: item.count >= 8 ? 0.75 : 0.7,
     })),
     ...businesses.map((item) => ({
       url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
