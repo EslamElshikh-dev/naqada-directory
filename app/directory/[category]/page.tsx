@@ -76,7 +76,7 @@ export default async function CategoryPage({ params }: Props) {
       <section className="detail-hero category-hero"><div className="shell category-hero__grid"><div><nav className="breadcrumbs"><Link href="/directory">الدليل</Link><span>/</span><span>{category.shortLabel}</span></nav><span className="eyebrow">قسم محلي متخصص</span><h1>{category.shortLabel} <em>في نقادة</em></h1><p>{category.description}</p><div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span></div></div><CategoryVisual category={category.name} size="lg" /></div></section>
       <section className="shell page-section">
         {topLocalities.length > 0 && <div className="category-pills" aria-label={`أبرز مناطق ${category.shortLabel} في نقادة`}>
-          {topLocalities.map(({ locality, count }) => <Link key={locality.slug} href={`/villages/${locality.slug}`}>{locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
+          {topLocalities.map(({ locality, count }) => <Link key={locality.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/villages/${locality.slug}`}>{locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
         </div>}
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} lockedCategory /></Suspense>
       </section>
