@@ -73,7 +73,7 @@ export default async function LocalityPage({ params }: Props) {
       <section id="locality-listings" className="shell page-section">
         <div className="locality-summary"><div><span>النوع</span><strong>{locality.type}</strong></div><div><span>النطاق الإداري</span><strong>{locality.center || 'مركز نقادة'}</strong></div><div><span>التصنيف</span><strong>{locality.classification || 'موضع محلي'}</strong></div></div>
         {topCategories.length > 0 && <div className="category-pills" aria-label={`أشهر أقسام ${locality.name}`}>
-          {topCategories.map(({ category, count }) => <Link key={category.slug} href={`/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
+          {topCategories.map(({ category, count }) => <Link key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
         </div>}
         {scoped.length ? <Suspense fallback={<div className="loading-state">جارٍ تجهيز الأنشطة…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialLocality={locality.name} lockedLocality /></Suspense> : <div className="empty-state"><strong>لم تُنشر أنشطة مؤكدة لهذا الموضع بعد</strong><p>الموضع موجود في الهيكل الجغرافي، لكنه غير مفهرس كصفحة نتائج حتى تتوفر له بيانات منشورة كافية.</p><Link href="/directory" className="button button--primary">فتح الدليل الشامل</Link></div>}
       </section>
