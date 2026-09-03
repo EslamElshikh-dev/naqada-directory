@@ -17,10 +17,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = getBusinessBySlug(slug);
   if (!listing) return {};
   const locality = listing.locality || 'مركز نقادة';
+  const description = `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`;
   return {
     title: `${listing.name} — ${locality}`,
-    description: `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`,
+    description,
     alternates: { canonical: `/listing/${listing.slug}` },
+    openGraph: {
+      title: `${listing.name} — ${locality}`,
+      description,
+      url: `/listing/${listing.slug}`,
+      type: 'website',
+    },
   };
 }
 
@@ -33,15 +40,36 @@ export default async function ListingPage({ params }: Props) {
   const whatsapp = whatsappUrl(listing.phone);
   const related = relatedBusinesses(listing);
   const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
+  const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: listing.name,
-    url: canonicalUrl,
-    telephone: phone || undefined,
-    address: { '@type': 'PostalAddress', streetAddress: listing.address || undefined, addressLocality: locality, addressRegion: 'قنا', addressCountry: 'EG' },
-    hasMap: isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : undefined,
-    additionalType: listing.subcategory || listing.category,
+    '@graph': [
+      {
+        '@type': 'LocalBusiness',
+        '@id': `${canonicalUrl}#business`,
+        name: listing.name,
+        url: canonicalUrl,
+        telephone: phone || undefined,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: listing.address || undefined,
+          addressLocality: locality,
+          addressRegion: 'قنا',
+          addressCountry: 'EG',
+        },
+        hasMap: isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : undefined,
+        additionalType: listing.subcategory || listing.category,
+        dateModified: listing.checked || undefined,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: siteConfig.url },
+          { '@type': 'ListItem', position: 2, name: listing.category, item: categoryUrl },
+          { '@type': 'ListItem', position: 3, name: listing.name, item: canonicalUrl },
+        ],
+      },
+    ],
   };
   return (
     <main id="main-content" className="page-main">
@@ -80,7 +108,7 @@ export default async function ListingPage({ params }: Props) {
         </article>
         <aside className="detail-aside">
           <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
-          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/directory">البحث في كل الدليل</Link></div>
+          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/directory">البحث في كل الدليل</Link></div>
           <p className="detail-aside__note">الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
         </aside>
       </section>
