@@ -24,6 +24,7 @@ export function SiteHeader() {
         <nav className="desktop-nav" aria-label="التنقل الرئيسي">
           <Link href="/">الرئيسية</Link>
           <Link href="/directory">الدليل</Link>
+          <Link href="/updates">آخر التحديثات</Link>
           <Link href="/villages">القرى والنجوع</Link>
           <Link href="/families">العائلات</Link>
           <Link href="/heritage">الأعلام والمعالم</Link>
@@ -52,6 +53,7 @@ export function Footer() {
           <h2>استكشف</h2>
           <div className="footer__links">
             <Link href="/directory">كل الأنشطة</Link>
+            <Link href="/updates">آخر تحديثات الدليل</Link>
             <Link href="/villages">القرى والنجوع</Link>
             <Link href="/families">السجل العائلي</Link>
             <Link href="/heritage">الأعلام والمعالم</Link>
