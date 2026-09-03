@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { BrandMark } from '@/components/site-shell';
 import { CategoryVisual } from '@/components/category-visual';
 import { ListingCard } from '@/components/listing-card';
-import { categories, families, featuredBusinesses, landmarks, meta, officialLocalities, people } from '@/lib/data';
+import { businesses, categories, families, featuredBusinesses, landmarks, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
@@ -18,12 +18,17 @@ const faq = [
 
 export default function HomePage() {
   const topLocalities = officialLocalities.filter((item) => item.businessCount > 0).slice(0, 12);
+  const recentlyReviewed = [...businesses]
+    .filter((item) => Boolean(item.checked))
+    .sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0))
+    .slice(0, 6);
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'دليل وموسوعة مركز نقادة',
     url: siteConfig.url,
     inLanguage: 'ar-EG',
+    dateModified: meta.updatedAt,
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
   };
   const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) };
@@ -77,6 +82,11 @@ export default function HomePage() {
         <div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">بيانات مرتبطة بالخرائط</span><h2>أماكن لها مرجع وصول مباشر</h2><p>سجلات مختارة حسب وضوح البيانات وحضور المراجعات لدى المصدر.</p></div><Link href="/directory" className="text-link">كل النتائج ←</Link></div>
           <div className="listing-grid">{featuredBusinesses.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div>
         </div>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الدليل يتجدد</span><h2>سجلات تمت مراجعتها مؤخرًا</h2><p>تحديثات حقيقية من قاعدة الدليل مع صفحات مستقلة وتاريخ مراجعة واضح.</p></div><Link href="/updates" className="text-link">كل التحديثات ←</Link></div>
+        <div className="listing-grid">{recentlyReviewed.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div>
       </section>
 
       <section className="section shell place-feature">
