@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>دليل نقادة | خدمات وأنشطة وقرى مركز نقادة</title>
+    <meta name="description" content="دليل محلي موثق للبحث عن الخدمات والأنشطة والقرى والعائلات والمعالم في مركز نقادة بمحافظة قنا.">
+    <meta name="theme-color" content="#062c34">
+    <meta property="og:locale" content="ar_EG">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="دليل نقادة">
+    <meta property="og:title" content="دليل نقادة | بتدور على إيه؟ وإحنا ندلّك عليه">
+    <meta property="og:description" content="خدمات وأنشطة وقرى وعائلات ومعالم نقادة في دليل واحد مبني على بيانات موثقة.">
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "دليل نقادة",
+        "inLanguage": "ar",
+        "description": "دليل محلي موثق للخدمات والأنشطة والقرى والعائلات والمعالم في مركز نقادة.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+  </head>
+  <body data-page="home">
+    <a class="skip-link" href="#main-content">انتقل إلى المحتوى</a>
+
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="./" aria-label="دليل نقادة — الرئيسية">
+          <span class="brand-mark" aria-hidden="true">ن</span>
+          <span class="brand-copy"><strong>دليل نقادة</strong><small>NAQADA DIRECTORY</small></span>
+        </a>
+        <nav class="desktop-nav" aria-label="التنقل الرئيسي">
+          <a class="nav-link" href="./" aria-current="page">الدليل</a>
+          <a class="nav-link" href="./villages.html">القرى والنجوع</a>
+          <a class="nav-link" href="./families.html">العائلات</a>
+          <a class="nav-link" href="./heritage.html">الأعلام والمعالم</a>
+          <a class="nav-link" href="./about.html">عن الدليل</a>
+        </nav>
+        <span class="trust-chip">بيانات مراجعة 2026</span>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="directory-intro">
+        <div class="container intro-grid">
+          <div>
+            <p class="eyebrow">من قلب نقادة إلى كل أهلها</p>
+            <h1>بتدور على إيه؟ وإحنا ندلّك عليه.</h1>
+            <p class="intro-copy">ابحث باسم النشاط أو الخدمة أو القرية، ووصّل للمكان والمعلومة من غير لفّ كتير.</p>
+          </div>
+          <aside class="intro-note">
+            <strong><span data-count="businesses">244</span> سجلًا جاهزًا للنشر</strong>
+            <p>كل سجل ظاهر هنا اجتاز المراجعة، والبيانات غير المحسومة محفوظة خارج واجهة النشر.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-label="البحث في دليل نقادة">
+        <div class="container">
+          <div class="search-shell">
+            <div class="search-grid">
+              <div class="field">
+                <label for="directory-search">ابحث في الدليل</label>
+                <input class="input" id="directory-search" type="search" inputmode="search" autocomplete="off" placeholder="مثال: صيدلية، مدرسة، مطعم، بشلاو…">
+              </div>
+              <div class="field">
+                <label for="category-filter">التصنيف</label>
+                <select class="select" id="category-filter"><option value="">كل التصنيفات</option></select>
+              </div>
+              <div class="field">
+                <label for="locality-filter">المنطقة</label>
+                <select class="select" id="locality-filter"><option value="">كل المناطق</option></select>
+              </div>
+              <button class="reset-button" id="reset-filters" type="button">مسح الفلاتر</button>
+            </div>
+            <div class="quick-categories" id="quick-categories" aria-label="التصنيفات الأكثر حضورًا"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="directory-body" id="results" aria-labelledby="results-title">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <h2 id="results-title">الخدمات والأنشطة</h2>
+              <p>مرتبة حسب وضوح البيانات وعدد المراجعات المتاح.</p>
+            </div>
+            <span class="result-count" id="result-count" aria-live="polite">جارٍ تجهيز النتائج…</span>
+          </div>
+          <div class="cards-grid" id="business-grid"></div>
+          <nav class="pagination" id="pagination" aria-label="صفحات النتائج"></nav>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="business-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-inner">
+        <div class="dialog-head">
+          <strong id="dialog-title">تفاصيل السجل</strong>
+          <button class="dialog-close" type="button" data-close-dialog aria-label="إغلاق">×</button>
+        </div>
+        <div class="dialog-content" id="dialog-body"></div>
+      </div>
+    </dialog>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <span class="brand-mark" aria-hidden="true">ن</span>
+          <div><strong>دليل نقادة</strong><p>بيانات محلية موثقة ومفتوحة للمراجعة والتحديث.</p></div>
+        </div>
+        <div class="developer-credit">تم التصميم والتطوير بواسطة<a href="https://eslam-elshikh.com/" target="_blank" rel="noopener noreferrer">المهندس إسلام الشيخ</a></div>
+      </div>
+    </footer>
+
+    <nav class="mobile-nav" aria-label="التنقل على الجوال">
+      <a href="./" data-icon="⌕" aria-current="page">الدليل</a>
+      <a href="./villages.html" data-icon="⌖">القرى</a>
+      <a href="./families.html" data-icon="ع">العائلات</a>
+      <a href="./heritage.html" data-icon="◇">التراث</a>
+      <a href="./about.html" data-icon="i">المنهج</a>
+    </nav>
+
+    <noscript><div class="container noscript">يحتاج البحث التفاعلي إلى تفعيل JavaScript في المتصفح.</div></noscript>
+    <script src="./assets/data.js" defer></script>
+    <script src="./assets/naqada-data-businesses-1.js" defer></script>
+    <script src="./assets/naqada-data-businesses-2.js" defer></script>
+    <script src="./assets/naqada-data-businesses-3.js" defer></script>
+    <script src="./assets/naqada-data-businesses-4.js" defer></script>
+    <script src="./assets/naqada-data-businesses-5.js" defer></script>
+    <script src="./assets/naqada-data-localities-1.js" defer></script>
+    <script src="./assets/naqada-data-families-1.js" defer></script>
+    <script src="./assets/naqada-data-people-1.js" defer></script>
+    <script src="./assets/naqada-data-landmarks-1.js" defer></script>
+    <script src="./assets/app.js" defer></script>
+  </body>
+</html>
