@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ListingCard } from '@/components/listing-card';
+import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
 import { cleanPhone, formatDate, isSafeExternalUrl, siteConfig, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
@@ -104,11 +105,12 @@ export default async function ListingPage({ params }: Props) {
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
           <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{isSafeExternalUrl(listing.mapsUrl) && <a href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
-          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>راجع منهج الدليل وطريقة إرسال تحديث موثّق للسجل.</p></div><Link href="/about#updates" className="button button--ghost">تصحيح البيانات</Link></div>
+          <ShareActions title={listing.name} locality={locality} />
+          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={`/contribute?type=correction&listing=${encodeURIComponent(listing.slug)}`} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
         <aside className="detail-aside">
           <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
-          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/directory">البحث في كل الدليل</Link></div>
+          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link href="/directory">البحث في كل الدليل</Link></div>
           <p className="detail-aside__note">الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
         </aside>
       </section>
