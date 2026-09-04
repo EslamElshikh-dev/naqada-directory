@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import './globals.css';
+import './naqada-theme.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
@@ -46,7 +47,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#102a24',
+  themeColor: '#2d1e18',
   colorScheme: 'light',
 };
 
