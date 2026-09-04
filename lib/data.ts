@@ -17,6 +17,18 @@ export const businesses = [
   ...businesses04,
 ] as Business[];
 
+/**
+ * Activity imports sometimes preserve useful parent context in locality strings,
+ * for example "بشلاو / الأوسط قمولا". Public locality routes should always use
+ * the first (most specific) segment so those records contribute to /villages/بشلاو
+ * instead of creating a second pseudo-locality.
+ */
+export function canonicalLocalityName(value?: string | null) {
+  const raw = value?.trim() || 'مركز نقادة';
+  const primary = raw.split('/')[0]?.trim();
+  return primary || raw;
+}
+
 export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
   id: item.id,
   slug: item.slug,
@@ -24,7 +36,7 @@ export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
   normalizedName: item.normalizedName,
   category: item.category,
   subcategory: item.subcategory,
-  locality: item.locality,
+  locality: canonicalLocalityName(item.locality),
   address: item.address,
   phone: item.phone,
   rating: item.rating,
@@ -84,7 +96,7 @@ export const categories: Category[] = catalog.categoryCounts.map((item) => ({
 
 const countByLocality = new Map<string, number>();
 for (const business of businesses) {
-  const name = business.locality || 'مركز نقادة';
+  const name = canonicalLocalityName(business.locality);
   countByLocality.set(name, (countByLocality.get(name) || 0) + 1);
 }
 
@@ -131,8 +143,9 @@ export function getLocalityBySlug(slug: string) {
 }
 
 export function relatedBusinesses(business: Business, limit = 3) {
+  const locality = canonicalLocalityName(business.locality);
   return businesses
-    .filter((item) => item.id !== business.id && (item.locality === business.locality || item.category === business.category))
-    .sort((a, b) => Number(b.locality === business.locality) - Number(a.locality === business.locality) || (b.reviews || 0) - (a.reviews || 0))
+    .filter((item) => item.id !== business.id && (canonicalLocalityName(item.locality) === locality || item.category === business.category))
+    .sort((a, b) => Number(canonicalLocalityName(b.locality) === locality) - Number(canonicalLocalityName(a.locality) === locality) || (b.reviews || 0) - (a.reviews || 0))
     .slice(0, limit);
 }
