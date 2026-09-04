@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
-import { siteConfig } from '@/lib/site';
+import { jsonLdStringify, siteConfig } from '@/lib/site';
 import './globals.css';
 
 const notoKufi = localFont({
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteHeader />
         {children}
         <Footer />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />
         <script dangerouslySetInnerHTML={{ __html: speedInsightsBootstrap }} />
         <script defer src="/_vercel/speed-insights/script.js" />
       </body>
