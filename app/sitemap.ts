@@ -13,6 +13,10 @@ function latestDate(items: Array<{ checked: string | null }>) {
   return timestamps.length ? new Date(Math.max(...timestamps)) : fallbackDate;
 }
 
+function sitemapUrl(path = '') {
+  return path ? `${siteConfig.url}${path}/` : `${siteConfig.url}/`;
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const latestBusinessDate = latestDate(businesses);
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
@@ -50,23 +54,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...baseRoutes.map(({ path, lastModified }) => ({
-      url: `${siteConfig.url}${path}`,
+      url: sitemapUrl(path),
       ...(lastModified ? { lastModified } : {}),
     })),
     ...categories.map((item) => ({
-      url: `${siteConfig.url}/directory/${encodeURIComponent(item.slug)}`,
+      url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`),
       lastModified: latestDate(businesses.filter((business) => business.category === item.name)),
     })),
     ...indexableLocalities.map((item) => ({
-      url: `${siteConfig.url}/villages/${encodeURIComponent(item.slug)}`,
+      url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`),
       lastModified: latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)),
     })),
     ...localCategoryPages.map((item) => ({
-      url: `${siteConfig.url}/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`,
+      url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`),
       lastModified: item.lastModified,
     })),
     ...businesses.map((item) => ({
-      url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
+      url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`),
       lastModified: item.checked ? new Date(item.checked) : fallbackDate,
     })),
   ];
