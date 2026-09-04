@@ -79,9 +79,29 @@ export default function PrivacyPage() {
 
       <section className="shell page-section">
         <div className="detail-card">
-          <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">قياس الأداء</span><h2>Vercel Speed Insights</h2></div>
-          <p>نستخدم Speed Insights لمتابعة مؤشرات أداء الويب مثل سرعة التحميل وتجربة الاستخدام. هذا القياس منفصل عن قاعدة طلبات ومؤشرات نمو الدليل، ويُستخدم لتحسين الأداء التقني.</p>
-          <p style={{ marginTop: 12 }}>قد تتغير الأدوات التقنية مع تطوير المشروع، وسنحدّث هذه الصفحة إذا تغيّر نوع البيانات التي نعالجها بصورة جوهرية.</p>
+          <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">الاحتفاظ بالبيانات</span><h2>حدود زمنية مطبقة تلقائيًا</h2></div>
+          <div className="detail-grid">
+            <div><span>أحداث الاستخدام</span><strong>حتى 180 يومًا</strong></div>
+            <div><span>وسيلة التواصل الاختيارية في المساهمة</span><strong>تُمسح بعد 90 يومًا</strong></div>
+            <div><span>بيانات حدود معدل الطلبات</span><strong>تُنظف بعد يومين</strong></div>
+            <div><span>سجل المساهمة نفسه</span><strong>يُحتفظ به للمراجعة وسجل جودة البيانات</strong></div>
+          </div>
+          <p style={{ marginTop: 16 }}>تُطبق عملية التنظيف آليًا داخل قاعدة البيانات يوميًا، لتقليل الاحتفاظ ببيانات لا نحتاجها على المدى الطويل.</p>
+        </div>
+      </section>
+
+      <section className="section section--muted">
+        <div className="shell methodology">
+          <div>
+            <span className="eyebrow eyebrow--dark">قياس الأداء</span>
+            <h2>Vercel Speed Insights</h2>
+            <p>نستخدم Speed Insights لمتابعة مؤشرات أداء الويب مثل سرعة التحميل وتجربة الاستخدام. هذا القياس منفصل عن قاعدة طلبات ومؤشرات نمو الدليل، ويُستخدم لتحسين الأداء التقني.</p>
+          </div>
+          <div className="methodology__grid">
+            <article><b>01</b><h3>أداء لا تسويق</h3><p>الغرض هو قياس مؤشرات Web Vitals وتحسين سرعة وتجربة الموقع.</p></article>
+            <article><b>02</b><h3>منفصل عن المساهمات</h3><p>بيانات الأداء التقنية ليست هي قاعدة طلبات التصحيح أو بيانات التواصل الاختيارية.</p></article>
+            <article><b>03</b><h3>تحديث مستمر</h3><p>إذا تغيّر نوع البيانات التي نعالجها بصورة جوهرية سنحدّث هذه الصفحة.</p></article>
+          </div>
         </div>
       </section>
 
