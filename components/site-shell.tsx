@@ -3,11 +3,10 @@ import { categories, meta } from '@/lib/data';
 import { MobileNav } from './mobile-nav';
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
+  const size = compact ? 30 : 42;
   return (
     <span className={`brand-mark${compact ? ' brand-mark--compact' : ''}`} aria-hidden="true">
-      <span className="brand-mark__ring" />
-      <span className="brand-mark__dot" />
-      {!compact && <span className="brand-mark__line" />}
+      <img src="/icon.svg" width={size} height={size} alt="" loading="eager" decoding="async" />
     </span>
   );
 }
