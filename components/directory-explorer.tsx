@@ -37,10 +37,19 @@ export function DirectoryExplorer({
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    setQuery(searchParams.get('q') || '');
-    setCategory(lockedCategory ? initialCategory : (initialCategory || searchParams.get('category') || ''));
-    setLocality(lockedLocality ? initialLocality : (initialLocality || searchParams.get('locality') || ''));
-    setHydratedFromUrl(true);
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setQuery(searchParams.get('q') || '');
+      setCategory(lockedCategory ? initialCategory : (initialCategory || searchParams.get('category') || ''));
+      setLocality(lockedLocality ? initialLocality : (initialLocality || searchParams.get('locality') || ''));
+      setHydratedFromUrl(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [initialCategory, initialLocality, lockedCategory, lockedLocality]);
 
   const filtered = useMemo(() => {
