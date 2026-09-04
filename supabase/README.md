@@ -30,6 +30,10 @@ The `insights` schema is not granted to `anon` or `authenticated` roles. It cont
 - `insights.contribution_queue_summary` — moderation workload by status/type/area.
 - `insights.daily_activity` — daily searches, zero-result rate, conversions and contributions.
 - `insights.search_demand_by_area` — demand and gaps by category/locality.
+- `insights.pending_contributions` — actionable moderation queue with source/details and a computed review priority. Corrections rank highest, then missing-result requests, then new additions; a supporting source and request age increase priority.
+- `insights.moderation_overview` — pending/reviewing/approved/rejected counts plus stale pending requests and oldest/latest timestamps.
+
+Use the Supabase SQL editor or other trusted service-role tooling as the internal moderation cockpit. Do not expose these views through a public admin page.
 
 ## Data retention
 
