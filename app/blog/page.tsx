@@ -28,10 +28,17 @@ export default function BlogPage() {
         description: 'حكايات ومقالات محلية عن قرى ونجوع مركز نقادة بمحافظة قنا.',
         url: blogUrl,
         inLanguage: 'ar-EG',
+        image: siteConfig.socialImage,
         author: {
           '@type': 'Person',
           name: villageArticleAuthor.name,
           url: `${siteConfig.url}${villageArticleAuthor.href}`,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: siteConfig.shortName,
+          url: siteConfig.url,
+          logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
         blogPost: villageArticles.map((article) => ({
           '@type': 'BlogPosting',
@@ -39,6 +46,18 @@ export default function BlogPage() {
           description: article.description,
           datePublished: article.publishedAt,
           dateModified: article.modifiedAt,
+          image: siteConfig.socialImage,
+          author: {
+            '@type': 'Person',
+            name: villageArticleAuthor.name,
+            url: `${siteConfig.url}${villageArticleAuthor.href}`,
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: siteConfig.shortName,
+            url: siteConfig.url,
+            logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
+          },
           url: `${siteConfig.url}${articleHref(article.locality)}`,
         })),
       },
@@ -72,7 +91,7 @@ export default function BlogPage() {
           <div>
             <span>أحدث الحكايات المحلية</span>
             <h2>اقرأ نقادة نجعًا نجعًا</h2>
-            <p>كل مقال مرتبط بصفحة المكان نفسها حتى تظل المعلومة والخدمات والـSEO في عنوان واحد قوي بدل تشتيت المحتوى بين روابط متنافسة.</p>
+            <p>كل حكاية تقودك إلى صفحة المكان نفسها، فتقرأ عن تاريخه وملامحه ثم تنتقل مباشرة إلى الخدمات والأنشطة المرتبطة به في دليل واحد متكامل.</p>
           </div>
           <Link href="/villages" className="text-link">استكشف كل القرى والنجوع ←</Link>
         </div>
