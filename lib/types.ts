@@ -18,6 +18,8 @@ export type Business = {
   status: string;
   checked: string | null;
   notes: string | null;
+  description?: string | null;
+  seoKeywords?: string[] | null;
 };
 
 export type DirectoryItem = Pick<Business,
