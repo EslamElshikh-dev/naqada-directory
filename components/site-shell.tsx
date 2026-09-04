@@ -40,6 +40,11 @@ export function SiteHeader() {
 export function Footer() {
   return (
     <footer className="footer">
+      <div className="shell footer__motto">
+        <span>نقادة · قنا</span>
+        <strong>دليل للمكان، وذاكرة للناس، وخدمات أقرب لليوم.</strong>
+        <Link href="/about">اعرف حكاية الدليل ←</Link>
+      </div>
       <div className="shell footer__grid">
         <div className="footer__about">
           <Link href="/" className="brand brand--footer"><BrandMark /><span className="brand__copy"><strong>دليل نقادة</strong><small>خدمات ومكان وذاكرة محلية في دليل واحد</small></span></Link>
