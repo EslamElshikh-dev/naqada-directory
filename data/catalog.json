@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "دليل نقادة",
-    "updatedAt": "2026-09-03",
-    "businessCount": 244,
+    "updatedAt": "2026-09-04",
+    "businessCount": 246,
     "localityCount": 64,
     "familyCount": 29,
     "peopleCount": 10,
@@ -15,7 +15,7 @@
     },
     {
       "name": "التجزئة والتسوق",
-      "count": 38
+      "count": 39
     },
     {
       "name": "التعليم",
@@ -35,7 +35,7 @@
     },
     {
       "name": "السيارات والنقل",
-      "count": 14
+      "count": 15
     },
     {
       "name": "الإلكترونيات والهواتف",
@@ -193,6 +193,14 @@
     },
     {
       "name": "نجع النقير / الخطارة",
+      "count": 1
+    },
+    {
+      "name": "عزبة الدرهمات",
+      "count": 1
+    },
+    {
+      "name": "القرية",
       "count": 1
     }
   ]
