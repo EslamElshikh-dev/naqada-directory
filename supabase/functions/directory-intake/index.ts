@@ -8,6 +8,10 @@ const allowedEventTypes = new Set([
   "listing_whatsapp",
   "listing_map",
   "listing_share",
+  "contribution_prepare",
+  "contribution_copy",
+  "contribution_share",
+  "contribution_contact",
 ]);
 const allowedRequestTypes = new Set(["add", "correction", "missing"]);
 
@@ -144,9 +148,11 @@ Deno.serve(async (req: Request) => {
 
     await db.from("directory_events").insert({
       event_type: "contribution_submitted",
+      request_type: requestType,
       category: row.category,
       locality: row.locality,
       listing_slug: row.listing_slug,
+      session_hint: clean(body.sessionHint, 80),
     });
 
     return json(201, { ok: true, id: data.id }, origin);
@@ -154,6 +160,9 @@ Deno.serve(async (req: Request) => {
 
   const eventType = clean(body.eventType, 40);
   if (!eventType || !allowedEventTypes.has(eventType)) return json(400, { ok: false, error: "invalid_event" }, origin);
+
+  const requestType = clean(body.requestType, 20);
+  if (requestType && !allowedRequestTypes.has(requestType)) return json(400, { ok: false, error: "invalid_request_type" }, origin);
 
   let queryText = clean(body.queryText, 160);
   if (looksSensitiveQuery(queryText)) queryText = null;
@@ -167,6 +176,7 @@ Deno.serve(async (req: Request) => {
     category: clean(body.category, 120),
     locality: clean(body.locality, 160),
     listing_slug: clean(body.listingSlug, 220),
+    request_type: requestType,
     session_hint: clean(body.sessionHint, 80),
   });
   if (error) return json(500, { ok: false, error: "insert_failed" }, origin);

@@ -62,6 +62,11 @@ revoke all on table public.directory_contributions from public, anon, authentica
 revoke all on table public.directory_events from public, anon, authenticated;
 revoke all on table public.public_request_limits from public, anon, authenticated;
 
+-- New Supabase projects no longer have to auto-expose tables to API roles.
+-- Grant only what the server-side Edge Function needs instead of relying on defaults.
+grant select, insert on table public.directory_contributions to service_role;
+grant insert on table public.directory_events to service_role;
+
 create or replace function public.consume_public_rate_limit(
   p_endpoint text,
   p_ip_hash text,

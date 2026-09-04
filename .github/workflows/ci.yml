@@ -35,3 +35,34 @@ jobs:
 
       - name: Build static site
         run: npm run build
+
+      - name: Smoke-test intake endpoint without writes
+        run: |
+          node <<'NODE'
+          const url = 'https://ceyjfguoomdlrtsujskj.supabase.co/functions/v1/directory-intake';
+          const origin = 'https://naqada-directory.vercel.app';
+
+          const preflight = await fetch(url, {
+            method: 'OPTIONS',
+            headers: { Origin: origin },
+          });
+          if (preflight.status !== 204) {
+            throw new Error(`Intake preflight failed with ${preflight.status}`);
+          }
+          if (preflight.headers.get('access-control-allow-origin') !== origin) {
+            throw new Error('Intake preflight returned an unexpected CORS origin');
+          }
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              Origin: origin,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ website: 'ci-smoke-no-write' }),
+          });
+          const body = await response.json();
+          if (!response.ok || body.ok !== true) {
+            throw new Error(`Intake no-write smoke failed with ${response.status}`);
+          }
+          NODE

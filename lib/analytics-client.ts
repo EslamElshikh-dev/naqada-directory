@@ -4,7 +4,17 @@ type AnalyticsWindow = Window & {
   va?: (command: 'event', payload: { name: string; data?: AnalyticsData }) => void;
 };
 
-type IntakeEventType = 'search' | 'zero_results' | 'listing_call' | 'listing_whatsapp' | 'listing_map' | 'listing_share';
+type IntakeEventType =
+  | 'search'
+  | 'zero_results'
+  | 'listing_call'
+  | 'listing_whatsapp'
+  | 'listing_map'
+  | 'listing_share'
+  | 'contribution_prepare'
+  | 'contribution_copy'
+  | 'contribution_share'
+  | 'contribution_contact';
 
 type ContributionPayload = {
   requestType: 'add' | 'correction' | 'missing';
@@ -28,6 +38,10 @@ const EVENT_MAP: Record<string, IntakeEventType | undefined> = {
   'Listing Map Opened': 'listing_map',
   'Listing Link Copied': 'listing_share',
   'Listing Shared': 'listing_share',
+  'Contribution Prepared': 'contribution_prepare',
+  'Contribution Copied': 'contribution_copy',
+  'Contribution Shared': 'contribution_share',
+  'Contribution Contact Opened': 'contribution_contact',
 };
 
 function dimension(value: unknown) {
@@ -35,6 +49,10 @@ function dimension(value: unknown) {
   const trimmed = value.trim();
   if (!trimmed || trimmed === 'all' || trimmed === 'unspecified') return undefined;
   return trimmed.slice(0, 160);
+}
+
+function contributionType(value: unknown) {
+  return value === 'add' || value === 'correction' || value === 'missing' ? value : undefined;
 }
 
 function sessionHint() {
@@ -85,6 +103,7 @@ export function trackEvent(name: string, data?: AnalyticsData) {
     category: dimension(data?.category),
     locality: dimension(data?.locality),
     listingSlug: dimension(data?.listingSlug),
+    requestType: contributionType(data?.type),
     sessionHint: sessionHint(),
   });
 }
@@ -94,7 +113,7 @@ export async function submitContribution(payload: ContributionPayload) {
     const response = await fetch(INTAKE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'contribution', ...payload }),
+      body: JSON.stringify({ action: 'contribution', sessionHint: sessionHint(), ...payload }),
     });
     const body = await response.json().catch(() => ({})) as { ok?: boolean; id?: string; error?: string };
     return {
