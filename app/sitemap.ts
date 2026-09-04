@@ -4,10 +4,32 @@ import { siteConfig } from '@/lib/site';
 
 export const dynamic = 'force-static';
 
+const fallbackDate = new Date('2026-09-04T00:00:00.000Z');
+
+function latestDate(items: Array<{ checked: string | null }>) {
+  const timestamps = items
+    .map((item) => item.checked ? Date.parse(item.checked) : Number.NaN)
+    .filter((value) => Number.isFinite(value));
+  return timestamps.length ? new Date(Math.max(...timestamps)) : fallbackDate;
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = ['', '/directory', '/villages', '/families', '/heritage', '/updates', '/coverage', '/contribute', '/privacy', '/emergency', '/about'];
+  const latestBusinessDate = latestDate(businesses);
+  const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
+    { path: '', lastModified: latestBusinessDate },
+    { path: '/directory', lastModified: latestBusinessDate },
+    { path: '/villages', lastModified: latestBusinessDate },
+    { path: '/families' },
+    { path: '/heritage' },
+    { path: '/updates', lastModified: latestBusinessDate },
+    { path: '/coverage', lastModified: latestBusinessDate },
+    { path: '/contribute' },
+    { path: '/privacy' },
+    { path: '/emergency' },
+    { path: '/about' },
+  ];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0);
-  const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number }>();
+  const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();
 
   for (const business of businesses) {
     const locality = localities.find((item) => item.name === canonicalLocalityName(business.locality));
@@ -15,45 +37,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     if (!locality || !category) continue;
     const key = `${locality.slug}::${category.slug}`;
     const current = comboCounts.get(key);
+    const businessDate = business.checked ? new Date(business.checked) : fallbackDate;
     comboCounts.set(key, {
       localitySlug: locality.slug,
       categorySlug: category.slug,
       count: (current?.count || 0) + 1,
+      lastModified: current && current.lastModified > businessDate ? current.lastModified : businessDate,
     });
   }
 
   const localCategoryPages = [...comboCounts.values()].filter((item) => item.count >= 3);
 
   return [
-    ...base.map((path) => ({
+    ...baseRoutes.map(({ path, lastModified }) => ({
       url: `${siteConfig.url}${path}`,
-      lastModified: new Date('2026-09-04'),
-      changeFrequency: path === '' || path === '/updates' ? 'weekly' as const : 'monthly' as const,
-      priority: path === '' ? 1 : path === '/updates' ? 0.85 : path === '/coverage' ? 0.8 : path === '/contribute' ? 0.75 : path === '/privacy' ? 0.45 : 0.8,
+      ...(lastModified ? { lastModified } : {}),
     })),
     ...categories.map((item) => ({
       url: `${siteConfig.url}/directory/${encodeURIComponent(item.slug)}`,
-      lastModified: new Date('2026-09-04'),
-      changeFrequency: 'monthly' as const,
-      priority: 0.75,
+      lastModified: latestDate(businesses.filter((business) => business.category === item.name)),
     })),
     ...indexableLocalities.map((item) => ({
       url: `${siteConfig.url}/villages/${encodeURIComponent(item.slug)}`,
-      lastModified: new Date('2026-09-04'),
-      changeFrequency: 'monthly' as const,
-      priority: item.businessCount >= 5 ? 0.75 : 0.65,
+      lastModified: latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)),
     })),
     ...localCategoryPages.map((item) => ({
       url: `${siteConfig.url}/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`,
-      lastModified: new Date('2026-09-04'),
-      changeFrequency: 'monthly' as const,
-      priority: item.count >= 8 ? 0.75 : 0.7,
+      lastModified: item.lastModified,
     })),
     ...businesses.map((item) => ({
       url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
-      lastModified: new Date(item.checked || '2026-09-04'),
-      changeFrequency: 'monthly' as const,
-      priority: 0.65,
+      lastModified: item.checked ? new Date(item.checked) : fallbackDate,
     })),
   ];
 }
