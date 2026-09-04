@@ -29,6 +29,13 @@ export function canonicalLocalityName(value?: string | null) {
   return primary || raw;
 }
 
+export function parentLocalityName(locality?: string | null, explicitParent?: string | null) {
+  if (explicitParent?.trim()) return explicitParent.trim();
+  if (!locality?.includes('/')) return null;
+  const parent = locality.split('/').slice(1).join('/').trim();
+  return parent || null;
+}
+
 export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
   id: item.id,
   slug: item.slug,
@@ -37,6 +44,7 @@ export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
   category: item.category,
   subcategory: item.subcategory,
   locality: canonicalLocalityName(item.locality),
+  parentLocality: parentLocalityName(item.locality, item.parentLocality),
   address: item.address,
   phone: item.phone,
   rating: item.rating,
