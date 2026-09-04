@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getLocalityBySlug, localities } from '@/lib/data';
@@ -87,7 +86,7 @@ export default async function LocalityPage({ params }: Props) {
   if (article) {
     graph.push(
       {
-        '@type': 'Article',
+        '@type': 'BlogPosting',
         '@id': `${canonicalUrl}#article`,
         headline: article.title,
         description: article.description,
@@ -96,6 +95,7 @@ export default async function LocalityPage({ params }: Props) {
         datePublished: article.publishedAt,
         dateModified: article.modifiedAt,
         mainEntityOfPage: canonicalUrl,
+        image: siteConfig.socialImage,
         about: { '@id': `${canonicalUrl}#place` },
         author: {
           '@type': 'Person',
@@ -106,6 +106,7 @@ export default async function LocalityPage({ params }: Props) {
           '@type': 'Organization',
           name: siteConfig.shortName,
           url: siteConfig.url,
+          logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
       },
       {
@@ -231,9 +232,7 @@ export default async function LocalityPage({ params }: Props) {
           </div>
         )}
         {scoped.length ? (
-          <Suspense fallback={<div className="loading-state">جارٍ تجهيز الأنشطة…</div>}>
-            <DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialLocality={locality.name} lockedLocality />
-          </Suspense>
+          <DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialLocality={locality.name} lockedLocality />
         ) : (
           <div className="empty-state">
             <strong>لم تُنشر أنشطة مؤكدة لهذا الموضع بعد</strong>
