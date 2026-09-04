@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { normalizeArabic } from '@/lib/site';
 import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
@@ -27,14 +26,22 @@ export function DirectoryExplorer({
   lockedCategory?: boolean;
   lockedLocality?: boolean;
 }) {
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [category, setCategory] = useState(initialCategory || searchParams.get('category') || '');
-  const [locality, setLocality] = useState(initialLocality || searchParams.get('locality') || '');
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState(initialCategory);
+  const [locality, setLocality] = useState(initialLocality);
   const [sort, setSort] = useState<SortMode>('recommended');
   const [page, setPage] = useState(1);
+  const [hydratedFromUrl, setHydratedFromUrl] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const pageSize = 12;
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setQuery(searchParams.get('q') || '');
+    setCategory(lockedCategory ? initialCategory : (initialCategory || searchParams.get('category') || ''));
+    setLocality(lockedLocality ? initialLocality : (initialLocality || searchParams.get('locality') || ''));
+    setHydratedFromUrl(true);
+  }, [initialCategory, initialLocality, lockedCategory, lockedLocality]);
 
   const filtered = useMemo(() => {
     const tokens = normalizeArabic(deferredQuery).split(' ').filter(Boolean);
@@ -57,13 +64,14 @@ export function DirectoryExplorer({
   const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {
+    if (!hydratedFromUrl) return;
     const params = new URLSearchParams();
     if (query) params.set('q', query);
     if (category && !lockedCategory) params.set('category', category);
     if (locality && !lockedLocality) params.set('locality', locality);
     const suffix = params.toString();
     window.history.replaceState(null, '', `${window.location.pathname}${suffix ? `?${suffix}` : ''}`);
-  }, [category, locality, lockedCategory, lockedLocality, query]);
+  }, [category, hydratedFromUrl, locality, lockedCategory, lockedLocality, query]);
 
   useEffect(() => {
     const term = deferredQuery.trim();
