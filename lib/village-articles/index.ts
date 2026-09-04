@@ -9,12 +9,13 @@ import { extendedVillageArticles7 } from './extended-7';
 import { extendedVillageArticles8 } from './extended-8';
 import { extendedVillageArticles9 } from './extended-9';
 import { extendedVillageArticles10 } from './extended-10';
+import { hagerTukhArticle } from './hager-tukh';
 import type { VillageArticle } from './base';
 
 export type { VillageArticleSection, VillageArticleFaq, VillageArticle } from './base';
 export { villageArticleAuthor } from './base';
 
-export const villageArticles: VillageArticle[] = [
+const rawVillageArticles: VillageArticle[] = [
   ...baseVillageArticles,
   ...extendedVillageArticles,
   ...extendedVillageArticles2,
@@ -27,6 +28,10 @@ export const villageArticles: VillageArticle[] = [
   ...extendedVillageArticles9,
   ...extendedVillageArticles10,
 ];
+
+export const villageArticles: VillageArticle[] = rawVillageArticles.map((article) =>
+  article.locality === hagerTukhArticle.locality ? hagerTukhArticle : article,
+);
 
 const articleAliases: Record<string, string> = {
   'ساحل بشلاو': 'ساحل بشلاو (الهواورة)',
@@ -89,6 +94,7 @@ const articleAliases: Record<string, string> = {
   'ساقية ابو الحمد': 'عزبة ساقية أبو الحمد',
   'عزبة ساقية ابو الحمد': 'عزبة ساقية أبو الحمد',
   'حاجر طوخ': 'نجع حاجر طوخ',
+  'قرية حاجر طوخ': 'نجع حاجر طوخ',
   'كوم الضبع': 'نجع كوم الضبع',
   'ترعة الهدايات': 'نجع ترعة الهدايات',
   'الحريقة': 'نجع الحريقة',
