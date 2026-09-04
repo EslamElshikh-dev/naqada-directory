@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
-import { businesses, categories, directoryBusinesses, getLocalityBySlug, localities } from '@/lib/data';
-import { isSafeExternalUrl, siteConfig } from '@/lib/site';
+import { businesses, canonicalLocalityName, categories, directoryBusinesses, getLocalityBySlug, localities } from '@/lib/data';
+import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -15,20 +15,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const locality = getLocalityBySlug(slug);
   if (!locality) return {};
-  return {
+  const description = `الخدمات والأنشطة المنشورة في ${locality.name} ضمن مركز نقادة بمحافظة قنا، مع معلومات الموضع وروابط الوصول.`;
+  return buildPageMetadata({
     title: `دليل ${locality.name} — مركز نقادة`,
-    description: `الخدمات والأنشطة المنشورة في ${locality.name} ضمن مركز نقادة بمحافظة قنا، مع معلومات الموضع وروابط الوصول.`,
-    alternates: { canonical: `/villages/${locality.slug}` },
+    description,
+    path: `/villages/${locality.slug}`,
     robots: locality.businessCount > 0 ? { index: true, follow: true } : { index: false, follow: true },
-  };
+  });
 }
 
 export default async function LocalityPage({ params }: Props) {
   const { slug } = await params;
   const locality = getLocalityBySlug(slug);
   if (!locality) notFound();
-  const scoped = businesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name);
-  const scopedDirectory = directoryBusinesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name);
+  const scoped = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name);
+  const scopedDirectory = directoryBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name);
   const categoryCount = new Set(scoped.map((item) => item.category)).size;
   const categoryCounts = new Map<string, number>();
   for (const item of scoped) categoryCounts.set(item.category, (categoryCounts.get(item.category) || 0) + 1);
@@ -77,7 +78,7 @@ export default async function LocalityPage({ params }: Props) {
         </div>}
         {scoped.length ? <Suspense fallback={<div className="loading-state">جارٍ تجهيز الأنشطة…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialLocality={locality.name} lockedLocality /></Suspense> : <div className="empty-state"><strong>لم تُنشر أنشطة مؤكدة لهذا الموضع بعد</strong><p>الموضع موجود في الهيكل الجغرافي، لكنه غير مفهرس كصفحة نتائج حتى تتوفر له بيانات منشورة كافية.</p><Link href="/directory" className="button button--primary">فتح الدليل الشامل</Link></div>}
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }
