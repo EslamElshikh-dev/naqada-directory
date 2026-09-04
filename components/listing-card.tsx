@@ -6,13 +6,14 @@ import { CategoryVisual } from './category-visual';
 export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
   const phone = cleanPhone(listing.phone);
   const locality = listing.locality || 'مركز نقادة';
+  const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
       <div className="listing-card__head">
         <CategoryVisual category={listing.category} size="sm" />
         <div className="listing-card__eyebrow">
           <Link href={`/directory/${slugify(listing.category)}`}>{listing.subcategory || listing.category}</Link>
-          <span className="source-chip">مرجع خرائط</span>
+          {hasMapReference && <span className="source-chip">مرجع خرائط</span>}
         </div>
       </div>
       <div className="listing-card__body">
@@ -27,7 +28,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
       <div className="listing-card__actions">
         <Link className="button button--primary" href={`/listing/${listing.slug}`}>التفاصيل</Link>
         {phone && <a className="button button--soft" href={`tel:${phone}`}>اتصال</a>}
-        {isSafeExternalUrl(listing.mapsUrl) && <a className="button button--ghost" href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">الخريطة</a>}
+        {hasMapReference && <a className="button button--ghost" href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">الخريطة</a>}
       </div>
     </article>
   );
