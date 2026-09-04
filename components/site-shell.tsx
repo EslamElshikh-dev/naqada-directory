@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { categories, meta } from '@/lib/data';
 import { MobileNav } from './mobile-nav';
+import { AccountButton } from './auth/account-button';
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   const size = compact ? 30 : 42;
@@ -30,7 +31,10 @@ export function SiteHeader() {
           <Link href="/heritage">الأعلام والمعالم</Link>
           <Link href="/about">عن الدليل</Link>
         </nav>
-        <Link href="/emergency" className="header-alert">أرقام مهمة</Link>
+        <div className="header-actions">
+          <AccountButton />
+          <Link href="/emergency" className="header-alert">أرقام مهمة</Link>
+        </div>
       </div>
     </header>
   );
@@ -66,6 +70,7 @@ export function Footer() {
             <Link href="/families">السجل العائلي</Link>
             <Link href="/heritage">الأعلام والمعالم</Link>
             <Link href="/privacy">الخصوصية واستخدام البيانات</Link>
+            <Link href="/account/login">دخول الأعضاء</Link>
           </div>
         </div>
         <div>
