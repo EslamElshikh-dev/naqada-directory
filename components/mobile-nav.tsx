@@ -9,7 +9,6 @@ const items = [
   { href: '/blog', label: 'المدونة', icon: '✦' },
   { href: '/villages', label: 'القرى', icon: '⌖' },
   { href: '/families', label: 'العائلات', icon: 'ع' },
-  { href: '/heritage', label: 'التراث', icon: '◇' },
 ];
 
 export function MobileNav() {
