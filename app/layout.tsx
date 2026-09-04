@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   applicationName: siteConfig.shortName,
   keywords: ['نقادة', 'مركز نقادة', 'دليل نقادة', 'قرى نقادة', 'قنا', 'خدمات نقادة', 'عائلات نقادة', 'معالم نقادة'],
+  verification: {
+    google: 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY',
+  },
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
