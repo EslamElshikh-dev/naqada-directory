@@ -108,14 +108,29 @@ for (const business of businesses) {
   countByLocality.set(name, (countByLocality.get(name) || 0) + 1);
 }
 
+const supplementalLocalities: LocalityRecord[] = [
+  {
+    name: 'دراو',
+    type: 'نجع / منطقة',
+    center: 'مركز نقادة',
+    scope: 'الأوسط قمولا',
+    verification: 'موثق بمصادر محلية',
+    classification: 'تابع للأوسط قمولا',
+    source: null,
+    notes: 'دراو — الأوسط قمولا، مركز نقادة، قنا. موضع مستقل عن دراو بمحافظة أسوان.',
+  },
+];
+
 const localityByName = new Map((rawLocalities as LocalityRecord[]).map((item) => [item.name, item]));
+const supplementalLocalityByName = new Map(supplementalLocalities.map((item) => [item.name, item]));
 const localityNames = new Set<string>([
   ...(rawLocalities as LocalityRecord[]).map((item) => item.name),
+  ...supplementalLocalities.map((item) => item.name),
   ...countByLocality.keys(),
 ]);
 
 export const localities: LocalityPage[] = [...localityNames].map((name) => {
-  const record = localityByName.get(name);
+  const record = localityByName.get(name) || supplementalLocalityByName.get(name);
   return {
     name,
     slug: slugify(name),
