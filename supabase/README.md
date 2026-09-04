@@ -6,6 +6,8 @@ Project: `naqada-directory` (Supabase Free plan)
 
 The website sends contributions and privacy-filtered usage events to the `directory-intake` Edge Function. The browser does **not** receive a service-role key and does not read/write database tables directly.
 
+The same function also serves listing rating summaries and accepts one mutable 1–5 score per listing and hashed network identity. Raw IP addresses are never stored. Rating writes are rate-limited and browser roles retain no direct database access.
+
 Tracked event families:
 
 - search
@@ -36,6 +38,7 @@ The `directory-intake` Edge Function uses the server-side `service_role` with le
 
 - `directory_contributions`: `SELECT`, `INSERT` only;
 - `directory_events`: `INSERT` only;
+- `directory_ratings`: `SELECT`, `INSERT`, `UPDATE` only;
 - `public_request_limits`: no direct table access;
 - `consume_public_rate_limit(...)`: `EXECUTE` only.
 
