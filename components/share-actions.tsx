@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { trackEvent } from '@/lib/analytics-client';
 
-export function ShareActions({ title, locality }: { title: string; locality: string }) {
+export function ShareActions({ title, locality, listingSlug }: { title: string; locality: string; listingSlug: string }) {
   const [copied, setCopied] = useState(false);
 
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      trackEvent('Listing Link Copied', { locality });
+      trackEvent('Listing Link Copied', { locality, listingSlug });
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
       setCopied(false);
@@ -21,12 +21,12 @@ export function ShareActions({ title, locality }: { title: string; locality: str
     const text = `${title} — ${locality} | دليل نقادة`;
     if (navigator.share) {
       await navigator.share({ title, text, url: window.location.href });
-      trackEvent('Listing Shared', { locality, method: 'native' });
+      trackEvent('Listing Shared', { locality, listingSlug, method: 'native' });
       return;
     }
     const whatsapp = `https://wa.me/?text=${encodeURIComponent(`${text}\n${window.location.href}`)}`;
     window.open(whatsapp, '_blank', 'noopener,noreferrer');
-    trackEvent('Listing Shared', { locality, method: 'whatsapp' });
+    trackEvent('Listing Shared', { locality, listingSlug, method: 'whatsapp' });
   }
 
   return (
