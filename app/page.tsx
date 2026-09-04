@@ -76,6 +76,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="shell discovery-strip" aria-label="طريقة استخدام الدليل">
+        <div className="discovery-strip__intro"><span>وصول أسرع</span><strong>من البحث إلى المكان في خطوات واضحة</strong></div>
+        <ol>
+          <li><b>01</b><div><strong>اكتب ما تحتاجه</strong><span>اسم نشاط، خدمة، قرية أو نجع</span></div></li>
+          <li><b>02</b><div><strong>قارن البيانات</strong><span>العنوان والتقييم ومرجع الخريطة</span></div></li>
+          <li><b>03</b><div><strong>تواصل أو تحرّك</strong><span>اتصال مباشر ومسار وصول سريع</span></div></li>
+        </ol>
+      </section>
+
       <section className="section shell">
         <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أقسام الدليل</span><h2>ابدأ بنوع الخدمة التي تحتاجها</h2><p>كل قسم يفتح صفحة مستقلة قابلة للبحث والتصفية.</p></div><Link href="/directory" className="text-link">عرض الدليل بالكامل ←</Link></div>
         <div className="category-grid">{categories.slice(0, 12).map((category, index) => (

@@ -1,13 +1,15 @@
 import Link from 'next/link';
-import { categories, meta } from '@/lib/data';
+import Image from 'next/image';
+import { meta } from '@/lib/data';
 import { MobileNav } from './mobile-nav';
 import { AccountButton } from './auth/account-button';
+import { HeaderNav } from './header-nav';
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   const size = compact ? 30 : 42;
   return (
     <span className={`brand-mark${compact ? ' brand-mark--compact' : ''}`} aria-hidden="true">
-      <img src="/icon.svg" width={size} height={size} alt="" loading="eager" decoding="async" />
+      <Image src="/icon.svg" width={size} height={size} alt="" priority />
     </span>
   );
 }
@@ -21,16 +23,7 @@ export function SiteHeader() {
           <span className="brand__copy"><strong>دليل نقادة</strong><small>الموسوعة المحلية لمركز نقادة</small></span>
           <span className="brand__scope">قنا</span>
         </Link>
-        <nav className="desktop-nav" aria-label="التنقل الرئيسي">
-          <Link href="/">الرئيسية</Link>
-          <Link href="/directory">الدليل</Link>
-          <Link href="/updates">آخر التحديثات</Link>
-          <Link href="/blog">المدونة</Link>
-          <Link href="/villages">القرى والنجوع</Link>
-          <Link href="/families">العائلات</Link>
-          <Link href="/heritage">الأعلام والمعالم</Link>
-          <Link href="/about">عن الدليل</Link>
-        </nav>
+        <HeaderNav />
         <div className="header-actions">
           <AccountButton />
           <Link href="/emergency" className="header-alert">أرقام مهمة</Link>
@@ -43,10 +36,9 @@ export function SiteHeader() {
 export function Footer() {
   return (
     <footer className="footer">
-      <div className="shell footer__motto">
-        <span>نقادة · قنا</span>
-        <strong>دليل للمكان، وذاكرة للناس، وخدمات أقرب لليوم.</strong>
-        <Link href="/about">اعرف حكاية الدليل ←</Link>
+      <div className="shell footer__cta">
+        <div><span>الدليل يكبر بمشاركة أهله</span><strong>نشاطك غير موجود أو بياناته تحتاج تحديثًا؟</strong><p>ساعدنا نحافظ على دليل نقادة دقيقًا ومفيدًا للجميع.</p></div>
+        <nav><Link href="/contribute" className="button button--light">أضف أو صحح نشاطًا</Link><Link href="/#site-reviews" className="button footer__review-button">قيّم تجربتك</Link></nav>
       </div>
       <div className="shell footer__grid">
         <div className="footer__about">
@@ -59,24 +51,30 @@ export function Footer() {
           </div>
         </div>
         <div>
-          <h2>استكشف</h2>
+          <h2>الخدمات والمكان</h2>
           <div className="footer__links">
             <Link href="/directory">كل الأنشطة</Link>
             <Link href="/updates">آخر تحديثات الدليل</Link>
-            <Link href="/blog">مدونة دليل نقادة</Link>
             <Link href="/coverage">خريطة تغطية الدليل</Link>
-            <Link href="/contribute">أضف نشاطًا أو صحح بيانات</Link>
             <Link href="/villages">القرى والنجوع</Link>
-            <Link href="/families">السجل العائلي</Link>
-            <Link href="/heritage">الأعلام والمعالم</Link>
-            <Link href="/privacy">الخصوصية واستخدام البيانات</Link>
-            <Link href="/account/login">دخول الأعضاء</Link>
           </div>
         </div>
         <div>
-          <h2>أقسام شائعة</h2>
+          <h2>الذاكرة والمحتوى</h2>
           <div className="footer__links">
-            {categories.slice(0, 5).map((category) => <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link>)}
+            <Link href="/blog">مدونة دليل نقادة</Link>
+            <Link href="/families">السجل العائلي</Link>
+            <Link href="/heritage">الأعلام والمعالم</Link>
+            <Link href="/about">عن الدليل ومنهجيته</Link>
+          </div>
+        </div>
+        <div>
+          <h2>الحساب والمشاركة</h2>
+          <div className="footer__links">
+            <Link href="/account">لوحة العضو</Link>
+            <Link href="/account/login">تسجيل الدخول</Link>
+            <Link href="/contribute">أضف أو صحح بيانات</Link>
+            <Link href="/privacy">الخصوصية واستخدام البيانات</Link>
           </div>
         </div>
       </div>

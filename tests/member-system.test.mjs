@@ -19,10 +19,25 @@ test('member, admin, and authentication entry points are present', () => {
     'app/api/auth/register/route.ts',
     'app/api/auth/logout/route.ts',
     'app/api/auth/session/route.ts',
+    'app/api/auth/google/route.ts',
+    'app/api/auth/oauth-complete/route.ts',
+    'app/account/oauth-callback/page.tsx',
     'app/api/profile/route.ts',
     'app/api/admin/access/route.ts',
     'app/api/site-reviews/route.ts',
   ]) assert.ok(existsSync(new URL(`../${path}`, import.meta.url)), path);
+});
+
+test('Google OAuth validates the provider token before creating secure cookies', () => {
+  const googleRoute = read('app/api/auth/google/route.ts');
+  const oauthComplete = read('app/api/auth/oauth-complete/route.ts');
+  const authForms = read('components/auth/auth-forms.tsx');
+  assert.ok(googleRoute.includes("searchParams.set('provider', 'google')"));
+  assert.ok(googleRoute.includes('/account/oauth-callback'));
+  assert.ok(oauthComplete.includes('await getUser(accessToken)'));
+  assert.ok(oauthComplete.includes('AUTH_ACCESS_COOKIE'));
+  assert.ok(oauthComplete.includes('AUTH_REFRESH_COOKIE'));
+  assert.ok(authForms.includes('المتابعة باستخدام Google'));
 });
 
 test('authentication cookies are server-only and production-safe', () => {
