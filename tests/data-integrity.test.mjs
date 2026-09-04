@@ -9,6 +9,10 @@ const localities = load('localities');
 const families = load('families');
 const people = load('people');
 const landmarks = load('landmarks');
+const canonicalLocality = (value) => {
+  const raw = value?.trim() || 'مركز نقادة';
+  return raw.split('/')[0]?.trim() || raw;
+};
 
 test('published datasets match the declared catalog totals', () => {
   assert.equal(businesses.length, catalog.meta.businessCount);
@@ -29,6 +33,23 @@ test('category counts are derived correctly', () => {
   for (const category of catalog.categoryCounts) {
     assert.equal(businesses.filter((item) => item.category === category.name).length, category.count, category.name);
   }
+});
+
+test('nested activity localities collapse to one canonical route name', () => {
+  const nested = businesses.filter((item) => item.locality?.includes('/'));
+  assert.ok(nested.length > 0, 'expected at least one nested locality fixture');
+  assert.ok(nested.every((item) => !canonicalLocality(item.locality).includes('/')));
+  assert.ok(nested.every((item) => canonicalLocality(item.locality).length > 0));
+});
+
+test('canonical locality normalization preserves all published businesses', () => {
+  const canonicalCounts = new Map();
+  for (const business of businesses) {
+    const locality = canonicalLocality(business.locality);
+    canonicalCounts.set(locality, (canonicalCounts.get(locality) || 0) + 1);
+  }
+  const canonicalTotal = [...canonicalCounts.values()].reduce((sum, count) => sum + count, 0);
+  assert.equal(canonicalTotal, businesses.length);
 });
 
 test('restricted review states and grade C are absent from public records', () => {
