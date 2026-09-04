@@ -9,6 +9,18 @@ export const siteConfig = {
   description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
 };
 
+const defaultIndexRobots: Metadata['robots'] = {
+  index: true,
+  follow: true,
+  googleBot: {
+    index: true,
+    follow: true,
+    'max-video-preview': -1,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+  },
+};
+
 export function buildPageMetadata({
   title,
   description,
@@ -26,7 +38,7 @@ export function buildPageMetadata({
     title,
     description,
     alternates: { canonical: normalizedPath },
-    robots,
+    robots: robots ?? defaultIndexRobots,
     openGraph: {
       type: 'website',
       locale: siteConfig.locale,
