@@ -22,7 +22,7 @@ export type Business = {
 
 export type DirectoryItem = Pick<Business,
   'id' | 'slug' | 'name' | 'normalizedName' | 'category' | 'subcategory' |
-  'locality' | 'address' | 'phone' | 'rating' | 'reviews' | 'mapsUrl' | 'verification'
+  'locality' | 'parentLocality' | 'address' | 'phone' | 'rating' | 'reviews' | 'mapsUrl' | 'verification'
 >;
 
 export type LocalityRecord = {
