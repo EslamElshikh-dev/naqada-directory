@@ -2,7 +2,7 @@
   "meta": {
     "title": "دليل نقادة",
     "updatedAt": "2026-09-04",
-    "businessCount": 250,
+    "businessCount": 251,
     "localityCount": 64,
     "familyCount": 29,
     "peopleCount": 10,
@@ -87,7 +87,7 @@
     },
     {
       "name": "التعليم والرعاية",
-      "count": 1
+      "count": 2
     },
     {
       "name": "السياحة والنقل",
@@ -105,7 +105,7 @@
     },
     {
       "name": "الخطارة",
-      "count": 35
+      "count": 36
     },
     {
       "name": "طوخ",

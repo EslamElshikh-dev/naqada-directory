@@ -208,5 +208,26 @@
     "status": "ready",
     "checked": "2026-09-04",
     "notes": "مرصود على خرائط Google — مراجعة 2026-09-04"
+  },
+  {
+    "id": "directory:little-stars-nursery-01031375936",
+    "slug": "حضانه-النجوم-الصغيره-الخطاره",
+    "name": "حضانة النجوم الصغيرة",
+    "normalizedName": "حضانه النجوم الصغيره",
+    "category": "التعليم والرعاية",
+    "subcategory": "حضانة ومركز أطفال مبكر",
+    "locality": "الخطارة",
+    "parentLocality": null,
+    "address": "WPFM+WC4، WPFM+RCW، الخطارة، مركز نقادة، محافظة قنا 1425543، مصر",
+    "phone": "+201031375936",
+    "rating": null,
+    "reviews": 0,
+    "hours": null,
+    "mapsUrl": "https://maps.app.goo.gl/d88rLFHzbx5kzmu58?g_st=ac",
+    "placeId": null,
+    "verification": "A",
+    "status": "ready",
+    "checked": "2026-09-04",
+    "notes": "موثق مباشرة لدى دليل نقادة — مراجعة 2026-09-04"
   }
 ]
