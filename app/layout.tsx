@@ -39,8 +39,19 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.shortName,
+    images: [{
+      url: siteConfig.socialImage,
+      width: 1200,
+      height: 630,
+      alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
+    }],
   },
-  twitter: { card: 'summary', title: siteConfig.name, description: siteConfig.description },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.socialImage],
+  },
 };
 
 export const viewport: Viewport = {
