@@ -1,31 +1,13 @@
-import React from 'react';
-import { ImageResponse } from 'next/og';
-
 export const dynamic = 'force-static';
 
+const imageBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAYFBMVEX27+b07eTw6eDt5dzq49rn39bk3dTc1MvSysHGvbW/tq62raXWqF+xqKCroZmglo6XjYWRhn6IfXV4bGVpXVZhVE1bTUdVSEFTRT9SRT5KPDU/MSo2KCEyIx0uHxktHhh6BjAvAAAD/0lEQVR42u3d23riIBAA4IlWEyPmYKK2Ocj7v+X223VvClEGBWbszLU285djggHQzAMEIAABCEAAAhCAAAQgAAEIQADsAOq1ERWgQkUUgAobgQEqRoQDqFgRBqBixusBKna8GKAUUQGQzd9RAGTTdyQA5fxdBOCfP7wyvAXglz+ECC8BeOQP4QIvAGz+EDqQAqCWP1YAqPwhTmAEQDB/lAABgJjxEkDC/N0FQDR/ZwFQzd9V4AgASC1AA9Ln7yZ4WwCF/J0ELgAAEgIUQBEEKF8AAOUieAwAoCJAABRJgPqdAADadQiIF8DDInh7AADxOiQAigBFFqDQAADqRSAAAZAErM//4sgV8HH7S70ABCAAAQhARuJ3AuSfXz+j4lUCJ+Ni45oVYG9erWUFyEaPIiDViFvzcjUrQH41LvfJqxs9m9crWAFqfDOmBdiadejCayS+GNe7blgBLP3QnhVgh24ExADr2bhgnwiQrY3IvBrBmAhg1uZ55QDozFa8SgMwp5ZnlzrUYIeyYABzYub0JM4yIy2TAHJsIsvdUJUEcDC/uXWaz2EnpKEALbY3+T+ZwA4EoQBmb3LyBRyTAC5+bdhWhdIAJvy91d8ozCt2KQAf6EnZci+UBJDjb60We68kVWjn2YvaRuIkvZDlH7l2AnREBrLK/GLmBLgQmUqYd+ezU/6rGVv3AgEaT0CpidwPNJ5t4KiJ3JE1ft2o5enoowEwWhvQDs/6bXcDOgci3ajDklhm6YO+0jzYsgxk8+ORzFJuukkDsMyKH09Hi8mDHWo2ammN192DW4FBe1S8UIDe8tXxbnvMbfnrXSqArTrr4Y6gHG3feHwbF/GpxHdMSzcFm+6qvQog3HOhi/3dg95WCNt2Wvh0wnXiauH9m7n7MSSv9t289NkiIWA1Lr5Fd2nL26rFpmz6efl9xxYSAhaL4NYahmEY57sf0cMqKSA76+dicrqLDrjAkU/PAQ6QGADl9Zn8W0gOgOoJgevPYsOukVVz4P9/8EW+3eiV/nwAIgDY9h75fxZABvDdlL+w3WeTASUAZHvMiDAdN6iV5TgL3cVxcMr+eqo+kEvj0Vbqi7q/36Cny/GwBXTE/KlBVlRtPxg963U8dc0+z8ArEvxWYlOUh6qum7ap66os8hU8E/LLXQEIQAB8ATzfZpUXogXwQoBsy5AEwH5nD9kcJjmA/f5Cb7XDE889ttjvcsZ/nznZqjA5gP1ul/z3G2W/4yv/PXf573rMf99p9jt/8997nf/u9/zPH+B/AgT/Mzj4n4LC/xwazf4kIM3/LCb+p2Fp9ueRRSUgcvpdZ/LFMGDT+YXnUgZS+KYhh8sKQAACEIAABCAAAQhAAAIQQKr4Az4f7e4yyMzgAAAAAElFTkSuQmCC';
+
 export function GET() {
-  const dimension = 192;
-  return new ImageResponse(
-    React.createElement(
-      'div',
-      {
-        style: {
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 46,
-          background: '#2d1e18',
-          color: '#f6efe6',
-          border: '11px solid #d6a85f',
-          fontFamily: 'sans-serif',
-          fontSize: 109,
-          fontWeight: 900,
-        },
-      },
-      'ن',
-    ),
-    { width: dimension, height: dimension },
-  );
+  const bytes = Buffer.from(imageBase64, 'base64');
+  return new Response(bytes, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
 }
