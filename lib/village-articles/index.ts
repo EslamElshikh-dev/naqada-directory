@@ -7,6 +7,7 @@ import { extendedVillageArticles5 } from './extended-5';
 import { extendedVillageArticles6 } from './extended-6';
 import { extendedVillageArticles7 } from './extended-7';
 import { extendedVillageArticles8 } from './extended-8';
+import { extendedVillageArticles9 } from './extended-9';
 import type { VillageArticle } from './base';
 
 export type { VillageArticleSection, VillageArticleFaq, VillageArticle } from './base';
@@ -22,6 +23,7 @@ export const villageArticles: VillageArticle[] = [
   ...extendedVillageArticles6,
   ...extendedVillageArticles7,
   ...extendedVillageArticles8,
+  ...extendedVillageArticles9,
 ];
 
 const articleAliases: Record<string, string> = {
@@ -74,6 +76,19 @@ const articleAliases: Record<string, string> = {
   'شرق الترعة': 'نجع شرق الترعة',
   'شرق الترعه': 'نجع شرق الترعة',
   'نجع شرق الترعه': 'نجع شرق الترعة',
+  'محمود علي الأمين': 'نجع محمود علي الأمين',
+  'محمود علي الامين': 'نجع محمود علي الأمين',
+  'نجع محمود علي الامين': 'نجع محمود علي الأمين',
+  'الدرهمات': 'عزبة الدرهمات',
+  'ساقية عبد الوهاب': 'عزبة ساقية عبد الوهاب',
+  'ساقية عبدالوهاب': 'عزبة ساقية عبد الوهاب',
+  'عزبة ساقية عبدالوهاب': 'عزبة ساقية عبد الوهاب',
+  'ساقية أبو الحمد': 'عزبة ساقية أبو الحمد',
+  'ساقية ابو الحمد': 'عزبة ساقية أبو الحمد',
+  'عزبة ساقية ابو الحمد': 'عزبة ساقية أبو الحمد',
+  'حاجر طوخ': 'نجع حاجر طوخ',
+  'كوم الضبع': 'نجع كوم الضبع',
+  'ترعة الهدايات': 'نجع ترعة الهدايات',
 };
 
 const articleByLocality = new Map(villageArticles.map((article) => [article.locality, article]));
