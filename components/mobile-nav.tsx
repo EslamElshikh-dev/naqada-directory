@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const items = [
   { href: '/', label: 'الرئيسية', icon: '⌂' },
   { href: '/directory', label: 'الدليل', icon: '⌕' },
+  { href: '/blog', label: 'المدونة', icon: '✦' },
   { href: '/villages', label: 'القرى', icon: '⌖' },
   { href: '/families', label: 'العائلات', icon: 'ع' },
   { href: '/heritage', label: 'التراث', icon: '◇' },
