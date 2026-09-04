@@ -5,8 +5,8 @@ import { ListingCard } from '@/components/listing-card';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
-import { businesses, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
-import { cleanPhone, formatDate, isSafeExternalUrl, siteConfig, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
+import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
+import { buildPageMetadata, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -18,26 +18,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const listing = getBusinessBySlug(slug);
   if (!listing) return {};
-  const locality = listing.locality || 'مركز نقادة';
+  const locality = canonicalLocalityName(listing.locality);
   const description = `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`;
-  return {
+  return buildPageMetadata({
     title: `${listing.name} — ${locality}`,
     description,
-    alternates: { canonical: `/listing/${listing.slug}` },
-    openGraph: {
-      title: `${listing.name} — ${locality}`,
-      description,
-      url: `/listing/${listing.slug}`,
-      type: 'website',
-    },
-  };
+    path: `/listing/${listing.slug}`,
+  });
 }
 
 export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
   const listing = getBusinessBySlug(slug);
   if (!listing) notFound();
-  const locality = listing.locality || 'مركز نقادة';
+  const locality = canonicalLocalityName(listing.locality);
+  const parentLocality = listing.parentLocality || (listing.locality?.includes('/') ? listing.locality.split('/').slice(1).join('/').trim() : null);
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const safeMapsUrl = isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : null;
@@ -49,8 +44,8 @@ export default async function ListingPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'LocalBusiness',
-        '@id': `${canonicalUrl}#business`,
+        '@type': schemaTypeForBusiness(listing),
+        '@id': `${canonicalUrl}#entity`,
         name: listing.name,
         url: canonicalUrl,
         telephone: phone || undefined,
@@ -62,7 +57,7 @@ export default async function ListingPage({ params }: Props) {
           addressCountry: 'EG',
         },
         hasMap: safeMapsUrl || undefined,
-        additionalType: listing.subcategory || listing.category,
+        description: listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${locality}، مركز نقادة.` : `${listing.category} في ${locality}، مركز نقادة.`,
         dateModified: listing.checked || undefined,
       },
       {
@@ -96,7 +91,7 @@ export default async function ListingPage({ params }: Props) {
           <div className="detail-grid">
             <div><span>التصنيف</span><strong>{listing.category}</strong></div>
             <div><span>نوع الخدمة</span><strong>{listing.subcategory || 'خدمة محلية'}</strong></div>
-            <div><span>الموضع</span><strong>{locality}{listing.parentLocality ? ` — ${listing.parentLocality}` : ''}</strong></div>
+            <div><span>الموضع</span><strong>{locality}{parentLocality ? ` — ${parentLocality}` : ''}</strong></div>
             <div><span>العنوان</span><strong>{listing.address || 'لا يتوفر عنوان تفصيلي'}</strong></div>
             <div><span>الهاتف</span><strong dir="ltr">{listing.phone || 'غير منشور'}</strong></div>
             <div><span>ساعات العمل</span><strong>{listing.hours || 'غير متاحة'}</strong></div>
@@ -115,7 +110,7 @@ export default async function ListingPage({ params }: Props) {
       </section>
 
       {related.length > 0 && <section className="section section--muted"><div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">قد يفيدك أيضًا</span><h2>أماكن وخدمات قريبة في التصنيف أو الموضع</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }

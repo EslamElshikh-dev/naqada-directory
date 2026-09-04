@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { siteConfig } from '@/lib/site';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'الخصوصية واستخدام البيانات — دليل نقادة',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'الخصوصية واستخدام البيانات',
   description: 'كيف يتعامل دليل نقادة مع بيانات البحث والمساهمات وقياس الأداء، وما الذي لا نجمعه أو ننشره.',
-  alternates: { canonical: '/privacy' },
-};
+  path: '/privacy',
+});
 
 export default function PrivacyPage() {
   const pageUrl = `${siteConfig.url}/privacy`;
@@ -116,7 +116,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }

@@ -42,7 +42,7 @@ export function DirectoryExplorer({
       if (category && item.category !== category) return false;
       if (locality && (item.locality || 'مركز نقادة') !== locality) return false;
       if (!tokens.length) return true;
-      const haystack = normalizeArabic([item.name, item.normalizedName, item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' '));
+      const haystack = normalizeArabic([item.name, item.normalizedName, item.category, item.subcategory, item.locality, item.parentLocality, item.address].filter(Boolean).join(' '));
       return tokens.every((token) => haystack.includes(token));
     });
     return matches.sort((a, b) => {

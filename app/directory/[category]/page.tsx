@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
-import { businesses, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
-import { siteConfig } from '@/lib/site';
+import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
 
@@ -17,11 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) return {};
-  return {
+  const description = `${category.description} تصفح ${category.count} نتيجة منشورة داخل مدينة نقادة وقراها.`;
+  return buildPageMetadata({
     title: `${category.shortLabel} في نقادة`,
-    description: `${category.description} تصفح ${category.count} نتيجة منشورة داخل مدينة نقادة وقراها.`,
-    alternates: { canonical: `/directory/${category.slug}` },
-  };
+    description,
+    path: `/directory/${category.slug}`,
+  });
 }
 
 export default async function CategoryPage({ params }: Props) {
@@ -30,10 +31,10 @@ export default async function CategoryPage({ params }: Props) {
   if (!category) notFound();
   const scoped = businesses.filter((item) => item.category === category.name);
   const scopedDirectory = directoryBusinesses.filter((item) => item.category === category.name);
-  const localityCount = new Set(scoped.map((item) => item.locality).filter(Boolean)).size;
+  const localityCount = new Set(scoped.map((item) => canonicalLocalityName(item.locality))).size;
   const localityCounts = new Map<string, number>();
   for (const item of scoped) {
-    const name = item.locality || 'مركز نقادة';
+    const name = canonicalLocalityName(item.locality);
     localityCounts.set(name, (localityCounts.get(name) || 0) + 1);
   }
   const topLocalities = [...localityCounts.entries()]
@@ -80,7 +81,7 @@ export default async function CategoryPage({ params }: Props) {
         </div>}
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} lockedCategory /></Suspense>
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }

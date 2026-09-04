@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { businesses, categories, localities } from '@/lib/data';
+import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 
 export const dynamic = 'force-static';
@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number }>();
 
   for (const business of businesses) {
-    const locality = localities.find((item) => item.name === (business.locality || 'مركز نقادة'));
+    const locality = localities.find((item) => item.name === canonicalLocalityName(business.locality));
     const category = categories.find((item) => item.name === business.category);
     if (!locality || !category) continue;
     const key = `${locality.slug}::${category.slug}`;

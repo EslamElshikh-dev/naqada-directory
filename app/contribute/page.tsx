@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { ContributionBuilder } from '@/components/contribution-builder';
 import { categories, localities } from '@/lib/data';
-import { siteConfig } from '@/lib/site';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'أضف نشاطًا أو صحح بيانات — دليل نقادة',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'أضف نشاطًا أو صحح بيانات',
   description: 'ساهم في استكمال دليل نقادة بإضافة نشاط أو اقتراح تصحيح أو الإبلاغ عن نتيجة بحث مفقودة، مع طلب منظم ومصدر داعم.',
-  alternates: { canonical: '/contribute' },
-};
+  path: '/contribute',
+});
 
 export default function ContributePage() {
   const pageUrl = `${siteConfig.url}/contribute`;
@@ -41,7 +41,7 @@ export default function ContributePage() {
         </p>
       </section>
       <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">سياسة المراجعة</span><h2>المساهمة ليست نشرًا تلقائيًا</h2><p>الطلب يمر بالمراجعة ومقارنة المصدر قبل تعديل السجل. الهدف أن تزيد التغطية من غير التضحية بدقة الدليل.</p><Link href="/about" className="text-link">اقرأ منهج البيانات ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>حدد المعلومة</h3><p>اسم واضح، موضع، وتصنيف أو وصف للخطأ.</p></article><article><b>02</b><h3>أرفق مصدرًا</h3><p>خرائط Google أو موقع رسمي أو مصدر عام مباشر يسرّع المراجعة.</p></article><article><b>03</b><h3>مراجعة قبل النشر</h3><p>لا تُضاف أو تُعدل البيانات تلقائيًا بمجرد إرسال المقترح.</p></article></div></div></section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }

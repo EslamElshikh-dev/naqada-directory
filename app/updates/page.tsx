@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ListingCard } from '@/components/listing-card';
-import { businesses, meta } from '@/lib/data';
-import { formatDate, siteConfig } from '@/lib/site';
+import { businesses, canonicalLocalityName, meta } from '@/lib/data';
+import { formatDate, jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'آخر تحديثات دليل نقادة',
@@ -16,7 +16,7 @@ export default function UpdatesPage() {
     .sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0))
     .slice(0, 24);
   const latestDate = recent[0]?.checked || meta.updatedAt;
-  const localityCount = new Set(recent.map((item) => item.locality).filter(Boolean)).size;
+  const localityCount = new Set(recent.map((item) => canonicalLocalityName(item.locality))).size;
   const categoryCount = new Set(recent.map((item) => item.category)).size;
   const pageUrl = `${siteConfig.url}/updates`;
   const structuredData = {
@@ -83,7 +83,7 @@ export default function UpdatesPage() {
           </div>
         </div>
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }

@@ -2,7 +2,7 @@
 .vercel/
 .next/
 out/
+dist/
 node_modules/
-.vercel/
 npm-debug.log*
 *.tsbuildinfo
