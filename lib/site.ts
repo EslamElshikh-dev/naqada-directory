@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 export const siteConfig = {
   name: 'دليل نقادة | الموسوعة المحلية لمركز نقادة',
   shortName: 'دليل نقادة',
@@ -5,6 +7,50 @@ export const siteConfig = {
   locale: 'ar_EG',
   description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
 };
+
+export function buildPageMetadata({
+  title,
+  description,
+  path,
+  robots,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  robots?: Metadata['robots'];
+}): Metadata {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const url = normalizedPath === '/' ? siteConfig.url : `${siteConfig.url}${normalizedPath}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: normalizedPath },
+    robots,
+    openGraph: {
+      type: 'website',
+      locale: siteConfig.locale,
+      url,
+      title,
+      description,
+      siteName: siteConfig.shortName,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+  };
+}
+
+/** Escape characters that can terminate an inline script while preserving JSON semantics. */
+export function jsonLdStringify(value: unknown) {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
 
 export function normalizeArabic(value: string) {
   return value
