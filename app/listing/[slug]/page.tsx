@@ -42,6 +42,7 @@ export default async function ListingPage({ params }: Props) {
   const related = relatedBusinesses(listing);
   const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
   const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
+  const correctionUrl = `/contribute?type=correction&name=${encodeURIComponent(listing.name)}&category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}`;
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -106,7 +107,7 @@ export default async function ListingPage({ params }: Props) {
           </div>
           <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{isSafeExternalUrl(listing.mapsUrl) && <a href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
           <ShareActions title={listing.name} locality={locality} />
-          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={`/contribute?type=correction&listing=${encodeURIComponent(listing.slug)}`} className="button button--ghost">تصحيح البيانات</Link></div>
+          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
         <aside className="detail-aside">
           <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
