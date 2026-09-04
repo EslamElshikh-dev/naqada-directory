@@ -59,6 +59,7 @@ export function Footer() {
             <Link href="/villages">القرى والنجوع</Link>
             <Link href="/families">السجل العائلي</Link>
             <Link href="/heritage">الأعلام والمعالم</Link>
+            <Link href="/privacy">الخصوصية واستخدام البيانات</Link>
           </div>
         </div>
         <div>

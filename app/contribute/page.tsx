@@ -36,6 +36,9 @@ export default function ContributePage() {
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز نموذج المساهمة…</div>}>
           <ContributionBuilder categories={categories} localities={localities.filter((item) => item.businessCount > 0 || item.verification)} />
         </Suspense>
+        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 13, lineHeight: 1.9 }}>
+          بإرسال المساهمة، تُستخدم البيانات للمراجعة وتحسين الدليل وفق <Link href="/privacy" className="text-link">سياسة الخصوصية واستخدام البيانات</Link>. وسيلة التواصل اختيارية ولا تُنشر داخل صفحات الدليل.
+        </p>
       </section>
       <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">سياسة المراجعة</span><h2>المساهمة ليست نشرًا تلقائيًا</h2><p>الطلب يمر بالمراجعة ومقارنة المصدر قبل تعديل السجل. الهدف أن تزيد التغطية من غير التضحية بدقة الدليل.</p><Link href="/about" className="text-link">اقرأ منهج البيانات ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>حدد المعلومة</h3><p>اسم واضح، موضع، وتصنيف أو وصف للخطأ.</p></article><article><b>02</b><h3>أرفق مصدرًا</h3><p>خرائط Google أو موقع رسمي أو مصدر عام مباشر يسرّع المراجعة.</p></article><article><b>03</b><h3>مراجعة قبل النشر</h3><p>لا تُضاف أو تُعدل البيانات تلقائيًا بمجرد إرسال المقترح.</p></article></div></div></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
