@@ -2,7 +2,7 @@
   "meta": {
     "title": "دليل نقادة",
     "updatedAt": "2026-09-04",
-    "businessCount": 246,
+    "businessCount": 248,
     "localityCount": 64,
     "familyCount": 29,
     "peopleCount": 10,
@@ -27,7 +27,7 @@
     },
     {
       "name": "دور العبادة",
-      "count": 18
+      "count": 19
     },
     {
       "name": "البناء والصيانة",
@@ -47,7 +47,7 @@
     },
     {
       "name": "الجمعيات والمجتمع",
-      "count": 7
+      "count": 8
     },
     {
       "name": "الخدمات الحكومية",
@@ -202,6 +202,10 @@
     {
       "name": "القرية",
       "count": 1
+    },
+    {
+      "name": "العربات",
+      "count": 2
     }
   ]
 }
