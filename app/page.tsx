@@ -6,6 +6,7 @@ import { ListingCard } from '@/components/listing-card';
 import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
+import { SiteReviews } from '@/components/site-reviews';
 import blogStyles from './blog/blog.module.css';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
@@ -132,6 +133,7 @@ export default function HomePage() {
 
       <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">منهجية البيانات</span><h2>الدقة قبل العدد</h2><p>كل نوع من البيانات له معيار نشر واضح، وتظهر حدود المعلومة بدل إخفائها.</p><Link href="/about" className="text-link">اقرأ منهج الدليل ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>خدمات قابلة للوصول</h3><p>العنوان والهاتف والخريطة تُعرض بحسب المصدر المتاح وتاريخ آخر مراجعة.</p></article><article><b>02</b><h3>جغرافيا بلا تخمين</h3><p>لا نُنشئ قرية أو تبعية مكانية من تشابه الاسم، بل من سجل منشور.</p></article><article><b>03</b><h3>عائلات بحدود واضحة</h3><p>تشابه اللقب لا يثبت نسبًا، وكل سجل يعرض درجته وتنبيهه الخاص.</p></article></div></div></section>
 
+      <SiteReviews />
       <section className="section shell faq-section"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">أسئلة شائعة</span><h2>قبل أن تبدأ البحث</h2></div></div><div className="faq-grid">{faq.map((item) => <details key={item.question}><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
