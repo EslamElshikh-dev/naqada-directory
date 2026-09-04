@@ -53,6 +53,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       'query-input': 'required name=search_term_string',
     },
   };
+  const analyticsBootstrap = `
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    window.va('beforeSend', function (event) {
+      try {
+        var url = new URL(event.url);
+        url.searchParams.delete('q');
+        return Object.assign({}, event, { url: url.toString() });
+      } catch (error) {
+        return event;
+      }
+    });
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  `;
   return (
     <html lang="ar" dir="rtl" className={notoKufi.variable}>
       <body>
@@ -61,6 +74,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <Footer />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+        <script dangerouslySetInnerHTML={{ __html: analyticsBootstrap }} />
+        <script defer src="/_vercel/insights/script.js" />
+        <script defer src="/_vercel/speed-insights/script.js" />
       </body>
     </html>
   );

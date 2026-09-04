@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ListingCard } from '@/components/listing-card';
+import { ListingPrimaryActions } from '@/components/listing-primary-actions';
+import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
 import { cleanPhone, formatDate, isSafeExternalUrl, siteConfig, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
@@ -38,9 +40,11 @@ export default async function ListingPage({ params }: Props) {
   const locality = listing.locality || 'مركز نقادة';
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
+  const safeMapsUrl = isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : null;
   const related = relatedBusinesses(listing);
   const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
   const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
+  const correctionUrl = `/contribute?type=correction&name=${encodeURIComponent(listing.name)}&category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}`;
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -57,7 +61,7 @@ export default async function ListingPage({ params }: Props) {
           addressRegion: 'قنا',
           addressCountry: 'EG',
         },
-        hasMap: isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : undefined,
+        hasMap: safeMapsUrl || undefined,
         additionalType: listing.subcategory || listing.category,
         dateModified: listing.checked || undefined,
       },
@@ -80,11 +84,7 @@ export default async function ListingPage({ params }: Props) {
             <div className="detail-hero__badges"><span>{listing.subcategory || listing.category}</span><Link href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
             <h1>{listing.name}</h1>
             <p>{listing.address || `${locality}، مركز نقادة، محافظة قنا`}</p>
-            <div className="detail-actions">
-              {phone && <a className="button button--light" href={`tel:${phone}`}>اتصال الآن</a>}
-              {whatsapp && <a className="button button--whatsapp" href={whatsapp} target="_blank" rel="noreferrer">واتساب</a>}
-              {isSafeExternalUrl(listing.mapsUrl) && <a className="button button--outline-light" href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">فتح الخريطة ↗</a>}
-            </div>
+            <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} />
           </div>
           <aside className="detail-hero__summary"><BrandMark /><span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p></aside>
         </div>
@@ -103,12 +103,13 @@ export default async function ListingPage({ params }: Props) {
             <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString('ar-EG')} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString('ar-EG')} مراجعة` : ''}` : 'غير متاح'}</strong></div>
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
-          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{isSafeExternalUrl(listing.mapsUrl) && <a href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
-          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>راجع منهج الدليل وطريقة إرسال تحديث موثّق للسجل.</p></div><Link href="/about#updates" className="button button--ghost">تصحيح البيانات</Link></div>
+          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
+          <ShareActions title={listing.name} locality={locality} />
+          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
         <aside className="detail-aside">
           <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
-          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/directory">البحث في كل الدليل</Link></div>
+          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link href="/directory">البحث في كل الدليل</Link></div>
           <p className="detail-aside__note">الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
         </aside>
       </section>

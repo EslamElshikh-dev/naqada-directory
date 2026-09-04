@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { normalizeArabic } from '@/lib/site';
+import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
 import { ListingCard } from './listing-card';
 
 type SortMode = 'recommended' | 'rating' | 'name';
@@ -63,6 +65,24 @@ export function DirectoryExplorer({
     window.history.replaceState(null, '', `${window.location.pathname}${suffix ? `?${suffix}` : ''}`);
   }, [category, locality, lockedCategory, lockedLocality, query]);
 
+  useEffect(() => {
+    const term = deferredQuery.trim();
+    if (!term && !category && !locality) return;
+
+    const timer = window.setTimeout(() => {
+      const safeTerm = privacySafeSearchTerm(term);
+      trackEvent(filtered.length === 0 ? 'Directory Zero Results' : 'Directory Search', {
+        results: filtered.length,
+        queryLength: term.length,
+        category: category || 'all',
+        locality: locality || 'all',
+        ...(filtered.length === 0 && safeTerm ? { query: safeTerm } : {}),
+      });
+    }, 900);
+
+    return () => window.clearTimeout(timer);
+  }, [category, deferredQuery, filtered.length, locality]);
+
   function reset() {
     setQuery('');
     if (!lockedCategory) setCategory('');
@@ -70,6 +90,8 @@ export function DirectoryExplorer({
     setSort('recommended');
     setPage(1);
   }
+
+  const missingHref = `/contribute?type=missing${query ? `&q=${encodeURIComponent(query)}` : ''}`;
 
   return (
     <div className="explorer">
@@ -94,7 +116,7 @@ export function DirectoryExplorer({
         {(query || (!lockedCategory && category) || (!lockedLocality && locality)) && <button type="button" onClick={reset}>مسح الفلاتر</button>}
       </div>
 
-      {visible.length ? <div className="listing-grid">{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : <div className="empty-state"><strong>لا توجد نتيجة مطابقة</strong><p>جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين.</p><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button></div>}
+      {visible.length ? <div className="listing-grid">{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : <div className="empty-state"><strong>لا توجد نتيجة مطابقة</strong><p>جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.</p><div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link className="button button--ghost" href={missingHref} onClick={() => trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' })}>اقترح نتيجة مفقودة</Link></div></div>}
 
       {totalPages > 1 && <nav className="pagination" aria-label="صفحات النتائج">
         <button type="button" disabled={currentPage === 1} onClick={() => { setPage((value) => Math.max(1, value - 1)); document.querySelector('.results-bar')?.scrollIntoView({ behavior: 'smooth' }); }}>السابق</button>
