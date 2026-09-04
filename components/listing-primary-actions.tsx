@@ -8,14 +8,16 @@ export function ListingPrimaryActions({
   mapsUrl,
   locality,
   category,
+  listingSlug,
 }: {
   phone: string | null;
   whatsapp: string | null;
   mapsUrl: string | null;
   locality: string;
   category: string;
+  listingSlug: string;
 }) {
-  const data = { locality, category };
+  const data = { locality, category, listingSlug };
 
   return (
     <div className="detail-actions">
