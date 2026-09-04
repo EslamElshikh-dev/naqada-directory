@@ -27,8 +27,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/heritage' },
     { path: '/updates', lastModified: latestBusinessDate },
     { path: '/coverage', lastModified: latestBusinessDate },
-    { path: '/contribute' },
-    { path: '/privacy' },
     { path: '/emergency' },
     { path: '/about' },
   ];

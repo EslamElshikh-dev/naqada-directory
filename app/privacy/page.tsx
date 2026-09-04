@@ -6,6 +6,11 @@ export const metadata: Metadata = buildPageMetadata({
   title: 'الخصوصية واستخدام البيانات',
   description: 'كيف يتعامل دليل نقادة مع بيانات البحث والمساهمات وقياس الأداء، وما الذي لا نجمعه أو ننشره.',
   path: '/privacy',
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: { index: false, follow: true },
+  },
 });
 
 export default function PrivacyPage() {

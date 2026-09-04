@@ -9,6 +9,11 @@ export const metadata: Metadata = buildPageMetadata({
   title: 'أضف نشاطًا أو صحح بيانات',
   description: 'ساهم في استكمال دليل نقادة بإضافة نشاط أو اقتراح تصحيح أو الإبلاغ عن نتيجة بحث مفقودة، مع طلب منظم ومصدر داعم.',
   path: '/contribute',
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: { index: false, follow: true },
+  },
 });
 
 export default function ContributePage() {

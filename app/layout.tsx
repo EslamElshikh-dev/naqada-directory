@@ -16,11 +16,21 @@ export const metadata: Metadata = {
   title: { default: siteConfig.name, template: '%s | دليل نقادة' },
   description: siteConfig.description,
   applicationName: siteConfig.shortName,
-  keywords: ['نقادة', 'مركز نقادة', 'دليل نقادة', 'قرى نقادة', 'قنا', 'خدمات نقادة', 'عائلات نقادة', 'معالم نقادة'],
   verification: {
     google: 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY',
   },
   alternates: { canonical: '/' },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: 'website',
     locale: siteConfig.locale,
@@ -50,15 +60,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     url: siteConfig.url,
     inLanguage: 'ar-EG',
     description: siteConfig.description,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${siteConfig.url}/directory?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
   const speedInsightsBootstrap = `window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };`;
   return (
-    <html lang="ar" dir="rtl" className={notoKufi.variable}>
+    <html lang="ar-EG" dir="rtl" className={notoKufi.variable}>
       <body>
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
