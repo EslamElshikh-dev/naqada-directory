@@ -4,7 +4,7 @@ import type { Business } from './types';
 export const siteConfig = {
   name: 'دليل نقادة | الموسوعة المحلية لمركز نقادة',
   shortName: 'دليل نقادة',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://naqada-directory.vercel.app',
+  url: 'https://naqada-directory.vercel.app',
   locale: 'ar_EG',
   description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
 };
