@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
-import { businesses, categories, directoryBusinesses, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
-import { siteConfig } from '@/lib/site';
+import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
 
@@ -14,7 +14,7 @@ const minimumResults = 3;
 export function generateStaticParams() {
   const counts = new Map<string, { slug: string; category: string; count: number }>();
   for (const business of businesses) {
-    const locality = localities.find((item) => item.name === (business.locality || 'مركز نقادة'));
+    const locality = localities.find((item) => item.name === canonicalLocalityName(business.locality));
     const category = categories.find((item) => item.name === business.category);
     if (!locality || !category) continue;
     const key = `${locality.slug}::${category.slug}`;
@@ -29,13 +29,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locality = getLocalityBySlug(slug);
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) return {};
-  const count = businesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name && item.category === category.name).length;
+  const count = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name).length;
   if (count < minimumResults) return { robots: { index: false, follow: true } };
-  return {
+  const description = `دليل ${category.shortLabel} في ${locality.name} بمركز نقادة: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`;
+  return buildPageMetadata({
     title: `${category.shortLabel} في ${locality.name} — نقادة`,
-    description: `دليل ${category.shortLabel} في ${locality.name} بمركز نقادة: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`,
-    alternates: { canonical: `/villages/${locality.slug}/${category.slug}` },
-  };
+    description,
+    path: `/villages/${locality.slug}/${category.slug}`,
+  });
 }
 
 export default async function LocalCategoryPage({ params }: Props) {
@@ -44,9 +45,9 @@ export default async function LocalCategoryPage({ params }: Props) {
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) notFound();
 
-  const scoped = businesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name && item.category === category.name);
+  const scoped = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
   if (scoped.length < minimumResults) notFound();
-  const scopedDirectory = directoryBusinesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name && item.category === category.name);
+  const scopedDirectory = directoryBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
   const pageUrl = `${siteConfig.url}/villages/${encodeURIComponent(locality.slug)}/${encodeURIComponent(category.slug)}`;
   const structuredData = {
     '@context': 'https://schema.org',
@@ -100,7 +101,7 @@ export default async function LocalCategoryPage({ params }: Props) {
           <DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} initialLocality={locality.name} lockedCategory lockedLocality />
         </Suspense>
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }
