@@ -29,10 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/heritage' },
     { path: '/updates', lastModified: latestBusinessDate },
     { path: '/coverage', lastModified: latestBusinessDate },
-    { path: '/contribute', lastModified: fallbackDate },
     { path: '/emergency' },
     { path: '/about' },
-    { path: '/privacy' },
   ];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0 || Boolean(getVillageArticle(item.name)));
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();

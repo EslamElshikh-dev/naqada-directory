@@ -1,3 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="دليل نقادة">
-  <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAA..." width="192" height="192" preserveAspectRatio="xMidYMid meet"/>
+  <defs>
+    <linearGradient id="bg" x1="28" y1="18" x2="164" y2="174" gradientUnits="userSpaceOnUse"><stop stop-color="#3b251d"/><stop offset=".58" stop-color="#7f3c29"/><stop offset="1" stop-color="#b75c3e"/></linearGradient>
+    <linearGradient id="pot" x1="96" y1="45" x2="96" y2="151" gradientUnits="userSpaceOnUse"><stop stop-color="#241612"/><stop offset=".26" stop-color="#3a2119"/><stop offset=".28" stop-color="#a94f34"/><stop offset="1" stop-color="#d17a56"/></linearGradient>
+    <linearGradient id="rim" x1="61" y1="49" x2="132" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#d6aa70"/><stop offset=".5" stop-color="#f2d4aa"/><stop offset="1" stop-color="#bd8650"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#170d09" flood-opacity=".38"/></filter>
+  </defs>
+  <rect width="192" height="192" rx="46" fill="url(#bg)"/>
+  <path d="M20 51 50 21M142 171l30-30M19 142l31 31M142 20l30 31" stroke="#d7a86c" stroke-opacity=".24" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="96" cy="96" r="70" fill="none" stroke="#f0d3aa" stroke-opacity=".16" stroke-width="2"/>
+  <g filter="url(#shadow)">
+    <path d="M67 60c5 8 7 15 5 23l-8 34c-4 18 10 35 32 35s36-17 32-35l-8-34c-2-8 0-15 5-23H67Z" fill="url(#pot)" stroke="#f0c997" stroke-width="2.5"/>
+    <rect x="62" y="48" width="68" height="17" rx="8.5" fill="#211512" stroke="url(#rim)" stroke-width="3"/>
+    <path d="M72 92c15 9 33 9 48 0M68 112c18 12 38 12 56 0" fill="none" stroke="#f1d0a3" stroke-opacity=".8" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="96" cy="103" r="6" fill="#3e7480" stroke="#f3d8b2" stroke-width="2"/>
+  </g>
 </svg>
