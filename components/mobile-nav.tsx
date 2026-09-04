@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-type NavIconName = 'home' | 'search' | 'blog' | 'villages' | 'families';
+type NavIconName = 'home' | 'search' | 'blog' | 'villages' | 'account';
 
 const items: { href: string; label: string; icon: NavIconName }[] = [
   { href: '/', label: 'الرئيسية', icon: 'home' },
   { href: '/directory', label: 'الدليل', icon: 'search' },
-  { href: '/blog', label: 'المدونة', icon: 'blog' },
   { href: '/villages', label: 'القرى', icon: 'villages' },
-  { href: '/families', label: 'العائلات', icon: 'families' },
+  { href: '/blog', label: 'المدونة', icon: 'blog' },
+  { href: '/account', label: 'حسابي', icon: 'account' },
 ];
 
 function NavIcon({ name }: { name: NavIconName }) {
@@ -19,7 +19,7 @@ function NavIcon({ name }: { name: NavIconName }) {
     search: <><circle cx="10.5" cy="10.5" r="6.25"/><path d="m15.2 15.2 4.3 4.3"/><path d="M8 10.5h5M10.5 8v5"/></>,
     blog: <><path d="M6 4.5h9.5A2.5 2.5 0 0 1 18 7v12H8.5A2.5 2.5 0 0 1 6 16.5v-12Z"/><path d="M6 16.5A2.5 2.5 0 0 1 8.5 14H18M9 8h6M9 11h4"/></>,
     villages: <><path d="M3.5 20h17"/><path d="M5 20v-8l4-3 4 3v8M13 20v-11l3-2.5L19 9v11"/><path d="M8 15h2M15.5 12h1"/></>,
-    families: <><circle cx="9" cy="8" r="3"/><circle cx="16.5" cy="9.5" r="2.3"/><path d="M3.5 20v-2.2A4.8 4.8 0 0 1 8.3 13h1.4a4.8 4.8 0 0 1 4.8 4.8V20"/><path d="M14 14.2a4 4 0 0 1 6.5 3.1V20"/></>,
+    account: <><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20v-1.7a5.8 5.8 0 0 1 5.8-5.8h1.4a5.8 5.8 0 0 1 5.8 5.8V20"/><path d="M4 20h16"/></>,
   };
   return (
     <span className="mobile-nav__icon" aria-hidden="true">
