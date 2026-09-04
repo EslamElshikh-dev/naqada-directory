@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { ContributionBuilder } from '@/components/contribution-builder';
-import { categories, getBusinessBySlug, localities } from '@/lib/data';
+import { categories, localities } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
-
-type SearchParams = Promise<{ type?: string; q?: string; listing?: string }>;
 
 export const metadata: Metadata = {
   title: 'أضف نشاطًا أو صحح بيانات — دليل نقادة',
@@ -12,15 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/contribute' },
 };
 
-function normalizeType(value?: string): 'add' | 'correction' | 'missing' {
-  if (value === 'correction' || value === 'missing') return value;
-  return 'add';
-}
-
-export default async function ContributePage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const listing = params.listing ? getBusinessBySlug(params.listing) : undefined;
-  const type = listing ? 'correction' : normalizeType(params.type);
+export default function ContributePage() {
   const pageUrl = `${siteConfig.url}/contribute`;
   const structuredData = {
     '@context': 'https://schema.org',
@@ -42,15 +33,9 @@ export default async function ContributePage({ searchParams }: { searchParams: S
         </div>
       </section>
       <section className="shell page-section">
-        <ContributionBuilder
-          categories={categories}
-          localities={localities.filter((item) => item.businessCount > 0 || item.verification)}
-          initialType={type}
-          initialName={listing?.name || ''}
-          initialQuery={params.q || ''}
-          initialCategory={listing?.category || ''}
-          initialLocality={listing?.locality || ''}
-        />
+        <Suspense fallback={<div className="loading-state">جارٍ تجهيز نموذج المساهمة…</div>}>
+          <ContributionBuilder categories={categories} localities={localities.filter((item) => item.businessCount > 0 || item.verification)} />
+        </Suspense>
       </section>
       <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">سياسة المراجعة</span><h2>المساهمة ليست نشرًا تلقائيًا</h2><p>الطلب يمر بالمراجعة ومقارنة المصدر قبل تعديل السجل. الهدف أن تزيد التغطية من غير التضحية بدقة الدليل.</p><Link href="/about" className="text-link">اقرأ منهج البيانات ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>حدد المعلومة</h3><p>اسم واضح، موضع، وتصنيف أو وصف للخطأ.</p></article><article><b>02</b><h3>أرفق مصدرًا</h3><p>خرائط Google أو موقع رسمي أو مصدر عام مباشر يسرّع المراجعة.</p></article><article><b>03</b><h3>مراجعة قبل النشر</h3><p>لا تُضاف أو تُعدل البيانات تلقائيًا بمجرد إرسال المقترح.</p></article></div></div></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
