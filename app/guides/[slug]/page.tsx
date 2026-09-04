@@ -20,7 +20,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: guide.metaTitle,
     description: guide.metaDescription,
-    keywords: [guide.focusKeyword, ...guide.secondaryKeywords],
     authors: [{ name: 'فريق دليل نقادة', url: siteConfig.url }],
     alternates: { canonical: path },
     robots: {
@@ -120,7 +119,7 @@ export default async function GuideArticlePage({ params }: Props) {
               <span>نشر: {new Date(guide.publishedAt).toLocaleDateString('ar-EG')}</span>
               <span>آخر تحديث: {new Date(guide.updatedAt).toLocaleDateString('ar-EG')}</span>
               <span>{guide.readingMinutes.toLocaleString('ar-EG')} دقائق قراءة تقريبًا</span>
-              <span>الكلمة الرئيسية: {guide.focusKeyword}</span>
+              <span>الموضوع الرئيسي: {guide.focusKeyword}</span>
             </div>
           </div>
         </header>
@@ -184,7 +183,7 @@ export default async function GuideArticlePage({ params }: Props) {
               </div>
             </div>
             <div className="guide-aside__box">
-              <h2>مصطلحات البحث</h2>
+              <h2>موضوعات مرتبطة</h2>
               <div className="guide-keywords">
                 <span>{guide.focusKeyword}</span>
                 {guide.secondaryKeywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
