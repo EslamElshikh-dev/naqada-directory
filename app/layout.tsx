@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   verification: {
     google: 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY',
   },
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/pwa-icon-192', sizes: '192x192', type: 'image/png' }],
+  },
   alternates: { canonical: '/' },
   robots: {
     index: true,
