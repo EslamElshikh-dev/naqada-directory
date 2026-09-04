@@ -6,6 +6,7 @@ import { extendedVillageArticles4 } from './extended-4';
 import { extendedVillageArticles5 } from './extended-5';
 import { extendedVillageArticles6 } from './extended-6';
 import { extendedVillageArticles7 } from './extended-7';
+import { extendedVillageArticles8 } from './extended-8';
 import type { VillageArticle } from './base';
 
 export type { VillageArticleSection, VillageArticleFaq, VillageArticle } from './base';
@@ -20,6 +21,7 @@ export const villageArticles: VillageArticle[] = [
   ...extendedVillageArticles5,
   ...extendedVillageArticles6,
   ...extendedVillageArticles7,
+  ...extendedVillageArticles8,
 ];
 
 const articleAliases: Record<string, string> = {
@@ -65,6 +67,13 @@ const articleAliases: Record<string, string> = {
   'القرينات الشرقية': 'نجع القرينات الشرقية',
   'القرينات الغربي': 'نجع القرينات الغربية',
   'القرينات الغربية': 'نجع القرينات الغربية',
+  'الافات': 'نجع اللافات',
+  'نجع الافات': 'نجع اللافات',
+  'القرنى': 'نجع القرني',
+  'نجع القرنى': 'نجع القرني',
+  'شرق الترعة': 'نجع شرق الترعة',
+  'شرق الترعه': 'نجع شرق الترعة',
+  'نجع شرق الترعه': 'نجع شرق الترعة',
 };
 
 const articleByLocality = new Map(villageArticles.map((article) => [article.locality, article]));
