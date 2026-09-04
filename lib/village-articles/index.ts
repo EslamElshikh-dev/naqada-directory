@@ -1,5 +1,6 @@
 import { villageArticles as baseVillageArticles } from './base';
 import { extendedVillageArticles } from './extended';
+import { extendedVillageArticles2 } from './extended-2';
 import type { VillageArticle } from './base';
 
 export type { VillageArticleSection, VillageArticleFaq, VillageArticle } from './base';
@@ -8,6 +9,7 @@ export { villageArticleAuthor } from './base';
 export const villageArticles: VillageArticle[] = [
   ...baseVillageArticles,
   ...extendedVillageArticles,
+  ...extendedVillageArticles2,
 ];
 
 const articleAliases: Record<string, string> = {
@@ -21,6 +23,8 @@ const articleAliases: Record<string, string> = {
   'نجع اسمنت الصغرى': 'أسمنت الصغيرة',
   'عزبة كتي': 'عزبة كُتّي',
   'كتي': 'عزبة كُتّي',
+  'عزبة عبد الكريم': 'عزبة عبدالكريم',
+  'عزبة عبد كُريم': 'عزبة عبدالكريم',
 };
 
 const articleByLocality = new Map(villageArticles.map((article) => [article.locality, article]));
