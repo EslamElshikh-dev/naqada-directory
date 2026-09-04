@@ -30,6 +30,12 @@ type ContributionPayload = {
 };
 
 const INTAKE_URL = 'https://ceyjfguoomdlrtsujskj.supabase.co/functions/v1/directory-intake';
+
+export type RatingSummary = {
+  average: number;
+  count: number;
+  distribution: Record<string, number>;
+};
 const EVENT_MAP: Record<string, IntakeEventType | undefined> = {
   'Directory Search': 'search',
   'Directory Zero Results': 'zero_results',
@@ -124,6 +130,36 @@ export async function submitContribution(payload: ContributionPayload) {
     };
   } catch {
     return { ok: false, error: 'network_error', status: 0 };
+  }
+}
+
+export async function getListingRating(listingSlug: string) {
+  try {
+    const params = new URLSearchParams({ action: 'rating', listingSlug });
+    const response = await fetch(`${INTAKE_URL}?${params.toString()}`, { cache: 'no-store' });
+    const body = await response.json().catch(() => ({})) as { ok?: boolean; summary?: RatingSummary };
+    return response.ok && body.ok === true ? body.summary || null : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function submitListingRating(listingSlug: string, score: number) {
+  try {
+    const response = await fetch(INTAKE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'rating', listingSlug, score, sessionHint: sessionHint(), website: '' }),
+    });
+    const body = await response.json().catch(() => ({})) as { ok?: boolean; summary?: RatingSummary; error?: string };
+    return {
+      ok: response.ok && body.ok === true,
+      summary: body.summary || null,
+      error: body.error || (response.ok ? undefined : 'request_failed'),
+      status: response.status,
+    };
+  } catch {
+    return { ok: false, summary: null, error: 'network_error', status: 0 };
   }
 }
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ListingCard } from '@/components/listing-card';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
+import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
@@ -19,7 +20,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = getBusinessBySlug(slug);
   if (!listing) return {};
   const locality = canonicalLocalityName(listing.locality);
-  const description = `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`;
+  const description = listing.description
+    ? listing.description.slice(0, 165)
+    : `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`;
   return buildPageMetadata({
     title: `${listing.name} — ${locality}`,
     description,
@@ -57,7 +60,7 @@ export default async function ListingPage({ params }: Props) {
           addressCountry: 'EG',
         },
         hasMap: safeMapsUrl || undefined,
-        description: listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${locality}، مركز نقادة.` : `${listing.category} في ${locality}، مركز نقادة.`,
+        description: listing.description || (listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${locality}، مركز نقادة.` : `${listing.category} في ${locality}، مركز نقادة.`),
         dateModified: listing.checked || undefined,
       },
       {
@@ -98,7 +101,13 @@ export default async function ListingPage({ params }: Props) {
             <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString('ar-EG')} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString('ar-EG')} مراجعة` : ''}` : 'غير متاح'}</strong></div>
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
+          {listing.description && <section className="listing-description" aria-labelledby="listing-description-title">
+            <span className="eyebrow eyebrow--dark">عن النشاط</span>
+            <h2 id="listing-description-title">{listing.name}</h2>
+            <p>{listing.description}</p>
+          </section>}
           <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
+          <ListingRating listingSlug={listing.slug} listingName={listing.name} />
           <ShareActions title={listing.name} locality={locality} listingSlug={listing.slug} />
           <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
@@ -110,6 +119,20 @@ export default async function ListingPage({ params }: Props) {
       </section>
 
       {related.length > 0 && <section className="section section--muted"><div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">قد يفيدك أيضًا</span><h2>أماكن وخدمات قريبة في التصنيف أو الموضع</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
+      {listing.seoKeywords?.length ? <section className="listing-keywords" aria-labelledby="listing-keywords-title"><div className="shell">
+        <span className="eyebrow eyebrow--dark">استكشف خدمات مشابهة</span>
+        <h2 id="listing-keywords-title">كلمات مرتبطة بالنشاط</h2>
+        <div className="listing-keywords__links">
+          {listing.seoKeywords.map((keyword) => {
+            const isLocal = keyword.includes('الخطارة');
+            const searchTerm = keyword === 'حضانة' || keyword.includes('نقادة') || isLocal
+              ? 'حضانة'
+              : keyword.includes('أطفال') || keyword.includes('رياض') ? 'أطفال' : keyword;
+            const href = `/directory?q=${encodeURIComponent(searchTerm)}${isLocal ? `&locality=${encodeURIComponent(locality)}` : ''}`;
+            return <Link key={keyword} href={href}>{keyword}<span aria-hidden="true">←</span></Link>;
+          })}
+        </div>
+      </div></section> : null}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
