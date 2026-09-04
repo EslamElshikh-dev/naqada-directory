@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
     { path: '/directory', lastModified: latestBusinessDate },
+    { path: '/blog', lastModified: fallbackDate },
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },
