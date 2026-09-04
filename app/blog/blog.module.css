@@ -1,12 +1,31 @@
 .hero {
-  padding: 72px 0 48px;
+  position: relative;
+  overflow: hidden;
+  padding: 78px 0 54px;
   background:
-    radial-gradient(circle at 15% 20%, rgba(223, 187, 95, .13), transparent 34%),
-    linear-gradient(135deg, #0f2b24, #213c32);
+    radial-gradient(circle at 16% 20%, rgba(209, 162, 101, .16), transparent 34%),
+    radial-gradient(circle at 88% 70%, rgba(62, 116, 128, .12), transparent 30%),
+    linear-gradient(135deg, #211713, #5d3022);
   color: #fff;
 }
 
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 210px;
+  height: 300px;
+  inset-inline-end: 8%;
+  inset-block-start: 12%;
+  border: 1px solid rgba(244, 214, 178, .15);
+  border-radius: 44% 44% 50% 50% / 24% 24% 76% 76%;
+  background: linear-gradient(to bottom, rgba(25, 15, 12, .45) 0 23%, rgba(185, 88, 57, .09) 24% 100%);
+  transform: rotate(7deg);
+  pointer-events: none;
+}
+
 .heroInner {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
 }
 
@@ -16,9 +35,10 @@
   gap: 8px;
   margin-bottom: 14px;
   padding: 7px 11px;
-  border: 1px solid rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.15);
   border-radius: 999px;
-  color: #e9cc80;
+  background: rgba(255, 243, 227, .055);
+  color: #e7bd82;
   font-size: 12px;
   font-weight: 900;
 }
@@ -32,14 +52,14 @@
 }
 
 .hero h1 em {
-  color: #f0d388;
+  color: #f0bd79;
   font-style: normal;
 }
 
 .hero p {
   max-width: 760px;
   margin: 18px 0 0;
-  color: #c4d2cc;
+  color: #decfc4;
   font-size: 16px;
   line-height: 2;
 }
@@ -53,9 +73,10 @@
 
 .stats span {
   padding: 10px 13px;
+  border: 1px solid rgba(255, 231, 204, .09);
   border-radius: 13px;
-  background: rgba(255,255,255,.07);
-  color: #dbe5e1;
+  background: rgba(255, 245, 232, .06);
+  color: #eaded4;
   font-size: 12px;
   font-weight: 800;
 }
@@ -67,7 +88,7 @@
 }
 
 .archive {
-  padding-block: 54px 80px;
+  padding-block: 58px 84px;
 }
 
 .heading {
@@ -81,7 +102,7 @@
 .heading span {
   display: block;
   margin-bottom: 5px;
-  color: #9a7b35;
+  color: #98623a;
   font-size: 12px;
   font-weight: 900;
 }
@@ -107,21 +128,34 @@
 }
 
 .card {
+  position: relative;
+  overflow: hidden;
   min-height: 310px;
   display: flex;
   flex-direction: column;
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 23px;
-  background: #fff;
-  box-shadow: 0 14px 38px rgba(10, 32, 26, .05);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  background: var(--paper);
+  box-shadow: 0 14px 38px rgba(76, 37, 24, .055);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  width: 95px;
+  height: 95px;
+  inset-inline-end: -42px;
+  inset-block-end: -45px;
+  border-radius: 50%;
+  background: rgba(195, 100, 69, .08);
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  border-color: #d8c188;
-  box-shadow: 0 20px 48px rgba(10, 32, 26, .09);
+  transform: translateY(-4px);
+  border-color: #d7b29c;
+  box-shadow: 0 22px 52px rgba(76, 37, 24, .1);
 }
 
 .cardTop {
@@ -135,19 +169,21 @@
 .cardTop time {
   padding: 6px 9px;
   border-radius: 999px;
-  background: #f0f4f1;
-  color: #68766f;
+  background: #f3e9df;
+  color: #77675e;
   font-size: 10px;
   font-weight: 900;
 }
 
 .cardTop span:first-child {
-  background: #f8efd8;
-  color: #806529;
+  background: #f4e3d4;
+  color: #7c3d29;
 }
 
 .card h2,
 .card h3 {
+  position: relative;
+  z-index: 1;
   margin: 0;
   color: var(--green-950);
   font-size: clamp(20px, 2.6vw, 25px);
@@ -155,13 +191,17 @@
 }
 
 .card p {
+  position: relative;
+  z-index: 1;
   margin: 11px 0 18px;
-  color: #66756e;
+  color: #75665e;
   font-size: 13px;
   line-height: 2;
 }
 
 .cardFooter {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -172,7 +212,7 @@
 }
 
 .cardFooter span {
-  color: #849089;
+  color: #8b7a70;
   font-size: 11px;
   font-weight: 800;
 }
@@ -189,9 +229,9 @@
   align-items: center;
   margin-top: 32px;
   padding: 22px;
-  border: 1px solid #ead7a6;
+  border: 1px solid #dec3ad;
   border-radius: 22px;
-  background: linear-gradient(135deg, #fff9ea, #f4f7f4);
+  background: linear-gradient(135deg, #fff8ed, #f2e6dc);
 }
 
 .authorMark {
@@ -200,15 +240,15 @@
   display: grid;
   place-items: center;
   border-radius: 17px;
-  background: var(--green-950);
-  color: #efd17e;
+  background: linear-gradient(145deg, #2e1d17, #6f3525);
+  color: #efc489;
   font-size: 19px;
   font-weight: 950;
 }
 
 .authorBand span {
   display: block;
-  color: #9a7b35;
+  color: #95613c;
   font-size: 10px;
   font-weight: 900;
 }
@@ -222,7 +262,7 @@
 
 .authorBand p {
   margin: 4px 0 0;
-  color: #6e7a74;
+  color: #786a61;
   font-size: 11px;
   line-height: 1.8;
 }
@@ -235,8 +275,8 @@
 }
 
 .previewSection {
-  padding-block: 66px;
-  background: linear-gradient(180deg, #f7f9f7, #fff);
+  padding-block: 68px;
+  background: linear-gradient(180deg, #f3e9df, #fffaf3);
 }
 
 .previewGrid {
@@ -252,12 +292,19 @@
   padding: 19px;
   border: 1px solid var(--line);
   border-radius: 19px;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(10,32,26,.04);
+  background: var(--paper);
+  box-shadow: 0 10px 30px rgba(76,37,24,.045);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.previewCard:hover {
+  transform: translateY(-4px);
+  border-color: #d6b5a2;
+  box-shadow: 0 17px 37px rgba(76,37,24,.08);
 }
 
 .previewCard span {
-  color: #9a7b35;
+  color: #95613c;
   font-size: 10px;
   font-weight: 900;
 }
@@ -271,7 +318,7 @@
 
 .previewCard p {
   margin: 0 0 14px;
-  color: #718079;
+  color: #796b62;
   font-size: 11px;
   line-height: 1.85;
 }
@@ -282,12 +329,22 @@
   font-size: 11px;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .hero::after { animation: blogPotteryFloat 8s ease-in-out infinite; }
+}
+
+@keyframes blogPotteryFloat {
+  0%, 100% { transform: rotate(7deg) translateY(0); }
+  50% { transform: rotate(5deg) translateY(-10px); }
+}
+
 @media (max-width: 900px) {
   .previewGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 680px) {
   .hero { padding: 50px 0 36px; }
+  .hero::after { inset-inline-end: -105px; opacity: .55; }
   .archive { padding-block: 38px 62px; }
   .grid, .previewGrid { grid-template-columns: 1fr; }
   .heading { align-items: start; flex-direction: column; }
