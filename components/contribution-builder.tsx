@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { Category, LocalityPage } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics-client';
 
@@ -16,27 +17,16 @@ const fieldStyle = {
   font: 'inherit',
 } as const;
 
-export function ContributionBuilder({
-  categories,
-  localities,
-  initialType = 'add',
-  initialName = '',
-  initialQuery = '',
-  initialCategory = '',
-  initialLocality = '',
-}: {
-  categories: Category[];
-  localities: LocalityPage[];
-  initialType?: ContributionType;
-  initialName?: string;
-  initialQuery?: string;
-  initialCategory?: string;
-  initialLocality?: string;
-}) {
-  const [type, setType] = useState<ContributionType>(initialType);
-  const [name, setName] = useState(initialName || initialQuery);
-  const [category, setCategory] = useState(initialCategory);
-  const [locality, setLocality] = useState(initialLocality);
+function normalizeType(value: string | null): ContributionType {
+  return value === 'correction' || value === 'missing' ? value : 'add';
+}
+
+export function ContributionBuilder({ categories, localities }: { categories: Category[]; localities: LocalityPage[] }) {
+  const searchParams = useSearchParams();
+  const [type, setType] = useState<ContributionType>(() => normalizeType(searchParams.get('type')));
+  const [name, setName] = useState(() => searchParams.get('name') || searchParams.get('q') || '');
+  const [category, setCategory] = useState(() => searchParams.get('category') || '');
+  const [locality, setLocality] = useState(() => searchParams.get('locality') || '');
   const [details, setDetails] = useState('');
   const [source, setSource] = useState('');
   const [contact, setContact] = useState('');
