@@ -36,6 +36,46 @@ jobs:
       - name: Build static site
         run: npm run build
 
+      - name: Verify technical SEO output
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const productionOrigin = 'https://naqada-directory.vercel.app';
+          const verificationToken = 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY';
+          const home = fs.readFileSync('out/index.html', 'utf8');
+          const robots = fs.readFileSync('out/robots.txt', 'utf8');
+          const sitemap = fs.readFileSync('out/sitemap.xml', 'utf8');
+
+          if (!home.includes('name="google-site-verification"') || !home.includes(`content="${verificationToken}"`)) {
+            throw new Error('Google Search Console verification meta is missing from the homepage head');
+          }
+          if (!home.includes(`rel="canonical" href="${productionOrigin}/"`)) {
+            throw new Error('Homepage canonical does not point to the adopted production Vercel URL');
+          }
+          if (!robots.includes(`Sitemap: ${productionOrigin}/sitemap.xml`)) {
+            throw new Error('robots.txt does not advertise the production sitemap');
+          }
+          if (/^Host:/mi.test(robots)) {
+            throw new Error('robots.txt contains an unnecessary Host directive');
+          }
+          if (/<priority>|<changefreq>/i.test(sitemap)) {
+            throw new Error('Sitemap contains priority/changefreq fields that Google ignores');
+          }
+
+          const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+          if (urls.length < 250) {
+            throw new Error(`Sitemap unexpectedly contains only ${urls.length} URLs`);
+          }
+          const invalidHost = urls.find((url) => !url.startsWith(`${productionOrigin}/`));
+          if (invalidHost) {
+            throw new Error(`Sitemap contains a non-production URL: ${invalidHost}`);
+          }
+          const missingTrailingSlash = urls.find((url) => !url.endsWith('/'));
+          if (missingTrailingSlash) {
+            throw new Error(`Sitemap URL does not match trailing-slash canonical format: ${missingTrailingSlash}`);
+          }
+          NODE
+
       - name: Smoke-test intake endpoint without writes
         run: |
           node <<'NODE'
