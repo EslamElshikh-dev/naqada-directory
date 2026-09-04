@@ -20,9 +20,12 @@ test('official Vercel origin and Search Console verification stay pinned', () =>
 });
 
 test('indexable pages expose unrestricted Google preview directives', () => {
-  assert.ok(layout.includes("'max-image-preview': 'large'"));
-  assert.ok(layout.includes("'max-snippet': -1"));
-  assert.ok(layout.includes("'max-video-preview': -1"));
+  for (const source of [layout, site]) {
+    assert.ok(source.includes("'max-image-preview': 'large'"));
+    assert.ok(source.includes("'max-snippet': -1"));
+    assert.ok(source.includes("'max-video-preview': -1"));
+  }
+  assert.ok(site.includes('robots: robots ?? defaultIndexRobots'));
 });
 
 test('robots.txt stays crawlable and points at the canonical sitemap', () => {
