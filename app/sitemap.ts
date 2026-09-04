@@ -5,7 +5,7 @@ import { siteConfig } from '@/lib/site';
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = ['', '/directory', '/villages', '/families', '/heritage', '/updates', '/contribute', '/emergency', '/about'];
+  const base = ['', '/directory', '/villages', '/families', '/heritage', '/updates', '/coverage', '/contribute', '/emergency', '/about'];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0);
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number }>();
 
@@ -29,7 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteConfig.url}${path}`,
       lastModified: new Date('2026-09-04'),
       changeFrequency: path === '' || path === '/updates' ? 'weekly' as const : 'monthly' as const,
-      priority: path === '' ? 1 : path === '/updates' ? 0.85 : path === '/contribute' ? 0.75 : 0.8,
+      priority: path === '' ? 1 : path === '/updates' ? 0.85 : path === '/coverage' ? 0.8 : path === '/contribute' ? 0.75 : 0.8,
     })),
     ...categories.map((item) => ({
       url: `${siteConfig.url}/directory/${encodeURIComponent(item.slug)}`,
