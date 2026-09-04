@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { BrandMark } from '@/components/site-shell';
 import { CategoryVisual } from '@/components/category-visual';
 import { ListingCard } from '@/components/listing-card';
-import { businesses, categories, families, featuredBusinesses, landmarks, meta, officialLocalities, people } from '@/lib/data';
+import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
+import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
+import blogStyles from './blog/blog.module.css';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 
@@ -16,12 +18,18 @@ const faq = [
   { question: 'هل تشمل التغطية كل قرى نقادة؟', answer: 'الهيكل الجغرافي يشمل المواضع الموثقة، بينما يزداد عدد الأنشطة والتفاصيل تدريجيًا مع اكتمال المراجعة.' },
 ];
 
+function articleHref(localityName: string) {
+  const locality = localities.find((item) => getVillageArticle(item.name)?.locality === localityName);
+  return locality ? `/villages/${locality.slug}` : '/blog';
+}
+
 export default function HomePage() {
   const topLocalities = officialLocalities.filter((item) => item.businessCount > 0).slice(0, 12);
   const recentlyReviewed = [...businesses]
     .filter((item) => Boolean(item.checked))
     .sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0))
     .slice(0, 6);
+  const featuredArticles = villageArticles.slice(0, 4);
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -49,7 +57,7 @@ export default function HomePage() {
               <input id="home-search" name="q" placeholder="ابحث باسم خدمة أو نشاط أو قرية…" />
               <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
             </form>
-            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">القرى</Link></div>
+            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">القرى</Link><Link href="/blog">المدونة</Link></div>
             <div className="hero__trust">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>نشاطًا وخدمة</small></span>
               <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية ونجعًا وموضعًا</small></span>
@@ -87,6 +95,22 @@ export default function HomePage() {
       <section className="section shell">
         <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الدليل يتجدد</span><h2>سجلات تمت مراجعتها مؤخرًا</h2><p>تحديثات حقيقية من قاعدة الدليل مع صفحات مستقلة وتاريخ مراجعة واضح.</p></div><Link href="/updates" className="text-link">كل التحديثات ←</Link></div>
         <div className="listing-grid">{recentlyReviewed.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div>
+      </section>
+
+      <section className={blogStyles.previewSection}>
+        <div className="shell">
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">مدونة دليل نقادة</span><h2>حكايات القرى والنجوع… بالمعلومة والضحكة في وقتها</h2><p>مقالات محلية أصلية عن المكان والناس والتاريخ والخدمات، بقلم إسلام الشيخ.</p></div><Link href="/blog" className="text-link">كل مقالات المدونة ←</Link></div>
+          <div className={blogStyles.previewGrid}>
+            {featuredArticles.map((article) => (
+              <Link key={article.locality} href={articleHref(article.locality)} className={blogStyles.previewCard}>
+                <span>{article.locality}</span>
+                <h3>{article.title}</h3>
+                <p>{article.description}</p>
+                <b>بقلم {villageArticleAuthor.name} · اقرأ المقال ←</b>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="section shell place-feature">
