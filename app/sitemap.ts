@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
+import { villageGuides } from '@/lib/village-guides';
 import { siteConfig } from '@/lib/site';
 
 export const dynamic = 'force-static';
@@ -19,10 +20,12 @@ function sitemapUrl(path = '') {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const latestBusinessDate = latestDate(businesses);
+  const latestGuideDate = new Date(Math.max(...villageGuides.map((guide) => Date.parse(guide.updatedAt))));
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
     { path: '/directory', lastModified: latestBusinessDate },
     { path: '/villages', lastModified: latestBusinessDate },
+    { path: '/guides', lastModified: latestGuideDate },
     { path: '/families' },
     { path: '/heritage' },
     { path: '/updates', lastModified: latestBusinessDate },
@@ -54,6 +57,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...baseRoutes.map(({ path, lastModified }) => ({
       url: sitemapUrl(path),
       ...(lastModified ? { lastModified } : {}),
+    })),
+    ...villageGuides.map((guide) => ({
+      url: sitemapUrl(`/guides/${guide.slug}`),
+      lastModified: new Date(guide.updatedAt),
     })),
     ...categories.map((item) => ({
       url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`),
