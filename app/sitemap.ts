@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
+import { getVillageArticle } from '@/lib/village-articles';
 
 export const dynamic = 'force-static';
 
@@ -22,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
     { path: '/directory', lastModified: latestBusinessDate },
-    { path: '/villages', lastModified: latestBusinessDate },
+    { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },
     { path: '/updates', lastModified: latestBusinessDate },
@@ -30,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/emergency' },
     { path: '/about' },
   ];
-  const indexableLocalities = localities.filter((item) => item.businessCount > 0);
+  const indexableLocalities = localities.filter((item) => item.businessCount > 0 || Boolean(getVillageArticle(item.name)));
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();
 
   for (const business of businesses) {
@@ -59,10 +60,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`),
       lastModified: latestDate(businesses.filter((business) => business.category === item.name)),
     })),
-    ...indexableLocalities.map((item) => ({
-      url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`),
-      lastModified: latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)),
-    })),
+    ...indexableLocalities.map((item) => {
+      const article = getVillageArticle(item.name);
+      return {
+        url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`),
+        lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)),
+      };
+    }),
     ...localCategoryPages.map((item) => ({
       url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`),
       lastModified: item.lastModified,
