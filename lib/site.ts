@@ -7,8 +7,8 @@ export const siteConfig = {
   url: 'https://naqada-directory.vercel.app',
   locale: 'ar_EG',
   description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
-  socialImage: 'https://naqada-directory.vercel.app/opengraph-image',
-  logoImage: 'https://naqada-directory.vercel.app/apple-icon',
+  socialImage: 'https://naqada-directory.vercel.app/social-card',
+  logoImage: 'https://naqada-directory.vercel.app/pwa-icon-192',
 };
 
 const defaultIndexRobots: Metadata['robots'] = {
