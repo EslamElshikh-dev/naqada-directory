@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { businesses, categories, officialLocalities } from '@/lib/data';
-import { siteConfig } from '@/lib/site';
+import { businesses, canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'خريطة تغطية دليل نقادة',
   description: 'تعرف على مستوى تغطية الأنشطة والخدمات في قرى ونجوع مركز نقادة داخل بيانات الدليل، والفئات التي تحتاج استكمالًا أو مصادر إضافية.',
-  alternates: { canonical: '/coverage' },
-};
+  path: '/coverage',
+});
 
 const primaryCategoryNames = [
   'الطب والصحة',
@@ -26,7 +26,7 @@ export default function CoveragePage() {
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   const coverage = officialLocalities.map((locality) => {
-    const items = businesses.filter((item) => (item.locality || 'مركز نقادة') === locality.name);
+    const items = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name);
     const represented = new Set(items.map((item) => item.category));
     const missing = primaryCategories.filter((category) => !represented.has(category.name));
     return { locality, items, represented, missing };
@@ -118,7 +118,7 @@ export default function CoveragePage() {
           <article><b>03</b><h3>المصدر أولًا</h3><p>اقتراح النشاط لا يعني نشره حتى يوجد ما يكفي لتثبيت البيانات العامة.</p></article>
         </div>
       </section>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );
 }
