@@ -55,6 +55,7 @@ export function Footer() {
             <Link href="/directory">كل الأنشطة</Link>
             <Link href="/updates">آخر تحديثات الدليل</Link>
             <Link href="/coverage">خريطة تغطية الدليل</Link>
+            <Link href="/guides">أدلة القرى والنجوع</Link>
             <Link href="/contribute">أضف نشاطًا أو صحح بيانات</Link>
             <Link href="/villages">القرى والنجوع</Link>
             <Link href="/families">السجل العائلي</Link>

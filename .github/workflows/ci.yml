@@ -74,6 +74,59 @@ jobs:
           if (missingTrailingSlash) {
             throw new Error(`Sitemap URL does not match trailing-slash canonical format: ${missingTrailingSlash}`);
           }
+
+          const guideSlugs = [
+            'bashlaw-naqada',
+            'sahel-bashlaw-naqada',
+            'asmant-naqada',
+            'draw-naqada',
+            'sahel-draw-naqada',
+            'ezbet-gabr-naqada',
+            'nag-el-sadr-naqada',
+            'al-qarya-naqada',
+            'tukh-naqada',
+            'alkhatara-naqada',
+          ];
+          const guideIndexUrl = `${productionOrigin}/guides/`;
+          if (!urls.includes(guideIndexUrl)) {
+            throw new Error('Village guides index is missing from sitemap');
+          }
+          for (const slug of guideSlugs) {
+            const expected = `${productionOrigin}/guides/${slug}/`;
+            if (!urls.includes(expected)) {
+              throw new Error(`Guide is missing from sitemap: ${expected}`);
+            }
+          }
+
+          const bashlawPath = 'out/guides/bashlaw-naqada/index.html';
+          if (!fs.existsSync(bashlawPath)) {
+            throw new Error('Bashlaw guide static HTML is missing');
+          }
+          const bashlaw = fs.readFileSync(bashlawPath, 'utf8');
+          if (!bashlaw.includes('بشلاو في مركز نقادة')) {
+            throw new Error('Bashlaw guide H1/content is missing');
+          }
+          if (!bashlaw.includes(`rel="canonical" href="${productionOrigin}/guides/bashlaw-naqada/"`)) {
+            throw new Error('Bashlaw guide canonical is incorrect');
+          }
+          if (!bashlaw.includes('property="og:type" content="article"')) {
+            throw new Error('Bashlaw guide Open Graph article type is missing');
+          }
+          if (!bashlaw.includes('name="robots" content="index, follow"')) {
+            throw new Error('Bashlaw guide is not explicitly index/follow');
+          }
+          if (!bashlaw.includes('name="google-site-verification"') || !bashlaw.includes(`content="${verificationToken}"`)) {
+            throw new Error('Search Console verification is not inherited by Bashlaw guide');
+          }
+          if (bashlaw.includes('name="keywords"')) {
+            throw new Error('Obsolete meta keywords were reintroduced on guide pages');
+          }
+          if (!bashlaw.includes('"@type":"Article"') || !bashlaw.includes('"@type":"FAQPage"') || !bashlaw.includes('"@type":"BreadcrumbList"')) {
+            throw new Error('Bashlaw structured data graph is incomplete');
+          }
+          if (!bashlaw.includes('المصادر المستخدمة') || !bashlaw.includes('أسئلة شائعة عن بشلاو')) {
+            throw new Error('Bashlaw guide is missing visible sources or FAQ content');
+          }
           NODE
 
       - name: Smoke-test intake endpoint without writes
