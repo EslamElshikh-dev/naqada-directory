@@ -7,6 +7,8 @@ export const siteConfig = {
   url: 'https://naqada-directory.vercel.app',
   locale: 'ar_EG',
   description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
+  socialImage: 'https://naqada-directory.vercel.app/opengraph-image',
+  logoImage: 'https://naqada-directory.vercel.app/apple-icon',
 };
 
 const defaultIndexRobots: Metadata['robots'] = {
@@ -34,6 +36,12 @@ export function buildPageMetadata({
 }): Metadata {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const url = normalizedPath === '/' ? siteConfig.url : `${siteConfig.url}${normalizedPath}`;
+  const socialImage = {
+    url: siteConfig.socialImage,
+    width: 1200,
+    height: 630,
+    alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
+  };
   return {
     title,
     description,
@@ -46,11 +54,13 @@ export function buildPageMetadata({
       title,
       description,
       siteName: siteConfig.shortName,
+      images: [socialImage],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title,
       description,
+      images: [siteConfig.socialImage],
     },
   };
 }
