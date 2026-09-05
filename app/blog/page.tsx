@@ -5,6 +5,7 @@ import { editorialPosts } from '@/lib/editorial-posts';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
 import styles from './blog.module.css';
+import editorialStyles from './editorial.module.css';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'مدونة دليل نقادة | حكايات ومقالات مصورة من نقادة',
@@ -116,7 +117,7 @@ export default function BlogPage() {
 
       <section className={`shell ${styles.archive}`}>
         {editorialPosts.length > 0 && (
-          <div className={styles.editorialBlock}>
+          <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>
               <div>
                 <span>السلسلة الجديدة · مقالات مصورة مستقلة</span>
@@ -124,11 +125,11 @@ export default function BlogPage() {
                 <p>كل مقال هنا له نية بحث مستقلة وصور مرتبطة بموضوعه ومصادر حديثة وروابط داخلية للصفحة المرجعية للمكان، عشان ما يحصلش تكرار أو تنافس بين صفحات الموقع.</p>
               </div>
             </div>
-            <div className={styles.editorialGrid}>
+            <div className={editorialStyles.editorialGrid}>
               {editorialPosts.map((post) => (
-                <Link key={post.slug} href={`/blog/${post.slug}`} className={styles.editorialCard}>
+                <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <img src={`/blog-media/${post.hero.asset}`} width={post.hero.width} height={post.hero.height} alt={post.hero.alt} loading="lazy" decoding="async" />
-                  <div className={styles.editorialCardBody}>
+                  <div className={editorialStyles.editorialCardBody}>
                     <div className={styles.cardTop}>
                       <span>{post.locality}</span>
                       <time dateTime={post.modifiedAt}>٥ سبتمبر ٢٠٢٦</time>
