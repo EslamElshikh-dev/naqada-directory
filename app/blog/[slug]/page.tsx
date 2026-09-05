@@ -21,6 +21,17 @@ function metadataTitle(title: string) {
   return title.replace(/\s*\|\s*دليل نقادة\s*$/u, '').trim();
 }
 
+function formatArticleDate(date: string) {
+  const [year, month, day] = date.split('-').map(Number);
+  if (!year || !month || !day) return date;
+  return new Intl.DateTimeFormat('ar-EG', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, day, 12)));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getAllEditorialPost(slug);
@@ -144,7 +155,7 @@ export default async function EditorialPostPage({ params }: Props) {
                 <p>{post.excerpt}</p>
                 <div className={styles.meta}>
                   <span>بقلم {villageArticleAuthor.name}</span>
-                  <time dateTime={post.publishedAt}>٥ سبتمبر ٢٠٢٦</time>
+                  <time dateTime={post.publishedAt}>{formatArticleDate(post.publishedAt)}</time>
                   <span>مقال محلي مصوّر</span>
                 </div>
               </div>
