@@ -12,6 +12,9 @@ const assets: Record<string, string> = {
   'awsat-qamula-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
   'hager-tukh-pottery.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/43e522bf-1d65-4961-8f32-27c24e190ec2.jpg',
   'naqada-pottery-heritage.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4fcfe0e3-569e-44a2-99ce-ee8724bab063.jpg',
+  'khattara-rural-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
+  'khattara-community-life.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/d39aca80-ec6f-471b-9618-f933f8c712c0.jpg',
+  'khattara-learning-youth.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/e6963a37-bed4-46ad-8ae2-cd2e35b81537.jpg',
 };
 
 export const revalidate = 604800;
