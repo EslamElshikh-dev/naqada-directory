@@ -10,6 +10,7 @@ import { editorialPostsBatch3E } from './editorial-posts-batch-3e';
 import { editorialPostsBatch3F } from './editorial-posts-batch-3f';
 import { editorialPostsBatch3G } from './editorial-posts-batch-3g';
 import { editorialPostsBatch3H } from './editorial-posts-batch-3h';
+import { editorialPostsBatch3I } from './editorial-posts-batch-3i';
 import { enrichEditorialPostImages } from './editorial-post-image-enrichment';
 
 const baseEditorialPosts = [
@@ -25,6 +26,7 @@ const baseEditorialPosts = [
   ...editorialPostsBatch3F,
   ...editorialPostsBatch3G,
   ...editorialPostsBatch3H,
+  ...editorialPostsBatch3I,
 ];
 
 export const allEditorialPosts = baseEditorialPosts.map(enrichEditorialPostImages);
