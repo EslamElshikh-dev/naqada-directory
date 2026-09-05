@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { editorialPosts, getEditorialPost } from '@/lib/editorial-posts';
+import { allEditorialPosts, getAllEditorialPost } from '@/lib/editorial-posts-all';
 import { localities } from '@/lib/data';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
@@ -10,7 +10,7 @@ import styles from './post.module.css';
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return editorialPosts.map((post) => ({ slug: post.slug }));
+  return allEditorialPosts.map((post) => ({ slug: post.slug }));
 }
 
 function imageUrl(asset: string) {
@@ -19,7 +19,7 @@ function imageUrl(asset: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getEditorialPost(slug);
+  const post = getAllEditorialPost(slug);
   if (!post) return {};
   const url = `${siteConfig.url}/blog/${post.slug}`;
   const hero = imageUrl(post.hero.asset);
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EditorialPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getEditorialPost(slug);
+  const post = getAllEditorialPost(slug);
   if (!post) notFound();
 
   const canonicalUrl = `${siteConfig.url}/blog/${post.slug}`;
@@ -178,14 +178,14 @@ export default async function EditorialPostPage({ params }: Props) {
             {relatedLocality && (
               <aside className={styles.villageBridge}>
                 <span>الصفحة المرجعية للمكان</span>
-                <strong>عايز تعرف بشلاو نفسها من أول الحكاية؟</strong>
-                <p>صفحة القرية تجمع الموقع والعائلات والحياة المحلية والخدمات، بينما المقال الحالي يركز على المؤسسات والنشاط الحديث.</p>
-                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل بشلاو الكامل ←</Link>
+                <strong>عايز تعرف {post.locality} نفسها من أول الحكاية؟</strong>
+                <p>صفحة المكان تجمع الموقع والهوية المحلية والخدمات، بينما المقال الحالي يركز على موضوع مستقل داخل {post.locality} بزاوية أعمق ومصادر وصور مخصصة.</p>
+                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.locality} الكامل ←</Link>
               </aside>
             )}
 
             <section className={styles.faq}>
-              <h2>أسئلة شائعة عن بشلاو اليوم</h2>
+              <h2>أسئلة شائعة ومفيدة عن {post.locality}</h2>
               {post.faqs.map((item, index) => (
                 <details key={item.question} open={index === 0}>
                   <summary>{item.question}</summary>
@@ -196,7 +196,7 @@ export default async function EditorialPostPage({ params }: Props) {
 
             <section className={styles.sources}>
               <h2>المصادر والمراجع</h2>
-              <p>المراجع التالية استُخدمت لتثبيت الوقائع الحديثة المذكورة في المقال. الروابط الخارجية تفتح في نافذة جديدة.</p>
+              <p>المراجع التالية استُخدمت لتثبيت الوقائع المذكورة في المقال. الروابط الخارجية تفتح في نافذة جديدة.</p>
               <ol>
                 {post.sources.map((source) => (
                   <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a></li>
