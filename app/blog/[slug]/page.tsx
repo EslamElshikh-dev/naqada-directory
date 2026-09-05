@@ -73,6 +73,7 @@ export default async function EditorialPostPage({ params }: Props) {
   const canonicalUrl = `${siteConfig.url}/blog/${post.slug}`;
   const heroUrl = imageUrl(post.hero.asset);
   const relatedLocality = localities.find((item) => item.name === post.relatedVillage);
+  const isDirectLocalityPage = post.locality === post.relatedVillage;
   const allImages = [post.hero, ...post.sections.flatMap((section) => section.image ? [section.image] : [])];
 
   const structuredData = {
@@ -181,10 +182,18 @@ export default async function EditorialPostPage({ params }: Props) {
 
             {relatedLocality && (
               <aside className={styles.villageBridge}>
-                <span>الصفحة المرجعية للمكان</span>
-                <strong>عايز تعرف {post.locality} نفسها من أول الحكاية؟</strong>
-                <p>صفحة المكان تجمع الموقع والهوية المحلية والخدمات، بينما المقال الحالي يركز على موضوع مستقل داخل {post.locality} بزاوية أعمق ومصادر وصور مخصصة.</p>
-                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.locality} الكامل ←</Link>
+                <span>{isDirectLocalityPage ? 'الصفحة المرجعية للمكان' : 'المكان في سياقه المحلي'}</span>
+                <strong>
+                  {isDirectLocalityPage
+                    ? `عايز تعرف ${post.locality} نفسها من أول الحكاية؟`
+                    : `عايز تربط ${post.locality} بالقرية الأم ${post.relatedVillage}؟`}
+                </strong>
+                <p>
+                  {isDirectLocalityPage
+                    ? `صفحة المكان تجمع الموقع والهوية المحلية والخدمات، بينما المقال الحالي يركز على موضوع مستقل داخل ${post.locality} بزاوية أعمق ومصادر وصور مخصصة.`
+                    : `المقال الحالي يركز على ${post.locality}، بينما صفحة ${post.relatedVillage} تجمع السياق الجغرافي والخدمي الأوسع والمواضع المرتبطة بها داخل مركز نقادة.`}
+                </p>
+                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.relatedVillage} الكامل ←</Link>
               </aside>
             )}
 
