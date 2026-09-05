@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
-import { editorialPosts } from '@/lib/editorial-posts';
+import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle } from '@/lib/village-articles';
 
@@ -21,8 +21,8 @@ function sitemapUrl(path = '') {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const latestBusinessDate = latestDate(businesses);
-  const latestEditorialDate = editorialPosts.length
-    ? new Date(Math.max(...editorialPosts.map((post) => Date.parse(post.modifiedAt))))
+  const latestEditorialDate = allEditorialPosts.length
+    ? new Date(Math.max(...allEditorialPosts.map((post) => Date.parse(post.modifiedAt))))
     : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
@@ -62,7 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: sitemapUrl(path),
       ...(lastModified ? { lastModified } : {}),
     })),
-    ...editorialPosts.map((post) => ({
+    ...allEditorialPosts.map((post) => ({
       url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`),
       lastModified: new Date(post.modifiedAt),
     })),
