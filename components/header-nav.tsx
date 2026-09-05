@@ -7,7 +7,7 @@ const items = [
   { href: '/', label: 'الرئيسية' },
   { href: '/directory', label: 'دليل الخدمات' },
   { href: '/villages', label: 'القرى والنجوع' },
-  { href: '/updates', label: 'آخر التحديثات' },
+  { href: '/landmarks', label: 'معالم نقادة' },
   { href: '/blog', label: 'المدونة' },
   { href: '/heritage', label: 'ذاكرة نقادة' },
 ];

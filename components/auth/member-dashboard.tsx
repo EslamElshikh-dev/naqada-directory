@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { localities } from '@/lib/data';
@@ -27,6 +28,7 @@ export function MemberDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -88,10 +90,11 @@ export function MemberDashboard() {
 
   if (loading || !user || !profile) return <div className="member-loading"><span/><p>جارٍ تجهيز مساحة العضو…</p></div>;
   const initial = profile.fullName.trim().charAt(0) || 'ع';
+  const avatarUrl = profile.avatarUrl || user.avatarUrl;
   return (
     <div className="member-dashboard">
       <section className="member-overview">
-        <div className="member-avatar" aria-hidden="true">{initial}</div>
+        <div className="member-avatar" aria-hidden="true">{avatarUrl && !avatarFailed ? <Image src={avatarUrl} alt="" fill sizes="72px" referrerPolicy="no-referrer" onError={() => setAvatarFailed(true)} /> : initial}</div>
         <div className="member-welcome"><span>مرحبًا بك في دليل نقادة</span><h2>{profile.fullName}</h2><p>{profile.email}</p></div>
         <div className="member-status"><span>{user.emailVerified ? 'حساب مؤكد' : 'بانتظار تأكيد البريد'}</span><strong>{completion}%</strong><small>اكتمال الملف</small></div>
       </section>

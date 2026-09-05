@@ -8,6 +8,10 @@ const auth = read('lib/auth/supabase-rest.ts');
 const reviewsApi = read('app/api/site-reviews/route.ts');
 const home = read('app/page.tsx');
 const nextConfig = read('next.config.ts');
+const accountButton = read('components/auth/account-button.tsx');
+const memberDashboard = read('components/auth/member-dashboard.tsx');
+const landmarksPage = read('app/landmarks/page.tsx');
+const sitemap = read('app/sitemap.ts');
 
 test('member, admin, and authentication entry points are present', () => {
   for (const path of [
@@ -75,4 +79,18 @@ test('site reviews require a verified member and stay within validated bounds', 
 
 test('the deployment uses the Next.js server runtime for protected routes', () => {
   assert.ok(!nextConfig.includes("output: 'export'"));
+});
+
+test('Google profile photos are rendered with a constrained image host and graceful fallback', () => {
+  assert.ok(nextConfig.includes("hostname: 'lh3.googleusercontent.com'"));
+  assert.ok(accountButton.includes('user!.avatarUrl'));
+  assert.ok(accountButton.includes('setFailedAvatarUrl'));
+  assert.ok(memberDashboard.includes('profile.avatarUrl || user.avatarUrl'));
+});
+
+test('the visual landmarks guide uses local optimized image delivery and is indexable', () => {
+  assert.ok(landmarksPage.includes("alternates: { canonical: '/landmarks' }"));
+  assert.ok(landmarksPage.includes("'/images/landmarks/deir-mikhail-churches.webp'"));
+  assert.ok(landmarksPage.includes('CC BY-SA 4.0'));
+  assert.ok(sitemap.includes("{ path: '/landmarks'"));
 });

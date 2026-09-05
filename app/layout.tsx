@@ -6,6 +6,7 @@ import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
 import './premium-refresh.css';
+import './experience-polish.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',

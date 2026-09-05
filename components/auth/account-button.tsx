@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ensureClientSession, subscribeClientSession, type ClientSessionUser } from './client-session';
 
@@ -11,6 +12,7 @@ function UserIcon() {
 export function AccountButton() {
   const [user, setUser] = useState<ClientSessionUser | null>(null);
   const [ready, setReady] = useState(false);
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState('');
   useEffect(() => {
     const unsubscribe = subscribeClientSession((value) => {
       if (value !== undefined) { setUser(value); setReady(true); }
@@ -19,10 +21,11 @@ export function AccountButton() {
     return unsubscribe;
   }, []);
   const initial = user?.displayName.trim().charAt(0);
+  const showAvatar = Boolean(user?.avatarUrl && failedAvatarUrl !== user.avatarUrl);
   return (
     <Link className={`account-trigger${user ? ' is-member' : ''}`} href={user ? '/account' : '/account/login'} aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}>
       <span className="account-trigger__icon" aria-hidden="true">
-        {initial ? <b>{initial}</b> : <UserIcon />}
+        {showAvatar ? <Image className="account-trigger__photo" src={user!.avatarUrl} alt="" fill sizes="32px" referrerPolicy="no-referrer" onError={() => setFailedAvatarUrl(user!.avatarUrl)} /> : initial ? <b>{initial}</b> : <UserIcon />}
       </span>
       <span>{ready && user ? user.displayName.split(' ')[0] : 'دخول'}</span>
     </Link>

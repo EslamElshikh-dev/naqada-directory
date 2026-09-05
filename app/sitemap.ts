@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },
+    { path: '/landmarks', lastModified: fallbackDate },
     { path: '/updates', lastModified: latestBusinessDate },
     { path: '/coverage', lastModified: latestBusinessDate },
     { path: '/emergency' },

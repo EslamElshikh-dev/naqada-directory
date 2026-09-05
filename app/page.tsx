@@ -132,7 +132,7 @@ export default function HomePage() {
         <div className="shell"><div className="section-heading section-heading--light"><div><span className="eyebrow">ذاكرة المكان</span><h2>العائلات والأعلام والمعالم بمصادرها</h2><p>مساحة توثيقية منفصلة عن دليل الخدمات، تحافظ على حدود كل معلومة.</p></div><Link href="/heritage" className="text-link text-link--light">استكشف السجل التراثي ←</Link></div>
           <div className="memory-grid">
             <Link href="/families" className="memory-card"><span>السجل العائلي</span><strong>{families.length.toLocaleString('ar-EG')}</strong><h3>عائلة وفرعًا تاريخيًا</h3><p>الموضع ودرجة الدليل والتنبيه اللازم، من غير وصل أنساب بالتشابه.</p></Link>
-            <Link href="/heritage" className="memory-card"><span>معالم نقادة</span><strong>{landmarks.length.toLocaleString('ar-EG')}</strong><h3>معلمًا موثقًا</h3><p>{landmarks.slice(0, 3).map((item) => item.name).join('، ')}.</p></Link>
+            <Link href="/landmarks" className="memory-card memory-card--landmarks"><span>معالم نقادة بالصور</span><strong>{landmarks.length.toLocaleString('ar-EG')}</strong><h3>معلمًا في السجل</h3><p>جولة بصرية في أشهر المواقع والعمارة وذاكرة نقادة الأثرية.</p></Link>
             <Link href="/heritage" className="memory-card"><span>أعلام المكان</span><strong>{people.length.toLocaleString('ar-EG')}</strong><h3>شخصيات في السجل</h3><p>{people.slice(0, 3).map((item) => item.name).join('، ')}.</p></Link>
           </div>
         </div>

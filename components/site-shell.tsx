@@ -4,12 +4,13 @@ import { meta } from '@/lib/data';
 import { MobileNav } from './mobile-nav';
 import { AccountButton } from './auth/account-button';
 import { HeaderNav } from './header-nav';
+import { ActionIcon } from './action-icon';
 
-export function BrandMark({ compact = false }: { compact?: boolean }) {
+export function BrandMark({ compact = false, priority = false }: { compact?: boolean; priority?: boolean }) {
   const size = compact ? 30 : 42;
   return (
     <span className={`brand-mark${compact ? ' brand-mark--compact' : ''}`} aria-hidden="true">
-      <Image src="/icon.svg" width={size} height={size} alt="" priority />
+      <Image src="/icon.svg" width={size} height={size} alt="" priority={priority} />
     </span>
   );
 }
@@ -19,14 +20,14 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="shell site-header__inner">
         <Link href="/" className="brand" aria-label="دليل نقادة — الرئيسية">
-          <span className="brand__emblem"><BrandMark /></span>
+          <span className="brand__emblem"><BrandMark priority /></span>
           <span className="brand__copy"><strong>دليل نقادة</strong><small>الموسوعة المحلية لمركز نقادة</small></span>
           <span className="brand__scope">قنا</span>
         </Link>
         <HeaderNav />
         <div className="header-actions">
+          <Link href="/contribute" className="header-contribute"><ActionIcon name="add" /><span>أضف نشاطًا</span></Link>
           <AccountButton />
-          <Link href="/emergency" className="header-alert">أرقام مهمة</Link>
         </div>
       </div>
     </header>
@@ -38,7 +39,7 @@ export function Footer() {
     <footer className="footer">
       <div className="shell footer__cta">
         <div><span>الدليل يكبر بمشاركة أهله</span><strong>نشاطك غير موجود أو بياناته تحتاج تحديثًا؟</strong><p>ساعدنا نحافظ على دليل نقادة دقيقًا ومفيدًا للجميع.</p></div>
-        <nav><Link href="/contribute" className="button button--light">أضف أو صحح نشاطًا</Link><Link href="/#site-reviews" className="button footer__review-button">قيّم تجربتك</Link></nav>
+        <nav><Link href="/contribute" className="button button--light"><ActionIcon name="add" /><span>أضف أو صحح نشاطًا</span></Link><Link href="/#site-reviews" className="button footer__review-button"><ActionIcon name="star" /><span>قيّم تجربتك</span></Link></nav>
       </div>
       <div className="shell footer__grid">
         <div className="footer__about">
@@ -64,6 +65,7 @@ export function Footer() {
           <div className="footer__links">
             <Link href="/blog">مدونة دليل نقادة</Link>
             <Link href="/families">السجل العائلي</Link>
+            <Link href="/landmarks">معالم نقادة بالصور</Link>
             <Link href="/heritage">الأعلام والمعالم</Link>
             <Link href="/about">عن الدليل ومنهجيته</Link>
           </div>
