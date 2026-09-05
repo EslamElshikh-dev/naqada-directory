@@ -23,6 +23,10 @@ const assets: Record<string, string> = {
   'amamra-zawayda-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
   'amamra-memory-documents.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/38bb6aa2-59e2-4e8c-b3d4-904f29f3ae6b.jpg',
   'amamra-sugarcane-canal.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/43e522bf-1d65-4961-8f32-27c24e190ec2.jpg',
+  'hariqa-village-life.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/38bb6aa2-59e2-4e8c-b3d4-904f29f3ae6b.jpg',
+  'hariqa-zawayda-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
+  'hariqa-community-services.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/d39aca80-ec6f-471b-9618-f933f8c712c0.jpg',
+  'hariqa-mosque-community.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/7918c38f-e35c-4d57-aa91-1397d161e3e2.jpg',
 };
 
 export const revalidate = 604800;
