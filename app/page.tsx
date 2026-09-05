@@ -8,9 +8,14 @@ import { siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
 import { SiteReviews } from '@/components/site-reviews';
 import { ActionIcon } from '@/components/action-icon';
+import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import blogStyles from './blog/blog.module.css';
 
-export const metadata: Metadata = { alternates: { canonical: '/' } };
+export const metadata: Metadata = {
+  title: { absolute: siteConfig.name },
+  description: siteConfig.description,
+  alternates: { canonical: '/' },
+};
 
 const quickCategories = ['الطب والصحة', 'التجزئة والتسوق', 'التعليم', 'المطاعم والأطعمة'];
 const faq = [
@@ -51,7 +56,7 @@ export default function HomePage() {
           <div className="hero__content">
             <div className="hero__meta-line"><span className="live-badge"><i /> بيانات محلية منظّمة</span><span>مركز نقادة · محافظة قنا</span></div>
             <span className="eyebrow">الدليل والموسوعة المحلية لمركز نقادة وقراه</span>
-            <h1>كل ما يخص نقادة… <em>خدماتك ومكانك</em> في بحث واحد.</h1>
+            <h1>دليل نقادة… <em>خدماتك ومكانك</em> في بحث واحد.</h1>
             <p>ابحث عن الأطباء والمحلات والمدارس والمطاعم والخدمات، واستكشف القرى والنجوع والعائلات والأعلام والمعالم في تجربة محلية واحدة.</p>
             <form action="/directory" className="hero-search">
               <span className="hero-search__brand"><BrandMark compact /></span>
@@ -118,6 +123,16 @@ export default function HomePage() {
             <div className="category-card__footer"><b>{category.count.toLocaleString('ar-EG')} نتيجة</b><span>استكشف ←</span></div>
           </Link>
         ))}</div>
+      </section>
+
+      <section className="section section--muted">
+        <div className="shell">
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أنشطة يبحث عنها أهل نقادة</span><h2>الخدمات والأنشطة بالأسماء</h2><p>صفحات مخصصة لأشهر أنواع الخدمات، تربط اسم النشاط بصفحته ومكانه داخل مركز نقادة.</p></div><Link href="/activities" className="text-link">كل أنواع الأنشطة ←</Link></div>
+          <div className="category-grid">{activityLandings.slice(0, 8).map((activity, index) => {
+            const count = getBusinessesForActivity(activity).length;
+            return <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card"><div className="category-card__visual"><CategoryVisual category={activity.visualCategory} /><span>{String(index + 1).padStart(2, '0')}</span></div><h3>{activity.name}</h3><p>{activity.description}</p><div className="category-card__footer"><b>{count.toLocaleString('ar-EG')} اسمًا</b><span>عرض النتائج ←</span></div></Link>;
+          })}</div>
+        </div>
       </section>
 
       <section className="section section--muted">

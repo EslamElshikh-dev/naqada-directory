@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import type { Business } from './types';
 
 export const siteConfig = {
-  name: 'دليل نقادة | الموسوعة المحلية لمركز نقادة',
+  name: 'دليل نقادة | دليل الخدمات والقرى والنجوع',
   shortName: 'دليل نقادة',
   url: 'https://naqada-directory.vercel.app',
   locale: 'ar_EG',
-  description: 'دليل محلي منظم لخدمات وقرى وعائلات وأعلام ومعالم مركز نقادة بمحافظة قنا، مع روابط وصول مباشرة ومنهج توثيق واضح.',
+  description: 'دليل نقادة للخدمات والأنشطة بالأسماء: أطباء وصيدليات ومدارس ومطاعم ومحلات، مع صفحات قرى ونجوع مركز نقادة بمحافظة قنا وروابط وصول مباشرة.',
   socialImage: 'https://naqada-directory.vercel.app/social-card',
   logoImage: 'https://naqada-directory.vercel.app/pwa-icon-192',
 };
@@ -137,6 +137,30 @@ export function normalizeRouteSlug(value: string) {
 
 export function cleanPhone(phone: string | null) {
   return phone?.replace(/[^+\d]/g, '') || null;
+}
+
+export function businessSummary(listing: Pick<Business, 'name' | 'category' | 'subcategory' | 'locality' | 'address' | 'phone' | 'mapsUrl' | 'checked'>) {
+  const locality = listing.locality?.split('/')[0]?.trim() || 'مركز نقادة';
+  const kind = listing.subcategory || listing.category;
+  const location = listing.address || `${locality}، مركز نقادة، محافظة قنا`;
+  const access = listing.phone && listing.mapsUrl
+    ? 'تتوفر في الصفحة وسيلة اتصال ورابط مباشر للخريطة.'
+    : listing.phone
+      ? 'تتوفر في الصفحة وسيلة اتصال منشورة.'
+      : listing.mapsUrl
+        ? 'يتوفر في الصفحة رابط مباشر لمراجعة الموقع على الخريطة.'
+        : 'تعرض الصفحة بيانات السجل المنشورة في الدليل.';
+  const review = listing.checked ? ` آخر مراجعة للبيانات: ${formatDate(listing.checked)}.` : '';
+  return `${listing.name} — ${kind} في ${locality} ضمن مركز نقادة بمحافظة قنا. العنوان المنشور: ${location}. ${access}${review}`;
+}
+
+export function truncateMetaDescription(value: string, maxLength = 160) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  if (normalized.length <= maxLength) return normalized;
+  const candidate = normalized.slice(0, maxLength + 1);
+  const boundary = candidate.lastIndexOf(' ');
+  const end = boundary >= Math.floor(maxLength * 0.75) ? boundary : maxLength;
+  return `${candidate.slice(0, end).replace(/[،؛:,.…\-\s]+$/u, '')}…`;
 }
 
 export function whatsappUrl(phone: string | null) {

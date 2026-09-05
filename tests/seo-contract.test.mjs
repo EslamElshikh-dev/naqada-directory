@@ -9,6 +9,12 @@ const robots = read('app/robots.ts');
 const site = read('lib/site.ts');
 const contribute = read('app/contribute/page.tsx');
 const privacy = read('app/privacy/page.tsx');
+const activities = read('app/activities/page.tsx');
+const activityPage = read('app/activities/[slug]/page.tsx');
+const activityData = read('lib/activity-landings.ts');
+const listingPage = read('app/listing/[slug]/page.tsx');
+const villagePage = read('app/villages/[slug]/page.tsx');
+const villageCategoryPage = read('app/villages/[slug]/[category]/page.tsx');
 
 const officialOrigin = 'https://naqada-directory.vercel.app';
 const verificationToken = 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY';
@@ -44,9 +50,28 @@ test('utility workflows are noindex-follow and excluded from the sitemap', () =>
 
 test('sitemap remains focused on canonical content collections and listings', () => {
   assert.ok(sitemap.includes('...categories.map'));
+  assert.ok(sitemap.includes('...activityLandings.map'));
   assert.ok(sitemap.includes('...indexableLocalities.map'));
   assert.ok(sitemap.includes('item.count >= 3'));
   assert.ok(sitemap.includes('...businesses.map'));
+});
+
+test('search landing pages connect activity intent to published business names', () => {
+  assert.ok(activities.includes("alternates: { canonical: '/activities' }"));
+  assert.ok(activities.includes('activityLandings.map'));
+  assert.ok(activityPage.includes('generateStaticParams'));
+  assert.ok(activityPage.includes("'@type': 'ItemList'"));
+  assert.ok(activityData.includes("name: 'صيدليات نقادة'"));
+  assert.ok(activityData.includes("name: 'مدارس ومعاهد نقادة'"));
+  assert.ok(listingPage.includes('businessSummary({ ...listing, locality })'));
+  assert.ok(listingPage.includes('title: `${listing.name} في ${locality}`'));
+});
+
+test('legacy village names redirect with header-safe canonical URLs', () => {
+  for (const source of [villagePage, villageCategoryPage]) {
+    assert.ok(source.includes('getCanonicalLocalitySlugAlias'));
+    assert.ok(source.includes('encodeURIComponent(canonicalAlias)'));
+  }
 });
 
 test('deprecated sitelinks SearchAction markup is not emitted', () => {

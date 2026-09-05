@@ -17,6 +17,11 @@ export const businesses = [
   ...businesses04,
 ] as Business[];
 
+const canonicalLocalityAliases: Record<string, string> = {
+  'كوم الضبع': 'نجع كوم الضبع',
+  'شرق الترعة': 'نجع شرق الترعة',
+};
+
 /**
  * Activity imports sometimes preserve useful parent context in locality strings,
  * for example "بشلاو / الأوسط قمولا". Public locality routes should always use
@@ -26,7 +31,8 @@ export const businesses = [
 export function canonicalLocalityName(value?: string | null) {
   const raw = value?.trim() || 'مركز نقادة';
   const primary = raw.split('/')[0]?.trim();
-  return primary || raw;
+  const name = primary || raw;
+  return canonicalLocalityAliases[name] || name;
 }
 
 export function parentLocalityName(locality?: string | null, explicitParent?: string | null) {
@@ -56,7 +62,6 @@ export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
 export const families = rawFamilies as Family[];
 export const people = rawPeople as PersonRecord[];
 export const landmarks = rawLandmarks as Landmark[];
-export const meta = catalog.meta;
 
 const categoryDescriptions: Record<string, string> = {
   'الطب والصحة': 'أطباء وعيادات وصيدليات ومعامل وخدمات صحية.',
@@ -275,6 +280,12 @@ export const localities: LocalityPage[] = [...localityNames].map((name) => {
   };
 }).sort((a, b) => b.businessCount - a.businessCount || a.name.localeCompare(b.name, 'ar'));
 
+export const meta = {
+  ...catalog.meta,
+  businessCount: businesses.length,
+  localityCount: localities.length,
+};
+
 export const officialLocalities = localities.filter((item) => localityByName.has(item.name));
 export const featuredBusinesses = [...businesses]
   .sort((a, b) => (b.reviews || 0) - (a.reviews || 0) || (b.rating || 0) - (a.rating || 0))
@@ -293,6 +304,12 @@ export function getBusinessBySlug(slug: string) {
 export function getLocalityBySlug(slug: string) {
   const normalized = normalizeRouteSlug(slug);
   return localities.find((item) => item.slug === normalized);
+}
+
+export function getCanonicalLocalitySlugAlias(slug: string) {
+  const normalized = normalizeRouteSlug(slug);
+  const alias = Object.entries(canonicalLocalityAliases).find(([name]) => slugify(name) === normalized);
+  return alias ? slugify(alias[1]) : null;
 }
 
 export function relatedBusinesses(business: Business, limit = 3) {

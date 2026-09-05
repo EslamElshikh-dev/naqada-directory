@@ -3,6 +3,7 @@ import { businesses, canonicalLocalityName, categories, localities } from '@/lib
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle } from '@/lib/village-articles';
+import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 
 export const dynamic = 'force-static';
 
@@ -27,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
     { path: '/directory', lastModified: latestBusinessDate },
+    { path: '/activities', lastModified: latestBusinessDate },
     { path: '/blog', lastModified: latestEditorialDate },
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
@@ -69,6 +71,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...categories.map((item) => ({
       url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`),
       lastModified: latestDate(businesses.filter((business) => business.category === item.name)),
+    })),
+    ...activityLandings.map((activity) => ({
+      url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`),
+      lastModified: latestDate(getBusinessesForActivity(activity)),
     })),
     ...indexableLocalities.map((item) => {
       const article = getVillageArticle(item.name);

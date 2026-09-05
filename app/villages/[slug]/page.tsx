@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
-import { businesses, canonicalLocalityName, categories, directoryBusinesses, getLocalityBySlug, localities } from '@/lib/data';
+import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
 import styles from './article.module.css';
@@ -38,6 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocalityPage({ params }: Props) {
   const { slug } = await params;
+  const canonicalAlias = getCanonicalLocalitySlugAlias(slug);
+  if (canonicalAlias) permanentRedirect(`/villages/${encodeURIComponent(canonicalAlias)}`);
   const locality = getLocalityBySlug(slug);
   if (!locality) notFound();
   const article = getVillageArticle(locality.name);

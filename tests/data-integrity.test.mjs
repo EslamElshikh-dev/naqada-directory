@@ -14,6 +14,11 @@ const canonicalLocality = (value) => {
   return raw.split('/')[0]?.trim() || raw;
 };
 
+const mergedLocality = (value) => ({
+  'كوم الضبع': 'نجع كوم الضبع',
+  'شرق الترعة': 'نجع شرق الترعة',
+}[canonicalLocality(value)] || canonicalLocality(value));
+
 test('published datasets match the declared catalog totals', () => {
   assert.equal(businesses.length, catalog.meta.businessCount);
   assert.equal(localities.length, catalog.meta.localityCount);
@@ -50,6 +55,11 @@ test('canonical locality normalization preserves all published businesses', () =
   }
   const canonicalTotal = [...canonicalCounts.values()].reduce((sum, count) => sum + count, 0);
   assert.equal(canonicalTotal, businesses.length);
+});
+
+test('known locality naming variants resolve to one canonical place', () => {
+  assert.equal(mergedLocality('كوم الضبع'), 'نجع كوم الضبع');
+  assert.equal(mergedLocality('شرق الترعة'), 'نجع شرق الترعة');
 });
 
 test('restricted review states and grade C are absent from public records', () => {

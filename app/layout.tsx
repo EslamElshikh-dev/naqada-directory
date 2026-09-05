@@ -75,13 +75,27 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const websiteSchema = {
     '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    '@id': `${siteConfig.url}#website`,
-    name: siteConfig.shortName,
-    alternateName: siteConfig.name,
-    url: siteConfig.url,
-    inLanguage: 'ar-EG',
-    description: siteConfig.description,
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${siteConfig.url}#website`,
+        name: siteConfig.shortName,
+        alternateName: ['دليل مركز نقادة', 'دليل خدمات نقادة', 'موسوعة نقادة المحلية'],
+        url: siteConfig.url,
+        inLanguage: 'ar-EG',
+        description: siteConfig.description,
+        publisher: { '@id': `${siteConfig.url}#organization` },
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${siteConfig.url}#organization`,
+        name: siteConfig.shortName,
+        alternateName: 'الموسوعة المحلية لمركز نقادة',
+        url: siteConfig.url,
+        logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
+        areaServed: { '@type': 'AdministrativeArea', name: 'مركز نقادة، محافظة قنا، مصر' },
+      },
+    ],
   };
   const speedInsightsBootstrap = `window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };`;
   return (

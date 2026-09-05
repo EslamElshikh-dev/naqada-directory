@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
-import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
@@ -41,6 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocalCategoryPage({ params }: Props) {
   const { slug, category: categorySlug } = await params;
+  const canonicalAlias = getCanonicalLocalitySlugAlias(slug);
+  if (canonicalAlias) permanentRedirect(`/villages/${encodeURIComponent(canonicalAlias)}/${encodeURIComponent(categorySlug)}`);
   const locality = getLocalityBySlug(slug);
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) notFound();

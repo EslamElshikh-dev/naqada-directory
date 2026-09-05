@@ -57,6 +57,7 @@ export function Footer() {
           <h2>الخدمات والمكان</h2>
           <div className="footer__links">
             <Link href="/directory">كل الأنشطة</Link>
+            <Link href="/activities">الأنشطة والخدمات بالأسماء</Link>
             <Link href="/updates">آخر تحديثات الدليل</Link>
             <Link href="/coverage">خريطة تغطية الدليل</Link>
             <Link href="/villages">القرى والنجوع</Link>

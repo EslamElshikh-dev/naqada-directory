@@ -7,7 +7,7 @@ import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
-import { buildPageMetadata, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
+import { buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,11 +20,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = getBusinessBySlug(slug);
   if (!listing) return {};
   const locality = canonicalLocalityName(listing.locality);
-  const description = listing.description
-    ? listing.description.slice(0, 165)
-    : `${listing.subcategory || listing.category} في ${locality}. ${listing.address || 'العنوان ووسائل الوصول المتاحة داخل دليل نقادة.'}`;
+  const description = truncateMetaDescription(listing.description || businessSummary({ ...listing, locality }));
   return buildPageMetadata({
-    title: `${listing.name} — ${locality}`,
+    title: `${listing.name} في ${locality}`,
     description,
     path: `/listing/${listing.slug}`,
   });
@@ -43,6 +41,7 @@ export default async function ListingPage({ params }: Props) {
   const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
   const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
   const correctionUrl = `/contribute?type=correction&name=${encodeURIComponent(listing.name)}&category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}&listing=${encodeURIComponent(listing.slug)}`;
+  const summary = listing.description || businessSummary({ ...listing, locality });
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -61,6 +60,8 @@ export default async function ListingPage({ params }: Props) {
         },
         hasMap: safeMapsUrl || undefined,
         description: listing.description || (listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${locality}، مركز نقادة.` : `${listing.category} في ${locality}، مركز نقادة.`),
+        mainEntityOfPage: canonicalUrl,
+        areaServed: { '@type': 'AdministrativeArea', name: `${locality}، مركز نقادة، محافظة قنا` },
         dateModified: listing.checked || undefined,
       },
       {
@@ -101,11 +102,11 @@ export default async function ListingPage({ params }: Props) {
             <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString('ar-EG')} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString('ar-EG')} مراجعة` : ''}` : 'غير متاح'}</strong></div>
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
-          {listing.description && <section className="listing-description" aria-labelledby="listing-description-title">
+          <section className="listing-description" aria-labelledby="listing-description-title">
             <span className="eyebrow eyebrow--dark">عن النشاط</span>
             <h2 id="listing-description-title">{listing.name}</h2>
-            <p>{listing.description}</p>
-          </section>}
+            <p>{summary}</p>
+          </section>
           <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
           <ListingRating listingSlug={listing.slug} listingName={listing.name} />
           <ShareActions title={listing.name} locality={locality} listingSlug={listing.slug} />

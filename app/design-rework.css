@@ -239,6 +239,22 @@ body {
 
 .discovery-strip { margin-top: 34px; border-radius: 26px; box-shadow: var(--shadow-soft); }
 
+.directory-activity-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  margin-top: 34px;
+  padding: 28px 30px;
+  border: 1px solid rgba(112,64,45,.1);
+  border-radius: 26px;
+  background: linear-gradient(135deg, #fffaf4, #f7e9dc);
+  box-shadow: var(--shadow-soft);
+}
+.directory-activity-cta h2 { margin: 7px 0 8px; color: #34231c; font-size: clamp(20px, 2vw, 28px); }
+.directory-activity-cta p { max-width: 780px; margin: 0; color: #74645c; line-height: 1.9; }
+.directory-activity-cta .button { white-space: nowrap; }
+
 /* Sections and cards */
 .section { padding-block: 72px; }
 .section-heading { align-items: center; margin-bottom: 30px; }
@@ -386,6 +402,8 @@ body {
 }
 
 @media (max-width: 680px) {
+  .directory-activity-cta { grid-template-columns: 1fr; gap: 18px; margin-top: 22px; padding: 22px 18px; border-radius: 22px; }
+  .directory-activity-cta .button { width: 100%; }
   :root { --shell: min(100% - 24px,1180px); }
   .site-header { border-radius: 0 0 18px 18px; }
   .brand__emblem { width: 43px; height: 43px; border-radius: 14px; }

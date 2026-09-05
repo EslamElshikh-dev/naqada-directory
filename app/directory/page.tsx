@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, categories, directoryBusinesses, localities } from '@/lib/data';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'دليل الخدمات والأنشطة في نقادة',
@@ -20,6 +21,10 @@ export default function DirectoryPage() {
           <div><nav className="breadcrumbs"><span>الرئيسية</span><span>/</span><span>الدليل</span></nav><span className="eyebrow">دليل الخدمات والأنشطة</span><h1>كل خدمات نقادة في <em>بحث واحد</em></h1><p>اكتب اسم المكان أو الخدمة، ثم ضيّق النتائج حسب القرية أو القسم. كل بطاقة تفتح صفحة تفصيلية مستقلة.</p></div>
           <aside className="catalog-hero__summary"><span className="catalog-hero__mark"><BrandMark /></span><div className="catalog-hero__metrics"><span><b>{businesses.length.toLocaleString('ar-EG')}</b><small>سجلًا منشورًا</small></span><span><b>{categories.length.toLocaleString('ar-EG')}</b><small>قسمًا</small></span><span><b>{mapped.toLocaleString('ar-EG')}</b><small>رابط خريطة</small></span><span><b>{phoned.toLocaleString('ar-EG')}</b><small>رقم اتصال</small></span></div></aside>
         </div>
+      </section>
+      <section className="shell directory-activity-cta" aria-label="تصفح أنواع الأنشطة">
+        <div><span className="eyebrow eyebrow--dark">صفحات مهيأة للبحث</span><h2>تبحث عن نوع نشاط محدد في نقادة؟</h2><p>تصفح الصيدليات والمدارس والمطاعم والأطباء والبنوك وبقية الخدمات في صفحات مستقلة تضم أسماء الأنشطة المنشورة.</p></div>
+        <Link href="/activities" className="button button--primary">عرض الأنشطة بالأسماء</Link>
       </section>
       <section className="shell page-section">
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز الدليل…</div>}>
