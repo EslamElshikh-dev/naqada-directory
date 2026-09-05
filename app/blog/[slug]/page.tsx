@@ -17,6 +17,10 @@ function imageUrl(asset: string) {
   return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
 }
 
+function metadataTitle(title: string) {
+  return title.replace(/\s*\|\s*دليل نقادة\s*$/u, '').trim();
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getAllEditorialPost(slug);
@@ -25,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hero = imageUrl(post.hero.asset);
 
   return {
-    title: post.seoTitle,
+    title: metadataTitle(post.seoTitle),
     description: post.description,
     keywords: post.keywords,
     alternates: { canonical: `/blog/${post.slug}` },
