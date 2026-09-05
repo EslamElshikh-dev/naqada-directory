@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { localities } from '@/lib/data';
-import { editorialPosts } from '@/lib/editorial-posts';
+import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
 import styles from './blog.module.css';
@@ -24,7 +24,7 @@ function editorialImage(asset: string) {
 
 export default function BlogPage() {
   const blogUrl = `${siteConfig.url}/blog`;
-  const totalPosts = villageArticles.length + editorialPosts.length;
+  const totalPosts = villageArticles.length + allEditorialPosts.length;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -35,7 +35,7 @@ export default function BlogPage() {
         description: 'حكايات ومقالات محلية مصورة عن قرى ونجوع مركز نقادة بمحافظة قنا.',
         url: blogUrl,
         inLanguage: 'ar-EG',
-        image: editorialPosts[0] ? editorialImage(editorialPosts[0].hero.asset) : siteConfig.socialImage,
+        image: allEditorialPosts[0] ? editorialImage(allEditorialPosts[0].hero.asset) : siteConfig.socialImage,
         author: {
           '@type': 'Person',
           name: villageArticleAuthor.name,
@@ -48,7 +48,7 @@ export default function BlogPage() {
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
         blogPost: [
-          ...editorialPosts.map((post) => ({
+          ...allEditorialPosts.map((post) => ({
             '@type': 'BlogPosting',
             headline: post.title,
             description: post.description,
@@ -106,27 +106,27 @@ export default function BlogPage() {
         <div className={`shell ${styles.heroInner}`}>
           <span className={styles.kicker}>مدونة دليل نقادة · حكايات من قلب المكان</span>
           <h1>نقادة كما يعرفها أهلها… <em>مش كما تختصرها الخريطة.</em></h1>
-          <p>مقالات عن القرى والنجوع، الناس والذاكرة، المدارس والدواوين والمعالم والخدمات؛ ومع السلسلة الجديدة أضفنا صورًا توضيحية مخصصة وسكيما صور وبيانات أرشفة أقوى لكل مقال مستقل.</p>
+          <p>مقالات عن القرى والنجوع، الناس والذاكرة، المدارس والدواوين والمعالم والخدمات؛ ومع السلسلة المصورة أضفنا موضوعات أطول وأغنى بصور مخصصة وأسئلة مفيدة ومصادر وروابط أرشفة مستقلة.</p>
           <div className={styles.stats}>
             <span><b>{totalPosts.toLocaleString('ar-EG')}</b> مقالات منشورة</span>
             <span><b>{villageArticleAuthor.name}</b> الكاتب والمحرر</span>
-            <span>محتوى محلي أصلي لمركز نقادة</span>
+            <span><b>{allEditorialPosts.length.toLocaleString('ar-EG')}</b> مقالات مصورة معمقة</span>
           </div>
         </div>
       </section>
 
       <section className={`shell ${styles.archive}`}>
-        {editorialPosts.length > 0 && (
+        {allEditorialPosts.length > 0 && (
           <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>
               <div>
                 <span>السلسلة الجديدة · مقالات مصورة مستقلة</span>
                 <h2>موضوعات من داخل القرية، مش مجرد تعريف بالقرية</h2>
-                <p>كل مقال هنا له نية بحث مستقلة وصور مرتبطة بموضوعه ومصادر حديثة وروابط داخلية للصفحة المرجعية للمكان، عشان ما يحصلش تكرار أو تنافس بين صفحات الموقع.</p>
+                <p>كل مقال له نية بحث مستقلة، نص طويل بروح المكان، صور مرتبطة بموضوعه، أسئلة تجيب عن لبس حقيقي، ومصادر وروابط داخلية تمنع التكرار وتخدم القارئ ومحركات البحث معًا.</p>
               </div>
             </div>
             <div className={editorialStyles.editorialGrid}>
-              {editorialPosts.map((post) => (
+              {allEditorialPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <img src={`/blog-media/${post.hero.asset}`} width={post.hero.width} height={post.hero.height} alt={post.hero.alt} loading="lazy" decoding="async" />
                   <div className={editorialStyles.editorialCardBody}>
