@@ -63,6 +63,8 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
   assert.ok(activityData.includes("name: 'صيدليات نقادة'"));
   assert.ok(activityData.includes("name: 'مدارس ومعاهد نقادة'"));
+  assert.ok(activityData.includes("name: 'محلات وأسواق نقادة'"));
+  assert.ok(activityData.includes("name: 'نظارات وبصريات في نقادة'"));
   assert.ok(listingPage.includes('businessSummary({ ...listing, locality })'));
   assert.ok(listingPage.includes('title: `${listing.name} في ${locality}`'));
 });
