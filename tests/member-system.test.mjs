@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const migration = read('supabase/migrations/20260904194733_member_auth_site_reviews.sql');
+const analyticsMigration = read('supabase/migrations/20260905210000_member_bio_visitor_analytics.sql');
 const auth = read('lib/auth/supabase-rest.ts');
 const reviewsApi = read('app/api/site-reviews/route.ts');
 const home = read('app/page.tsx');
@@ -12,6 +13,8 @@ const accountButton = read('components/auth/account-button.tsx');
 const memberDashboard = read('components/auth/member-dashboard.tsx');
 const landmarksPage = read('app/landmarks/page.tsx');
 const sitemap = read('app/sitemap.ts');
+const visitorRoute = read('app/api/analytics/visit/route.ts');
+const siteShell = read('components/site-shell.tsx');
 
 test('member, admin, and authentication entry points are present', () => {
   for (const path of [
@@ -86,6 +89,29 @@ test('Google profile photos are rendered with a constrained image host and grace
   assert.ok(accountButton.includes('user!.avatarUrl'));
   assert.ok(accountButton.includes('setFailedAvatarUrl'));
   assert.ok(memberDashboard.includes('profile.avatarUrl || user.avatarUrl'));
+});
+
+test('header search stays accessible and searches the complete directory', () => {
+  assert.ok(siteShell.includes('<GlobalSearch />'));
+  assert.ok(existsSync(new URL('../components/global-search.tsx', import.meta.url)));
+  assert.ok(existsSync(new URL('../app/api/site-search/route.ts', import.meta.url)));
+});
+
+test('visitor analytics separates unique browsers from page views without storing raw IP data', () => {
+  assert.ok(analyticsMigration.includes('create table if not exists public.analytics_visitors'));
+  assert.ok(analyticsMigration.includes('create table if not exists public.analytics_pageviews'));
+  assert.ok(analyticsMigration.includes('alter table public.analytics_visitors enable row level security'));
+  assert.ok(analyticsMigration.includes('revoke all on table public.analytics_visitors from public, anon, authenticated'));
+  assert.ok(analyticsMigration.includes('public.get_naqada_visitor_analytics()'));
+  assert.ok(!analyticsMigration.toLowerCase().includes('ip_address'));
+  assert.ok(visitorRoute.includes('httpOnly: true'));
+  assert.ok(visitorRoute.includes("VISITOR_COOKIE = 'naqada_visitor'"));
+});
+
+test('member bio is returned beside public member reviews', () => {
+  assert.ok(analyticsMigration.includes('profile.bio as author_bio'));
+  assert.ok(analyticsMigration.includes('left join public.member_profiles'));
+  assert.ok(memberDashboard.includes('نبذة عنك'));
 });
 
 test('the visual landmarks guide uses local optimized image delivery and is indexable', () => {

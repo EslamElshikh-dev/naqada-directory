@@ -22,7 +22,7 @@ export default function PrivacyPage() {
     url: pageUrl,
     description: 'سياسة مبسطة توضح بيانات الاستخدام والمساهمات التي يعالجها دليل نقادة وحدود استخدامها.',
     isPartOf: { '@id': `${siteConfig.url}#website` },
-    dateModified: '2026-09-04',
+    dateModified: '2026-09-05',
   };
 
   return (
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             <div className="methodology__grid">
               <article><b>01</b><h3>البحث والنتائج</h3><p>قد نسجل أن عملية بحث حدثت، وعدد النتائج، والتصنيف أو الموضع المختار. عند عدم وجود نتائج قد نحفظ عبارة البحث بعد فلترتها من صيغ البريد الإلكتروني وأرقام الهواتف.</p></article>
               <article><b>02</b><h3>إجراءات صفحات الأنشطة</h3><p>نسجل أحداثًا مثل الضغط على الاتصال أو واتساب أو الخريطة أو مشاركة السجل، مع ربط الحدث بمعرّف السجل والتصنيف والموضع متى كان ذلك متاحًا.</p></article>
-              <article><b>03</b><h3>جلسة المتصفح</h3><p>يُنشأ معرّف عشوائي مؤقت داخل Session Storage للمساعدة في فهم تسلسل الاستخدام داخل الجلسة نفسها. لا يُستخدم كحساب مستخدم أو ملف شخصي دائم.</p></article>
+              <article><b>03</b><h3>الزائر الفريد</h3><p>نضع ملف ارتباط آمنًا يحتوي معرّفًا عشوائيًا للمتصفح حتى نفرّق بين عدد الأشخاص التقريبي ومشاهدات الصفحات. لا يحتوي المعرّف اسمًا أو بريدًا أو رقم هاتف.</p></article>
             </div>
 
             <div className="source-panel" style={{ marginTop: 24 }}>
@@ -60,6 +60,7 @@ export default function PrivacyPage() {
               <span>لا نبيع بيانات المستخدمين.</span>
               <span>لا ننشر وسيلة التواصل الاختيارية للمساهم.</span>
               <span>لا نحفظ نص بحث يبدو بريدًا إلكترونيًا أو رقم هاتف.</span>
+              <span>لا نعرف اسم الزائر المجهول؛ يظهر الاسم للإدارة فقط عند دخول العضو بحسابه.</span>
               <span>لا تنشر المساهمات تلقائيًا قبل المراجعة.</span>
             </div>
           </aside>
@@ -87,6 +88,7 @@ export default function PrivacyPage() {
           <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">الاحتفاظ بالبيانات</span><h2>حدود زمنية مطبقة تلقائيًا</h2></div>
           <div className="detail-grid">
             <div><span>أحداث الاستخدام</span><strong>حتى 180 يومًا</strong></div>
+            <div><span>معرّف الزائر غير النشط</span><strong>يُحذف بعد 365 يومًا</strong></div>
             <div><span>وسيلة التواصل الاختيارية في المساهمة</span><strong>تُمسح بعد 90 يومًا</strong></div>
             <div><span>بيانات حدود معدل الطلبات</span><strong>تُنظف بعد يومين</strong></div>
             <div><span>سجل المساهمة نفسه</span><strong>يُحتفظ به للمراجعة وسجل جودة البيانات</strong></div>
@@ -116,7 +118,7 @@ export default function PrivacyPage() {
           <div className="methodology__grid">
             <article><b>أ</b><h3>الدليل مستقل</h3><p>دليل نقادة منصة معلوماتية مستقلة وليست جهة حكومية أو ممثلًا للأنشطة المدرجة.</p></article>
             <article><b>ب</b><h3>تقليل البيانات</h3><p>نفضل المصادر العامة والمعلومات اللازمة للمراجعة، ولا نطلب بيانات حساسة لإضافة نشاط أو تصحيح سجل.</p></article>
-            <article><b>ج</b><h3>آخر تحديث</h3><p>تم تحديث هذه الصفحة في 4 سبتمبر 2026.</p></article>
+            <article><b>ج</b><h3>آخر تحديث</h3><p>تم تحديث هذه الصفحة في 5 سبتمبر 2026.</p></article>
           </div>
         </div>
       </section>

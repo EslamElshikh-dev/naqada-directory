@@ -95,7 +95,7 @@ export function MemberDashboard() {
     <div className="member-dashboard">
       <section className="member-overview">
         <div className="member-avatar" aria-hidden="true">{avatarUrl && !avatarFailed ? <Image src={avatarUrl} alt="" fill sizes="72px" referrerPolicy="no-referrer" onError={() => setAvatarFailed(true)} /> : initial}</div>
-        <div className="member-welcome"><span>مرحبًا بك في دليل نقادة</span><h2>{profile.fullName}</h2><p>{profile.email}</p></div>
+        <div className="member-welcome"><span>مرحبًا بك في دليل نقادة</span><h2>{profile.fullName}</h2>{profile.bio ? <p className="member-welcome__bio">{profile.bio}</p> : <p className="member-welcome__bio is-empty">أضف نبذة عنك لتظهر أسفل اسمك في مشاركاتك.</p>}<small dir="ltr">{profile.email}</small></div>
         <div className="member-status"><span>{user.emailVerified ? 'حساب مؤكد' : 'بانتظار تأكيد البريد'}</span><strong>{completion}%</strong><small>اكتمال الملف</small></div>
       </section>
 
@@ -109,8 +109,8 @@ export function MemberDashboard() {
             <div className="profile-field"><label htmlFor="profile-email">البريد الإلكتروني</label><input id="profile-email" value={profile.email} readOnly disabled dir="ltr"/></div>
             <div className="profile-field"><label htmlFor="profile-phone">رقم الهاتف <span>اختياري</span></label><input id="profile-phone" value={profile.phone} onChange={(event) => update('phone', event.target.value)} inputMode="tel" dir="ltr" placeholder="01000000000"/></div>
             <div className="profile-field profile-field--wide"><label htmlFor="profile-locality">القرية أو الموضع <span>اختياري</span></label><select id="profile-locality" value={profile.locality} onChange={(event) => update('locality', event.target.value)}><option value="">اختر من نطاق دليل نقادة</option>{localities.map((item) => <option value={item.name} key={`${item.name}-${item.type}`}>{item.name} — {item.type}</option>)}</select></div>
-            <div className="profile-field profile-field--wide"><label htmlFor="profile-bio">نبذة قصيرة <span>اختياري</span></label><textarea id="profile-bio" value={profile.bio} onChange={(event) => update('bio', event.target.value.slice(0, 280))} maxLength={280} placeholder="اكتب نبذة بسيطة عنك أو علاقتك بنقادة…"/><small>{profile.bio.length}/280</small></div>
-            <div className="profile-actions"><div aria-live="polite">{error ? <span className="is-error">{error}</span> : feedback ? <span className="is-success">{feedback}</span> : <span>بياناتك لا تظهر للعامة إلا في تقييمك باسمك.</span>}</div><button type="submit" disabled={saving}>{saving ? 'جارٍ الحفظ…' : 'حفظ التعديلات'}</button></div>
+            <div className="profile-field profile-field--wide"><label htmlFor="profile-bio">نبذة عنك <span>اختياري · تظهر في مشاركاتك</span></label><textarea id="profile-bio" value={profile.bio} onChange={(event) => update('bio', event.target.value.slice(0, 280))} maxLength={280} placeholder="عرّف أعضاء الدليل بنفسك أو اكتب علاقتك بنقادة…"/><small>{profile.bio.length}/280</small></div>
+            <div className="profile-actions"><div aria-live="polite">{error ? <span className="is-error">{error}</span> : feedback ? <span className="is-success">{feedback}</span> : <span>يظهر اسمك ونبذتك فقط بجانب مشاركاتك العامة.</span>}</div><button type="submit" disabled={saving}>{saving ? 'جارٍ الحفظ…' : 'حفظ التعديلات'}</button></div>
           </form>
         </section>
 

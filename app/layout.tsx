@@ -2,12 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { VisitorTracker } from '@/components/visitor-tracker';
 import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
 import './premium-refresh.css';
 import './experience-polish.css';
 import './design-rework.css';
+import './dashboard-rework.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
@@ -87,6 +89,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
+        <VisitorTracker />
         {children}
         <Footer />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />

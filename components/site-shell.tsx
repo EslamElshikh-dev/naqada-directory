@@ -5,6 +5,7 @@ import { MobileNav } from './mobile-nav';
 import { AccountButton } from './auth/account-button';
 import { HeaderNav } from './header-nav';
 import { ActionIcon } from './action-icon';
+import { GlobalSearch } from './global-search';
 
 export function BrandMark({ compact = false, priority = false }: { compact?: boolean; priority?: boolean }) {
   const size = compact ? 30 : 42;
@@ -26,6 +27,7 @@ export function SiteHeader() {
         </Link>
         <HeaderNav />
         <div className="header-actions">
+          <GlobalSearch />
           <Link href="/contribute" className="header-contribute"><ActionIcon name="add" /><span>أضف نشاطًا</span></Link>
           <AccountButton />
         </div>

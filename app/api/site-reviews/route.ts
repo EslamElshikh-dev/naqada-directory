@@ -10,6 +10,7 @@ type ReviewRow = {
   rating: number;
   body: string;
   author_name: string;
+  author_bio: string | null;
   created_at: string;
   updated_at: string;
   is_own: boolean;
@@ -23,6 +24,7 @@ function mapReview(row: ReviewRow) {
     rating: Number(row.rating),
     body: row.body,
     authorName: row.author_name,
+    authorBio: row.author_bio || '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     own: Boolean(row.is_own),
@@ -84,6 +86,12 @@ export async function POST(request: Request) {
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) return sessionJson({ error: 'اختر تقييمًا من نجمة إلى خمس نجوم.' }, session, 400);
   if (review.length < 20 || review.length > 800) return sessionJson({ error: 'اكتب رأيك في 20 إلى 800 حرف.' }, session, 400);
   try {
+    const profileResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/member_profiles?id=eq.${encodeURIComponent(session.user.id)}&select=full_name,bio&limit=1`,
+      { headers: restHeaders(session.accessToken), cache: 'no-store' },
+    );
+    const profiles = profileResponse.ok ? await profileResponse.json() as Array<{ full_name: string; bio: string | null }> : [];
+    const author = profiles[0];
     const response = await fetch(`${SUPABASE_URL}/rest/v1/site_reviews?on_conflict=user_id`, {
       method: 'POST',
       headers: { ...restHeaders(session.accessToken, true), Prefer: 'resolution=merge-duplicates,return=representation' },
@@ -91,14 +99,14 @@ export async function POST(request: Request) {
         user_id: session.user.id,
         rating,
         body: review,
-        author_name: session.user.displayName.slice(0, 80),
+        author_name: (author?.full_name || session.user.displayName).slice(0, 80),
         status: 'published',
       }),
       cache: 'no-store',
     });
     if (!response.ok) throw new Error('REVIEW_WRITE_FAILED');
     const rows = await response.json() as ReviewRow[];
-    return sessionJson({ saved: true, review: rows[0] ? { ...mapReview({ ...rows[0], is_own: true }), own: true } : null }, session);
+    return sessionJson({ saved: true, review: rows[0] ? { ...mapReview({ ...rows[0], author_bio: author?.bio || null, is_own: true }), own: true } : null }, session);
   } catch {
     return sessionJson({ error: 'تعذر حفظ تقييمك الآن.' }, session, 500);
   }
