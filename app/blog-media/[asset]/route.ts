@@ -15,6 +15,10 @@ const assets: Record<string, string> = {
   'khattara-rural-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
   'khattara-community-life.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/d39aca80-ec6f-471b-9618-f933f8c712c0.jpg',
   'khattara-learning-youth.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/e6963a37-bed4-46ad-8ae2-cd2e35b81537.jpg',
+  'zawayda-village-life.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/38bb6aa2-59e2-4e8c-b3d4-904f29f3ae6b.jpg',
+  'zawayda-village-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
+  'zawayda-learning.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/e6963a37-bed4-46ad-8ae2-cd2e35b81537.jpg',
+  'zawayda-fields-irrigation.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/d39aca80-ec6f-471b-9618-f933f8c712c0.jpg',
 };
 
 export const revalidate = 604800;
