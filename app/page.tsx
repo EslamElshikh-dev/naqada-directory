@@ -7,6 +7,7 @@ import { businesses, categories, families, featuredBusinesses, landmarks, locali
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
 import { SiteReviews } from '@/components/site-reviews';
+import { ActionIcon } from '@/components/action-icon';
 import blogStyles from './blog/blog.module.css';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
@@ -75,6 +76,29 @@ export default function HomePage() {
           </aside>
         </div>
       </section>
+
+      <nav className="shell home-actions" aria-label="مسارات الوصول الرئيسية">
+        <Link href="/directory" className="home-action home-action--featured">
+          <span className="home-action__icon"><ActionIcon name="arrow" /></span>
+          <span><small>وصول مباشر</small><strong>ابحث في دليل الخدمات</strong></span>
+          <b>{meta.businessCount.toLocaleString('ar-EG')}</b>
+        </Link>
+        <Link href="/villages" className="home-action">
+          <span className="home-action__icon"><ActionIcon name="map" /></span>
+          <span><small>حسب موقعك</small><strong>القرى والنجوع</strong></span>
+          <b>{meta.localityCount.toLocaleString('ar-EG')}</b>
+        </Link>
+        <Link href="/landmarks" className="home-action">
+          <span className="home-action__icon"><ActionIcon name="landmark" /></span>
+          <span><small>اكتشف المكان</small><strong>معالم نقادة</strong></span>
+          <i aria-hidden="true">←</i>
+        </Link>
+        <Link href="/contribute" className="home-action home-action--contribute">
+          <span className="home-action__icon"><ActionIcon name="add" /></span>
+          <span><small>شارك في الدليل</small><strong>أضف نشاطًا</strong></span>
+          <i aria-hidden="true">+</i>
+        </Link>
+      </nav>
 
       <section className="shell discovery-strip" aria-label="طريقة استخدام الدليل">
         <div className="discovery-strip__intro"><span>وصول أسرع</span><strong>من البحث إلى المكان في خطوات واضحة</strong></div>
