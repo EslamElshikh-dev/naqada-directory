@@ -1,1 +1,124 @@
-/* placeholder */
+/* Final phone pass based on live device screenshots. Loaded after all mobile layers. */
+@media (max-width: 430px) {
+  /* Header: the bottom nav already owns the add action, so keep the top bar calm. */
+  .header-contribute { display: none !important; }
+  .site-header__inner { padding-inline: 2px !important; }
+  .brand { flex: 1 1 auto; }
+  .header-actions { flex: 0 0 auto; }
+
+  /* Hero: reduce dominance and guarantee clean edges on 360–430px viewports. */
+  .hero { padding-block: 18px 52px !important; }
+  .hero__content { min-width: 0 !important; overflow: visible; }
+  .hero__meta-line { margin-bottom: 7px !important; }
+  .hero h1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 5px !important;
+    padding-inline: 1px !important;
+    font-size: clamp(28px, 8vw, 32px) !important;
+    line-height: 1.32 !important;
+    letter-spacing: -.3px !important;
+    text-wrap: balance;
+    overflow-wrap: normal;
+  }
+  .hero__content > p {
+    margin-block: 10px 14px !important;
+    font-size: 10.8px !important;
+    line-height: 1.82 !important;
+  }
+
+  /* Search bar: explicit box sizing and compact mobile label prevent left clipping in RTL. */
+  .hero-search {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 38px minmax(0, 1fr) 70px !important;
+    gap: 4px !important;
+    padding: 5px !important;
+    overflow: hidden !important;
+  }
+  .hero-search > * { min-width: 0 !important; }
+  .hero-search__brand { width: 38px !important; height: 38px !important; }
+  .hero-search input {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-inline: 2px !important;
+    font-size: 10px !important;
+  }
+  .hero-search button {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    padding-inline: 5px !important;
+    font-size: 0 !important;
+    text-align: center;
+    overflow: hidden !important;
+    white-space: nowrap;
+  }
+  .hero-search button::after {
+    content: 'ابحث';
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .hero-search button b { display: none !important; }
+
+  /* Quick access should never look accidentally chopped. Two tidy rows are clearer than a clipped carousel. */
+  .hero__quick-links {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    overflow: visible !important;
+    margin: 10px 0 0 !important;
+    padding: 0 !important;
+    gap: 6px !important;
+  }
+  .hero__quick-links > span {
+    flex: 0 0 100%;
+    padding: 0 !important;
+    margin: 0 0 1px !important;
+    font-size: 8px !important;
+  }
+  .hero__quick-links a {
+    min-height: 28px !important;
+    padding: 4px 9px !important;
+    font-size: 8px !important;
+  }
+
+  /* Trust metrics: readable labels and slightly more contrast. */
+  .hero__trust { gap: 7px !important; margin-top: 12px !important; }
+  .hero__trust span {
+    min-height: 66px !important;
+    border-color: rgba(255,255,255,.14) !important;
+    background: rgba(255,255,255,.075) !important;
+  }
+  .hero__trust b { color: #fff9f2 !important; font-size: 17px !important; }
+  .hero__trust small {
+    color: rgba(255,255,255,.68) !important;
+    font-size: 8.2px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Action cards: strengthen hierarchy and keep the dock clear of the fixed nav. */
+  .home-actions { margin-top: -26px !important; row-gap: 9px !important; }
+  .home-action--featured { min-height: 74px !important; }
+  .home-action:not(.home-action--featured) { min-height: 82px !important; }
+  .home-action strong { font-size: 11px !important; }
+  .home-action small { font-size: 7.3px !important; }
+
+  /* Bottom nav: slightly lighter footprint without shrinking touch targets. */
+  .mobile-nav {
+    min-height: 60px !important;
+    padding: 4px 5px !important;
+    box-shadow: 0 14px 36px rgba(50,28,20,.16), inset 0 1px rgba(255,255,255,.9) !important;
+  }
+  .mobile-nav a { min-height: 47px !important; }
+}
+
+@media (max-width: 370px) {
+  .hero h1 { font-size: 27px !important; }
+  .hero-search { grid-template-columns: 36px minmax(0, 1fr) 64px !important; }
+  .hero-search button { width: 64px !important; min-width: 64px !important; max-width: 64px !important; }
+  .hero__quick-links a { padding-inline: 8px !important; }
+}
