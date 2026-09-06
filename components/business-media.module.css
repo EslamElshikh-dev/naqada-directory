@@ -1,0 +1,66 @@
+.media {
+  overflow: hidden;
+  border: 1px solid rgba(23, 58, 48, .12);
+  border-radius: 17px;
+  background: #edf1ee;
+}
+
+.visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #e8ede9;
+}
+
+.visual img {
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.card {
+  margin: -4px -4px 14px;
+  border-radius: 16px;
+}
+
+.card .visual {
+  aspect-ratio: 16 / 9;
+}
+
+.card:hover .visual img {
+  transform: scale(1.025);
+}
+
+.detail {
+  margin-bottom: 17px;
+  border-color: rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .08);
+}
+
+.detail .visual {
+  aspect-ratio: 16 / 10;
+}
+
+.caption {
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px 11px;
+  color: #53635d;
+  background: #fffefb;
+  font-size: 11px;
+  line-height: 1.75;
+}
+
+.caption a {
+  color: #2d6d58;
+  font-weight: 900;
+}
+
+.detail .caption {
+  color: #d8e4df;
+  background: rgba(8, 30, 24, .76);
+}
+
+.detail .caption a {
+  color: #f0d184;
+}
