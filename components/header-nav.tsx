@@ -7,10 +7,8 @@ const items = [
   { href: '/', label: 'الرئيسية' },
   { href: '/directory', label: 'دليل الخدمات' },
   { href: '/villages', label: 'القرى والنجوع' },
-  { href: '/landmarks', label: 'معالم نقادة' },
   { href: '/knowledge', label: 'موسوعة نقادة' },
   { href: '/blog', label: 'المدونة' },
-  { href: '/heritage', label: 'ذاكرة نقادة' },
 ];
 
 export function HeaderNav() {
