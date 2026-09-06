@@ -15,12 +15,10 @@ export async function POST(request: Request) {
 
   const session = await resolveSession();
   const origin = request.headers.get('origin') || new URL(request.url).origin;
-  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Origin: origin,
   };
-  if (forwardedFor) headers['X-Client-IP'] = forwardedFor;
   if (session?.accessToken) headers.Authorization = `Bearer ${session.accessToken}`;
 
   try {

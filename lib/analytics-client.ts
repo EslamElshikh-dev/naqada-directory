@@ -115,18 +115,22 @@ export function trackEvent(name: string, data?: AnalyticsData) {
 }
 
 export async function submitContribution(payload: ContributionPayload) {
+  const body = { sessionHint: sessionHint(), ...payload };
   try {
-    const response = await fetch('/api/contributions', {
+    const sessionResponse = await fetch('/api/auth/session', { cache: 'no-store', credentials: 'same-origin' });
+    const sessionData = sessionResponse.ok ? await sessionResponse.json().catch(() => null) as { user?: unknown } | null : null;
+    const endpoint = sessionData?.user ? '/api/contributions' : INTAKE_URL;
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ sessionHint: sessionHint(), ...payload }),
+      credentials: endpoint.startsWith('/') ? 'same-origin' : 'omit',
+      body: JSON.stringify(endpoint === INTAKE_URL ? { action: 'contribution', ...body } : body),
     });
-    const body = await response.json().catch(() => ({})) as { ok?: boolean; id?: string; error?: string };
+    const responseBody = await response.json().catch(() => ({})) as { ok?: boolean; id?: string; error?: string };
     return {
-      ok: response.ok && body.ok === true,
-      id: body.id,
-      error: body.error || (response.ok ? undefined : 'request_failed'),
+      ok: response.ok && responseBody.ok === true,
+      id: responseBody.id,
+      error: responseBody.error || (response.ok ? undefined : 'request_failed'),
       status: response.status,
     };
   } catch {

@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { MemberAvatar } from '@/components/auth/member-avatar';
+import type { MemberFrameCode } from '@/lib/member-reputation';
 
-type Review = { id: string; rating: number; body: string; authorName: string; authorBio: string; createdAt: string; updatedAt: string; own: boolean };
+type Review = { id: string; rating: number; body: string; authorName: string; authorBio: string; createdAt: string; updatedAt: string; own: boolean; frameCode: MemberFrameCode; roleLabel: string };
 type Payload = { authenticated: boolean; emailVerified: boolean; summary: { count: number; average: number }; reviews: Review[]; myReview: Review | null; error?: string };
 const stars = [1, 2, 3, 4, 5];
 
@@ -73,7 +75,7 @@ export function SiteReviews() {
             )}
             <div className="review-feedback" aria-live="polite">{feedback && <span className="is-success">{feedback}</span>}{error && <span className="is-error">{error}</span>}</div>
           </div>
-          <div className="review-list-wrap"><div className="review-list-head"><div><span>آراء المجتمع</span><h3>ماذا يقول أعضاء دليل نقادة؟</h3></div></div>{payload?.reviews.length ? <div className="review-list">{payload.reviews.map((item) => <article key={item.id}><header><span className="review-avatar">{item.authorName.charAt(0)}</span><div><strong>{item.authorName}</strong>{item.authorBio ? <p className="review-author-bio">{item.authorBio}</p> : null}<small>{item.own ? 'تقييمك' : 'عضو مسجل'} · {new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div></header><Stars value={item.rating}/><p>{item.body}</p></article>)}</div> : <div className="review-empty"><span>★★★★★</span><strong>كن أول من يشارك رأيه</strong><p>أضف تقييمك وساعدنا في بناء دليل أفضل لأهالي نقادة.</p></div>}</div>
+          <div className="review-list-wrap"><div className="review-list-head"><div><span>آراء المجتمع</span><h3>ماذا يقول أعضاء دليل نقادة؟</h3></div></div>{payload?.reviews.length ? <div className="review-list">{payload.reviews.map((item) => <article key={item.id}><header><MemberAvatar name={item.authorName} frame={item.frameCode} size={44} compact/><div><strong>{item.authorName}</strong>{item.authorBio ? <p className="review-author-bio">{item.authorBio}</p> : null}<small>{item.own ? 'تقييمك' : item.roleLabel} · {new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div></header><Stars value={item.rating}/><p>{item.body}</p></article>)}</div> : <div className="review-empty"><span>★★★★★</span><strong>كن أول من يشارك رأيه</strong><p>أضف تقييمك وساعدنا في بناء دليل أفضل لأهالي نقادة.</p></div>}</div>
         </div>
       </div>
     </section>

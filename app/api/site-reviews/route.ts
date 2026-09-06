@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { resolveSession, sessionJson, type ResolvedSession } from '@/lib/auth/session';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
+import type { MemberFrameCode } from '@/lib/member-reputation';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -14,6 +15,8 @@ type ReviewRow = {
   created_at: string;
   updated_at: string;
   is_own: boolean;
+  frame_code: MemberFrameCode;
+  role_label: string;
 };
 
 type SummaryRow = { review_count: number | string; average_rating: number | string };
@@ -28,6 +31,8 @@ function mapReview(row: ReviewRow) {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     own: Boolean(row.is_own),
+    frameCode: row.frame_code || 'gray',
+    roleLabel: row.role_label || 'عضو جديد',
   };
 }
 
@@ -105,8 +110,9 @@ export async function POST(request: Request) {
       cache: 'no-store',
     });
     if (!response.ok) throw new Error('REVIEW_WRITE_FAILED');
-    const rows = await response.json() as ReviewRow[];
-    return sessionJson({ saved: true, review: rows[0] ? { ...mapReview({ ...rows[0], author_bio: author?.bio || null, is_own: true }), own: true } : null }, session);
+    const publicRows = await readRows(session);
+    const own = publicRows.find((row) => row.is_own) || null;
+    return sessionJson({ saved: true, review: own ? mapReview(own) : null }, session);
   } catch {
     return sessionJson({ error: 'تعذر حفظ تقييمك الآن.' }, session, 500);
   }

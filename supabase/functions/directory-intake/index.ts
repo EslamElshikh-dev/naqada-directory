@@ -30,7 +30,7 @@ function cors(origin: string | null) {
   const allowed = isAllowedOrigin(origin) ? origin! : PROD_ORIGIN;
   return {
     "Access-Control-Allow-Origin": allowed,
-    "Access-Control-Allow-Headers": "content-type, authorization, x-client-ip",
+    "Access-Control-Allow-Headers": "content-type, authorization",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Vary": "Origin",
     "Cache-Control": "no-store",
@@ -118,7 +118,6 @@ Deno.serve(async (req: Request) => {
     if (url.searchParams.get("action") !== "rating") return json(400, { ok: false, error: "invalid_action" }, origin);
     const listingSlug = clean(url.searchParams.get("listingSlug"), 220);
     if (!validListingSlug(listingSlug)) return json(400, { ok: false, error: "invalid_listing" }, origin);
-
     const { data, error } = await db.from("directory_ratings").select("score").eq("listing_slug", listingSlug!).limit(5000);
     if (error) return json(500, { ok: false, error: "rating_lookup_failed" }, origin);
     return json(200, { ok: true, summary: summarizeRatings(data || []) }, origin);
@@ -130,17 +129,24 @@ Deno.serve(async (req: Request) => {
   if (length > 20_000) return json(413, { ok: false, error: "payload_too_large" }, origin);
 
   let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return json(400, { ok: false, error: "invalid_json" }, origin);
-  }
+  try { body = await req.json(); }
+  catch { return json(400, { ok: false, error: "invalid_json" }, origin); }
 
   if (clean(body.website, 200)) return json(200, { ok: true }, origin);
 
-  const clientIp = clean(req.headers.get("x-client-ip"), 120);
-  const ip = clientIp || (req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown").split(",")[0].trim();
-  const ipHash = await hashIp(ip, serviceRole);
+  let authenticatedUserId: string | null = null;
+  const authorization = req.headers.get("authorization");
+  if (authorization?.startsWith("Bearer ")) {
+    const token = authorization.slice(7).trim();
+    if (token) {
+      const { data: authData, error: authError } = await db.auth.getUser(token);
+      if (!authError && authData.user) authenticatedUserId = authData.user.id;
+    }
+  }
+
+  const rawIp = (req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown").split(",")[0].trim();
+  const rateIdentity = authenticatedUserId ? `user:${authenticatedUserId}` : rawIp;
+  const ipHash = await hashIp(rateIdentity, serviceRole);
   const action = body.action === "event" ? "event" : body.action === "contribution" ? "contribution" : body.action === "rating" ? "rating" : null;
   if (!action) return json(400, { ok: false, error: "invalid_action" }, origin);
 
@@ -156,19 +162,10 @@ Deno.serve(async (req: Request) => {
   if (action === "rating") {
     const listingSlug = clean(body.listingSlug, 220);
     const score = Number(body.score);
-    if (!validListingSlug(listingSlug) || !Number.isInteger(score) || score < 1 || score > 5) {
-      return json(400, { ok: false, error: "invalid_rating" }, origin);
-    }
-
-    const raterHash = await hashRatingIdentity(ip, serviceRole);
-    const { error: upsertError } = await db.from("directory_ratings").upsert({
-      listing_slug: listingSlug,
-      score,
-      rater_hash: raterHash,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "listing_slug,rater_hash" });
+    if (!validListingSlug(listingSlug) || !Number.isInteger(score) || score < 1 || score > 5) return json(400, { ok: false, error: "invalid_rating" }, origin);
+    const raterHash = await hashRatingIdentity(rawIp, serviceRole);
+    const { error: upsertError } = await db.from("directory_ratings").upsert({ listing_slug: listingSlug, score, rater_hash: raterHash, updated_at: new Date().toISOString() }, { onConflict: "listing_slug,rater_hash" });
     if (upsertError) return json(500, { ok: false, error: "rating_save_failed" }, origin);
-
     const { data, error } = await db.from("directory_ratings").select("score").eq("listing_slug", listingSlug!).limit(5000);
     if (error) return json(500, { ok: false, error: "rating_lookup_failed" }, origin);
     return json(200, { ok: true, summary: summarizeRatings(data || []) }, origin);
@@ -177,26 +174,10 @@ Deno.serve(async (req: Request) => {
   if (action === "contribution") {
     const startedAt = Number(body.formStartedAt || 0);
     const age = Date.now() - startedAt;
-    if (!Number.isFinite(startedAt) || age < 1200 || age > 7_200_000) {
-      return json(400, { ok: false, error: "invalid_form_timing" }, origin);
-    }
-
+    if (!Number.isFinite(startedAt) || age < 1200 || age > 7_200_000) return json(400, { ok: false, error: "invalid_form_timing" }, origin);
     const requestType = clean(body.requestType, 20);
     const name = clean(body.name, 160);
-    if (!requestType || !allowedRequestTypes.has(requestType) || !name || name.length < 2) {
-      return json(400, { ok: false, error: "missing_required_fields" }, origin);
-    }
-
-    let submittedByUserId: string | null = null;
-    const authorization = req.headers.get("authorization");
-    if (authorization?.startsWith("Bearer ")) {
-      const token = authorization.slice(7).trim();
-      if (token) {
-        const { data: authData, error: authError } = await db.auth.getUser(token);
-        if (!authError && authData.user) submittedByUserId = authData.user.id;
-      }
-    }
-
+    if (!requestType || !allowedRequestTypes.has(requestType) || !name || name.length < 2) return json(400, { ok: false, error: "missing_required_fields" }, origin);
     const row = {
       request_type: requestType,
       name,
@@ -207,45 +188,23 @@ Deno.serve(async (req: Request) => {
       contact: clean(body.contact, 320),
       listing_slug: clean(body.listingSlug, 220),
       submitted_via: "web",
-      submitted_by_user_id: submittedByUserId,
+      submitted_by_user_id: authenticatedUserId,
     };
-
     const { data, error } = await db.from("directory_contributions").insert(row).select("id").single();
     if (error) return json(500, { ok: false, error: "insert_failed" }, origin);
-
-    await db.from("directory_events").insert({
-      event_type: "contribution_submitted",
-      request_type: requestType,
-      category: row.category,
-      locality: row.locality,
-      listing_slug: row.listing_slug,
-      session_hint: clean(body.sessionHint, 80),
-    });
-
-    return json(201, { ok: true, id: data.id, attributed: Boolean(submittedByUserId) }, origin);
+    await db.from("directory_events").insert({ event_type: "contribution_submitted", request_type: requestType, category: row.category, locality: row.locality, listing_slug: row.listing_slug, session_hint: clean(body.sessionHint, 80) });
+    return json(201, { ok: true, id: data.id, attributed: Boolean(authenticatedUserId) }, origin);
   }
 
   const eventType = clean(body.eventType, 40);
   if (!eventType || !allowedEventTypes.has(eventType)) return json(400, { ok: false, error: "invalid_event" }, origin);
-
   const requestType = clean(body.requestType, 20);
   if (requestType && !allowedRequestTypes.has(requestType)) return json(400, { ok: false, error: "invalid_request_type" }, origin);
-
   let queryText = clean(body.queryText, 160);
   if (looksSensitiveQuery(queryText)) queryText = null;
   const rawCount = Number(body.resultCount);
   const resultCount = Number.isFinite(rawCount) ? Math.max(0, Math.min(10_000, Math.trunc(rawCount))) : null;
-
-  const { error } = await db.from("directory_events").insert({
-    event_type: eventType,
-    query_text: queryText,
-    result_count: resultCount,
-    category: clean(body.category, 120),
-    locality: clean(body.locality, 160),
-    listing_slug: clean(body.listingSlug, 220),
-    request_type: requestType,
-    session_hint: clean(body.sessionHint, 80),
-  });
+  const { error } = await db.from("directory_events").insert({ event_type: eventType, query_text: queryText, result_count: resultCount, category: clean(body.category, 120), locality: clean(body.locality, 160), listing_slug: clean(body.listingSlug, 220), request_type: requestType, session_hint: clean(body.sessionHint, 80) });
   if (error) return json(500, { ok: false, error: "insert_failed" }, origin);
   return json(202, { ok: true }, origin);
 });
