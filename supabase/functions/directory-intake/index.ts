@@ -30,7 +30,7 @@ function cors(origin: string | null) {
   const allowed = isAllowedOrigin(origin) ? origin! : PROD_ORIGIN;
   return {
     "Access-Control-Allow-Origin": allowed,
-    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Headers": "content-type, authorization, x-client-ip",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Vary": "Origin",
     "Cache-Control": "no-store",
@@ -138,7 +138,8 @@ Deno.serve(async (req: Request) => {
 
   if (clean(body.website, 200)) return json(200, { ok: true }, origin);
 
-  const ip = (req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown").split(",")[0].trim();
+  const clientIp = clean(req.headers.get("x-client-ip"), 120);
+  const ip = clientIp || (req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown").split(",")[0].trim();
   const ipHash = await hashIp(ip, serviceRole);
   const action = body.action === "event" ? "event" : body.action === "contribution" ? "contribution" : body.action === "rating" ? "rating" : null;
   if (!action) return json(400, { ok: false, error: "invalid_action" }, origin);
@@ -186,6 +187,16 @@ Deno.serve(async (req: Request) => {
       return json(400, { ok: false, error: "missing_required_fields" }, origin);
     }
 
+    let submittedByUserId: string | null = null;
+    const authorization = req.headers.get("authorization");
+    if (authorization?.startsWith("Bearer ")) {
+      const token = authorization.slice(7).trim();
+      if (token) {
+        const { data: authData, error: authError } = await db.auth.getUser(token);
+        if (!authError && authData.user) submittedByUserId = authData.user.id;
+      }
+    }
+
     const row = {
       request_type: requestType,
       name,
@@ -196,6 +207,7 @@ Deno.serve(async (req: Request) => {
       contact: clean(body.contact, 320),
       listing_slug: clean(body.listingSlug, 220),
       submitted_via: "web",
+      submitted_by_user_id: submittedByUserId,
     };
 
     const { data, error } = await db.from("directory_contributions").insert(row).select("id").single();
@@ -210,7 +222,7 @@ Deno.serve(async (req: Request) => {
       session_hint: clean(body.sessionHint, 80),
     });
 
-    return json(201, { ok: true, id: data.id }, origin);
+    return json(201, { ok: true, id: data.id, attributed: Boolean(submittedByUserId) }, origin);
   }
 
   const eventType = clean(body.eventType, 40);

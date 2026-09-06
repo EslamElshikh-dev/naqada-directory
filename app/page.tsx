@@ -6,10 +6,12 @@ import { ListingCard } from '@/components/listing-card';
 import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
+import { fieldInformants, knowledgeHeritage, knowledgePeople, knowledgePlaces, knowledgeReferences, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { SiteReviews } from '@/components/site-reviews';
 import { ActionIcon } from '@/components/action-icon';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import blogStyles from './blog/blog.module.css';
+import knowledgeStyles from './knowledge/knowledge.module.css';
 
 export const metadata: Metadata = {
   title: { absolute: siteConfig.name },
@@ -45,6 +47,7 @@ export default function HomePage() {
     inLanguage: 'ar-EG',
     dateModified: meta.updatedAt,
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
+    contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: `${siteConfig.url}/contributors/${primaryKnowledgeContributor.slug}` },
   };
   const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) };
 
@@ -64,7 +67,7 @@ export default function HomePage() {
               <input id="home-search" name="q" placeholder="ابحث باسم خدمة أو نشاط أو قرية…" />
               <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
             </form>
-            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">القرى</Link><Link href="/blog">المدونة</Link></div>
+            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">القرى</Link><Link href="/knowledge">الموسوعة</Link><Link href="/blog">المدونة</Link></div>
             <div className="hero__trust">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>نشاطًا وخدمة</small></span>
               <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية ونجعًا وموضعًا</small></span>
@@ -93,9 +96,9 @@ export default function HomePage() {
           <span><small>حسب موقعك</small><strong>القرى والنجوع</strong></span>
           <b>{meta.localityCount.toLocaleString('ar-EG')}</b>
         </Link>
-        <Link href="/landmarks" className="home-action">
+        <Link href="/knowledge" className="home-action">
           <span className="home-action__icon"><ActionIcon name="landmark" /></span>
-          <span><small>اكتشف المكان</small><strong>معالم نقادة</strong></span>
+          <span><small>بالمصدر والإسناد</small><strong>موسوعة نقادة</strong></span>
           <i aria-hidden="true">←</i>
         </Link>
         <Link href="/contribute" className="home-action home-action--contribute">
@@ -112,6 +115,24 @@ export default function HomePage() {
           <li><b>02</b><div><strong>قارن البيانات</strong><span>العنوان والتقييم ومرجع الخريطة</span></div></li>
           <li><b>03</b><div><strong>تواصل أو تحرّك</strong><span>اتصال مباشر ومسار وصول سريع</span></div></li>
         </ol>
+      </section>
+
+      <section className="section section--muted">
+        <div className="shell">
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">من موسوعة نقادة المرجعية</span><h2>المكان والناس والتراث… ومع كل معلومة أصلها</h2><p>أدخلنا المادة المرجعية داخل تجربة الموقع نفسها، مع فصل المعلومة التاريخية عن البيانات التجارية الحديثة وإظهار المساهم بالمصدر.</p></div><Link href="/knowledge" className="text-link">فتح موسوعة نقادة ←</Link></div>
+          <div className={knowledgeStyles.attribution}>
+            <div className={knowledgeStyles.seal}>أد</div>
+            <div><h2>المادة المرجعية بمساهمة الأستاذ أحمد الدعباسي</h2><p>مؤلف «{primaryKnowledgeContributor.primaryWork}» · {primaryKnowledgeContributor.role}. تُنسب إليه المواد المستخرجة من كتابه ومصادره داخل الصفحات التي تستخدمها. <Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المساهم ←</Link></p></div>
+          </div>
+          <div className={knowledgeStyles.grid}>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>خريطة المكان</span><h2>{knowledgePlaces.length.toLocaleString('ar-EG')} موضعًا</h2><p>{knowledgePlaces.slice(0, 6).map((item) => item.shortName || item.name).join('، ')}…</p><Link href="/knowledge/places">استكشف الأماكن ←</Link></article>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أعلام نقادة</span><h2>{knowledgePeople.length.toLocaleString('ar-EG')} شخصية</h2><p>{knowledgePeople.slice(0, 4).map((item) => item.name).join('، ')}.</p><Link href="/knowledge/people">استكشف الأعلام ←</Link></article>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>التراث والمعالم</span><h2>{knowledgeHeritage.length.toLocaleString('ar-EG')} موضوعًا</h2><p>{knowledgeHeritage.slice(0, 4).map((item) => item.name).join('، ')}.</p><Link href="/knowledge/heritage">استكشف التراث ←</Link></article>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>المراجع</span><h2>{knowledgeReferences.length.toLocaleString('ar-EG')} مرجعًا</h2><p>فهرس مرجعي مستقل يوضح طبقة المصادر التي استند إليها المؤلف في المادة المنشورة.</p><Link href="/knowledge/references">عرض المراجع ←</Link></article>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>العمل الميداني</span><h2>{fieldInformants.length.toLocaleString('ar-EG')} اسمًا</h2><p>مقابلات ومساعدات ميدانية وردت في المصدر، مع نطاقاتها الجغرافية دون نشر بيانات اتصال.</p><Link href="/knowledge/fieldwork">عرض العمل الميداني ←</Link></article>
+            <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>منهج الإسناد</span><h2>المصدر ظاهر</h2><p>أي معلومة مأخوذة من مواد الأستاذ أحمد تحمل إسنادًا له وللمصدر، مع توضيح سنة البيانات التاريخية متى كانت متاحة.</p><Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>عن المساهم والمصادر ←</Link></article>
+          </div>
+        </div>
       </section>
 
       <section className="section shell">

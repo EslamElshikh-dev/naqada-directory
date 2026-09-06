@@ -116,10 +116,11 @@ export function trackEvent(name: string, data?: AnalyticsData) {
 
 export async function submitContribution(payload: ContributionPayload) {
   try {
-    const response = await fetch(INTAKE_URL, {
+    const response = await fetch('/api/contributions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'contribution', sessionHint: sessionHint(), ...payload }),
+      credentials: 'same-origin',
+      body: JSON.stringify({ sessionHint: sessionHint(), ...payload }),
     });
     const body = await response.json().catch(() => ({})) as { ok?: boolean; id?: string; error?: string };
     return {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { localities } from '@/lib/data';
 import { resolveSession, sessionJson } from '@/lib/auth/session';
 import { SUPABASE_URL, restHeaders, sameOrigin, updateUserName } from '@/lib/auth/supabase-rest';
+import { resolveMemberReputation, type MemberFrameCode, type MemberRoleOverride } from '@/lib/member-reputation';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -15,6 +16,14 @@ type ProfileRow = {
   created_at: string;
   updated_at: string;
 };
+
+type RoleRow = {
+  role_code: string;
+  role_label: string;
+  frame_code: MemberFrameCode;
+};
+
+type ContributionRow = { status: string };
 
 function clean(value: unknown, max: number) {
   return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max) : '';
@@ -30,7 +39,33 @@ async function readProfile(accessToken: string, id: string) {
   return rows[0] || null;
 }
 
-function serialize(profile: ProfileRow | null, session: NonNullable<Awaited<ReturnType<typeof resolveSession>>>) {
+async function readRole(accessToken: string, id: string): Promise<MemberRoleOverride> {
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/directory_member_roles?user_id=eq.${encodeURIComponent(id)}&active=eq.true&select=role_code,role_label,frame_code&limit=1`,
+    { headers: restHeaders(accessToken), cache: 'no-store' },
+  );
+  if (!response.ok) return null;
+  const rows = await response.json() as RoleRow[];
+  const row = rows[0];
+  return row ? { roleCode: row.role_code, roleLabel: row.role_label, frameCode: row.frame_code } : null;
+}
+
+async function readContributionStatuses(accessToken: string, id: string) {
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/directory_contributions?submitted_by_user_id=eq.${encodeURIComponent(id)}&select=status&limit=5000`,
+    { headers: restHeaders(accessToken), cache: 'no-store' },
+  );
+  if (!response.ok) return [];
+  const rows = await response.json() as ContributionRow[];
+  return rows.map((item) => item.status);
+}
+
+async function serialize(profile: ProfileRow | null, session: NonNullable<Awaited<ReturnType<typeof resolveSession>>>) {
+  const createdAt = profile?.created_at || session.user.createdAt;
+  const [role, statuses] = await Promise.all([
+    readRole(session.accessToken, session.user.id),
+    readContributionStatuses(session.accessToken, session.user.id),
+  ]);
   return {
     fullName: profile?.full_name || session.user.displayName,
     email: session.user.email,
@@ -38,8 +73,9 @@ function serialize(profile: ProfileRow | null, session: NonNullable<Awaited<Retu
     locality: profile?.locality || '',
     bio: profile?.bio || '',
     avatarUrl: profile?.avatar_url || session.user.avatarUrl,
-    createdAt: profile?.created_at || session.user.createdAt,
+    createdAt,
     updatedAt: profile?.updated_at || null,
+    reputation: resolveMemberReputation({ createdAt, statuses, role }),
   };
 }
 
@@ -47,7 +83,7 @@ export async function GET() {
   const session = await resolveSession();
   if (!session) return NextResponse.json({ error: 'يلزم تسجيل الدخول أولًا.' }, { status: 401 });
   try {
-    return sessionJson({ profile: serialize(await readProfile(session.accessToken, session.user.id), session) }, session);
+    return sessionJson({ profile: await serialize(await readProfile(session.accessToken, session.user.id), session) }, session);
   } catch {
     return sessionJson({ error: 'تعذر تحميل الملف الشخصي الآن.' }, session, 500);
   }
@@ -83,7 +119,8 @@ export async function POST(request: Request) {
     });
     if (!response.ok) throw new Error('PROFILE_WRITE_FAILED');
     const rows = await response.json() as ProfileRow[];
-    return sessionJson({ saved: true, profile: serialize(rows[0] || null, { ...session, user: { ...session.user, displayName: fullName } }) }, session);
+    const nextSession = { ...session, user: { ...session.user, displayName: fullName } };
+    return sessionJson({ saved: true, profile: await serialize(rows[0] || null, nextSession) }, nextSession);
   } catch {
     return sessionJson({ error: 'تعذر حفظ الملف الشخصي الآن.' }, session, 500);
   }

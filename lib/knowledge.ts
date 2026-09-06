@@ -49,3 +49,30 @@ export function childrenForPlace(name:string){return knowledgePlaces.filter((ite
 export function sourceById(id:string){return knowledgeSources.find((item)=>item.id===id);}
 export function contributorById(id:string){return knowledgeContributors.find((item)=>item.id===id);}
 export function knowledgeAttribution(contributorId?:string){const contributor=contributorById(contributorId||knowledgeSummary.primaryContributorId)||primaryKnowledgeContributor;return contributor.attributionFull;}
+
+function normalizedPlaceLabel(value:string){
+  return value
+    .normalize('NFKD')
+    .replace(/[\u064B-\u065F\u0670\u0640]/g,'')
+    .replace(/[أإآ]/g,'ا')
+    .replace(/ى/g,'ي')
+    .replace(/ة/g,'ه')
+    .replace(/[()،,.\-_/]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .replace(/^(مدينه|قريه|نجع|عزبه|حاجر|جزيره)\s+/,'');
+}
+
+export function knowledgePlaceForLocality(name:string){
+  const exact=knowledgePlaces.find((item)=>item.name===name||item.shortName===name);
+  if(exact)return exact;
+  const normalized=normalizedPlaceLabel(name);
+  return knowledgePlaces.find((item)=>normalizedPlaceLabel(item.name)===normalized||normalizedPlaceLabel(item.shortName)===normalized);
+}
+
+export function knowledgePeopleForLocality(name:string,limit=6){
+  const normalized=normalizedPlaceLabel(name);
+  return knowledgePeople
+    .filter((person)=>person.placeTags.some((tag)=>normalizedPlaceLabel(tag)===normalized))
+    .slice(0,limit);
+}

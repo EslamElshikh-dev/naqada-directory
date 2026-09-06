@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { localities } from '@/lib/data';
+import type { MemberReputation } from '@/lib/member-reputation';
 import { ensureClientSession, setClientSessionUser, updateClientSessionUser, type ClientSessionUser } from './client-session';
+import { MemberAvatar } from './member-avatar';
 
 type Profile = {
   fullName: string;
@@ -16,7 +17,20 @@ type Profile = {
   avatarUrl: string;
   createdAt: string;
   updatedAt: string | null;
+  reputation: MemberReputation;
 };
+
+function rankDescription(reputation: MemberReputation) {
+  if (reputation.isRoleOverride) return 'رتبة رسمية مرتبطة بدورك داخل دليل نقادة.';
+  if (reputation.frameCode === 'gold') return reputation.memberDays >= 365 && reputation.contributionCount <= 100
+    ? 'وصلت إلى الإطار الذهبي بفضل مدة عضويتك المستمرة في الدليل.'
+    : 'وصلت إلى أعلى رتبة مساهم عامة في دليل نقادة.';
+  if (reputation.nextTierAt && reputation.nextTierLabel) {
+    const remaining = Math.max(0, reputation.nextTierAt - reputation.contributionCount);
+    return `متبقي ${remaining.toLocaleString('ar-EG')} مساهمة غير مرفوضة للوصول إلى ${reputation.nextTierLabel}.`;
+  }
+  return 'استمر في المساهمة لتحصل على إطار أعلى.';
+}
 
 export function MemberDashboard() {
   const router = useRouter();
@@ -28,7 +42,6 @@ export function MemberDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
-  const [avatarFailed, setAvatarFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -89,12 +102,13 @@ export function MemberDashboard() {
   }
 
   if (loading || !user || !profile) return <div className="member-loading"><span/><p>جارٍ تجهيز مساحة العضو…</p></div>;
-  const initial = profile.fullName.trim().charAt(0) || 'ع';
   const avatarUrl = profile.avatarUrl || user.avatarUrl;
+  const reputation = profile.reputation;
+
   return (
     <div className="member-dashboard">
       <section className="member-overview">
-        <div className="member-avatar" aria-hidden="true">{avatarUrl && !avatarFailed ? <Image src={avatarUrl} alt="" fill sizes="72px" referrerPolicy="no-referrer" onError={() => setAvatarFailed(true)} /> : initial}</div>
+        <MemberAvatar name={profile.fullName} src={avatarUrl} frame={reputation.frameCode} size={84} badge={reputation.tierLabel} priority />
         <div className="member-welcome"><span>مرحبًا بك في دليل نقادة</span><h2>{profile.fullName}</h2>{profile.bio ? <p className="member-welcome__bio">{profile.bio}</p> : <p className="member-welcome__bio is-empty">أضف نبذة عنك لتظهر أسفل اسمك في مشاركاتك.</p>}<small dir="ltr">{profile.email}</small></div>
         <div className="member-status"><span>{user.emailVerified ? 'حساب مؤكد' : 'بانتظار تأكيد البريد'}</span><strong>{completion}%</strong><small>اكتمال الملف</small></div>
       </section>
@@ -115,6 +129,15 @@ export function MemberDashboard() {
         </section>
 
         <aside className="member-side">
+          <section>
+            <span>رتبتك داخل مجتمع الدليل</span>
+            <h2>{reputation.tierLabel}</h2>
+            <p>{rankDescription(reputation)}</p>
+            <div style={{ display: 'grid', gap: 9, marginTop: 14 }}>
+              <div style={{ height: 8, borderRadius: 999, background: '#ece5df', overflow: 'hidden' }}><i style={{ display: 'block', width: `${reputation.progressPercent}%`, height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#9b7440,#d6b15d)' }}/></div>
+              <small>{reputation.contributionCount.toLocaleString('ar-EG')} مساهمة محسوبة · {reputation.acceptedCount.toLocaleString('ar-EG')} معتمدة/منشورة · {reputation.pendingCount.toLocaleString('ar-EG')} قيد المراجعة</small>
+            </div>
+          </section>
           <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link href="/contribute"><b>02</b><span>أضف أو صحح نشاطًا<small>ساهم في تحديث الدليل</small></span><i>←</i></Link><Link href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
           <section className="member-security"><span>حماية الحساب</span><strong>{user.emailVerified ? 'البريد مؤكد والحساب نشط' : 'أكمل تأكيد البريد'}</strong><p>جلسة الدخول محفوظة في ملفات ارتباط آمنة ولا تُعرض مفاتيح الإدارة داخل المتصفح.</p></section>
         </aside>

@@ -13,6 +13,25 @@ export type ContributorAccess = {
   permissions: string[];
 };
 
+export type ContributorSubmission = {
+  id: string;
+  requestType: string;
+  name: string;
+  locality: string | null;
+  status: string;
+  createdAt: string;
+};
+
+export type ContributorActivity = {
+  total: number;
+  pending: number;
+  reviewing: number;
+  approved: number;
+  published: number;
+  rejected: number;
+  recent: ContributorSubmission[];
+};
+
 type AccountRow = { contributor_id: string; active: boolean };
 type ProfileRow = {
   id: string;
@@ -26,6 +45,14 @@ type ProfileRow = {
   is_author: boolean;
 };
 type PermissionRow = { permission: string; enabled: boolean };
+type ContributionRow = {
+  id: string;
+  request_type: string;
+  name: string;
+  locality: string | null;
+  status: string;
+  created_at: string;
+};
 
 async function restGet<T>(path: string, accessToken: string): Promise<T> {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -68,5 +95,29 @@ export async function getContributorAccess(accessToken: string, userId: string):
     primaryWork: profile.primary_work,
     isAuthor: profile.is_author,
     permissions: permissions.map((item) => item.permission),
+  };
+}
+
+export async function getContributorActivity(accessToken: string, userId: string): Promise<ContributorActivity> {
+  const rows = await restGet<ContributionRow[]>(
+    `directory_contributions?select=id,request_type,name,locality,status,created_at&submitted_by_user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc&limit=500`,
+    accessToken,
+  );
+  const count = (status: string) => rows.filter((item) => item.status === status).length;
+  return {
+    total: rows.length,
+    pending: count('pending'),
+    reviewing: count('reviewing'),
+    approved: count('approved'),
+    published: count('published'),
+    rejected: count('rejected'),
+    recent: rows.slice(0, 8).map((item) => ({
+      id: item.id,
+      requestType: item.request_type,
+      name: item.name,
+      locality: item.locality,
+      status: item.status,
+      createdAt: item.created_at,
+    })),
   };
 }

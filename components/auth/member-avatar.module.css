@@ -1,0 +1,149 @@
+.avatarShell {
+  --avatar-size: 72px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: var(--avatar-size);
+}
+
+.ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  padding: 3px;
+  border-radius: 999px;
+  isolation: isolate;
+  background: #a8adb3;
+  box-shadow: 0 8px 24px rgb(34 28 24 / 12%);
+}
+
+.ring::before,
+.ring::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.ring::before {
+  border: 1px solid rgb(255 255 255 / 50%);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 7%);
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  border-radius: inherit;
+  background: linear-gradient(145deg, #faf8f5, #ece7e1);
+  color: #2d1e18;
+  font-weight: 900;
+  font-size: calc(var(--avatar-size) * .34);
+  line-height: 1;
+}
+
+.inner img {
+  object-fit: cover;
+}
+
+.gray .ring {
+  background: linear-gradient(145deg, #c8ccd0, #7e858d);
+}
+
+.bronze .ring {
+  background: linear-gradient(135deg, #f2c18d 0%, #a9632e 38%, #6e3f22 65%, #db9a5d 100%);
+  box-shadow: 0 8px 26px rgb(154 93 46 / 22%);
+}
+
+.silver .ring {
+  background: linear-gradient(135deg, #f9fbfc 0%, #bfc6cc 30%, #7e8790 57%, #e9edf0 100%);
+  box-shadow: 0 8px 28px rgb(93 104 116 / 23%);
+}
+
+.gold .ring {
+  background: linear-gradient(135deg, #fff3b2 0%, #d9a72d 30%, #8c6118 58%, #f6d868 100%);
+  box-shadow: 0 9px 30px rgb(180 133 30 / 28%);
+}
+
+.gold .ring::after {
+  inset: -4px;
+  border: 1px solid rgb(233 190 68 / 48%);
+  box-shadow: 0 0 18px rgb(229 187 67 / 18%);
+}
+
+.diamond .ring {
+  background: conic-gradient(from 210deg, #ecffff, #8be7ff, #ffffff, #9ba8ff, #e9b8ff, #ffffff, #8be7ff, #ecffff);
+  box-shadow: 0 10px 34px rgb(96 176 221 / 30%), 0 0 26px rgb(182 129 255 / 22%);
+}
+
+.diamond .ring::before {
+  inset: -4px;
+  border: 1px solid rgb(182 231 255 / 70%);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 55%), 0 0 18px rgb(125 210 255 / 32%);
+}
+
+.diamond .ring::after {
+  inset: -5px;
+  background: linear-gradient(115deg, transparent 18%, rgb(255 255 255 / 0%) 40%, rgb(255 255 255 / 82%) 49%, rgb(255 255 255 / 0%) 58%, transparent 80%);
+  background-size: 220% 100%;
+  mix-blend-mode: screen;
+  animation: diamondShine 3.8s ease-in-out infinite;
+}
+
+.badge {
+  max-width: 180px;
+  padding: 4px 9px;
+  border: 1px solid rgb(119 94 70 / 12%);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(45 30 24 / 8%);
+  color: #59473e;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bronze .badge { color: #8a4f27; background: #fff8f1; border-color: #e4bf9d; }
+.silver .badge { color: #59636d; background: #f7f9fa; border-color: #cbd2d8; }
+.gold .badge { color: #7d5814; background: #fffaf0; border-color: #e7c86f; }
+.diamond .badge {
+  color: #365b72;
+  background: linear-gradient(120deg, #f8ffff, #f4f0ff, #fff);
+  border-color: #b9e7fa;
+  box-shadow: 0 4px 16px rgb(112 188 225 / 16%);
+}
+
+.compact {
+  gap: 0;
+  min-width: var(--avatar-size);
+}
+
+.compact .ring {
+  padding: 2px;
+  box-shadow: none;
+}
+
+.compact .inner {
+  border-width: 2px;
+}
+
+@keyframes diamondShine {
+  0%, 20% { background-position: 180% 0; opacity: .1; }
+  45% { opacity: .95; }
+  70%, 100% { background-position: -60% 0; opacity: .1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diamond .ring::after { animation: none; }
+}

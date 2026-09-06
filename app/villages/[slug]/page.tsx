@@ -4,9 +4,11 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
+import { aliasesForPlace, childrenForPlace, knowledgePeopleForLocality, knowledgePlaceForLocality, primaryKnowledgeContributor, sourceById } from '@/lib/knowledge';
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
 import styles from './article.module.css';
+import knowledgeStyles from '../../knowledge/knowledge.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -56,7 +58,16 @@ export default async function LocalityPage({ params }: Props) {
   const relatedPlaces = article
     ? localities.filter((item) => article.relatedLocalities.some((name) => item.name === name || getVillageArticle(item.name)?.locality === name)).slice(0, 6)
     : [];
+
+  const knowledgePlace = knowledgePlaceForLocality(locality.name);
+  const knowledgeAliases = knowledgePlace ? aliasesForPlace(knowledgePlace.name).slice(0, 8) : [];
+  const knowledgeChildren = knowledgePlace ? childrenForPlace(knowledgePlace.name).slice(0, 8) : [];
+  const knowledgePeople = knowledgePeopleForLocality(knowledgePlace?.name || locality.name, 6);
+  const knowledgeSource = knowledgePlace ? sourceById(knowledgePlace.sourceId) : null;
+  const hasHistoricStats = Boolean(knowledgePlace?.population1897 || knowledgePlace?.houses1897 || knowledgePlace?.population2014);
+
   const canonicalUrl = `${siteConfig.url}/villages/${encodeURIComponent(locality.slug)}`;
+  const contributorUrl = `${siteConfig.url}/contributors/${primaryKnowledgeContributor.slug}`;
   const graph: Record<string, unknown>[] = [
     {
       '@type': 'Place',
@@ -104,6 +115,14 @@ export default async function LocalityPage({ params }: Props) {
           name: villageArticleAuthor.name,
           url: `${siteConfig.url}${villageArticleAuthor.href}`,
         },
+        ...(knowledgePlace ? {
+          contributor: {
+            '@type': 'Person',
+            name: primaryKnowledgeContributor.name,
+            url: contributorUrl,
+          },
+          citation: knowledgeSource?.title || primaryKnowledgeContributor.primaryWork,
+        } : {}),
         publisher: {
           '@type': 'Organization',
           name: siteConfig.shortName,
@@ -123,6 +142,17 @@ export default async function LocalityPage({ params }: Props) {
     );
   }
 
+  if (knowledgePlace) {
+    graph.push({
+      '@type': 'CreativeWork',
+      '@id': `${canonicalUrl}#reference-material`,
+      name: `المادة المرجعية عن ${locality.name}`,
+      isPartOf: { '@type': 'Book', name: knowledgeSource?.title || primaryKnowledgeContributor.primaryWork, author: { '@type': 'Person', name: primaryKnowledgeContributor.name } },
+      contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: contributorUrl },
+      about: { '@id': `${canonicalUrl}#place` },
+    });
+  }
+
   const structuredData = { '@context': 'https://schema.org', '@graph': graph };
 
   return (
@@ -139,6 +169,7 @@ export default async function LocalityPage({ params }: Props) {
             <p>{article?.intro[0] || locality.notes || locality.scope || 'موضع محلي ضمن مركز نقادة بمحافظة قنا.'}</p>
             <div className="detail-actions">
               {article ? <a href="#village-article" className="button button--light">اقرأ حكاية المكان</a> : <a href="#locality-listings" className="button button--light">عرض الأنشطة</a>}
+              {knowledgePlace ? <a href="#reference-knowledge" className="button button--outline-light">المادة المرجعية</a> : null}
               <a href="#locality-listings" className="button button--outline-light">الخدمات والأنشطة</a>
             </div>
           </div>
@@ -160,6 +191,23 @@ export default async function LocalityPage({ params }: Props) {
           <div><span>النطاق الإداري</span><strong>{locality.center || 'مركز نقادة'}</strong></div>
           <div><span>التصنيف</span><strong>{locality.classification || 'موضع محلي'}</strong></div>
         </div>
+
+        {knowledgePlace && (
+          <section id="reference-knowledge" className={knowledgeStyles.section}>
+            <div className={knowledgeStyles.sectionHeader}><div><span>المادة المرجعية للمكان</span><h2>{locality.name} في موسوعة نقادة</h2></div><Link href={`/knowledge/places/${knowledgePlace.slug}`}>فتح السجل المرجعي ←</Link></div>
+            <div className={knowledgeStyles.attribution}>
+              <div className={knowledgeStyles.seal}>أد</div>
+              <div><h3>المصدر والمساهم</h3><p>وردت هذه الطبقة المعرفية في {knowledgeSource?.title ? `«${knowledgeSource.title}»` : `«${primaryKnowledgeContributor.primaryWork}»`}، للمؤلف الأستاذ <strong>{primaryKnowledgeContributor.name}</strong> — {primaryKnowledgeContributor.role}. <Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المساهم ←</Link></p></div>
+            </div>
+            <div className={knowledgeStyles.grid}>
+              {hasHistoricStats && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>بيانات تاريخية</span><h3>أرقام وردت في المصدر</h3><p>{knowledgePlace.population1897 ? `سكان 1897: ${knowledgePlace.population1897.toLocaleString('ar-EG')}. ` : ''}{knowledgePlace.houses1897 ? `منازل 1897: ${knowledgePlace.houses1897.toLocaleString('ar-EG')}. ` : ''}{knowledgePlace.population2014 ? `سكان 2014: ${knowledgePlace.population2014.toLocaleString('ar-EG')}.` : ''}</p><small style={{ marginTop: 'auto', paddingTop: 14, color: '#7d6d64' }}>هذه أرقام تاريخية من سنواتها وليست إحصاءً حاليًا.</small></article>}
+              {knowledgeAliases.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أسماء وتهجئات</span><h3>أسماء مرتبطة بالموضع</h3><p>{knowledgeAliases.map((item) => item.alias).join('، ')}.</p><Link href={`/knowledge/places/${knowledgePlace.slug}`}>تفاصيل الأسماء ←</Link></article>}
+              {knowledgeChildren.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>تقسيمات مرتبطة</span><h3>مواضع وردت تحت هذا النطاق</h3><p>{knowledgeChildren.map((item) => item.shortName || item.name).join('، ')}.</p><Link href="/knowledge/places">خريطة الأماكن ←</Link></article>}
+              {knowledgePeople.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أعلام مرتبطة بالمكان</span><h3>{knowledgePeople.length.toLocaleString('ar-EG')} أسماء في العرض المختصر</h3><p>{knowledgePeople.map((item) => item.name).join('، ')}.</p><Link href="/knowledge/people">أعلام نقادة ←</Link></article>}
+              <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>حالة المعلومة</span><h3>مؤكد من المصدر</h3><p>يعني أن المعلومة وردت في المادة المرجعية المنسوبة للمؤلف، ولا يعني تلقائيًا أنها تحقق ميداني حديث لعام 2026.</p><Link href="/knowledge">منهج الموسوعة ←</Link></article>
+            </div>
+          </section>
+        )}
 
         {article && (
           <article id="village-article" className={styles.article}>
@@ -220,6 +268,7 @@ export default async function LocalityPage({ params }: Props) {
                 <strong>{villageArticleAuthor.name}</strong>
                 <small>{villageArticleAuthor.role}</small>
                 <p>{villageArticleAuthor.bio}</p>
+                {knowledgePlace && <p>المادة المرجعية التاريخية والجغرافية الظاهرة في قسم «موسوعة نقادة» بهذه الصفحة بمساهمة الأستاذ <Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>{primaryKnowledgeContributor.name}</Link>.</p>}
                 <Link href={villageArticleAuthor.href}>عن دليل نقادة والكاتب ←</Link>
               </div>
             </footer>
