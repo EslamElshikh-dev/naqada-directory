@@ -12,6 +12,7 @@ import './design-rework.css';
 import './dashboard-rework.css';
 import './mobile-polish.css';
 import './mobile-screenshot-fix.css';
+import './mobile-final-pass.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
