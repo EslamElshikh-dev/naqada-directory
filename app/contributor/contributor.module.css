@@ -347,12 +347,80 @@
 }
 
 @media (max-width: 640px) {
-  .hero { padding: 34px 0 26px; }
-  .identity { align-items: flex-start; }
-  .heroStats { grid-template-columns: repeat(2, 1fr); }
-  .section { padding: 18px; border-radius: 18px; }
-  .sectionHeader { align-items: flex-start; flex-direction: column; }
-  .actionGrid, .permissionGrid { grid-template-columns: 1fr; }
-  .metricGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .statusGrid { grid-template-columns: repeat(2, 1fr); }
+  .hero {
+    padding: 26px 0 22px;
+    border-radius: 0 0 24px 24px;
+  }
+  .heroGrid { gap: 18px; }
+  .identity {
+    align-items: center;
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+  }
+  .identityCopy > span { margin-bottom: 5px; font-size: 9px; }
+  .identityCopy h1 { font-size: clamp(25px, 8vw, 33px); line-height: 1.3; }
+  .identityCopy p { margin-top: 8px; font-size: 10px; line-height: 1.8; }
+  .badges { justify-content: center; gap: 5px; margin-top: 10px; }
+  .badges span { padding: 4px 7px; font-size: 8px; }
+  .heroStats { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .heroStats div { padding: 12px 10px; border-radius: 14px; text-align: center; }
+  .heroStats strong { font-size: 20px; }
+  .heroStats span { font-size: 8px; line-height: 1.5; }
+  .wrap { gap: 14px; padding-top: 16px; padding-bottom: 30px; }
+  .section { padding: 15px; border-radius: 17px; box-shadow: 0 10px 26px rgb(45 30 24 / 5%); }
+  .sectionHeader { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 13px; }
+  .sectionHeader span { font-size: 8px; }
+  .sectionHeader h2 { margin-top: 2px; font-size: 19px; line-height: 1.45; }
+  .sectionHeader p { margin-top: 4px; font-size: 10px; line-height: 1.75; }
+  .sectionHeader a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding-inline: 10px;
+    border: 1px solid #e6ddd4;
+    border-radius: 10px;
+    background: #fbf8f4;
+    font-size: 9px;
+  }
+  .actionGrid { grid-template-columns: 1fr; gap: 8px; }
+  .action {
+    min-height: 76px;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    align-items: center;
+    justify-content: initial;
+    gap: 11px;
+    padding: 11px 12px;
+    border-radius: 14px;
+  }
+  .action b { grid-row: 1 / span 2; width: 38px; height: 38px; border-radius: 11px; }
+  .action > div { min-width: 0; }
+  .action strong { font-size: 12px; }
+  .action small { margin-top: 2px; font-size: 9px; line-height: 1.55; }
+  .metricGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .metric { padding: 12px 10px; border-radius: 13px; }
+  .metric strong { font-size: 20px; }
+  .metric span { margin-top: 3px; font-size: 8px; line-height: 1.45; }
+  .statusGrid { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .statusCard { padding: 11px; border-radius: 12px; }
+  .statusCard b { font-size: 18px; }
+  .statusCard span { font-size: 8px; }
+  .permissionGrid { grid-template-columns: 1fr; gap: 7px; }
+  .permission { padding: 10px 11px; border-radius: 11px; font-size: 9.5px; }
+  .activityList { gap: 4px; }
+  .activityItem { grid-template-columns: 1fr; gap: 6px; padding: 10px 0; }
+  .activityItem strong { font-size: 11px; line-height: 1.6; }
+  .activityItem small { font-size: 8.5px; }
+  .status { justify-self: start; padding: 4px 7px; font-size: 8px; }
+  .empty { padding: 15px; border-radius: 12px; font-size: 10px; }
+}
+
+@media (max-width: 390px) {
+  .heroStats { grid-template-columns: 1fr 1fr; }
+  .section { padding-inline: 13px; }
+  .metricGrid { gap: 6px; }
+  .metric { padding-inline: 8px; }
+  .metric strong { font-size: 18px; }
+  .metric span { font-size: 7.5px; }
 }
