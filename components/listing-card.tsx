@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { canonicalLocalityName } from '@/lib/data';
 import type { DirectoryItem } from '@/lib/types';
 import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel } from '@/lib/site';
 import { BusinessMedia } from './business-media';
@@ -7,7 +8,7 @@ import { ActionIcon } from './action-icon';
 
 export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
   const phone = cleanPhone(listing.phone);
-  const locality = listing.locality || 'مركز نقادة';
+  const locality = canonicalLocalityName(listing.locality);
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
