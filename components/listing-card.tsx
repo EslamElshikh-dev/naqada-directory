@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { DirectoryItem } from '@/lib/types';
 import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel } from '@/lib/site';
+import { BusinessMedia } from './business-media';
 import { CategoryVisual } from './category-visual';
 import { ActionIcon } from './action-icon';
 
@@ -10,6 +11,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
+      <BusinessMedia businessId={listing.id} />
       <div className="listing-card__head">
         <CategoryVisual category={listing.category} size="sm" />
         <div className="listing-card__eyebrow">
