@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { BusinessMedia } from '@/components/business-media';
 import { ListingCard } from '@/components/listing-card';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { BrandMark } from '@/components/site-shell';
+import { getBusinessMedia } from '@/lib/business-media';
 import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
 import { buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 
@@ -32,6 +34,7 @@ export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
   const listing = getBusinessBySlug(slug);
   if (!listing) notFound();
+  const media = getBusinessMedia(listing.id);
   const locality = canonicalLocalityName(listing.locality);
   const parentLocality = listing.parentLocality || (listing.locality?.includes('/') ? listing.locality.split('/').slice(1).join('/').trim() : null);
   const phone = cleanPhone(listing.phone);
@@ -50,6 +53,7 @@ export default async function ListingPage({ params }: Props) {
         '@id': `${canonicalUrl}#entity`,
         name: listing.name,
         url: canonicalUrl,
+        image: media?.imageUrl || undefined,
         telephone: phone || undefined,
         address: {
           '@type': 'PostalAddress',
@@ -85,7 +89,10 @@ export default async function ListingPage({ params }: Props) {
             <p>{listing.address || `${locality}، مركز نقادة، محافظة قنا`}</p>
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
           </div>
-          <aside className="detail-hero__summary"><BrandMark /><span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p></aside>
+          <aside className="detail-hero__summary">
+            {media ? <BusinessMedia businessId={listing.id} variant="detail" /> : <BrandMark />}
+            <span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p>
+          </aside>
         </div>
       </section>
 
