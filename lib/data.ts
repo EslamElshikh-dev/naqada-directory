@@ -10,12 +10,32 @@ import rawPeople from '@/data/people.json';
 import { normalizeRouteSlug, slugify } from './site';
 import type { Business, Category, DirectoryItem, Family, Landmark, LocalityPage, LocalityRecord, PersonRecord } from './types';
 
-export const businesses = [
+const rawBusinesses = [
   ...businesses01,
   ...businesses02,
   ...businesses03,
   ...businesses04,
 ] as Business[];
+
+/**
+ * Small, reviewable corrections for published records where the source data is
+ * intentionally kept immutable. This prevents a one-off locality correction
+ * from requiring a rewrite of a large imported dataset and keeps the reason for
+ * the correction visible in code review.
+ */
+const businessOverrides: Record<string, Partial<Business>> = {
+  'google:ChIJ5ZH736NHSRQRQ9Dbks_bZXc': {
+    locality: 'ساحل بشلاو (الهواورة) / الأوسط قمولا',
+    parentLocality: 'الأوسط قمولا',
+    checked: '2026-09-06',
+    notes: 'تصحيح جغرافي: العنوان والاسم يثبتان أن المسجد في ساحل بشلاو، وليس داخل بشلاو نفسها.',
+  },
+};
+
+export const businesses = rawBusinesses.map((item) => {
+  const override = businessOverrides[item.id];
+  return override ? { ...item, ...override } : item;
+});
 
 const canonicalLocalityAliases: Record<string, string> = {
   'كوم الضبع': 'نجع كوم الضبع',
