@@ -21,12 +21,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const listing = getBusinessBySlug(slug);
   if (!listing) return {};
+  const media = getBusinessMedia(listing.id);
   const locality = canonicalLocalityName(listing.locality);
   const description = truncateMetaDescription(listing.description || businessSummary({ ...listing, locality }));
   return buildPageMetadata({
     title: `${listing.name} في ${locality}`,
     description,
     path: `/listing/${listing.slug}`,
+    socialImage: media ? { url: media.imageUrl, alt: media.imageAlt } : undefined,
   });
 }
 
