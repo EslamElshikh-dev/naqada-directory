@@ -28,20 +28,24 @@ export function buildPageMetadata({
   description,
   path,
   robots,
+  socialImage,
 }: {
   title: string;
   description: string;
   path: string;
   robots?: Metadata['robots'];
+  socialImage?: { url: string; alt?: string };
 }): Metadata {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const url = normalizedPath === '/' ? siteConfig.url : `${siteConfig.url}${normalizedPath}`;
-  const socialImage = {
-    url: siteConfig.socialImage,
-    width: 1200,
-    height: 630,
-    alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
-  };
+  const image = socialImage
+    ? { url: socialImage.url, alt: socialImage.alt || title }
+    : {
+        url: siteConfig.socialImage,
+        width: 1200,
+        height: 630,
+        alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
+      };
   return {
     title,
     description,
@@ -54,13 +58,13 @@ export function buildPageMetadata({
       title,
       description,
       siteName: siteConfig.shortName,
-      images: [socialImage],
+      images: [image],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [siteConfig.socialImage],
+      images: [socialImage?.url || siteConfig.socialImage],
     },
   };
 }
