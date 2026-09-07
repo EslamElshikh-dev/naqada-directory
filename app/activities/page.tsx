@@ -6,9 +6,9 @@ import { canonicalLocalityName, localities } from '@/lib/data';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'أنشطة وخدمات نقادة بالأسماء',
-  description: 'تصفح أشهر أنواع الأنشطة والخدمات في مركز نقادة، من الصيدليات والمدارس والمطاعم إلى مواد البناء والبنوك، مع صفحة مستقلة لكل نشاط مسجل.',
-  alternates: { canonical: '/activities' },
+  title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم',
+  description: 'دليل خدمات وأنشطة نقادة بمحافظة قنا: صيدليات وأطباء وعيادات ومدارس ومحلات ومطاعم وبنوك وخدمات أخرى، مع الأسماء والعناوين والهواتف ومناطق التواجد.',
+  alternates: { canonical: '/activities/' },
 };
 
 export default function ActivitiesPage() {
@@ -16,8 +16,8 @@ export default function ActivitiesPage() {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'أنشطة وخدمات نقادة بالأسماء',
-    url: `${siteConfig.url}/activities`,
+    name: 'دليل خدمات وأنشطة نقادة',
+    url: `${siteConfig.url}/activities/`,
     inLanguage: 'ar-EG',
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر' },
     mainEntity: {
@@ -27,7 +27,7 @@ export default function ActivitiesPage() {
         '@type': 'ListItem',
         position: index + 1,
         name: activity.name,
-        url: `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}`,
+        url: `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`,
       })),
     },
   };
@@ -37,13 +37,13 @@ export default function ActivitiesPage() {
       <section className="catalog-hero">
         <div className="shell catalog-hero__grid">
           <div>
-            <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>الأنشطة</span></nav>
-            <span className="eyebrow">وصول مباشر حسب نوع النشاط</span>
-            <h1>أنشطة وخدمات <em>نقادة بالأسماء</em></h1>
-            <p>اختر ما تبحث عنه لتصل إلى الأسماء المنشورة والعناوين والهواتف وروابط الخرائط داخل مدينة نقادة وقراها ونجوعها.</p>
+            <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>دليل الخدمات والأنشطة</span></nav>
+            <span className="eyebrow">دليل الخدمات المحلية في مركز نقادة</span>
+            <h1>دليل خدمات وأنشطة <em>نقادة</em></h1>
+            <p>ابحث حسب نوع الخدمة للوصول إلى الأسماء المنشورة والعناوين والهواتف وروابط الخرائط في مدينة نقادة وقراها ونجوعها، من الصيدليات والأطباء والمدارس إلى المطاعم والمحلات والخدمات اليومية.</p>
           </div>
           <aside className="catalog-hero__summary">
-            <span>تغطية صفحات الأنشطة</span>
+            <span>تغطية دليل الخدمات</span>
             <div className="catalog-hero__metrics">
               <span><b>{activityLandings.length.toLocaleString('ar-EG')}</b><small>نوع نشاط مطلوب</small></span>
               <span><b>{totalBusinesses.toLocaleString('ar-EG')}</b><small>اسمًا مرتبطًا</small></span>
@@ -55,7 +55,11 @@ export default function ActivitiesPage() {
 
       <section className="shell page-section">
         <div className="section-heading">
-          <div><span className="eyebrow eyebrow--dark">ابحث بنوع الخدمة</span><h2>أشهر الأنشطة في مركز نقادة</h2><p>كل بطاقة تقود إلى صفحة قابلة للفهرسة تعرض الأسماء الحقيقية المنشورة ومناطق وجودها.</p></div>
+          <div>
+            <span className="eyebrow eyebrow--dark">ابحث بنوع الخدمة</span>
+            <h2>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة</h2>
+            <p>كل بطاقة تقود إلى صفحة مستقلة تعرض الأسماء الحقيقية المنشورة ومناطق وجودها، لتكون لكل نية بحث خدمية صفحة واضحة داخل دليل نقادة.</p>
+          </div>
         </div>
         <div className="category-grid">
           {activityLandings.map((activity, index) => {
