@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
       { protocol: 'https', hostname: 'www.elaosboa.com', pathname: '/wp-content/uploads/**' },
+      { protocol: 'https', hostname: 'asc-mek.org', pathname: '/storage/Foundation_Graduate_Images/**' },
     ],
   },
 };

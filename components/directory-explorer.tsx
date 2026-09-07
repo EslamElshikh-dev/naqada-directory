@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
+import { hasBusinessMedia } from '@/lib/business-media';
 import { normalizeArabic } from '@/lib/site';
 import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
 import { ListingCard } from './listing-card';
@@ -64,6 +65,8 @@ export function DirectoryExplorer({
     return matches.sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name, 'ar');
       if (sort === 'rating') return (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0);
+      const mediaPriority = Number(hasBusinessMedia(b.id)) - Number(hasBusinessMedia(a.id));
+      if (mediaPriority) return mediaPriority;
       return (b.reviews || 0) - (a.reviews || 0) || (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name, 'ar');
     });
   }, [businesses, category, deferredQuery, locality, sort]);
