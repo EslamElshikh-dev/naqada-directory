@@ -1,30 +1,24 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { localities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
-import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
+import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './blog.module.css';
 import editorialStyles from './editorial.module.css';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'مدونة دليل نقادة | حكايات ومقالات مصورة من نقادة',
-  description: 'مدونة دليل نقادة: مقالات محلية أصلية ومصورة عن قرى ونجوع مركز نقادة، تاريخها وعائلاتها ومعالمها وخدماتها وحكايات الحياة اليومية.',
+  description: 'مدونة دليل نقادة: مقالات محلية أصلية ومصورة عن تاريخ نقادة وقراها ونجوعها والناس والمعالم والحياة اليومية، بنية بحث تحريرية مستقلة عن صفحات دليل القرى والخدمات.',
   path: '/blog',
 });
-
-function articleHref(localityName: string) {
-  const locality = localities.find((item) => getVillageArticle(item.name)?.locality === localityName);
-  return locality ? `/villages/${locality.slug}` : '/villages';
-}
 
 function editorialImage(asset: string) {
   return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
 }
 
 export default function BlogPage() {
-  const blogUrl = `${siteConfig.url}/blog`;
-  const totalPosts = villageArticles.length + allEditorialPosts.length;
+  const blogUrl = `${siteConfig.url}/blog/`;
+  const totalPosts = allEditorialPosts.length;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -32,7 +26,7 @@ export default function BlogPage() {
         '@type': 'Blog',
         '@id': `${blogUrl}#blog`,
         name: 'مدونة دليل نقادة',
-        description: 'حكايات ومقالات محلية مصورة عن قرى ونجوع مركز نقادة بمحافظة قنا.',
+        description: 'حكايات ومقالات محلية مصورة عن تاريخ وناس ومعالم مركز نقادة بمحافظة قنا.',
         url: blogUrl,
         inLanguage: 'ar-EG',
         image: allEditorialPosts[0] ? editorialImage(allEditorialPosts[0].hero.asset) : siteConfig.socialImage,
@@ -47,48 +41,26 @@ export default function BlogPage() {
           url: siteConfig.url,
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
-        blogPost: [
-          ...allEditorialPosts.map((post) => ({
-            '@type': 'BlogPosting',
-            headline: post.title,
-            description: post.description,
-            datePublished: post.publishedAt,
-            dateModified: post.modifiedAt,
-            image: editorialImage(post.hero.asset),
-            author: {
-              '@type': 'Person',
-              name: villageArticleAuthor.name,
-              url: `${siteConfig.url}${villageArticleAuthor.href}`,
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: siteConfig.shortName,
-              url: siteConfig.url,
-              logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
-            },
-            url: `${siteConfig.url}/blog/${post.slug}`,
-          })),
-          ...villageArticles.map((article) => ({
-            '@type': 'BlogPosting',
-            headline: article.title,
-            description: article.description,
-            datePublished: article.publishedAt,
-            dateModified: article.modifiedAt,
-            image: siteConfig.socialImage,
-            author: {
-              '@type': 'Person',
-              name: villageArticleAuthor.name,
-              url: `${siteConfig.url}${villageArticleAuthor.href}`,
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: siteConfig.shortName,
-              url: siteConfig.url,
-              logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
-            },
-            url: `${siteConfig.url}${articleHref(article.locality)}`,
-          })),
-        ],
+        blogPost: allEditorialPosts.map((post) => ({
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.description,
+          datePublished: post.publishedAt,
+          dateModified: post.modifiedAt,
+          image: editorialImage(post.hero.asset),
+          author: {
+            '@type': 'Person',
+            name: villageArticleAuthor.name,
+            url: `${siteConfig.url}${villageArticleAuthor.href}`,
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: siteConfig.shortName,
+            url: siteConfig.url,
+            logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
+          },
+          url: `${siteConfig.url}/blog/${post.slug}/`,
+        })),
       },
       {
         '@type': 'BreadcrumbList',
@@ -106,11 +78,11 @@ export default function BlogPage() {
         <div className={`shell ${styles.heroInner}`}>
           <span className={styles.kicker}>مدونة دليل نقادة · حكايات من قلب المكان</span>
           <h1>نقادة كما يعرفها أهلها… <em>مش كما تختصرها الخريطة.</em></h1>
-          <p>مقالات عن القرى والنجوع، الناس والذاكرة، المدارس والدواوين والمعالم والخدمات؛ ومع السلسلة المصورة أضفنا موضوعات أطول وأغنى بصور مخصصة وأسئلة مفيدة ومصادر وروابط أرشفة مستقلة.</p>
+          <p>هذه مساحة المقالات التحريرية في دليل نقادة: موضوعات عن الناس والذاكرة والمدارس والدواوين والمعالم والحياة اليومية. أمّا البحث عن قرية أو خدمة بعينها فله صفحات دليل مستقلة حتى لا تتنافس نيات البحث مع بعضها.</p>
           <div className={styles.stats}>
-            <span><b>{totalPosts.toLocaleString('ar-EG')}</b> مقالات منشورة</span>
+            <span><b>{totalPosts.toLocaleString('ar-EG')}</b> مقالات تحريرية منشورة</span>
             <span><b>{villageArticleAuthor.name}</b> الكاتب والمحرر</span>
-            <span><b>{allEditorialPosts.length.toLocaleString('ar-EG')}</b> مقالات مصورة معمقة</span>
+            <span><Link href="/villages">دليل القرى والنجوع ←</Link></span>
           </div>
         </div>
       </section>
@@ -120,9 +92,9 @@ export default function BlogPage() {
           <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>
               <div>
-                <span>السلسلة الجديدة · مقالات مصورة مستقلة</span>
-                <h2>موضوعات من داخل القرية، مش مجرد تعريف بالقرية</h2>
-                <p>كل مقال له نية بحث مستقلة، نص طويل بروح المكان، صور مرتبطة بموضوعه، أسئلة تجيب عن لبس حقيقي، ومصادر وروابط داخلية تمنع التكرار وتخدم القارئ ومحركات البحث معًا.</p>
+                <span>مقالات مصورة مستقلة</span>
+                <h2>موضوعات من داخل المكان، لا صفحات دليل مكررة</h2>
+                <p>كل مقال هنا له زاوية تحريرية مستقلة مثل التاريخ أو الذاكرة أو الناس أو الحياة اليومية، بينما تظل عبارة «دليل + اسم القرية» مملوكة لصفحة القرية نفسها.</p>
               </div>
             </div>
             <div className={editorialStyles.editorialGrid}>
@@ -149,28 +121,11 @@ export default function BlogPage() {
 
         <div className={styles.heading}>
           <div>
-            <span>دليل القرى والنجوع</span>
-            <h2>اقرأ نقادة نجعًا نجعًا</h2>
-            <p>صفحات مرجعية تجمع حكاية المكان وموقعه وملامحه ثم تقود مباشرة إلى الخدمات والأنشطة المرتبطة به في الدليل.</p>
+            <span>تبحث عن قرية أو نجع؟</span>
+            <h2>انتقل إلى دليل قرى ونجوع نقادة</h2>
+            <p>صفحات القرى هي الوجهة المرجعية لعبارات مثل «دليل بشلاو» و«دليل الأوسط قمولا» و«دليل طوخ» و«دليل الخطارة» و«دليل دنفيق»، وتربط كل موضع بالخدمات والأنشطة المنشورة داخله.</p>
           </div>
-          <Link href="/villages" className="text-link">استكشف كل القرى والنجوع ←</Link>
-        </div>
-
-        <div className={styles.grid}>
-          {villageArticles.map((article) => (
-            <Link key={article.locality} href={articleHref(article.locality)} className={styles.card}>
-              <div className={styles.cardTop}>
-                <span>{article.locality}</span>
-                <time dateTime={article.modifiedAt}>٤ سبتمبر ٢٠٢٦</time>
-              </div>
-              <h2>{article.title}</h2>
-              <p>{article.description}</p>
-              <div className={styles.cardFooter}>
-                <span>بقلم {villageArticleAuthor.name}</span>
-                <b>اقرأ المقال ←</b>
-              </div>
-            </Link>
-          ))}
+          <Link href="/villages" className="text-link">استكشف دليل القرى والنجوع ←</Link>
         </div>
 
         <aside className={styles.authorBand} aria-label="كاتب مدونة دليل نقادة">
