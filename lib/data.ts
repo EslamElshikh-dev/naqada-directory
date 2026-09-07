@@ -2,6 +2,7 @@ import businesses01 from '@/data/businesses-01.json';
 import businesses02 from '@/data/businesses-02.json';
 import businesses03 from '@/data/businesses-03.json';
 import businesses04 from '@/data/businesses-04.json';
+import businesses05 from '@/data/businesses-05.json';
 import catalog from '@/data/catalog.json';
 import rawFamilies from '@/data/families.json';
 import rawLandmarks from '@/data/landmarks.json';
@@ -15,6 +16,7 @@ const rawBusinesses = [
   ...businesses02,
   ...businesses03,
   ...businesses04,
+  ...businesses05,
 ] as Business[];
 
 /**
@@ -141,10 +143,15 @@ const shortLabels: Record<string, string> = {
   'الجمعيات والمجتمع': 'المجتمع',
 };
 
+const countByCategory = new Map<string, number>();
+for (const business of businesses) {
+  countByCategory.set(business.category, (countByCategory.get(business.category) || 0) + 1);
+}
+
 export const categories: Category[] = catalog.categoryCounts.map((item) => ({
   name: item.name,
   slug: slugify(item.name),
-  count: item.count,
+  count: countByCategory.get(item.name) ?? item.count,
   shortLabel: shortLabels[item.name] || item.name,
   description: categoryDescriptions[item.name] || `خدمات ${item.name} المنشورة في مركز نقادة.`,
 }));
