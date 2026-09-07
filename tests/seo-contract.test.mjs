@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const layout = read('app/layout.tsx');
+const homepage = read('app/page.tsx');
 const sitemap = read('app/sitemap.ts');
 const robots = read('app/robots.ts');
 const site = read('lib/site.ts');
@@ -103,6 +104,23 @@ test('hub pages emit page-specific Open Graph and Twitter metadata', () => {
   assert.ok(site.includes('twitter: {'));
   assert.ok(site.includes('title,'));
   assert.ok(site.includes('description,'));
+});
+
+test('homepage routes priority locality and service intent to canonical landing pages', () => {
+  assert.ok(homepage.includes("const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];"));
+  assert.ok(homepage.includes("const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];"));
+  assert.ok(homepage.includes('<strong>دليل {item.name}</strong>'));
+  assert.ok(homepage.includes('صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة'));
+  assert.ok(homepage.includes('href={`/activities/${activity.slug}`}'));
+  assert.ok(homepage.includes('href={`/villages/${item.slug}`}'));
+});
+
+test('homepage editorial preview uses real blog posts instead of village directory pages', () => {
+  assert.ok(homepage.includes("import { allEditorialPosts } from '@/lib/editorial-posts-all';"));
+  assert.ok(homepage.includes('const featuredArticles = allEditorialPosts.slice(0, 4);'));
+  assert.ok(homepage.includes('href={`/blog/${article.slug}`}'));
+  assert.ok(!homepage.includes('getVillageArticle'));
+  assert.ok(!homepage.includes('villageArticles.slice(0, 4)'));
 });
 
 test('village pages explicitly own directory and locality search intent', () => {
