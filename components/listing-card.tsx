@@ -10,6 +10,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const phone = cleanPhone(listing.phone);
   const locality = canonicalLocalityName(listing.locality);
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
+  const detailHref = `/listing/${listing.slug}/`;
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
       <BusinessMedia businessId={listing.id} />
@@ -21,7 +22,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
         </div>
       </div>
       <div className="listing-card__body">
-        <h3><Link href={`/listing/${listing.slug}`}>{listing.name}</Link></h3>
+        <h3><a href={detailHref}>{listing.name}</a></h3>
         <p className="listing-card__location"><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
         <div className="listing-card__meta">
           <Link href={`/villages/${slugify(locality)}`}>{locality}</Link>
@@ -30,7 +31,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
         </div>
       </div>
       <div className="listing-card__actions">
-        <Link className="button button--primary" href={`/listing/${listing.slug}`}><span>عرض التفاصيل</span><ActionIcon name="arrow" /></Link>
+        <a className="button button--primary" href={detailHref}><span>عرض التفاصيل</span><ActionIcon name="arrow" /></a>
         {phone && <a className="button button--soft" href={`tel:${phone}`} aria-label={`الاتصال بـ ${listing.name}`}><ActionIcon name="call" /><span>اتصال</span></a>}
         {hasMapReference && <a className="button button--ghost" href={listing.mapsUrl || '#'} target="_blank" rel="noreferrer" aria-label={`فتح موقع ${listing.name} على الخريطة`}><ActionIcon name="map" /><span>الخريطة</span></a>}
       </div>
