@@ -13,15 +13,34 @@ export function generateStaticParams() {
   return activityLandings.map((activity) => ({ slug: activity.slug }));
 }
 
+function activityKeywords(name: string, searchLabel: string) {
+  const core = name.replace(/\s+في\s+نقادة$/, ' نقادة');
+  const singular = searchLabel.trim();
+  return [...new Set([
+    name,
+    core,
+    `${singular} نقادة`,
+    `${singular} في نقادة`,
+    `دليل ${name}`,
+    `دليل ${core}`,
+    `أفضل ${singular} في نقادة`,
+    `خدمات ${singular} نقادة`,
+    'دليل نقادة',
+    'خدمات نقادة',
+  ])];
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const activity = getActivityBySlug(slug);
   if (!activity) return {};
   const count = getBusinessesForActivity(activity).length;
   return buildPageMetadata({
-    title: activity.name,
-    description: `${activity.description} تصفح ${count.toLocaleString('ar-EG')} اسمًا منشورًا في دليل نقادة.`,
+    title: `${activity.name} | الأسماء والعناوين في دليل نقادة`,
+    description: `${activity.description} تصفح ${count.toLocaleString('ar-EG')} اسمًا منشورًا، وابحث حسب القرية أو النجع داخل مركز نقادة بمحافظة قنا.`,
     path: `/activities/${activity.slug}`,
+    keywords: activityKeywords(activity.name, activity.searchLabel),
+    robots: count >= 2 ? { index: true, follow: true } : { index: false, follow: true },
   });
 }
 
@@ -39,7 +58,7 @@ export default async function ActivityPage({ params }: Props) {
     .map(([name, count]) => ({ locality: localities.find((item) => item.name === name), count }))
     .filter((item): item is { locality: NonNullable<typeof item.locality>; count: number } => Boolean(item.locality))
     .sort((a, b) => b.count - a.count || a.locality.name.localeCompare(b.locality.name, 'ar'));
-  const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}`;
+  const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`;
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -50,6 +69,7 @@ export default async function ActivityPage({ params }: Props) {
         description: activity.description,
         inLanguage: 'ar-EG',
         about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر' },
+        keywords: activityKeywords(activity.name, activity.searchLabel).join(', '),
         mainEntity: {
           '@type': 'ItemList',
           numberOfItems: scoped.length,
@@ -57,15 +77,15 @@ export default async function ActivityPage({ params }: Props) {
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
+            url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}/`,
           })),
         },
       },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: siteConfig.url },
-          { '@type': 'ListItem', position: 2, name: 'الأنشطة', item: `${siteConfig.url}/activities` },
+          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: `${siteConfig.url}/` },
+          { '@type': 'ListItem', position: 2, name: 'الأنشطة', item: `${siteConfig.url}/activities/` },
           { '@type': 'ListItem', position: 3, name: activity.name, item: pageUrl },
         ],
       },
@@ -81,6 +101,7 @@ export default async function ActivityPage({ params }: Props) {
             <span className="eyebrow">دليل محلي متخصص · مركز نقادة</span>
             <h1>{activity.name}</h1>
             <p>{activity.description}</p>
+            <p>هذه الصفحة مخصصة للبحث عن <strong>{activity.name}</strong> داخل مدينة نقادة وقرى ونجوع مركز نقادة، وتجمع الأسماء المنشورة في الدليل في صفحة واحدة بدل البحث المتفرق.</p>
             <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> اسمًا منشورًا</span><span><b>{places.length.toLocaleString('ar-EG')}</b> قرية أو نجعًا</span></div>
           </div>
           <CategoryVisual category={activity.visualCategory} size="lg" />
@@ -89,11 +110,14 @@ export default async function ActivityPage({ params }: Props) {
 
       <section className="shell page-section">
         {places.length > 0 && (
-          <div className="category-pills" aria-label={`أماكن وجود ${activity.name}`}>
-            {places.map(({ locality, count }) => <Link key={locality.slug} href={`/villages/${locality.slug}`}>{locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
-          </div>
+          <>
+            <div className="section-heading"><div><span className="eyebrow eyebrow--dark">ابحث حسب المكان</span><h2>{activity.name} في قرى ونجوع نقادة</h2><p>انتقل مباشرة إلى صفحة القرية أو النجع لعرض الأنشطة والخدمات المحلية المرتبطة بالمكان.</p></div></div>
+            <div className="category-pills" aria-label={`أماكن وجود ${activity.name}`}>
+              {places.map(({ locality, count }) => <Link key={locality.slug} href={`/villages/${locality.slug}`}>{activity.searchLabel} في {locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
+            </div>
+          </>
         )}
-        <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الأسماء داخل الدليل</span><h2>نتائج {activity.name}</h2><p>اضغط على اسم النشاط لفتح صفحته المستقلة ومعرفة العنوان ووسيلة الاتصال ومصدر الوصول حسب المتاح.</p></div></div>
+        <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الأسماء داخل الدليل</span><h2>دليل {activity.name}: الأسماء والعناوين</h2><p>اضغط على اسم النشاط لفتح صفحته المستقلة ومعرفة العنوان ووسيلة الاتصال ومصدر الوصول حسب المتاح.</p></div></div>
         <div className="listing-grid">{scoped.map((item) => <ListingCard key={item.id} listing={item} />)}</div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
