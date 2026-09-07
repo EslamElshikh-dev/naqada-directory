@@ -1,0 +1,140 @@
+{
+  "scope": "بشلاو / الأوسط قمولا، مركز نقادة، قنا",
+  "checked": "2026-09-07",
+  "purpose": "جولة Reverse Match اجتماعية محلية: الانطلاق من أصحاب العقارات والأسماء المحيطة بالقيود الرسمية للبحث عن اسم واجهة، هاتف، صفحة عامة، إعلان قديم أو صورة محلية. الملف بحثي وغير مستورد إلى واجهة الدليل.",
+  "rules": [
+    "تشابه الأسماء أو تتابع أسماء الآباء لا يثبت قرابة أو شراكة.",
+    "وجود شخص في نفس القرية أو نشاط مجتمعي لا يثبت ملكية النشاط التجاري.",
+    "أي رقم هاتف محفوظ هنا يجب أن يكون رقمًا عامًا منشورًا لجهة/نشاط؛ لا يُنسب لمرشح إلا عند وجود ربط صريح.",
+    "لا تستخدم صور عامة أو صور أنشطة خارج بشلاو كبديل بصري.",
+    "معلومات كتاب إقليم نقادة بصعيد مصر تُنسب إلى مؤلفه الأستاذ أحمد الدعباسي — مشرف ومساهم ذهبي في دليل نقادة."
+  ],
+  "priorityCandidates": [
+    {
+      "leadId": "lead:bashlaw-mobile-accessories-103456",
+      "candidate": "محمد عبدالرحيم تهامي عبدالرحيم",
+      "activity": "إكسسوار محمول",
+      "officialLocality": "بشلاو؛ ثم تعديل العنوان إلى الأوسط قمولا - بشلاو",
+      "propertyOwnerPivots": [
+        {
+          "name": "محمود عبدالناصر عبدالله",
+          "evidenceDate": "2024-06-10",
+          "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+          "relationshipToCandidate": "property_owner_only"
+        },
+        {
+          "name": "أحمد عبدالناصر عبدالله",
+          "evidenceDate": "2024-07-30",
+          "source": "https://www.itda.gov.eg/CRM/876/CRA40.pdf",
+          "relationshipToCandidate": "property_owner_only"
+        }
+      ],
+      "directMatch": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "communityPivot": {
+        "name": "جمعية البدر للتنمية المجتمعية الشاملة والتدريب ببشلاو",
+        "publicContact": "عبدالناصر زكير الناصر عبدالله",
+        "publicPhone": "01001601221",
+        "publicEmail": "albadercharity@gmail.com",
+        "source": "https://asc-mek.org/ar/foundations-graduates/15",
+        "use": "local_verification_network_only",
+        "relationshipToPropertyOwners": "unproven_name_overlap_only",
+        "note": "الاسم يوفر Pivot محليًا عامًا داخل بشلاو، لكنه لا يثبت أي قرابة أو صلة تجارية بمحمود/أحمد عبدالناصر عبدالله أو بالمرشح."
+      },
+      "negativeControls": [
+        "نتائج متاجر الموبايل التي ظهرت في الخطارة أو مدينة نقادة لا تُنقل إلى بشلاو.",
+        "لا توجد نتيجة اجتماعية عامة مفهرسة تربط اسم المرشح أو مالكي العقار باسم متجر موبايلات داخل بشلاو حتى نهاية الجولة."
+      ],
+      "publicationDecision": "hold_for_explicit_storefront_phone_or_social_match"
+    },
+    {
+      "leadId": "lead:bashlaw-feed-herbs-47105",
+      "candidate": "عماد محمود محمد حامد",
+      "activity": "النص الرسمي المفهرس قريب من بيع علافة/علاقة وعطارة؛ تبقى قراءة النشاط بحاجة تثبيت من الأصل",
+      "officialLocality": "بشلاو - الأوسط قمولا",
+      "propertyOwnerPivot": {
+        "name": "عاطف محمود محمد حامد",
+        "source": "https://itda.gov.eg/CRM/877/CRA79.pdf",
+        "relationshipToCandidate": "property_owner_only; kinship_not_inferred"
+      },
+      "reverseMatchEvidence": [
+        {
+          "type": "independent_local_press",
+          "name": "عاطف محمود محمد حامد",
+          "source": "https://almessa.gomhuriaonline.com/168021/",
+          "finding": "ورد الاسم ضمن داعمي نشاط مرتبط بمركز شباب الأوسط قمولا.",
+          "meaning": "يدعم الحضور المجتمعي العلني للاسم في نفس النطاق الجغرافي، ولا يثبت النشاط التجاري."
+        },
+        {
+          "type": "authored_local_source",
+          "name": "عاطف محمود حامد",
+          "sourceTitle": "كتاب إقليم نقادة بصعيد مصر",
+          "author": "الأستاذ أحمد الدعباسي",
+          "authorRoleInDirectory": "مشرف ومساهم ذهبي",
+          "finding": "ورد ضمن قائمة الزيارات الميدانية والمقابلات ومن ساعدوا المؤلف في جمع المعلومات، مع تحديد الموضع: الأوسط قمولا - بشلاو.",
+          "verification": "source_confirmed_not_independently_verified_for_every_biographical_detail"
+        }
+      ],
+      "directMatch": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "confidenceEffect": "raises_property_owner_locality_confidence_not_business_operating_status",
+      "publicationDecision": "hold_for_explicit_storefront_phone_or_current_sales_trace"
+    },
+    {
+      "leadId": "lead:bashlaw-dairy-cattle-48545",
+      "candidate": "محمد جعفري محمود محمد",
+      "activity": "تربية إناث المواشي بغرض بيع الألبان",
+      "officialLocality": "الأوسط قمولا - بشلاو",
+      "propertyOwnerPivot": {
+        "name": "رجب جعفر محمود محمد",
+        "source": "https://www.itda.gov.eg/CRM/883/CRA79.pdf",
+        "relationshipToCandidate": "property_owner_only; kinship_not_inferred"
+      },
+      "directMatch": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "searchOutcome": "لم يظهر في المصادر العامة أو المحفوظات الحالية أثر تشغيلي أو اجتماعي يمكن ربطه بثقة بالمرشح أو بمالك العقار على نحو يكشف هاتفًا أو اسم نشاط متداول.",
+      "publicationDecision": "hold_for_operational_or_contact_trace"
+    }
+  ],
+  "oldAdsAndSocialSearch": {
+    "candidateSpecificMatches": 0,
+    "finding": "البحث في الفهرسة العامة ومرايا المنشورات القديمة أظهر متاجر وإعلانات موبايلات في مدينة نقادة والخطارة، لكنه لم يظهر إعلانًا قديمًا أو صفحة متجر قابلة للإثبات داخل بشلاو تخص أيًا من المرشحين.",
+    "facebookIndexingNote": "فهرسة Facebook العامة محدودة؛ عدم ظهور نتيجة ليس دليلًا على عدم وجود صفحة أو منشور.",
+    "acceptedCandidatePhoneFromAds": null
+  },
+  "imageAudit": {
+    "accepted": 0,
+    "rejectedReason": "الصور الظاهرة كانت عامة أو من أنشطة خارج بشلاو ولم يوجد ما يربطها بالنشاط أو المرشح نفسه."
+  },
+  "round4Summary": {
+    "verifiedCandidatePhones": 0,
+    "verifiedCandidateStoreNames": 0,
+    "verifiedCandidateSocialPages": 0,
+    "verifiedCandidateLocalPhotos": 0,
+    "strongNewSocialPivots": 1,
+    "strongestPivot": "عاطف محمود محمد حامد — تطابق اسم كامل + حضور مجتمعي مستقل + موضع بشلاو/الأوسط قمولا في مصدر الأستاذ أحمد الدعباسي",
+    "localCommunityVerificationPivots": 1,
+    "newPublishableBusinesses": 0,
+    "nextActions": [
+      "البحث بأسماء مالكي العقارات مع ألفاظ محلية محتملة مثل محل/سنتر/ستور/عطارة/أعلاف/مخزن/حظيرة وبدون اسم صاحب السجل.",
+      "مطابقة أي رقم يظهر في إعلان قديم مع خرائط/صفحة حالية قبل اعتماده.",
+      "استغلال أسماء الجهات المحلية العامة كمفاتيح بحث جغرافي لا كدليل قرابة.",
+      "عدم نقل أي Lead إلى businesses قبل ظهور اسم واجهة أو هاتف أو نقطة موقع/صفحة تشغيلية حالية."
+    ]
+  }
+}
