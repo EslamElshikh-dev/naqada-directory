@@ -10,6 +10,28 @@
   ],
   "findings": [
     {
+      "leadId": "lead:bashlaw-sanitary-plumbing-35116",
+      "name": "عائشة سقف نجدي سقاف",
+      "activity": "بيع الأدوات الصحية والسباكة",
+      "confidence": "B",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2021-12-09",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/CRM/833/CRA79.pdf",
+          "details": "قيد 35116، بيع الأدوات الصحية والسباكة، بجهة الأوسط قمولا - بشلاو، بملك الطيب سعدي حسين."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      },
+      "reason": "مصدر رسمي يثبت النشاط والموضع، لكنه أقدم من بقية المرشحين ولم يظهر أثر عام حديث مستقل يثبت استمرار التشغيل أو الاسم التجاري المتداول."
+    },
+    {
       "leadId": "lead:bashlaw-mobile-accessories-103456",
       "name": "محمد عبدالرحيم تهامي عبدالرحيم",
       "activity": "إكسسوار محمول",
@@ -186,8 +208,9 @@
   "round2Summary": {
     "publishNow": 0,
     "strongCandidates": 3,
-    "holdCandidates": 4,
+    "holdCandidates": 5,
     "blockedAsActive": 1,
+    "totalTracked": 9,
     "highestPriorityNext": [
       "محمد عبدالرحيم تهامي عبدالرحيم - إكسسوار محمول",
       "عماد محمود محمد حامد - بيع علف وعطارة",
