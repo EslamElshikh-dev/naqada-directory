@@ -16,6 +16,7 @@ const listingPage = read('app/listing/[slug]/page.tsx');
 const businesses05 = read('data/businesses-05.json');
 const villagePage = read('app/villages/[slug]/page.tsx');
 const villageCategoryPage = read('app/villages/[slug]/[category]/page.tsx');
+const villageArticleIndex = read('lib/village-articles/index.ts');
 
 const officialOrigin = 'https://naqada-directory.vercel.app';
 const verificationToken = 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY';
@@ -35,6 +36,13 @@ test('indexable pages expose unrestricted Google preview directives', () => {
   assert.ok(site.includes('robots: robots ?? defaultIndexRobots'));
 });
 
+test('canonical URLs match the trailing-slash production URL shape', () => {
+  assert.ok(site.includes('export function canonicalPath'));
+  assert.ok(site.includes("return `${normalizedPath.replace(/\\/+$/, '')}/`;"));
+  assert.ok(site.includes('alternates: { canonical: normalizedPath }'));
+  assert.ok(activityPage.includes('const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`;'));
+});
+
 test('robots.txt stays crawlable and points at the canonical sitemap', () => {
   assert.ok(robots.includes("allow: '/'"));
   assert.ok(robots.includes('sitemap: `${siteConfig.url}/sitemap.xml`'));
@@ -51,7 +59,8 @@ test('utility workflows are noindex-follow and excluded from the sitemap', () =>
 
 test('sitemap remains focused on canonical content collections and listings', () => {
   assert.ok(sitemap.includes('...categories.map'));
-  assert.ok(sitemap.includes('...activityLandings.map'));
+  assert.ok(sitemap.includes('indexableActivities'));
+  assert.ok(sitemap.includes('getBusinessesForActivity(activity).length >= 2'));
   assert.ok(sitemap.includes('...indexableLocalities.map'));
   assert.ok(sitemap.includes('item.count >= 3'));
   assert.ok(sitemap.includes('...businesses.map'));
@@ -62,12 +71,23 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activities.includes('activityLandings.map'));
   assert.ok(activityPage.includes('generateStaticParams'));
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
+  assert.ok(activityPage.includes('activityKeywords(activity.name, activity.searchLabel)'));
+  assert.ok(activityPage.includes('<h2>دليل {activity.name}: الأسماء والعناوين</h2>'));
   assert.ok(activityData.includes("name: 'صيدليات نقادة'"));
   assert.ok(activityData.includes("name: 'مدارس ومعاهد نقادة'"));
   assert.ok(activityData.includes("name: 'محلات وأسواق نقادة'"));
   assert.ok(activityData.includes("name: 'نظارات وبصريات في نقادة'"));
   assert.ok(listingPage.includes('businessSummary({ ...listing, locality })'));
   assert.ok(listingPage.includes('title: `${listing.name} في ${locality}`'));
+});
+
+test('village pages explicitly own directory and locality search intent', () => {
+  assert.ok(villageArticleIndex.includes('function strengthenDirectoryIntent'));
+  assert.ok(villageArticleIndex.includes('`دليل ${locality}`'));
+  assert.ok(villageArticleIndex.includes('`${locality} نقادة`'));
+  assert.ok(villageArticleIndex.includes('`خدمات ${locality}`'));
+  assert.ok(villageArticleIndex.includes('`أنشطة ${locality}`'));
+  assert.ok(villageArticleIndex.includes('seoTitle: `دليل ${locality} في نقادة | خدمات وأنشطة ${locality} | دليل نقادة`'));
 });
 
 test('listing SEO keyword routing only rewrites nursery intent', () => {

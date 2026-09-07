@@ -29,9 +29,35 @@ const rawVillageArticles: VillageArticle[] = [
   ...extendedVillageArticles10,
 ];
 
-export const villageArticles: VillageArticle[] = rawVillageArticles.map((article) =>
-  article.locality === hagerTukhArticle.locality ? hagerTukhArticle : article,
-);
+function strengthenDirectoryIntent(article: VillageArticle): VillageArticle {
+  const locality = article.locality;
+  const plainLocality = locality.replace(/[إأآ]/g, 'ا');
+  const keywords = [
+    `دليل ${locality}`,
+    `دليل ${plainLocality}`,
+    locality,
+    plainLocality,
+    `${locality} نقادة`,
+    `${plainLocality} نقادة`,
+    `خدمات ${locality}`,
+    `أنشطة ${locality}`,
+    'دليل نقادة',
+    ...article.keywords,
+  ];
+
+  return {
+    ...article,
+    title: `دليل ${locality} في نقادة: الخدمات والأنشطة والمعلومات المحلية`,
+    seoTitle: `دليل ${locality} في نقادة | خدمات وأنشطة ${locality} | دليل نقادة`,
+    description: `دليل ${locality} في مركز نقادة بمحافظة قنا: الخدمات والأنشطة والموقع والمعلومات المحلية، مع روابط الوصول والبيانات المنشورة عن ${locality} والمواضع القريبة.`,
+    keywords: [...new Set(keywords)],
+  };
+}
+
+export const villageArticles: VillageArticle[] = rawVillageArticles.map((article) => {
+  const resolvedArticle = article.locality === hagerTukhArticle.locality ? hagerTukhArticle : article;
+  return strengthenDirectoryIntent(resolvedArticle);
+});
 
 const articleAliases: Record<string, string> = {
   'ساحل بشلاو': 'ساحل بشلاو (الهواورة)',

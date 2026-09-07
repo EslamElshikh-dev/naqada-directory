@@ -23,21 +23,29 @@ const defaultIndexRobots: Metadata['robots'] = {
   },
 };
 
+export function canonicalPath(path: string) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  if (normalizedPath === '/') return '/';
+  return `${normalizedPath.replace(/\/+$/, '')}/`;
+}
+
 export function buildPageMetadata({
   title,
   description,
   path,
   robots,
   socialImage,
+  keywords,
 }: {
   title: string;
   description: string;
   path: string;
   robots?: Metadata['robots'];
   socialImage?: { url: string; alt?: string };
+  keywords?: string[];
 }): Metadata {
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = normalizedPath === '/' ? siteConfig.url : `${siteConfig.url}${normalizedPath}`;
+  const normalizedPath = canonicalPath(path);
+  const url = normalizedPath === '/' ? `${siteConfig.url}/` : `${siteConfig.url}${normalizedPath}`;
   const image = socialImage
     ? { url: socialImage.url, alt: socialImage.alt || title }
     : {
@@ -49,6 +57,7 @@ export function buildPageMetadata({
   return {
     title,
     description,
+    ...(keywords?.length ? { keywords } : {}),
     alternates: { canonical: normalizedPath },
     robots: robots ?? defaultIndexRobots,
     openGraph: {

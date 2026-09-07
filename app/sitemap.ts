@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/about' },
   ];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0 || Boolean(getVillageArticle(item.name)));
+  const indexableActivities = activityLandings.filter((activity) => getBusinessesForActivity(activity).length >= 2);
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();
 
   for (const business of businesses) {
@@ -64,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...knowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...allEditorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),
     ...categories.map((item) => ({ url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`), lastModified: latestDate(businesses.filter((business) => business.category === item.name)) })),
-    ...activityLandings.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity)) })),
+    ...indexableActivities.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity)) })),
     ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
     ...localCategoryPages.map((item) => ({ url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`), lastModified: item.lastModified })),
     ...businesses.map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
