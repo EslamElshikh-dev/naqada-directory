@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { LocalityExplorer } from '@/components/locality-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, localities } from '@/lib/data';
-import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'دليل قرى ونجوع نقادة | القرى والعزب والخدمات',
   description: 'دليل قرى ونجوع نقادة بمحافظة قنا: استكشف القرى والنجوع والعزب والمواضع الموثقة وافتح دليل كل قرية للوصول إلى الخدمات والأنشطة المسجلة فيها.',
-  alternates: { canonical: '/villages/' },
-};
+  path: '/villages/',
+});
 
 export default function VillagesPage() {
   const kinds = new Set(localities.map((item) => item.type)).size;
