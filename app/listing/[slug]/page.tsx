@@ -10,6 +10,7 @@ import { BrandMark } from '@/components/site-shell';
 import { getBusinessMedia } from '@/lib/business-media';
 import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
 import { buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
+import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -42,11 +43,48 @@ export default async function ListingPage({ params }: Props) {
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const safeMapsUrl = isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : null;
+  const safeMediaSourceUrl = media && isSafeExternalUrl(media.sourceUrl) ? media.sourceUrl : null;
   const related = relatedBusinesses(listing);
   const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
   const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
   const correctionUrl = `/contribute?type=correction&name=${encodeURIComponent(listing.name)}&category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}&listing=${encodeURIComponent(listing.slug)}`;
   const summary = listing.description || businessSummary({ ...listing, locality });
+  const completenessSignals = [
+    { label: 'عنوان تفصيلي', available: Boolean(listing.address) },
+    { label: 'رقم هاتف', available: Boolean(phone) },
+    { label: 'ساعات عمل', available: Boolean(listing.hours) },
+    { label: 'رابط خريطة', available: Boolean(safeMapsUrl) },
+    { label: 'صورة موثقة', available: Boolean(media) },
+  ];
+  const availableSignals = completenessSignals.filter((item) => item.available).length;
+  const completenessPercent = Math.round((availableSignals / completenessSignals.length) * 100);
+  const missingLabels = completenessSignals.filter((item) => !item.available).map((item) => item.label);
+  const faqItems = [
+    {
+      question: `أين يقع ${listing.name}؟`,
+      answer: listing.address
+        ? `العنوان المنشور في دليل نقادة هو: ${listing.address}.`
+        : `الموضع المنشور هو ${locality}، مركز نقادة، محافظة قنا، ولا يتوفر عنوان تفصيلي منشور حتى الآن.`,
+    },
+    {
+      question: `هل يوجد رقم هاتف لـ ${listing.name}؟`,
+      answer: phone
+        ? `نعم، رقم الهاتف المنشور في السجل هو ${listing.phone}.`
+        : 'لا يوجد رقم هاتف منشور في السجل الحالي. يمكن إرسال تصحيح موثق إذا توفر رقم عام للنشاط أو الجهة.',
+    },
+    {
+      question: `ما مواعيد عمل ${listing.name}؟`,
+      answer: listing.hours
+        ? `ساعات العمل المنشورة هي: ${listing.hours}. يُفضّل التأكد من الموعد قبل الزيارة لأن المواعيد قد تتغير.`
+        : 'لا توجد ساعات عمل منشورة في السجل الحالي. يُفضّل التحقق مباشرة قبل الزيارة إذا توفرت وسيلة اتصال.',
+    },
+    {
+      question: `هل يتوفر موقع ${listing.name} على الخريطة؟`,
+      answer: safeMapsUrl
+        ? 'نعم، يتوفر رابط خريطة مرتبط بالسجل ويمكن فتحه من زر الخريطة في الصفحة.'
+        : 'لا يوجد رابط خريطة منشور في السجل الحالي، لذلك يعرض الدليل العنوان النصي المتاح فقط.',
+    },
+  ];
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -77,6 +115,15 @@ export default async function ListingPage({ params }: Props) {
           { '@type': 'ListItem', position: 2, name: listing.category, item: categoryUrl },
           { '@type': 'ListItem', position: 3, name: listing.name, item: canonicalUrl },
         ],
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${canonicalUrl}#faq`,
+        mainEntity: faqItems.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
       },
     ],
   };
@@ -116,7 +163,35 @@ export default async function ListingPage({ params }: Props) {
             <h2 id="listing-description-title">{listing.name}</h2>
             <p>{summary}</p>
           </section>
-          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}</div>
+
+          <section className={styles.trustSection} aria-labelledby="listing-completeness-title">
+            <div className={styles.trustHeading}>
+              <div>
+                <span className="eyebrow eyebrow--dark">شفافية السجل</span>
+                <h2 id="listing-completeness-title">اكتمال البيانات المنشورة</h2>
+              </div>
+              <div className={styles.score}><strong>{completenessPercent.toLocaleString('ar-EG')}٪</strong><span>{availableSignals.toLocaleString('ar-EG')} من {completenessSignals.length.toLocaleString('ar-EG')} عناصر أساسية</span></div>
+            </div>
+            <div className={styles.completenessBar} role="progressbar" aria-label="نسبة اكتمال البيانات المنشورة" aria-valuemin={0} aria-valuemax={100} aria-valuenow={completenessPercent}>
+              <span style={{ width: `${completenessPercent}%` }} />
+            </div>
+            <div className={styles.signalGrid}>
+              {completenessSignals.map((item) => <div key={item.label} className={`${styles.signal} ${item.available ? styles.signalAvailable : ''}`}><i aria-hidden="true" /><span>{item.label}</span></div>)}
+            </div>
+            <p className={styles.missingNote}>{missingLabels.length ? `غير منشور حتى الآن: ${missingLabels.join('، ')}. لا يضيف الدليل بيانات غير مؤكدة فقط لرفع نسبة الاكتمال.` : 'العناصر الأساسية الخمسة متاحة في السجل الحالي، مع بقاء ضرورة التحقق من أي تغيّر قبل الزيارة.'}</p>
+          </section>
+
+          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p><div className={styles.sourceLinks}>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}{safeMediaSourceUrl && <a href={safeMediaSourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media?.sourceName} ↗</a>}</div></div>
+
+          <section className={styles.faqSection} aria-labelledby="listing-faq-title">
+            <span className="eyebrow eyebrow--dark">أسئلة مباشرة</span>
+            <h2 id="listing-faq-title">أسئلة شائعة عن {listing.name}</h2>
+            <p className={styles.faqIntro}>الإجابات التالية مبنية على البيانات المنشورة في السجل نفسه، وتوضح بوضوح ما هو متاح وما هو غير منشور.</p>
+            <div className={styles.faqList}>
+              {faqItems.map((item, index) => <details key={item.question} className={styles.faqItem} open={index === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+            </div>
+          </section>
+
           <ListingRating listingSlug={listing.slug} listingName={listing.name} />
           <ShareActions title={listing.name} locality={locality} listingSlug={listing.slug} />
           <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
