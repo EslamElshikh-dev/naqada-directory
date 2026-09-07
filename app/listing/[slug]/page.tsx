@@ -14,6 +14,19 @@ import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 
+function resolveSeoKeywordSearch(keyword: string) {
+  const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);
+  const isLocal = isNurseryKeyword && keyword.includes('الخطارة');
+
+  if (!isNurseryKeyword) return { searchTerm: keyword, isLocal: false };
+
+  const searchTerm = keyword === 'حضانة' || keyword.includes('نقادة') || isLocal
+    ? 'حضانة'
+    : keyword.includes('أطفال') || keyword.includes('رياض') ? 'أطفال' : keyword;
+
+  return { searchTerm, isLocal };
+}
+
 export function generateStaticParams() {
   return businesses.map((item) => ({ slug: item.slug }));
 }
@@ -209,10 +222,7 @@ export default async function ListingPage({ params }: Props) {
         <h2 id="listing-keywords-title">كلمات مرتبطة بالنشاط</h2>
         <div className="listing-keywords__links">
           {listing.seoKeywords.map((keyword) => {
-            const isLocal = keyword.includes('الخطارة');
-            const searchTerm = keyword === 'حضانة' || keyword.includes('نقادة') || isLocal
-              ? 'حضانة'
-              : keyword.includes('أطفال') || keyword.includes('رياض') ? 'أطفال' : keyword;
+            const { searchTerm, isLocal } = resolveSeoKeywordSearch(keyword);
             const href = `/directory?q=${encodeURIComponent(searchTerm)}${isLocal ? `&locality=${encodeURIComponent(locality)}` : ''}`;
             return <Link key={keyword} href={href}>{keyword}<span aria-hidden="true">←</span></Link>;
           })}
