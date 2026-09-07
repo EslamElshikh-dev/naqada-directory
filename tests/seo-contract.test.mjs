@@ -10,6 +10,8 @@ const site = read('lib/site.ts');
 const contribute = read('app/contribute/page.tsx');
 const privacy = read('app/privacy/page.tsx');
 const activities = read('app/activities/page.tsx');
+const villages = read('app/villages/page.tsx');
+const blog = read('app/blog/page.tsx');
 const activityPage = read('app/activities/[slug]/page.tsx');
 const activityData = read('lib/activity-landings.ts');
 const listingPage = read('app/listing/[slug]/page.tsx');
@@ -67,7 +69,9 @@ test('sitemap remains focused on canonical content collections and listings', ()
 });
 
 test('search landing pages connect activity intent to published business names', () => {
-  assert.ok(activities.includes("alternates: { canonical: '/activities' }"));
+  assert.ok(activities.includes("alternates: { canonical: '/activities/' }"));
+  assert.ok(activities.includes("title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم'"));
+  assert.ok(activities.includes('<h1>دليل خدمات وأنشطة <em>نقادة</em></h1>'));
   assert.ok(activities.includes('activityLandings.map'));
   assert.ok(activityPage.includes('generateStaticParams'));
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
@@ -81,6 +85,14 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(listingPage.includes('title: `${listing.name} في ${locality}`'));
 });
 
+test('villages hub owns generic village-directory intent', () => {
+  assert.ok(villages.includes("title: 'دليل قرى ونجوع نقادة | القرى والعزب والخدمات'"));
+  assert.ok(villages.includes("alternates: { canonical: '/villages/' }"));
+  assert.ok(villages.includes('<h1>دليل قرى ونجوع <em>نقادة</em></h1>'));
+  assert.ok(villages.includes('name: `دليل ${item.name}`'));
+  assert.ok(villages.includes('دليل بشلاو ودليل الأوسط قمولا'));
+});
+
 test('village pages explicitly own directory and locality search intent', () => {
   assert.ok(villageArticleIndex.includes('function strengthenDirectoryIntent'));
   assert.ok(villageArticleIndex.includes('`دليل ${locality}`'));
@@ -88,6 +100,15 @@ test('village pages explicitly own directory and locality search intent', () => 
   assert.ok(villageArticleIndex.includes('`خدمات ${locality}`'));
   assert.ok(villageArticleIndex.includes('`أنشطة ${locality}`'));
   assert.ok(villageArticleIndex.includes('seoTitle: `دليل ${locality} في نقادة | خدمات وأنشطة ${locality} | دليل نقادة`'));
+});
+
+test('blog schema contains editorial posts only and routes directory intent to villages', () => {
+  assert.ok(blog.includes('const totalPosts = allEditorialPosts.length;'));
+  assert.ok(blog.includes('blogPost: allEditorialPosts.map'));
+  assert.ok(!blog.includes('...villageArticles.map'));
+  assert.ok(blog.includes('عبارة «دليل + اسم القرية» مملوكة لصفحة القرية نفسها'));
+  assert.ok(blog.includes('دليل بشلاو'));
+  assert.ok(blog.includes('<Link href="/villages"'));
 });
 
 test('listing SEO keyword routing only rewrites nursery intent', () => {
