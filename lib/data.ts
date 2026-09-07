@@ -30,6 +30,16 @@ const businessOverrides: Record<string, Partial<Business>> = {
     checked: '2026-09-06',
     notes: 'تصحيح جغرافي: العنوان والاسم يثبتان أن المسجد في ساحل بشلاو، وليس داخل بشلاو نفسها.',
   },
+  'directory:bashlaw-alhoot-metalworks': {
+    address: 'نجع بشلاو، الأوسط قمولا، مركز نقادة، قنا',
+    phone: '+201060291767',
+    rating: 5,
+    reviews: 1,
+    hours: 'مفتوح 24 ساعة يوميًا',
+    mapsUrl: 'https://www.google.com/maps/?cid=1787744057810019796',
+    checked: '2026-09-07',
+    notes: 'تحديث تحقق 2026-09-07: BizMidEast وCybo متفقان على الهاتف وساعات العمل والتصنيف، وCybo يعرض 5/5 من مراجعة واحدة. حُذف Plus Code من العنوان المنشور لأن المصدرين يعرضان كودين مختلفين مع اتفاقهما على نجع بشلاو والأوسط قمولا.',
+  },
 };
 
 export const businesses = rawBusinesses.map((item) => {
