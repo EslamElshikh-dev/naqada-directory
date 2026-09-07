@@ -21,13 +21,13 @@ export function LocalityExplorer({ localities }: { localities: LocalityPage[] })
       </div>
       <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> موضعًا مطابقًا</span></div></div>
       {filtered.length ? <div className="village-grid">{filtered.map((item, index) => (
-        <Link href={`/villages/${item.slug}`} key={item.slug} className="village-card">
+        <Link href={`/villages/${item.slug}`} key={item.slug} className="village-card" aria-label={`فتح دليل ${item.name} في نقادة`}>
           <div className="village-card__head"><span className="village-card__visual"><BrandMark compact /></span><span className="village-card__index">{String(index + 1).padStart(2, '0')}</span></div>
-          <span className="village-card__type">{item.type}</span>
-          <h2>{item.name}</h2>
-          <p>{item.notes || item.scope || `${item.name} ضمن النطاق الجغرافي لمركز نقادة.`}</p>
+          <span className="village-card__type">{item.type} · مركز نقادة</span>
+          <h2>دليل {item.name}</h2>
+          <p>{item.notes || item.scope || `دليل ${item.name} ضمن مركز نقادة: الخدمات والأنشطة والمعلومات المحلية المنشورة عن المكان.`}</p>
           <div className="village-card__meta"><span><b>{item.businessCount.toLocaleString('ar-EG')}</b> سجل خدمي</span><span>{item.verification || 'مراجع'}</span></div>
-          <span className="village-card__cta">فتح صفحة الموضع ←</span>
+          <span className="village-card__cta">فتح دليل {item.name} ←</span>
         </Link>
       ))}</div> : <div className="empty-state"><strong>لا يوجد موضع مطابق</strong><p>جرّب كتابة جزء من الاسم.</p></div>}
     </div>
