@@ -1,0 +1,197 @@
+{
+  "scope": "بشلاو / الأوسط قمولا، مركز نقادة، قنا",
+  "checked": "2026-09-07",
+  "purpose": "جولة تحقق ثانية على مرشحي التجارة والخدمات. الملف بحثي وغير مستورد إلى واجهة الدليل.",
+  "method": [
+    "مطابقة الاسم الكامل والنشاط والموضع مع جريدة الأسماء التجارية الرسمية.",
+    "البحث عن تعديلات لاحقة على العنوان أو النشاط أو محو/شطب بالاسم الكامل، لا برقم القيد وحده لأن أرقام القيد قد تتكرر بين مكاتب مختلفة.",
+    "البحث عن أثر عام أحدث مثل خريطة أو هاتف أو صفحة متجر أو قرار إداري لاحق.",
+    "عدم اعتبار غياب نتيجة الشطب دليلاً على أن النشاط يعمل حاليًا."
+  ],
+  "findings": [
+    {
+      "leadId": "lead:bashlaw-mobile-accessories-103456",
+      "name": "محمد عبدالرحيم تهامي عبدالرحيم",
+      "activity": "إكسسوار محمول",
+      "confidence": "B+",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2024-06-10",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+          "details": "قيد 103456، محل رئيسي عن إكسسوار محمول، بجهة بشلاو، بملك محمود عبدالناصر عبدالله."
+        },
+        {
+          "date": "2024-07-30",
+          "type": "address_update",
+          "source": "https://www.itda.gov.eg/CRM/876/CRA40.pdf",
+          "details": "تعديل لاحق للعنوان إلى الأوسط قمولا - بشلاو، بملك أحمد عبدالناصر عبدالله."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      },
+      "reason": "وجود قيد ثم تعديل عنوان لاحق يقوي جدًا ربط النشاط ببشلاو، لكن ما زال ينقص اسم متجر متداول أو وسيلة اتصال/خريطة تسمح بعرضه كوجهة حالية للجمهور."
+    },
+    {
+      "leadId": "lead:bashlaw-feed-herbs-47105",
+      "name": "عماد محمود محمد حامد",
+      "activity": "بيع علف وعطارة",
+      "confidence": "B+",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2024-08-22",
+          "type": "initial_registration",
+          "source": "https://itda.gov.eg/CRM/877/CRA79.pdf",
+          "details": "قيد 47105، محل رئيسي عن بيع علف وعطارة، بجهة بشلاو - الأوسط قمولا، بملك عاطف محمود محمد حامد."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      },
+      "reason": "المرشح قوي رسميًا ومكانيًا، لكن البحث الحالي لم يربطه باسم محل أو هاتف أو خريطة عامة حديثة."
+    },
+    {
+      "leadId": "lead:bashlaw-dairy-cattle-48545",
+      "name": "محمد جعفري محمود محمد",
+      "activity": "حظيرة مواشي لتربية إناث المواشي لغرض بيع الألبان",
+      "confidence": "B+",
+      "publicationDecision": "hold_for_live_contact_or_operational_trace",
+      "evidence": [
+        {
+          "date": "2025-02-09",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/CRM/883/CRA79.pdf",
+          "details": "قيد 48545، نشاط حظيرة مواشي لتربية الإناث بغرض بيع الألبان، بالأوسط قمولا - بشلاو، بملك رجب جعفر محمود محمد."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      },
+      "reason": "أحدث المرشحين الزراعيين رسميًا، لكنه ليس متجر تجزئة بالضرورة ويحتاج أثر تشغيل حالي أو وسيلة تواصل قبل صفحة عامة."
+    },
+    {
+      "leadId": "lead:bashlaw-grocery-103457",
+      "name": "محمد احمد احمد محمد ابوالحسن",
+      "activity": "بيع بقالة",
+      "confidence": "B",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2024-06-10",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+          "details": "قيد 103457، محل رئيسي عن بيع بقالة، بجهة بشلاو، بملك جاد يوسف جادالرب."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      }
+    },
+    {
+      "leadId": "lead:bashlaw-grocery-46035",
+      "name": "محمود احمد عبدالمطلب ابوالحسن",
+      "activity": "بيع بقالة",
+      "confidence": "B",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2024-03-18",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/CRM/872/CRA79.pdf",
+          "details": "قيد 46035، محل رئيسي عن بيع بقالة، بالأوسط قمولا - بشلاو، بملك أحمد عبدالمطلب ابوالحسن."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      }
+    },
+    {
+      "leadId": "lead:bashlaw-produce-43398",
+      "name": "ابراهيم محمد عبدالكريم ابراهيم",
+      "activity": "بيع الخضروات والفاكهة",
+      "confidence": "B",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2023-02-23",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/crm/859/CRA79.pdf",
+          "details": "قيد 43398، محل لبيع الخضروات والفاكهة، بالأوسط قمولا - بشلاو."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      }
+    },
+    {
+      "leadId": "lead:bashlaw-produce-43399",
+      "name": "مديحه عبد الحميد ابوالعلا احمد",
+      "activity": "بيع الخضروات والفاكهة",
+      "confidence": "B",
+      "publicationDecision": "hold_for_live_contact_or_storefront_match",
+      "evidence": [
+        {
+          "date": "2023-02-23",
+          "type": "initial_registration",
+          "source": "https://www.itda.gov.eg/crm/859/CRA79.pdf",
+          "details": "قيد 43399، محل لبيع الخضروات والفاكهة، بالأوسط قمولا - بشلاو."
+        }
+      ],
+      "liveTrace": {
+        "phone": null,
+        "maps": null,
+        "storeName": null,
+        "socialPage": null
+      }
+    },
+    {
+      "leadId": "lead:bashlaw-falafel-mohamed-atito-adly",
+      "name": "محمد عطيتو عادلي",
+      "activity": "بائع فول وفلافل",
+      "confidence": "A_for_administrative_status",
+      "publicationDecision": "do_not_publish_as_active",
+      "evidence": [
+        {
+          "date": "2025-12-17",
+          "type": "administrative_closure",
+          "source": "https://www.qena.gov.eg/Goffice/orders/Lists/List/AllItems.aspx",
+          "details": "قرار محافظة قنا بإغلاق المنشأة إداريًا لحين تقنين الأوضاع واستيفاء الاشتراطات الصحية."
+        }
+      ],
+      "followUpSearch": "لم يظهر في البحث العام الحالي دليل لاحق يثبت إعادة الفتح أو تقنين الوضع.",
+      "reason": "يبقى خارج قائمة الأنشطة النشطة حتى يظهر مستند أو أثر عام أحدث يثبت التسوية."
+    }
+  ],
+  "round2Summary": {
+    "publishNow": 0,
+    "strongCandidates": 3,
+    "holdCandidates": 4,
+    "blockedAsActive": 1,
+    "highestPriorityNext": [
+      "محمد عبدالرحيم تهامي عبدالرحيم - إكسسوار محمول",
+      "عماد محمود محمد حامد - بيع علف وعطارة",
+      "محمد جعفري محمود محمد - حظيرة مواشي/ألبان"
+    ]
+  }
+}
