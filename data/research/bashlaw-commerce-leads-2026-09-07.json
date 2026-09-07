@@ -1,0 +1,137 @@
+{
+  "scope": "بشلاو / الأوسط قمولا، مركز نقادة، قنا",
+  "checked": "2026-09-07",
+  "purpose": "حصر داخلي لمرشحي الأنشطة قبل الوصول إلى معيار النشر. هذا الملف غير مستورد في واجهة الدليل ولا يعني أن الأنشطة ما زالت تعمل حاليًا.",
+  "publicationPolicy": "لا يُنقل أي مرشح إلى businesses إلا بعد تحقق حالي إضافي مناسب لطبيعة النشاط. القرارات الإدارية السلبية تمنع وصف النشاط بأنه نشط حتى يظهر ما يثبت تسوية الوضع لاحقًا.",
+  "baseline": {
+    "electronics": {
+      "name": "صيانة الأجهزة الإلكترونية",
+      "status": "already_published",
+      "verification": "A",
+      "note": "السجل المؤكد الحالي الوحيد في بشلاو ضمن الإلكترونيات والهواتف؛ لا يُكرر ضمن المرشحين."
+    },
+    "bakeries": {
+      "status": "no_bashlaw_specific_publishable_match_found",
+      "note": "ظهرت مخابز موثقة في الأوسط قمولا، لكن لم يظهر دليل كافٍ لنقل موضعها إلى بشلاو تحديدًا."
+    }
+  },
+  "leads": [
+    {
+      "id": "lead:bashlaw-sanitary-plumbing-35116",
+      "category": "الأدوات الصحية والسباكة",
+      "name": "عائشة سقف نجدي سقاف",
+      "activity": "بيع أدوات صحية وسباكة",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2021-12-09",
+      "registryNumber": "35116",
+      "source": "https://www.itda.gov.eg/CRM/833/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "hold_for_current_verification",
+      "reason": "القيد الرسمي يثبت النشاط والموضع تاريخيًا، لكنه قديم نسبيًا ولا يوجد حتى الآن أثر حديث مستقل يثبت استمرار التشغيل أو الاسم التجاري المتداول."
+    },
+    {
+      "id": "lead:bashlaw-feed-herbs-47105",
+      "category": "الأعلاف والزراعة",
+      "name": "عماد محمود محمد حامد",
+      "activity": "بيع أعلاف وعطارة",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2024-08-22",
+      "registryNumber": "47105",
+      "source": "https://itda.gov.eg/CRM/877/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "strong_lead_hold_for_current_verification",
+      "reason": "قيد رسمي حديث نسبيًا يطابق بشلاو والأوسط قمولا، لكن لا يوجد حتى الآن هاتف أو خريطة أو أثر عام أحدث يثبت استمرار النشاط بصورته الحالية."
+    },
+    {
+      "id": "lead:bashlaw-dairy-cattle-48545",
+      "category": "الأعلاف والزراعة",
+      "name": "محمد جعفري محمود محمد",
+      "activity": "تربية إناث المواشي لغرض بيع الألبان",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2025-02-09",
+      "registryNumber": "48545",
+      "source": "https://www.itda.gov.eg/CRM/883/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "strong_lead_hold_for_current_verification",
+      "reason": "قيد رسمي حديث يثبت نشاطًا زراعيًا/حيوانيًا في بشلاو، ويحتاج أثرًا تشغيليًا حاليًا قبل الإدراج كنشاط متاح للجمهور."
+    },
+    {
+      "id": "lead:bashlaw-mobile-accessories-103456",
+      "category": "الموبايلات والإلكترونيات",
+      "name": "محمد عبدالرحيم تهامي عبدالرحيم",
+      "activity": "إكسسوار محمول",
+      "locality": "بشلاو",
+      "evidenceDate": "2024-06-10",
+      "registryNumber": "103456",
+      "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "strong_lead_hold_for_current_verification",
+      "reason": "مرشح جديد واضح للموبايلات في بشلاو، لكن القيد لا يعرض اسم متجر متداول أو هاتفًا أو خريطة؛ يلزم ربطه بأثر حديث قبل النشر."
+    },
+    {
+      "id": "lead:bashlaw-grocery-103457",
+      "category": "المخابز والأكل",
+      "name": "محمد احمد احمد محمد ابوالحسن",
+      "activity": "بيع بقالة",
+      "locality": "بشلاو",
+      "evidenceDate": "2024-06-10",
+      "registryNumber": "103457",
+      "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "hold_for_current_verification",
+      "reason": "القيد يثبت نشاط بقالة في بشلاو، لكنه لا يكفي وحده لبناء صفحة نشاط حالي دون اسم متجر/اتصال/أثر حديث."
+    },
+    {
+      "id": "lead:bashlaw-grocery-46035",
+      "category": "المخابز والأكل",
+      "name": "محمود احمد عبدالمطلب ابوالحسن",
+      "activity": "بيع بقالة",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2024-03-18",
+      "registryNumber": "46035",
+      "source": "https://www.itda.gov.eg/CRM/872/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "hold_for_current_verification",
+      "reason": "مرشح غذائي محلي مثبت رسميًا، لكن لا يوجد حتى الآن دليل تشغيلي حديث كافٍ للنشر العام."
+    },
+    {
+      "id": "lead:bashlaw-produce-43398",
+      "category": "المخابز والأكل",
+      "name": "ابراهيم محمد عبدالكريم ابراهيم",
+      "activity": "بيع خضروات وفاكهة",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2023-02-23",
+      "registryNumber": "43398",
+      "source": "https://www.itda.gov.eg/crm/859/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "hold_for_current_verification",
+      "reason": "القيد مناسب للحصر التاريخي/التجاري، لكنه أقدم ولا توجد مطابقة حديثة كافية حتى الآن."
+    },
+    {
+      "id": "lead:bashlaw-produce-43399",
+      "category": "المخابز والأكل",
+      "name": "مديحه عبد الحميد ابوالعلا احمد",
+      "activity": "بيع خضروات وفاكهة",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2023-02-23",
+      "registryNumber": "43399",
+      "source": "https://www.itda.gov.eg/crm/859/CRA79.pdf",
+      "sourceType": "جريدة الأسماء التجارية - جهاز تنمية التجارة الداخلية",
+      "decision": "hold_for_current_verification",
+      "reason": "القيد مناسب للحصر التاريخي/التجاري، لكنه أقدم ولا توجد مطابقة حديثة كافية حتى الآن."
+    },
+    {
+      "id": "lead:bashlaw-falafel-mohamed-atito-adly",
+      "category": "المخابز والأكل",
+      "name": "محمد عطيتو عادلي",
+      "activity": "بائع فول وفلافل",
+      "locality": "بشلاو / الأوسط قمولا",
+      "evidenceDate": "2025-12-17",
+      "registryNumber": null,
+      "source": "https://www.qena.gov.eg/Goffice/orders/Lists/List/AllItems.aspx",
+      "sourceType": "قرار منشور بمحافظة قنا",
+      "decision": "do_not_publish_as_active",
+      "reason": "ورد النشاط ضمن منشآت تقرر غلقها إداريًا لحين تقنين الأوضاع واستيفاء الاشتراطات الصحية. لا يُوصف كنشاط نشط إلا بعد دليل لاحق على التسوية أو إعادة التشغيل."
+    }
+  ]
+}
