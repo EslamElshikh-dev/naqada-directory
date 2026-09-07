@@ -40,6 +40,18 @@ const businessOverrides: Record<string, Partial<Business>> = {
     checked: '2026-09-07',
     notes: 'تحديث تحقق 2026-09-07: BizMidEast وCybo متفقان على الهاتف وساعات العمل والتصنيف، وCybo يعرض 5/5 من مراجعة واحدة. حُذف Plus Code من العنوان المنشور لأن المصدرين يعرضان كودين مختلفين مع اتفاقهما على نجع بشلاو والأوسط قمولا.',
   },
+  'directory:bashlaw-waleed-barber': {
+    rating: 3.5,
+    reviews: 2,
+    checked: '2026-09-07',
+    notes: 'تحديث تحقق 2026-09-07: Cybo يطابق الاسم والعنوان على المدخل الرئيسي لقرية بشلاو ويعرض تقييم 3.5/5 من مراجعتين. لم تُضف صورة لأن نتائج الصور المطابقة للاسم من خارج بشلاو رُفضت.',
+  },
+  'directory:bashlaw-mahmoud-barber': {
+    rating: 3,
+    reviews: 3,
+    checked: '2026-09-07',
+    notes: 'تحديث تحقق 2026-09-07: Cybo يطابق الاسم والعنوان في شارع مدرسة عمر بن الخطاب ببشلاو ويعرض تقييم 3/5 من 3 مراجعات. لا توجد صورة محلية موثقة مضافة.',
+  },
 };
 
 export const businesses = rawBusinesses.map((item) => {
