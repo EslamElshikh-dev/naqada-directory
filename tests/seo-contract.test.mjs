@@ -69,7 +69,8 @@ test('sitemap remains focused on canonical content collections and listings', ()
 });
 
 test('search landing pages connect activity intent to published business names', () => {
-  assert.ok(activities.includes("alternates: { canonical: '/activities/' }"));
+  assert.ok(activities.includes('buildPageMetadata({'));
+  assert.ok(activities.includes("path: '/activities/'"));
   assert.ok(activities.includes("title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم'"));
   assert.ok(activities.includes('<h1>دليل خدمات وأنشطة <em>نقادة</em></h1>'));
   assert.ok(activities.includes('activityLandings.map'));
@@ -86,11 +87,22 @@ test('search landing pages connect activity intent to published business names',
 });
 
 test('villages hub owns generic village-directory intent', () => {
+  assert.ok(villages.includes('buildPageMetadata({'));
+  assert.ok(villages.includes("path: '/villages/'"));
   assert.ok(villages.includes("title: 'دليل قرى ونجوع نقادة | القرى والعزب والخدمات'"));
-  assert.ok(villages.includes("alternates: { canonical: '/villages/' }"));
   assert.ok(villages.includes('<h1>دليل قرى ونجوع <em>نقادة</em></h1>'));
   assert.ok(villages.includes('name: `دليل ${item.name}`'));
   assert.ok(villages.includes('دليل بشلاو ودليل الأوسط قمولا'));
+});
+
+test('hub pages emit page-specific Open Graph and Twitter metadata', () => {
+  for (const source of [activities, villages]) {
+    assert.ok(source.includes('buildPageMetadata({'));
+  }
+  assert.ok(site.includes('openGraph: {'));
+  assert.ok(site.includes('twitter: {'));
+  assert.ok(site.includes('title,'));
+  assert.ok(site.includes('description,'));
 });
 
 test('village pages explicitly own directory and locality search intent', () => {
