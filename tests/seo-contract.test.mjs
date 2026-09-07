@@ -13,6 +13,7 @@ const activities = read('app/activities/page.tsx');
 const activityPage = read('app/activities/[slug]/page.tsx');
 const activityData = read('lib/activity-landings.ts');
 const listingPage = read('app/listing/[slug]/page.tsx');
+const businesses05 = read('data/businesses-05.json');
 const villagePage = read('app/villages/[slug]/page.tsx');
 const villageCategoryPage = read('app/villages/[slug]/[category]/page.tsx');
 
@@ -67,6 +68,14 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activityData.includes("name: 'نظارات وبصريات في نقادة'"));
   assert.ok(listingPage.includes('businessSummary({ ...listing, locality })'));
   assert.ok(listingPage.includes('title: `${listing.name} في ${locality}`'));
+});
+
+test('listing SEO keyword routing only rewrites nursery intent', () => {
+  assert.ok(businesses05.includes('"مطور اندرويد نقادة"'));
+  assert.ok(listingPage.includes("const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);"));
+  assert.ok(listingPage.includes("if (!isNurseryKeyword) return { searchTerm: keyword, isLocal: false };"));
+  assert.ok(listingPage.includes('const { searchTerm, isLocal } = resolveSeoKeywordSearch(keyword);'));
+  assert.ok(!listingPage.includes("const isLocal = keyword.includes('الخطارة');\n            const searchTerm = keyword === 'حضانة' || keyword.includes('نقادة') || isLocal"));
 });
 
 test('legacy village names redirect with header-safe canonical URLs', () => {
