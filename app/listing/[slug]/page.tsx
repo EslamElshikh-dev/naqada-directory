@@ -61,7 +61,7 @@ export default async function ListingPage({ params }: Props) {
   const missingLabels = completenessSignals.filter((item) => !item.available).map((item) => item.label);
   const faqItems = [
     {
-      question: `أين يقع ${listing.name}؟`,
+      question: `ما موقع ${listing.name}؟`,
       answer: listing.address
         ? `العنوان المنشور في دليل نقادة هو: ${listing.address}.`
         : `الموضع المنشور هو ${locality}، مركز نقادة، محافظة قنا، ولا يتوفر عنوان تفصيلي منشور حتى الآن.`,
