@@ -1,0 +1,159 @@
+{
+  "scope": "بشلاو / الأوسط قمولا، مركز نقادة، قنا",
+  "checked": "2026-09-07",
+  "purpose": "جولة صيد هواتف/أسماء محلات/صور/صفحات عامة للمرشحين B+، مع توسيع مسح الموبايلات والأعلاف والزراعة في بشلاو. الملف بحثي وغير مستورد إلى واجهة الدليل.",
+  "searchMethod": [
+    "بحث حرفي بالأسماء الكاملة والمتغيرات الإملائية مع بشلاو/الأوسط قمولا/نقادة.",
+    "بحث فئوي عن موبايلات وإكسسوارات وأعلاف وعطارة ومواشي في بشلاو.",
+    "بحث خرائط/أعمال محلية ومصادر ويب عامة وفهرسة صفحات اجتماعية عامة.",
+    "بحث صور منفصل، ورفض أي صورة لا يثبت أنها للنشاط نفسه داخل بشلاو.",
+    "مراجعة جرائد الأسماء التجارية الرسمية بحثًا عن قيود أو تعديلات إضافية."
+  ],
+  "priorityCandidates": [
+    {
+      "leadId": "lead:bashlaw-mobile-accessories-103456",
+      "name": "محمد عبدالرحيم تهامي عبدالرحيم",
+      "category": "الموبايلات والإلكترونيات",
+      "activity": "إكسسوار محمول",
+      "confidence": "B+",
+      "officialEvidence": [
+        {
+          "date": "2024-06-10",
+          "source": "https://www.itda.gov.eg/CRM/875/CRA40.pdf",
+          "details": "قيد 103456؛ محل رئيسي عن إكسسوار محمول؛ جهة بشلاو."
+        },
+        {
+          "date": "2024-07-30",
+          "source": "https://www.itda.gov.eg/CRM/876/CRA40.pdf",
+          "details": "تعديل لاحق للعنوان إلى الأوسط قمولا - بشلاو."
+        }
+      ],
+      "publicTrace": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "searchOutcome": "لم يظهر تطابق عام موثوق يربط الاسم باسم متجر أو هاتف أو صفحة أو خريطة داخل بشلاو. نتائج الخرائط الحالية أعادت متاجر محمول في مدينة نقادة والخطارة، وليست مطابقة لبشلاو، فتم رفضها.",
+      "publicationDecision": "hold_for_storefront_or_contact_match"
+    },
+    {
+      "leadId": "lead:bashlaw-feed-herbs-47105",
+      "name": "عماد محمود محمد حامد",
+      "category": "الأعلاف والزراعة",
+      "activity": "النص المفهرس رسميًا: بيع علاقة/علافة وعطارة — يحتاج تأكيد قراءة النشاط من الأصل",
+      "confidence": "B+",
+      "officialEvidence": [
+        {
+          "date": "2024-08-22",
+          "source": "https://itda.gov.eg/CRM/877/CRA79.pdf",
+          "details": "قيد 47105؛ جهة بشلاو - الأوسط قمولا؛ بملك عاطف محمود محمد حامد. محرك البحث يعرض وصف النشاط بصيغة OCR قد تكون «بيع علافة وعطارة»."
+        }
+      ],
+      "publicTrace": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "searchOutcome": "لا توجد حتى الآن مطابقة عامة موثقة لاسم محل أو هاتف أو صفحة أو خريطة مرتبطة بالاسم داخل بشلاو.",
+      "publicationDecision": "hold_for_live_storefront_or_contact_match"
+    },
+    {
+      "leadId": "lead:bashlaw-dairy-cattle-48545",
+      "name": "محمد جعفري محمود محمد",
+      "category": "الأعلاف والزراعة",
+      "activity": "حظيرة مواشي لتربية إناث المواشي بغرض بيع الألبان",
+      "confidence": "B+",
+      "officialEvidence": [
+        {
+          "date": "2025-02-09",
+          "source": "https://itda.gov.eg/CRM/883/CRA79.pdf",
+          "details": "قيد 48545؛ الأوسط قمولا - بشلاو؛ بملك رجب جعفر محمود محمد."
+        }
+      ],
+      "publicTrace": {
+        "verifiedBusinessPhone": null,
+        "verifiedStoreName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "searchOutcome": "لا يوجد أثر تشغيلي عام حديث يمكن ربطه بثقة بالاسم والنشاط في بشلاو.",
+      "publicationDecision": "hold_for_operational_trace_or_contact"
+    }
+  ],
+  "imageAudit": {
+    "accepted": 0,
+    "rejected": "نتائج الصور الظاهرة كانت صور محلات موبايلات/أعلاف عامة أو من مدن أخرى، ولم يثبت أنها تخص أيًا من المرشحين في بشلاو. لم تُستخدم أي صورة شكلية بديلة."
+  },
+  "mobileExpansion": {
+    "newPublishableMatches": 0,
+    "notes": [
+      "لم يظهر في نتائج الخرائط العامة متجر موبايلات إضافي يمكن تثبيته داخل بشلاو تحديدًا.",
+      "سجل «صيانة الأجهزة الإلكترونية» الموجود بالفعل في بشلاو يظل النشاط الإلكتروني المؤكد الحالي ولا يطابق اسم المرشح 103456.",
+      "متاجر الأصيل/Ali Store وغيرها تقع في الخطارة أو مدينة نقادة، فتم استبعادها من حصر بشلاو."
+    ]
+  },
+  "agricultureExpansion": {
+    "newHistoricalLeads": [
+      {
+        "name": "حراجي عبدالكرم حسن عبدالكرم",
+        "activity": "حظيرة لتربية المواشي وبيع الألبان",
+        "date": "2022-05-08",
+        "registryNumber": "97397",
+        "source": "https://www.itda.gov.eg/CRM/850/CRA40.pdf",
+        "locationText": "الأوسط قمولا - بشلاو",
+        "decision": "historical_lead_hold_for_current_trace"
+      },
+      {
+        "name": "مصطفى عبده بصري عبدالجيل",
+        "activity": "حظيرة مواشي؛ وله محل آخر في بشلاو مذكور بنشاط بقالة",
+        "date": "2020-09-28",
+        "registryNumber": "65309",
+        "source": "https://www.itda.gov.eg/CRM/830/CRA40.pdf",
+        "locationText": "الأوسط قمولا - بشلاو بحسب النص المفهرس",
+        "decision": "historical_lead_hold_for_current_trace"
+      },
+      {
+        "name": "ابو الواجد عبدالفصيل انور ابوالحمد",
+        "activity": "تربية مواشي",
+        "date": "2020-11-30",
+        "registryNumber": "88230",
+        "source": "https://www.itda.gov.eg/CRM/832/CRA40.pdf",
+        "locationText": "بشلاو - الأوسط قمولا بحسب OCR المصدر",
+        "decision": "historical_lead_needs_address_text_confirmation"
+      },
+      {
+        "name": "نجاه موسى جاد علي",
+        "activity": "حظيرة تربية مواشي وبيع الألبان",
+        "date": "2021-11-21",
+        "registryNumber": "94431",
+        "source": "https://itda.gov.eg/CRM/844/CRA40.pdf",
+        "locationText": "النص المفهرس يذكر بشلاو مع قراءة OCR غير مستقرة للجزء الإداري",
+        "decision": "historical_lead_needs_address_text_confirmation"
+      }
+    ],
+    "notes": [
+      "لم يظهر متجر أعلاف آخر داخل بشلاو بنفس وضوح قيد عماد محمود محمد حامد.",
+      "ظهرت أنشطة أعلاف في مواضع أخرى من مركز نقادة، لكنها لم تُنسب لبشلاو.",
+      "المرشحون الجدد أعلاه مرتبطون أكثر بالمواشي/الألبان من تجارة الأعلاف، لذلك حُفظوا كتوسعة زراعية ثانوية لا كبدائل لمحل أعلاف."
+    ]
+  },
+  "round3Summary": {
+    "verifiedPhonesFound": 0,
+    "verifiedStoreNamesFound": 0,
+    "verifiedSocialPagesFound": 0,
+    "verifiedLocalPhotosFound": 0,
+    "newPublishableMobileOrFeedBusinesses": 0,
+    "newHistoricalAgricultureLeads": 4,
+    "priorityOrderNext": [
+      "البحث الميداني/الاجتماعي عن اسم متجر محمد عبدالرحيم تهامي عبدالرحيم",
+      "تأكيد اسم النشاط التجاري المتداول لعماد محمود محمد حامد وربطه بهاتف أو واجهة محل",
+      "البحث عن وسيلة تواصل أو اسم تشغيلي لحظيرة محمد جعفري محمود محمد",
+      "مراجعة صفحات/مجموعات بشلاو المحلية يدويًا عند ظهور نتائج عامة قابلة للفهرسة"
+    ]
+  }
+}
