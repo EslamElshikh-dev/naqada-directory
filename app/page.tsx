@@ -5,7 +5,8 @@ import { CategoryVisual } from '@/components/category-visual';
 import { ListingCard } from '@/components/listing-card';
 import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
-import { getVillageArticle, villageArticleAuthor, villageArticles } from '@/lib/village-articles';
+import { villageArticleAuthor } from '@/lib/village-articles';
+import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { fieldInformants, knowledgeHeritage, knowledgePeople, knowledgePlaces, knowledgeReferences, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { SiteReviews } from '@/components/site-reviews';
 import { ActionIcon } from '@/components/action-icon';
@@ -20,6 +21,8 @@ export const metadata: Metadata = {
 };
 
 const quickCategories = ['الطب والصحة', 'التجزئة والتسوق', 'التعليم', 'المطاعم والأطعمة'];
+const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];
+const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];
 const faq = [
   { question: 'ما الذي يقدمه دليل نقادة؟', answer: 'ينظم الأنشطة والخدمات والقرى والنجوع والسجل العائلي والتراثي لمركز نقادة في صفحات واضحة وسهلة البحث.' },
   { question: 'هل ظهور النشاط يعني أنه معتمد رسميًا؟', answer: 'لا. الدليل منصة معلوماتية مستقلة، ويعرض مصدر البيانات وتاريخ المراجعة بقدر ما تسمح به المادة المتاحة.' },
@@ -27,18 +30,27 @@ const faq = [
   { question: 'هل تشمل التغطية كل قرى نقادة؟', answer: 'الهيكل الجغرافي يشمل المواضع الموثقة، بينما يزداد عدد الأنشطة والتفاصيل تدريجيًا مع اكتمال المراجعة.' },
 ];
 
-function articleHref(localityName: string) {
-  const locality = localities.find((item) => getVillageArticle(item.name)?.locality === localityName);
-  return locality ? `/villages/${locality.slug}` : '/blog';
-}
-
 export default function HomePage() {
   const topLocalities = officialLocalities.filter((item) => item.businessCount > 0).slice(0, 12);
+  const priorityLocalities = priorityLocalityNames
+    .map((name) => localities.find((item) => item.name === name))
+    .filter((item): item is (typeof localities)[number] => Boolean(item));
+  const featuredLocalityGuides = [
+    ...priorityLocalities,
+    ...topLocalities.filter((item) => !priorityLocalityNames.includes(item.name)),
+  ].slice(0, 8);
+  const priorityActivities = priorityActivityNames
+    .map((name) => activityLandings.find((item) => item.name === name))
+    .filter((item): item is (typeof activityLandings)[number] => Boolean(item));
+  const featuredActivities = [
+    ...priorityActivities,
+    ...activityLandings.filter((item) => !priorityActivityNames.includes(item.name)),
+  ].slice(0, 8);
   const recentlyReviewed = [...businesses]
     .filter((item) => Boolean(item.checked))
     .sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0))
     .slice(0, 6);
-  const featuredArticles = villageArticles.slice(0, 4);
+  const featuredArticles = allEditorialPosts.slice(0, 4);
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -67,7 +79,7 @@ export default function HomePage() {
               <input id="home-search" name="q" placeholder="ابحث باسم خدمة أو نشاط أو قرية…" />
               <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
             </form>
-            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">القرى</Link><Link href="/knowledge">الموسوعة</Link><Link href="/blog">المدونة</Link></div>
+            <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">دليل القرى</Link><Link href="/knowledge">الموسوعة</Link><Link href="/blog">المدونة</Link></div>
             <div className="hero__trust">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>نشاطًا وخدمة</small></span>
               <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية ونجعًا وموضعًا</small></span>
@@ -80,7 +92,7 @@ export default function HomePage() {
             <div className="hero__panel-stat"><strong>{meta.businessCount.toLocaleString('ar-EG')}</strong><div><b>مكان وخدمة</b><span>منظّمان داخل دليل واحد</span></div></div>
             <span className="hero__panel-label">استكشف حسب المكان</span>
             <div className="village-cloud">{topLocalities.map((item) => <Link key={item.slug} href={`/villages/${item.slug}`}>{item.name}</Link>)}</div>
-            <Link href="/villages" className="text-link text-link--light">كل القرى والنجوع ←</Link>
+            <Link href="/villages" className="text-link text-link--light">كل أدلة القرى والنجوع ←</Link>
           </aside>
         </div>
       </section>
@@ -93,7 +105,7 @@ export default function HomePage() {
         </Link>
         <Link href="/villages" className="home-action">
           <span className="home-action__icon"><ActionIcon name="map" /></span>
-          <span><small>حسب موقعك</small><strong>القرى والنجوع</strong></span>
+          <span><small>حسب موقعك</small><strong>دليل القرى والنجوع</strong></span>
           <b>{meta.localityCount.toLocaleString('ar-EG')}</b>
         </Link>
         <Link href="/knowledge" className="home-action">
@@ -148,8 +160,8 @@ export default function HomePage() {
 
       <section className="section section--muted">
         <div className="shell">
-          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أنشطة يبحث عنها أهل نقادة</span><h2>الخدمات والأنشطة بالأسماء</h2><p>صفحات مخصصة لأشهر أنواع الخدمات، تربط اسم النشاط بصفحته ومكانه داخل مركز نقادة.</p></div><Link href="/activities" className="text-link">كل أنواع الأنشطة ←</Link></div>
-          <div className="category-grid">{activityLandings.slice(0, 8).map((activity, index) => {
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أنشطة يبحث عنها أهل نقادة</span><h2>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة</h2><p>روابط مباشرة إلى أهم صفحات الخدمات ذات نية البحث المحلية، ثم بقية أنواع الأنشطة المنشورة داخل مركز نقادة.</p></div><Link href="/activities" className="text-link">كل أنواع الأنشطة ←</Link></div>
+          <div className="category-grid">{featuredActivities.map((activity, index) => {
             const count = getBusinessesForActivity(activity).length;
             return <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card"><div className="category-card__visual"><CategoryVisual category={activity.visualCategory} /><span>{String(index + 1).padStart(2, '0')}</span></div><h3>{activity.name}</h3><p>{activity.description}</p><div className="category-card__footer"><b>{count.toLocaleString('ar-EG')} اسمًا</b><span>عرض النتائج ←</span></div></Link>;
           })}</div>
@@ -167,13 +179,18 @@ export default function HomePage() {
         <div className="listing-grid">{recentlyReviewed.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div>
       </section>
 
+      <section className="section shell place-feature">
+        <div className="place-feature__intro"><span className="eyebrow eyebrow--dark">أدلة القرى ذات الأولوية</span><h2>أدلة قرى نقادة الأكثر أهمية للبحث المحلي</h2><p>وصول مباشر إلى دليل بشلاو، دليل الأوسط قمولا، دليل طوخ، دليل الخطارة، دليل دنفيق، ثم أبرز المواضع التي تحتوي على أنشطة منشورة.</p><Link href="/villages" className="button button--primary">كل أدلة القرى والنجوع</Link></div>
+        <div className="place-list">{featuredLocalityGuides.map((item, index) => <Link key={item.slug} href={`/villages/${item.slug}`}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>دليل {item.name}</strong><small>{item.type}</small></div><b>{item.businessCount.toLocaleString('ar-EG')} سجلًا</b></Link>)}</div>
+      </section>
+
       <section className={blogStyles.previewSection}>
         <div className="shell">
-          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">مدونة دليل نقادة</span><h2>حكايات القرى والنجوع… بالمعلومة والضحكة في وقتها</h2><p>مقالات محلية أصلية عن المكان والناس والتاريخ والخدمات، بقلم إسلام الشيخ.</p></div><Link href="/blog" className="text-link">كل مقالات المدونة ←</Link></div>
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">مدونة دليل نقادة</span><h2>مقالات تحريرية مستقلة عن صفحات دليل القرى</h2><p>مقالات محلية أصلية عن المكان والناس والتاريخ والحياة اليومية، بينما تبقى عبارة «دليل + اسم القرية» موجهة لصفحة القرية نفسها.</p></div><Link href="/blog" className="text-link">كل مقالات المدونة ←</Link></div>
           <div className={blogStyles.previewGrid}>
             {featuredArticles.map((article) => (
-              <Link key={article.locality} href={articleHref(article.locality)} className={blogStyles.previewCard}>
-                <span>{article.locality}</span>
+              <Link key={article.slug} href={`/blog/${article.slug}`} className={blogStyles.previewCard}>
+                <span>{article.category} · {article.locality}</span>
                 <h3>{article.title}</h3>
                 <p>{article.description}</p>
                 <b>بقلم {villageArticleAuthor.name} · اقرأ المقال ←</b>
@@ -181,11 +198,6 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="section shell place-feature">
-        <div className="place-feature__intro"><span className="eyebrow eyebrow--dark">الجغرافيا المحلية</span><h2>لكل موضع صفحة مستقلة</h2><p>استكشف الأنشطة المنشورة داخل المدينة والقرى والنجوع، واعرف نوع الموضع ومصدر إدراجه.</p><Link href="/villages" className="button button--primary">تصفح كل المواضع</Link></div>
-        <div className="place-list">{topLocalities.slice(0, 8).map((item, index) => <Link key={item.slug} href={`/villages/${item.slug}`}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{item.name}</strong><small>{item.type}</small></div><b>{item.businessCount.toLocaleString('ar-EG')} سجلًا</b></Link>)}</div>
       </section>
 
       <section className="section memory-section">
