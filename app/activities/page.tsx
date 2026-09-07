@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { CategoryVisual } from '@/components/category-visual';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
-import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم',
   description: 'دليل خدمات وأنشطة نقادة بمحافظة قنا: صيدليات وأطباء وعيادات ومدارس ومحلات ومطاعم وبنوك وخدمات أخرى، مع الأسماء والعناوين والهواتف ومناطق التواجد.',
-  alternates: { canonical: '/activities/' },
-};
+  path: '/activities/',
+});
 
 export default function ActivitiesPage() {
   const totalBusinesses = new Set(activityLandings.flatMap((activity) => getBusinessesForActivity(activity).map((item) => item.id))).size;
