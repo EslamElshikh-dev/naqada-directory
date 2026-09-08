@@ -3,6 +3,7 @@ import businesses02 from '@/data/businesses-02.json';
 import businesses03 from '@/data/businesses-03.json';
 import businesses04 from '@/data/businesses-04.json';
 import businesses05 from '@/data/businesses-05.json';
+import businesses06 from '@/data/businesses-06.json';
 import catalog from '@/data/catalog.json';
 import rawFamilies from '@/data/families.json';
 import rawLandmarks from '@/data/landmarks.json';
@@ -18,6 +19,7 @@ const rawBusinesses = [
   ...businesses03,
   ...businesses04,
   ...businesses05,
+  ...businesses06,
 ] as Business[];
 
 /**
