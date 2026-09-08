@@ -8,6 +8,7 @@ import rawFamilies from '@/data/families.json';
 import rawLandmarks from '@/data/landmarks.json';
 import rawLocalities from '@/data/localities.json';
 import rawPeople from '@/data/people.json';
+import { bashlawListingEnrichment } from './bashlaw-listing-enrichment';
 import { normalizeRouteSlug, slugify } from './site';
 import type { Business, Category, DirectoryItem, Family, Landmark, LocalityPage, LocalityRecord, PersonRecord } from './types';
 
@@ -57,8 +58,9 @@ const businessOverrides: Record<string, Partial<Business>> = {
 };
 
 export const businesses = rawBusinesses.map((item) => {
+  const enrichment = bashlawListingEnrichment[item.id];
   const override = businessOverrides[item.id];
-  return override ? { ...item, ...override } : item;
+  return enrichment || override ? { ...item, ...enrichment, ...override } : item;
 });
 
 const canonicalLocalityAliases: Record<string, string> = {
