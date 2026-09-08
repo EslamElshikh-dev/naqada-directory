@@ -1,11 +1,12 @@
 import type { Business } from './types';
 
 /**
- * Editorial enrichment for verified Bashlaw listings.
+ * Editorial enrichment for verified listings.
  *
  * Keep this layer separate from imported/source records: it adds only public-facing
- * descriptions and search-intent phrases supported by the published record. It must
- * not invent opening status, phone numbers, photos, ownership, or precise locations.
+ * descriptions, search-intent phrases, and reviewed locality corrections supported
+ * by published evidence. It must not invent opening status, phone numbers, photos,
+ * ownership, or precise locations.
  */
 export const bashlawListingEnrichment: Record<string, Partial<Business>> = {
   'google:ChIJiQdNQ0dHSRQRTd5T-3tkAeA': {
@@ -75,5 +76,14 @@ export const bashlawListingEnrichment: Record<string, Partial<Business>> = {
   'directory:bashlaw-sheikh-abdullah-maqam': {
     description: 'مقام الشيخ عبد الله البشلاوي معلم ديني ومحلي مرصود عند المدخل الرئيسي لقرية بشلاو بمركز نقادة. يُدرج في الدليل ضمن المعالم والتراث بوصفه موضعًا مرتبطًا بذاكرة المكان، من دون إضافة روايات نسب أو تاريخ غير موثقة.',
     seoKeywords: ['مقام الشيخ عبد الله البشلاوي', 'معالم بشلاو', 'مقامات نقادة', 'معالم الأوسط قمولا'],
+  },
+  'google:ChIJvzV4ohZHSRQRQiXfheWevgA': {
+    locality: 'نجع الحزرات / البحري قمولا',
+    parentLocality: 'البحري قمولا',
+    address: 'نجع الحزرات (الحرازات)، البحري قمولا، مركز نقادة، قنا',
+    checked: '2026-09-08',
+    notes: 'تصحيح جغرافي: قائمة الأحوزة العمرانية 2026 تثبت «نجع الحزرات» ضمن وحدة البحري قمولا، بينما السجلات التجارية والأخبار الحديثة تستخدم الحزرات/الحرازات للمكان نفسه. اسم الجمعية نفسه «جمعية الحرازات لتنمية المجتمع» مع سجل خرائط Google القائم يدعم إسنادها إلى النجع بدل القرية الأم؛ تم النقل دون إنشاء سجل جديد أو تغيير Place ID أو الهاتف أو التقييم.',
+    description: 'جمعية الحرازات لتنمية المجتمع جمعية محلية في نجع الحزرات التابع للبحري قمولا بمركز نقادة. يحتفظ السجل باسم الجمعية المنشور بصيغة «الحرازات»، بينما يعتمد الدليل «نجع الحزرات» اسمًا جغرافيًا قياسيًا للموضع.',
+    seoKeywords: ['جمعية الحرازات لتنمية المجتمع', 'جمعية الحزرات', 'نجع الحزرات', 'الحرازات البحري قمولا', 'جمعيات نقادة'],
   },
 };
