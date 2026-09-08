@@ -8,6 +8,7 @@ import businesses07 from '@/data/businesses-07.json';
 import businesses08 from '@/data/businesses-08.json';
 import businesses09 from '@/data/businesses-09.json';
 import businesses10 from '@/data/businesses-10.json';
+import businesses11 from '@/data/businesses-11.json';
 import catalog from '@/data/catalog.json';
 import rawFamilies from '@/data/families.json';
 import rawLandmarks from '@/data/landmarks.json';
@@ -28,6 +29,7 @@ const rawBusinesses = [
   ...businesses08,
   ...businesses09,
   ...businesses10,
+  ...businesses11,
 ] as Business[];
 
 /**
@@ -48,6 +50,12 @@ const businessOverrides: Record<string, Partial<Business>> = {
     parentLocality: 'الأوسط قمولا',
     checked: '2026-09-08',
     notes: 'تصحيح جغرافي: عنوان سجل المدرسة يذكر صراحة ساحل بشلاو - عزبة جبر، كما تذكر وزارة الأوقاف حديثًا مدرسة/موضع عزبة جبر بجوار مكتب بريد نجع القرية. نُقل الإسناد المحلي إلى عزبة جبر دون إنشاء سجل مدرسة مكرر.',
+  },
+  'google:ChIJSwZjsDxHSRQRowEc1puF-7U': {
+    locality: 'دويح / البحري قمولا',
+    parentLocality: 'البحري قمولا',
+    checked: '2026-09-08',
+    notes: 'تصحيح جغرافي: عنوان سجل خرائط Google للنشاط يذكر صراحة «دويح البحري قمولا، نقادة، قنا». نُقل الإسناد المحلي من القرية الأم إلى دويح دون إنشاء سجل مكرر أو تغيير رابط النشاط الحالي.',
   },
   'directory:bashlaw-alhoot-metalworks': {
     address: 'نجع بشلاو، الأوسط قمولا، مركز نقادة، قنا',
@@ -190,6 +198,16 @@ const supplementalLocalities: LocalityRecord[] = [
     classification: 'تابع للأوسط قمولا',
     source: null,
     notes: 'دراو — الأوسط قمولا، مركز نقادة، قنا. موضع مستقل عن دراو بمحافظة أسوان.',
+  },
+  {
+    name: 'دويح',
+    type: 'نجع / قرية محلية',
+    center: 'مركز نقادة',
+    scope: 'البحري قمولا',
+    verification: 'موثق بمصادر متعددة',
+    classification: 'تابع للبحري قمولا',
+    source: 'https://www.youm7.com/story/2020/11/30/صور-رئيس-منطقة-قنا-الأزهرية-يفتتح-معهد-دويح-الأزهرى/5092162',
+    notes: 'دويح موضع محلي مستقل داخل نطاق البحري قمولا بمركز نقادة؛ تثبته مصادر التعليم الأزهري والأوقاف وعناوين الأنشطة المحلية، ويُفصل عن القرية الأم في صفحات الخدمات.',
   },
   {
     name: 'أسمنت الصغيرة',
