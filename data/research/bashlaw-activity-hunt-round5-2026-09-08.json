@@ -1,0 +1,85 @@
+{
+  "scope": "بشلاو / الأوسط قمولا، مركز نقادة، قنا",
+  "checked": "2026-09-08",
+  "purpose": "استكمال مسح الأنشطة الناقصة في بشلاو بعد إثراء صفحات السجلات المنشورة، مع التركيز على الموبايلات والإلكترونيات والأعلاف والزراعة والحرف والمقاولين والأطعمة والمخابز. الملف بحثي ولا يُستورد تلقائيًا إلى الدليل.",
+  "publicSearchOutcome": {
+    "mobileElectronics": "لم يظهر متجر موبايلات إضافي يمكن تثبيته داخل بشلاو من النتائج العامة. سجل صيانة الأجهزة الإلكترونية المنشور يظل التطابق المحلي المؤكد الحالي.",
+    "feedAgriculture": "لم يظهر اسم متجر أعلاف/أسمدة جديد بواجهة أو هاتف أو خريطة موثقة داخل بشلاو. القيود الرسمية الزراعية تظل Leads فقط حتى ظهور أثر تشغيلي حديث.",
+    "tradesContractors": "النتائج العامة خلطت بين بشلاو ومواضع أخرى في مركز نقادة؛ لم يُرفع أي مرشح جديد إلى A.",
+    "foodBakery": "لم يظهر اسم مخبز أو مطعم تجاري حديث داخل بشلاو يمكن نشره بثقة. لا يزال قرار الغلق الرسمي التاريخي لبائع الفول والفلافل غير صالح لإثبات نشاط حالي."
+  },
+  "registryFindings": [
+    {
+      "leadId": "lead:bashlaw-cattle-86099",
+      "name": "أحمد جمال سليمان الضبع",
+      "activity": "حظيرة مواشي لبيع وتسمين المواشي",
+      "registryDate": "2020-09-29",
+      "registryNumber": "86099",
+      "locationText": "الأوسط قمولا - بشلاو",
+      "propertyOwner": "جمال سليمان الضبع",
+      "source": "https://www.itda.gov.eg/CRM/830/CRA40.pdf",
+      "confidence": "B",
+      "publicTrace": {
+        "verifiedBusinessPhone": null,
+        "verifiedTradingName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "publicationDecision": "historical_official_lead_hold_for_current_operational_trace"
+    },
+    {
+      "leadId": "lead:bashlaw-grocery-mawaheb-45651",
+      "name": "مواهب سلام شكلي سلام",
+      "activity": "سوبر ماركت (بقالة)",
+      "registryDate": "2024-01-31",
+      "registryNumber": "45651",
+      "locationText": "بشلاو - الأوسط قمولا",
+      "propertyOwner": "عبدالكريم أحمد إبراهيم",
+      "source": "https://www.itda.gov.eg/CRM/870/CRA79.pdf",
+      "confidence": "B+",
+      "publicTrace": {
+        "verifiedBusinessPhone": null,
+        "verifiedTradingName": null,
+        "verifiedMapsListing": null,
+        "verifiedSocialPage": null,
+        "verifiedLocalPhoto": null
+      },
+      "publicationDecision": "official_lead_storefront_name_required",
+      "note": "أُعيد تأكيد القيد الرسمي في جولة 2026-09-08، لكن اسم مالك القيد لا يتحول تلقائيًا إلى اسم متجر عام."
+    },
+    {
+      "leadId": "lead:bashlaw-dairy-cattle-48545",
+      "name": "محمد جعفري محمود محمد",
+      "activity": "حظيرة مواشي لتربية إناث المواشي بغرض بيع الألبان",
+      "registryDate": "2025-02-09",
+      "registryNumber": "48545",
+      "locationText": "الأوسط قمولا - بشلاو",
+      "propertyOwner": "رجب جعفر محمود محمد",
+      "source": "https://itda.gov.eg/CRM/883/CRA79.pdf",
+      "confidence": "B+",
+      "publicationDecision": "hold_for_operational_trace_or_contact",
+      "note": "أُعيد تأكيد القيد الرسمي، ولم يظهر في البحث العام الحالي هاتف أو اسم تشغيلي أو صفحة أو خريطة قابلة للربط بثقة."
+    }
+  ],
+  "strictExclusions": [
+    "ساحل بشلاو: أي نشاط عنوانه ساحل بشلاو يبقى خارج ملف بشلاو الحالي.",
+    "مدينة نقادة والخطارة: نتائج الموبايلات والإلكترونيات التي ظهرت هناك لا تُنقل إلى بشلاو.",
+    "أي اسم مالك في السجل التجاري لا يُستخدم كاسم واجهة محل دون مصدر مستقل.",
+    "أي صورة لنشاط متشابه بالاسم من مدينة أخرى تُرفض."
+  ],
+  "round5Summary": {
+    "newPublishableBusinesses": 0,
+    "newOfficialHistoricalLeads": 1,
+    "reconfirmedOfficialLeads": 2,
+    "newVerifiedPhones": 0,
+    "newVerifiedTradingNames": 0,
+    "newVerifiedLocalPhotos": 0,
+    "nextPriority": [
+      "Reverse match لاسم محمد عبدالرحيم تهامي عبدالرحيم مع صفحات/أرقام محلية في بشلاو",
+      "Reverse match لعماد محمود محمد حامد وربطه باسم محل أعلاف/عطارة إن وجد",
+      "مطابقة أصحاب العقارات في القيود الرسمية مع واجهات المحلات المنشورة دون استنتاج صلة ملكية بالنشاط",
+      "العودة لمسح الشوارع: مدرسة عمر بن الخطاب، مسجد النور المحمدي، المدخل الرئيسي، طريق أسمنت-بشلاو، طريق بشلاو-دراو"
+    ]
+  }
+}
