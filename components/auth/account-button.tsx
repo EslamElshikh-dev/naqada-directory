@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState, type MouseEvent } from 'react';
 import { ensureClientSession, subscribeClientSession, type ClientSessionUser } from './client-session';
 import { MemberAvatar } from './member-avatar';
 import type { MemberReputation } from '@/lib/member-reputation';
@@ -11,17 +12,33 @@ function UserIcon() {
 }
 
 export function AccountButton() {
+  const router = useRouter();
   const [user, setUser] = useState<ClientSessionUser | null>(null);
   const [reputation, setReputation] = useState<MemberReputation | null>(null);
   const [ready, setReady] = useState(false);
+
+  const loadSession = useCallback(() => ensureClientSession().finally(() => setReady(true)), []);
 
   useEffect(() => {
     const unsubscribe = subscribeClientSession((value) => {
       if (value !== undefined) { setUser(value); setReady(true); }
     });
-    void ensureClientSession().finally(() => setReady(true));
-    return unsubscribe;
-  }, []);
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = typeof idleWindow.requestIdleCallback === 'function'
+      ? idleWindow.requestIdleCallback(loadSession, { timeout: 1600 })
+      : null;
+    const timerId = idleId === null ? window.setTimeout(loadSession, 1200) : null;
+
+    return () => {
+      unsubscribe();
+      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
+      if (timerId !== null) window.clearTimeout(timerId);
+    };
+  }, [loadSession]);
 
   useEffect(() => {
     if (!user) { setReputation(null); return; }
@@ -36,8 +53,23 @@ export function AccountButton() {
     return () => { active = false; };
   }, [user?.id]);
 
+  const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    if (ready) return;
+    event.preventDefault();
+    void loadSession().then((currentUser) => {
+      router.push(currentUser ? '/account' : '/account/login');
+    });
+  }, [loadSession, ready, router]);
+
   return (
-    <Link className={`account-trigger${user ? ' is-member' : ''}`} href={user ? '/account' : '/account/login'} aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}>
+    <Link
+      className={`account-trigger${user ? ' is-member' : ''}`}
+      href={user ? '/account' : '/account/login'}
+      aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}
+      onPointerEnter={loadSession}
+      onFocus={loadSession}
+      onClick={handleClick}
+    >
       <span className="account-trigger__icon" aria-hidden="true">
         {user ? (
           <MemberAvatar name={user.displayName} src={user.avatarUrl} frame={reputation?.frameCode || 'gray'} size={32} compact />
