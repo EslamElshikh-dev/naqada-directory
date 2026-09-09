@@ -134,6 +134,7 @@ export function HomeSmartSearch() {
         <input
           id="home-search"
           name="q"
+          role="combobox"
           value={query}
           onChange={(event) => setQuery(event.target.value.slice(0, 100))}
           onFocus={() => canSearch && setOpen(true)}
@@ -142,6 +143,7 @@ export function HomeSmartSearch() {
           autoComplete="off"
           inputMode="search"
           aria-expanded={showPanel}
+          aria-haspopup="listbox"
           aria-controls="home-smart-search-results"
           aria-activedescendant={activeIndex >= 0 ? `home-search-result-${activeIndex}` : undefined}
           aria-autocomplete="list"
