@@ -7,6 +7,9 @@
 .form {
   width: 100%;
   max-width: none !important;
+  display: grid !important;
+  grid-template-columns: 46px minmax(0, 1fr) auto auto;
+  align-items: center;
 }
 
 .clear {
@@ -191,6 +194,7 @@
 
 @media (max-width: 700px) {
   .root { width: 100%; }
+  .form { grid-template-columns: 42px minmax(0, 1fr) auto; }
   .panel { border-radius: 17px; }
   .panelHead { font-size: .61rem; }
   .result { grid-template-columns: 38px minmax(0, 1fr) auto; min-height: 54px; gap: 8px; }
