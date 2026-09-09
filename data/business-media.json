@@ -68,5 +68,65 @@
     "sourceName": "المركز العربي لاستدامة العمل الأهلي - مؤسسة مصر الخير",
     "credit": "صورة Card مرتبطة بسجل الجمعية الذي يطابق الاسم والهاتف والعنوان في بشلاو",
     "verifiedAt": "2026-09-07"
+  },
+  {
+    "businessId": "google:ChIJF8VCGKRHSRQRTTXqTCc_WL8",
+    "imageUrl": "/images/businesses/bashlaw-babo-electronics.webp",
+    "imageAlt": "صورة حقيقية لداخل محل بابو للإلكترونيات في بشلاو تعرض الأجهزة والإكسسوارات",
+    "caption": "صورة منشورة في سجل محل بابو للإلكترونيات على خرائط Google المرتبط بمعرّف المكان نفسه.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D9%85%D8%AD%D9%84%20%D8%A8%D8%A7%D8%A8%D9%88%20%D9%84%D9%84%D8%A7%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D8%A7%D8%AA&query_place_id=ChIJF8VCGKRHSRQRTTXqTCc_WL8",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق للاسم ومعرّف Google",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJbSfPO9pHSRQRSAnlULjxMDw",
+    "imageUrl": "/images/businesses/bashlaw-womens-association.webp",
+    "imageAlt": "صناديق مساعدات تحمل شعار واسم الجمعية النسائية بحسن الهواورة بشلاو",
+    "caption": "صورة حقيقية تحمل اسم الجمعية النسائية بحسن الهواورة، ومنشورة في سجل الجمعية النسائية ببشلاو على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D9%8A%D8%A9%20%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A6%D9%8A%D8%A9%20%D8%A8%D8%B4%D9%84%D8%A7%D9%88&query_place_id=ChIJbSfPO9pHSRQRSAnlULjxMDw",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق، ويظهر عليها اسم الجمعية",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJW-JGf0hHSRQRYitBZnVF2aw",
+    "imageUrl": "/images/businesses/bashlaw-al-abdelshakour-butcher.webp",
+    "imageAlt": "صورة ماشية منشورة لجزارة آل عبد الشكور في بشلاو",
+    "caption": "صورة نشاط منشورة ضمن سجل جزارة آل عبد الشكور على خرائط Google المرتبط بمعرّف المكان نفسه.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D8%AC%D8%B2%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%20%D8%B9%D8%A8%D8%AF%20%D8%A7%D9%84%D8%B4%D9%83%D9%88%D8%B1&query_place_id=ChIJW-JGf0hHSRQRYitBZnVF2aw",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق للاسم ومعرّف Google",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJ-8Ly2B5HSRQROz_NcTOdu3E",
+    "imageUrl": "/images/businesses/bashlaw-al-atiq-mosque.webp",
+    "imageAlt": "مئذنة المسجد العتيق بساحل بشلاو في صورة حقيقية",
+    "caption": "صورة المئذنة منشورة ضمن سجل المسجد العتيق بساحل بشلاو على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D8%A7%D9%84%D9%85%D8%B3%D8%AC%D8%AF%20%D8%A7%D9%84%D8%B9%D8%AA%D9%8A%D9%82&query_place_id=ChIJ-8Ly2B5HSRQROz_NcTOdu3E",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المسجد المطابق لمعرّف Google",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJSzGqLblHSRQRNKQbk5DrmF4",
+    "imageUrl": "/images/businesses/bashlaw-electronics-repair.webp",
+    "imageAlt": "فني داخل مساحة عمل لصيانة الأجهزة الإلكترونية في بشلاو",
+    "caption": "صورة حقيقية من مساحة العمل منشورة ضمن سجل صيانة الأجهزة الإلكترونية في بشلاو على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D8%B5%D9%8A%D8%A7%D9%86%D8%A9%20%D8%A7%D9%84%D8%A3%D8%AC%D9%87%D8%B2%D8%A9%20%D8%A7%D9%84%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9&query_place_id=ChIJSzGqLblHSRQRNKQbk5DrmF4",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق للاسم ومعرّف Google",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJ800VPEdHSRQRFLhY47W2yz8",
+    "imageUrl": "/images/businesses/bashlaw-hajj-amer-building-materials.webp",
+    "imageAlt": "ساحة أولاد الحاج عامر لمواد البناء والتعمير في بشلاو",
+    "caption": "صورة حقيقية لساحة النشاط وبوابة تحمل اسم أولاد الحاج عامر، منشورة في سجل المكان على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/search/?api=1&query=%D8%A3%D9%88%D9%84%D8%A7%D8%AF%20%D8%A7%D9%84%D8%AD%D8%A7%D8%AC%20%D8%B9%D8%A7%D9%85%D8%B1%20%D9%84%D9%85%D9%88%D8%A7%D8%AF%20%D8%A7%D9%84%D8%A8%D9%86%D8%A7%D8%A1%20%D9%88%D8%A7%D9%84%D8%AA%D8%B9%D9%85%D9%8A%D8%B1&query_place_id=ChIJ800VPEdHSRQRFLhY47W2yz8",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق للاسم ومعرّف Google",
+    "verifiedAt": "2026-09-09"
   }
 ]
