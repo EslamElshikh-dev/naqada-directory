@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { businesses, categories, landmarks, localities } from '@/lib/data';
-import { normalizeArabic } from '@/lib/site';
+import {
+  normalizeSearchFields,
+  prepareSearchQuery,
+  scoreNormalizedSearchFields,
+  type NormalizedSearchFields,
+  type SearchRankingFields,
+} from '@/lib/search-ranking';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,27 +16,12 @@ type SearchItem = {
   subtitle: string;
   href: string;
   badge: string;
-  fields: {
-    title: string;
-    category?: string;
-    subcategory?: string;
-    locality?: string;
-    address?: string;
-    auxiliary?: string;
-  };
+  fields: SearchRankingFields;
 };
 
-type IndexedSearchItem = SearchItem & {
-  normalized: {
-    title: string;
-    category: string;
-    subcategory: string;
-    locality: string;
-    address: string;
-    auxiliary: string;
-    all: string;
-  };
-};
+type IndexedSearchItem = SearchItem & { normalized: NormalizedSearchFields };
+
+const cacheHeaders = { 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600' };
 
 const pages: SearchItem[] = [
   { kind: 'page', title: 'دليل الخدمات والأنشطة', subtitle: 'كل الأنشطة المنشورة في مركز نقادة', href: '/directory', badge: 'صفحة', fields: { title: 'دليل الخدمات والأنشطة', auxiliary: 'دليل خدمات أنشطة بحث' } },
@@ -40,38 +31,8 @@ const pages: SearchItem[] = [
   { kind: 'page', title: 'مدونة دليل نقادة', subtitle: 'مقالات وموضوعات محلية', href: '/blog', badge: 'محتوى', fields: { title: 'مدونة دليل نقادة', auxiliary: 'مدونة مقالات اخبار محتوى' } },
 ];
 
-const synonymGroups = [
-  ['دكتور', 'طبيب', 'عياده'],
-  ['دكتوره', 'طبيبه', 'عياده'],
-  ['موبايل', 'محمول', 'تليفون', 'تلفون', 'هاتف', 'هواتف'],
-  ['حضانه', 'حضانات'],
-  ['معمل', 'معامل', 'مختبر', 'تحاليل'],
-  ['نجار', 'نجاره'],
-  ['كوافير', 'صالون', 'تجميل'],
-] as const;
-
-const synonymMap = new Map<string, string[]>();
-for (const group of synonymGroups) {
-  const normalizedGroup = [...new Set(group.map((value) => normalizeArabic(value)))];
-  for (const token of normalizedGroup) synonymMap.set(token, normalizedGroup);
-}
-
-function normalizeField(value?: string | null) {
-  return normalizeArabic(value || '');
-}
-
 function indexItem(item: SearchItem): IndexedSearchItem {
-  const normalized = {
-    title: normalizeField(item.fields.title),
-    category: normalizeField(item.fields.category),
-    subcategory: normalizeField(item.fields.subcategory),
-    locality: normalizeField(item.fields.locality),
-    address: normalizeField(item.fields.address),
-    auxiliary: normalizeField(item.fields.auxiliary),
-    all: '',
-  };
-  normalized.all = [normalized.title, normalized.category, normalized.subcategory, normalized.locality, normalized.address, normalized.auxiliary].filter(Boolean).join(' ');
-  return { ...item, normalized };
+  return { ...item, normalized: normalizeSearchFields(item.fields) };
 }
 
 const searchIndex: IndexedSearchItem[] = [
@@ -117,69 +78,17 @@ const searchIndex: IndexedSearchItem[] = [
   ...pages,
 ].map(indexItem);
 
-function variantsFor(token: string) {
-  return synonymMap.get(token) || [token];
-}
-
-function fieldScore(field: string, variants: string[], exactWeight: number, prefixWeight: number, containsWeight: number) {
-  let best = 0;
-  for (const variant of variants) {
-    if (!variant || !field) continue;
-    if (field === variant) best = Math.max(best, exactWeight);
-    else if (field.startsWith(`${variant} `) || field.startsWith(variant)) best = Math.max(best, prefixWeight);
-    else if (` ${field} `.includes(` ${variant} `)) best = Math.max(best, Math.round((prefixWeight + containsWeight) / 2));
-    else if (field.includes(variant)) best = Math.max(best, containsWeight);
-  }
-  return best;
-}
-
-function scoreItem(item: IndexedSearchItem, normalizedQuery: string, tokens: string[]) {
-  const { normalized } = item;
-  let score = 0;
-
-  if (normalized.title === normalizedQuery) score += 240;
-  else if (normalized.title.startsWith(normalizedQuery)) score += 150;
-  else if (normalized.title.includes(normalizedQuery)) score += 105;
-
-  if (normalized.locality === normalizedQuery) score += 180;
-  else if (normalized.locality.startsWith(normalizedQuery)) score += 95;
-  else if (normalized.locality.includes(normalizedQuery)) score += 60;
-
-  if (normalized.subcategory === normalizedQuery) score += 150;
-  else if (normalized.subcategory.includes(normalizedQuery)) score += 75;
-
-  if (normalized.category === normalizedQuery) score += 135;
-  else if (normalized.category.includes(normalizedQuery)) score += 65;
-
-  if (normalized.all.includes(normalizedQuery)) score += 32;
-
-  for (const token of tokens) {
-    const variants = variantsFor(token);
-    const title = fieldScore(normalized.title, variants, 54, 38, 25);
-    const subcategory = fieldScore(normalized.subcategory, variants, 38, 28, 18);
-    const category = fieldScore(normalized.category, variants, 34, 24, 16);
-    const locality = fieldScore(normalized.locality, variants, 38, 28, 18);
-    const address = fieldScore(normalized.address, variants, 15, 10, 6);
-    const auxiliary = fieldScore(normalized.auxiliary, variants, 14, 9, 5);
-    const best = Math.max(title, subcategory, category, locality, address, auxiliary);
-    if (!best) return -1;
-    score += best + Math.round((title + subcategory + category + locality) * 0.12);
-  }
-
-  if (tokens.length > 1 && tokens.every((token) => normalized.title.includes(token))) score += 35;
-  if (item.kind === 'listing') score += 6;
-  return score;
-}
-
 export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get('q')?.trim().replace(/\s+/g, ' ').slice(0, 100) || '';
-  if (query.length < 2) return NextResponse.json({ items: [] }, { headers: { 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600' } });
+  if (query.length < 2) return NextResponse.json({ items: [] }, { headers: cacheHeaders });
 
-  const normalizedQuery = normalizeArabic(query);
-  const tokens = normalizedQuery.split(' ').filter(Boolean);
+  const { normalizedQuery, tokens } = prepareSearchQuery(query);
   const seen = new Set<string>();
   const items = searchIndex
-    .map((item) => ({ item, rank: scoreItem(item, normalizedQuery, tokens) }))
+    .map((item) => ({
+      item,
+      rank: scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens) + (item.kind === 'listing' ? 6 : 0),
+    }))
     .filter(({ rank }) => rank >= 0)
     .sort((a, b) => b.rank - a.rank || a.item.title.localeCompare(b.item.title, 'ar'))
     .map(({ item }) => item)
@@ -187,5 +96,5 @@ export async function GET(request: NextRequest) {
     .slice(0, 8)
     .map(({ kind, title, subtitle, href, badge }) => ({ kind, title, subtitle, href, badge }));
 
-  return NextResponse.json({ items }, { headers: { 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600' } });
+  return NextResponse.json({ items }, { headers: cacheHeaders });
 }
