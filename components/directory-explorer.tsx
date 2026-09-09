@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { hasBusinessMedia } from '@/lib/business-media';
-import { normalizeArabic } from '@/lib/site';
+import { normalizeSearchFields, prepareSearchQuery, scoreNormalizedSearchFields } from '@/lib/search-ranking';
 import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
 import { ListingCard } from './listing-card';
 
@@ -53,23 +53,43 @@ export function DirectoryExplorer({
     };
   }, [initialCategory, initialLocality, lockedCategory, lockedLocality]);
 
+  const indexedBusinesses = useMemo(() => businesses.map((item) => ({
+    item,
+    normalized: normalizeSearchFields({
+      title: item.name,
+      category: item.category,
+      subcategory: item.subcategory,
+      locality: item.locality,
+      address: item.address,
+      auxiliary: [item.normalizedName, item.parentLocality].filter(Boolean).join(' '),
+    }),
+  })), [businesses]);
+
   const filtered = useMemo(() => {
-    const tokens = normalizeArabic(deferredQuery).split(' ').filter(Boolean);
-    const matches = businesses.filter((item) => {
-      if (category && item.category !== category) return false;
-      if (locality && (item.locality || 'مركز نقادة') !== locality) return false;
-      if (!tokens.length) return true;
-      const haystack = normalizeArabic([item.name, item.normalizedName, item.category, item.subcategory, item.locality, item.parentLocality, item.address].filter(Boolean).join(' '));
-      return tokens.every((token) => haystack.includes(token));
-    });
-    return matches.sort((a, b) => {
-      if (sort === 'name') return a.name.localeCompare(b.name, 'ar');
-      if (sort === 'rating') return (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0);
-      const mediaPriority = Number(hasBusinessMedia(b.id)) - Number(hasBusinessMedia(a.id));
+    const { normalizedQuery, tokens } = prepareSearchQuery(deferredQuery);
+    const matches = indexedBusinesses
+      .filter(({ item }) => {
+        if (category && item.category !== category) return false;
+        if (locality && (item.locality || 'مركز نقادة') !== locality) return false;
+        return true;
+      })
+      .map(({ item, normalized }) => ({
+        item,
+        rank: tokens.length ? scoreNormalizedSearchFields(normalized, normalizedQuery, tokens) : 0,
+      }))
+      .filter(({ rank }) => rank >= 0);
+
+    matches.sort((a, b) => {
+      if (sort === 'name') return a.item.name.localeCompare(b.item.name, 'ar');
+      if (sort === 'rating') return (b.item.rating || 0) - (a.item.rating || 0) || (b.item.reviews || 0) - (a.item.reviews || 0);
+      if (tokens.length && b.rank !== a.rank) return b.rank - a.rank;
+      const mediaPriority = Number(hasBusinessMedia(b.item.id)) - Number(hasBusinessMedia(a.item.id));
       if (mediaPriority) return mediaPriority;
-      return (b.reviews || 0) - (a.reviews || 0) || (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name, 'ar');
+      return (b.item.reviews || 0) - (a.item.reviews || 0) || (b.item.rating || 0) - (a.item.rating || 0) || a.item.name.localeCompare(b.item.name, 'ar');
     });
-  }, [businesses, category, deferredQuery, locality, sort]);
+
+    return matches.map(({ item }) => item);
+  }, [category, deferredQuery, indexedBusinesses, locality, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -123,7 +143,7 @@ export function DirectoryExplorer({
         </label>
         {!lockedLocality && <label className="select-field"><span>المكان</span><select value={locality} onChange={(event) => { setLocality(event.target.value); setPage(1); }}><option value="">كل المناطق</option>{localities.filter((item) => item.businessCount > 0).map((item) => <option key={item.slug} value={item.name}>{item.name} ({item.businessCount.toLocaleString('ar-EG')})</option>)}</select></label>}
         {!lockedCategory && <label className="select-field"><span>القسم</span><select value={category} onChange={(event) => { setCategory(event.target.value); setPage(1); }}><option value="">كل الأقسام</option>{categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel} ({item.count.toLocaleString('ar-EG')})</option>)}</select></label>}
-        <label className="select-field"><span>الترتيب</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortMode); setPage(1); }}><option value="recommended">الأكثر حضورًا</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم أبجديًا</option></select></label>
+        <label className="select-field"><span>الترتيب</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortMode); setPage(1); }}><option value="recommended">الأكثر صلة</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم أبجديًا</option></select></label>
       </div>
 
       <div className="category-pills" aria-label="التصنيفات">
