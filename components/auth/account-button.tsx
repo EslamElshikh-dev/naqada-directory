@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ensureClientSession, subscribeClientSession, type ClientSessionUser } from './client-session';
 import { MemberAvatar } from './member-avatar';
 import type { MemberReputation } from '@/lib/member-reputation';
@@ -15,13 +15,30 @@ export function AccountButton() {
   const [reputation, setReputation] = useState<MemberReputation | null>(null);
   const [ready, setReady] = useState(false);
 
+  const loadSession = useCallback(() => {
+    void ensureClientSession().finally(() => setReady(true));
+  }, []);
+
   useEffect(() => {
     const unsubscribe = subscribeClientSession((value) => {
       if (value !== undefined) { setUser(value); setReady(true); }
     });
-    void ensureClientSession().finally(() => setReady(true));
-    return unsubscribe;
-  }, []);
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = typeof idleWindow.requestIdleCallback === 'function'
+      ? idleWindow.requestIdleCallback(loadSession, { timeout: 1600 })
+      : null;
+    const timerId = idleId === null ? window.setTimeout(loadSession, 1200) : null;
+
+    return () => {
+      unsubscribe();
+      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
+      if (timerId !== null) window.clearTimeout(timerId);
+    };
+  }, [loadSession]);
 
   useEffect(() => {
     if (!user) { setReputation(null); return; }
@@ -37,7 +54,13 @@ export function AccountButton() {
   }, [user?.id]);
 
   return (
-    <Link className={`account-trigger${user ? ' is-member' : ''}`} href={user ? '/account' : '/account/login'} aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}>
+    <Link
+      className={`account-trigger${user ? ' is-member' : ''}`}
+      href={user ? '/account' : '/account/login'}
+      aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}
+      onPointerEnter={loadSession}
+      onFocus={loadSession}
+    >
       <span className="account-trigger__icon" aria-hidden="true">
         {user ? (
           <MemberAvatar name={user.displayName} src={user.avatarUrl} frame={reputation?.frameCode || 'gray'} size={32} compact />
