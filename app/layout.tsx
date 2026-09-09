@@ -15,6 +15,9 @@ import './mobile-screenshot-fix.css';
 import './mobile-final-pass.css';
 import './mobile-header-nav-fix.css';
 import './interface-refresh.css';
+import './design-system-v2.css';
+import './detail-experience-v2.css';
+import './discovery-experience-v2.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
@@ -73,7 +76,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#2d1e18',
+  themeColor: '#251915',
   colorScheme: 'light',
 };
 
