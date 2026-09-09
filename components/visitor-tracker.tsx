@@ -32,16 +32,21 @@ export function VisitorTracker() {
       }).catch(() => null);
     };
 
-    const schedule = 'requestIdleCallback' in window
-      ? { kind: 'idle' as const, id: window.requestIdleCallback(sendVisit, { timeout: 2500 }) }
-      : { kind: 'timer' as const, id: window.setTimeout(sendVisit, 1800) };
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = typeof idleWindow.requestIdleCallback === 'function'
+      ? idleWindow.requestIdleCallback(sendVisit, { timeout: 2500 })
+      : null;
+    const timerId = idleId === null ? window.setTimeout(sendVisit, 1800) : null;
 
     window.addEventListener('pagehide', sendVisit, { once: true });
 
     return () => {
       window.removeEventListener('pagehide', sendVisit);
-      if (schedule.kind === 'idle') window.cancelIdleCallback(schedule.id);
-      else window.clearTimeout(schedule.id);
+      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
+      if (timerId !== null) window.clearTimeout(timerId);
     };
   }, [pathname]);
 
