@@ -48,8 +48,8 @@ export function GlobalSearch() {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
     if (loading) return 'جارٍ البحث داخل دليل نقادة…';
     if (error) return error;
-    if (!items.length) return 'لا توجد نتيجة مباشرة؛ اضغط Enter للبحث الموسّع.';
-    return `${items.length.toLocaleString('ar-EG')} نتائج سريعة`;
+    if (!items.length) return 'لا توجد نتيجة سريعة؛ جرّب البحث الموسّع داخل الدليل.';
+    return `${items.length.toLocaleString('ar-EG')} نتائج سريعة مرتبة حسب الصلة`;
   }, [canSearch, error, items.length, loading]);
 
   useEffect(() => {
@@ -89,7 +89,6 @@ export function GlobalSearch() {
       setError('');
       try {
         const response = await fetch(`/api/site-search/?q=${encodeURIComponent(trimmedQuery)}`, {
-          cache: 'no-store',
           signal: controller.signal,
         });
         const payload = await response.json().catch(() => ({})) as SearchResponse;
@@ -103,7 +102,7 @@ export function GlobalSearch() {
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
-    }, 180);
+    }, 220);
     return () => window.clearTimeout(timer);
   }, [canSearch, open, trimmedQuery]);
 
@@ -130,6 +129,14 @@ export function GlobalSearch() {
       event.preventDefault();
       setActiveIndex((value) => value <= 0 ? items.length - 1 : value - 1);
     }
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setActiveIndex(0);
+    }
+    if (event.key === 'End') {
+      event.preventDefault();
+      setActiveIndex(items.length - 1);
+    }
   }
 
   return (
@@ -151,18 +158,18 @@ export function GlobalSearch() {
             <button type="submit" className="global-search__submit">ابحث</button>
           </form>
           <div className={`global-search__status${error ? ' is-error' : ''}`} aria-live="polite"><span>{status}</span>{canSearch && !loading && !error ? <small>Enter لعرض كل النتائج</small> : null}</div>
-          <div id="global-search-results" className="global-search__results" role="listbox" aria-label="نتائج البحث السريع">
+          <div id="global-search-results" className="global-search__results" role="listbox" aria-label="نتائج البحث السريع" aria-busy={loading}>
             {loading ? <div className="global-search__loading" aria-hidden="true"><span /><span /><span /></div> : items.length ? items.map((item, index) => (
               <button key={`${item.kind}-${item.href}`} id={`global-search-result-${index}`} type="button" role="option" aria-selected={activeIndex === index} className={`global-search__result${activeIndex === index ? ' is-active' : ''}`} onMouseEnter={() => setActiveIndex(index)} onClick={() => navigate(item.href)}>
                 <span className={`global-search__result-icon kind-${item.kind}`} aria-hidden="true">{resultGlyph(item.kind)}</span>
                 <span className="global-search__result-copy"><span><strong>{item.title}</strong><i>{item.badge}</i></span><small>{item.subtitle}</small></span>
                 <b aria-hidden="true">←</b>
               </button>
-            )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة مباشرة</strong><small>اضغط Enter لإجراء بحث أوسع داخل الدليل.</small></div> : (
-              <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('الخطارة')}>الخطارة</button><button type="button" onClick={() => setQuery('مطعم')}>مطعم</button></div></div>
+            )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة سريعة</strong><small>قد تظهر نتائج أوسع عند البحث داخل الدليل الكامل.</small><button type="button" className="global-search__empty-action" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>بحث موسّع عن «{trimmedQuery}» ←</button></div> : (
+              <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('بشلاو')}>بشلاو</button><button type="button" onClick={() => setQuery('مطعم')}>مطعم</button></div></div>
             )}
           </div>
-          <div className="global-search__footer"><span>بحث سريع في الأنشطة والأقسام والقرى والمعالم</span><button type="button" onClick={() => navigate('/directory')}>فتح الدليل كاملًا ←</button></div>
+          <div className="global-search__footer"><span>بحث ذكي في الأنشطة والأقسام والقرى والمعالم</span><button type="button" onClick={() => navigate('/directory')}>فتح الدليل كاملًا ←</button></div>
         </div>
       ) : null}
     </div>
