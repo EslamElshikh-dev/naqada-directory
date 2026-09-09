@@ -128,5 +128,45 @@
     "sourceName": "خرائط Google",
     "credit": "صورة مستخدم منشورة ضمن سجل المكان المطابق للاسم ومعرّف Google",
     "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "directory:bashlaw-alshakily-homeware",
+    "imageUrl": "/images/businesses/bashlaw-shakily-homeware.webp",
+    "imageAlt": "طقم أواني منزلية معروض في الصفحة الرسمية لمعرض الشكيلي ببشلاو",
+    "caption": "صورة منتجات منشورة على الصفحة الرسمية لمعرض الشكيلي، ويطابق رقم هاتف الصفحة رقم النشاط في الدليل.",
+    "sourceUrl": "https://www.facebook.com/100063495023302/photos/",
+    "sourceName": "الصفحة الرسمية لمعرض الشكيلي على Facebook",
+    "credit": "صورة الغلاف الحالية للصفحة الرسمية المطابقة للاسم ورقم الهاتف",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "directory:bashlaw-famasia-android-developer",
+    "imageUrl": "/images/businesses/bashlaw-famasia-android.webp",
+    "imageAlt": "أيقونة تطبيق خلفيات الهاتف المنشور باسم المطور FAMASIA من بشلاو",
+    "caption": "الأيقونة الرسمية لتطبيق FAMASIA على Google Play؛ ويطابق اسم المطور وعنوانه في بشلاو بيانات النشاط.",
+    "sourceUrl": "https://play.google.com/store/apps/details?hl=ar&id=com.phone.background",
+    "sourceName": "Google Play",
+    "credit": "أيقونة التطبيق الرسمية المنشورة بواسطة المطور FAMASIA",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "directory:bashlaw-alhoot-metalworks",
+    "imageUrl": "/images/businesses/bashlaw-alhoot-metalworks.webp",
+    "imageAlt": "بوابة معدنية مزخرفة من أعمال ورشة الحوت لتشكيل المعادن وتصنيع الجمالون",
+    "caption": "صورة حقيقية لأحد أعمال ورشة الحوت منشورة ضمن سجل الورشة المطابق للاسم والهاتف على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/place/%D9%88%D8%B1%D8%B4%D8%A9+%D8%A7%D9%84%D8%AD%D9%88%D8%AA+%D9%84%D8%AA%D8%B4%D9%83%D9%8A%D9%84+%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D8%AF%D9%86+%D9%88%D8%AA%D8%B5%D9%86%D9%8A%D8%B9+%D8%A7%D9%84%D8%AC%D9%85%D8%A7%D9%84%D9%88%D9%86%E2%80%AD/@25.8087694,32.7385355,17z",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل الورشة المطابق للاسم ورقم الهاتف",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "directory:bashlaw-three-brothers-carpentry",
+    "imageUrl": "/images/businesses/bashlaw-three-brothers-carpentry.webp",
+    "imageAlt": "غرفة نوم حديثة من أعمال ورشة الإخوة الثلاثة للنجارة في بشلاو",
+    "caption": "صورة حقيقية لأحد أعمال ورشة الإخوة الثلاثة منشورة ضمن سجل الورشة المطابق للاسم والهاتف والعنوان على خرائط Google.",
+    "sourceUrl": "https://www.google.com/maps/place/%D9%88%D8%B1%D8%B4%D8%A9+%D8%A7%D9%84%D8%A7%D8%AE%D9%88%D8%A9+%D8%A7%D9%84%D8%AB%D9%84%D8%A7%D8%AB%D8%A9%E2%80%AD/@25.8042623,32.7316092,17z",
+    "sourceName": "خرائط Google",
+    "credit": "صورة مستخدم منشورة ضمن سجل الورشة المطابق للاسم ورقم الهاتف والعنوان",
+    "verifiedAt": "2026-09-09"
   }
 ]
