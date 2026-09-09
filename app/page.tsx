@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BrandMark } from '@/components/site-shell';
 import { CategoryVisual } from '@/components/category-visual';
+import { CategoryCover } from '@/components/category-cover';
 import { ListingCard } from '@/components/listing-card';
 import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
@@ -151,7 +152,7 @@ export default function HomePage() {
         <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أقسام الدليل</span><h2>ابدأ بنوع الخدمة التي تحتاجها</h2><p>كل قسم يفتح صفحة مستقلة قابلة للبحث والتصفية.</p></div><Link href="/directory" className="text-link">عرض الدليل بالكامل ←</Link></div>
         <div className="category-grid">{categories.slice(0, 12).map((category, index) => (
           <Link key={category.slug} href={`/directory/${category.slug}`} className="category-card">
-            <div className="category-card__visual"><CategoryVisual category={category.name} /><span>{String(index + 1).padStart(2, '0')}</span></div>
+            <CategoryCover category={category.name} index={index} />
             <h3>{category.shortLabel}</h3><p>{category.description}</p>
             <div className="category-card__footer"><b>{category.count.toLocaleString('ar-EG')} نتيجة</b><span>استكشف ←</span></div>
           </Link>
@@ -163,7 +164,7 @@ export default function HomePage() {
           <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أنشطة يبحث عنها أهل نقادة</span><h2>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة</h2><p>روابط مباشرة إلى أهم صفحات الخدمات ذات نية البحث المحلية، ثم بقية أنواع الأنشطة المنشورة داخل مركز نقادة.</p></div><Link href="/activities" className="text-link">كل أنواع الأنشطة ←</Link></div>
           <div className="category-grid">{featuredActivities.map((activity, index) => {
             const count = getBusinessesForActivity(activity).length;
-            return <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card"><div className="category-card__visual"><CategoryVisual category={activity.visualCategory} /><span>{String(index + 1).padStart(2, '0')}</span></div><h3>{activity.name}</h3><p>{activity.description}</p><div className="category-card__footer"><b>{count.toLocaleString('ar-EG')} اسمًا</b><span>عرض النتائج ←</span></div></Link>;
+            return <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card"><CategoryCover category={activity.visualCategory} index={index} /><h3>{activity.name}</h3><p>{activity.description}</p><div className="category-card__footer"><b>{count.toLocaleString('ar-EG')} اسمًا</b><span>عرض النتائج ←</span></div></Link>;
           })}</div>
         </div>
       </section>

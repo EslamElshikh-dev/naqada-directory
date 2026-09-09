@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CategoryVisual } from '@/components/category-visual';
+import { CategoryCover } from '@/components/category-cover';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -67,7 +67,7 @@ export default function ActivitiesPage() {
             const localityCount = new Set(items.map((item) => canonicalLocalityName(item.locality))).size;
             return (
               <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card">
-                <div className="category-card__visual"><CategoryVisual category={activity.visualCategory} /><span>{String(index + 1).padStart(2, '0')}</span></div>
+                <CategoryCover category={activity.visualCategory} index={index} />
                 <h3>{activity.name}</h3>
                 <p>{activity.description}</p>
                 <div className="category-card__footer"><b>{items.length.toLocaleString('ar-EG')} اسمًا · {localityCount.toLocaleString('ar-EG')} موضعًا</b><span>عرض الأسماء ←</span></div>

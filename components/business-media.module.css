@@ -18,6 +18,23 @@
   transition: transform .35s ease;
 }
 
+.illustrative .visual img { filter: saturate(.88) contrast(.96); }
+
+.illustrativeBadge {
+  position: absolute;
+  z-index: 1;
+  inset-inline-start: 10px;
+  inset-block-end: 9px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  background: rgba(32,22,17,.68);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  font-size: 9px;
+  font-weight: 800;
+}
+
 .card {
   margin: -4px -4px 14px;
   border-radius: 16px;

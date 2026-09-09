@@ -13,7 +13,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const detailHref = `/listing/${listing.slug}/`;
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
-      <BusinessMedia businessId={listing.id} />
+      <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} />
       <div className="listing-card__head">
         <CategoryVisual category={listing.category} size="sm" />
         <div className="listing-card__eyebrow">
