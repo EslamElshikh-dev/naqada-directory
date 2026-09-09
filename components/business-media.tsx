@@ -38,16 +38,18 @@ export function BusinessMedia({
     '--cover-hue': `${(seed % 9) - 4}deg`,
     '--cover-accent': `hsl(${35 + (seed % 36)} 68% 58%)`,
   } as CSSProperties);
+  const isDetail = variant === 'detail';
 
   return (
-    <figure style={coverStyle} className={`${styles.media} ${variant === 'detail' ? styles.detail : styles.card}${media ? '' : ` ${styles.illustrative}`}`}>
+    <figure style={coverStyle} className={`${styles.media} ${isDetail ? styles.detail : styles.card}${media ? '' : ` ${styles.illustrative}`}`}>
       <div className={styles.visual}>
         <Image
           src={imageUrl}
           alt={imageAlt}
           fill
-          sizes={variant === 'detail' ? '(max-width: 760px) 92vw, 340px' : '(max-width: 760px) 92vw, (max-width: 1100px) 45vw, 360px'}
-          loading="lazy"
+          sizes={isDetail ? '(max-width: 760px) 92vw, 340px' : '(max-width: 760px) 92vw, (max-width: 1100px) 45vw, 360px'}
+          loading={isDetail ? 'eager' : 'lazy'}
+          fetchPriority={isDetail ? 'high' : 'auto'}
           quality={72}
         />
         {!media && (
@@ -59,7 +61,7 @@ export function BusinessMedia({
           </div>
         )}
       </div>
-      {variant === 'detail' && (
+      {isDetail && (
         <figcaption className={styles.caption}>
           {media ? <><span>{media.caption}</span><a href={media.sourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media.sourceName} ↗</a></> : <span>غلاف مصمم خصيصًا لتمييز هذا النشاط بصريًا، ولا يُقصد به توثيق واجهة المكان.</span>}
         </figcaption>
