@@ -6,7 +6,6 @@ import { ListingCard } from '@/components/listing-card';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
-import { BrandMark } from '@/components/site-shell';
 import { getBusinessMedia } from '@/lib/business-media';
 import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
 import { buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
@@ -152,7 +151,7 @@ export default async function ListingPage({ params }: Props) {
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
           </div>
           <aside className="detail-hero__summary">
-            {media ? <BusinessMedia businessId={listing.id} variant="detail" /> : <BrandMark />}
+            <BusinessMedia businessId={listing.id} variant="detail" fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />
             <span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p>
           </aside>
         </div>

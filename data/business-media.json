@@ -1,5 +1,55 @@
 [
   {
+    "businessId": "google:ChIJ9R8oMB1ISRQRSXSEMDGCjbk",
+    "imageUrl": "/images/businesses/nile-hospital-naqada.webp",
+    "imageAlt": "صورة تعريفية لمستشفى النيل بنقادة تعرض مبنى المستشفى وخدماته",
+    "caption": "صورة تعريفية منشورة لمستشفى النيل بنقادة وتطابق الاسم والعنوان في شارع 23 يوليو.",
+    "sourceUrl": "https://www.soutalsaeid.com/3552",
+    "sourceName": "بوابة صوت الصعيد",
+    "credit": "صورة منشورة ضمن تغطية خدمات مستشفى النيل بنقادة",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJK48cvt5JSRQRyFtMpicFURk",
+    "imageUrl": "/images/businesses/italiano-restaurant-naqada.webp",
+    "imageAlt": "طبق حواوشي منشور على صفحة Italiano Restaurant في نقادة",
+    "caption": "صورة طعام منشورة على الصفحة الرسمية للمطعم، وتطابق منشورات الصفحة عنوان شارع المركز في نقادة.",
+    "sourceUrl": "https://www.facebook.com/61567024481496/photos/122134843178567482/",
+    "sourceName": "الصفحة الرسمية لـ Italiano Restaurant",
+    "credit": "صورة منشورة بواسطة النشاط على صفحته الرسمية",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJ89UzmKxJSRQR5ced2KnLfvU",
+    "imageUrl": "/images/businesses/ali-store-naqada.webp",
+    "imageAlt": "غلاف صفحة Ali Store لخدمات المحمول والصيانة في نقادة",
+    "caption": "الغلاف الرسمي لـ Ali Store ويعرض خدمات المحمول وعنوان النشاط في نقادة.",
+    "sourceUrl": "https://www.facebook.com/alistore12/?locale=ar_AR",
+    "sourceName": "الصفحة الرسمية لـ Ali Store",
+    "credit": "غلاف منشور بواسطة النشاط على صفحته الرسمية",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJ8a6efyI4SRQRH5iL3WR2zOk",
+    "imageUrl": "/images/businesses/archangel-michael-monastery-naqada.webp",
+    "imageAlt": "واجهة دير رئيس الملائكة ميخائيل بنقادة والساحة أمامه",
+    "caption": "واجهة دير رئيس الملائكة ميخائيل بنقادة كما ظهرت في تغطية صحفية مصورة عن الدير.",
+    "sourceUrl": "https://www.egyptke.com/192159",
+    "sourceName": "موقع مصر كي",
+    "credit": "صورة صحفية منشورة ضمن تقرير عن دير ميخائيل بنقادة",
+    "verifiedAt": "2026-09-09"
+  },
+  {
+    "businessId": "google:ChIJQxTLUGI4SRQRESz9BcDrGdw",
+    "imageUrl": "/images/businesses/holy-cross-monastery-naqada.webp",
+    "imageAlt": "مدخل دير الصليب المقدس بنقادة",
+    "caption": "صورة مدخل دير الصليب المقدس بنقادة منشورة ضمن تقرير مصور عن أديرة نقادة.",
+    "sourceUrl": "https://www.youm7.com/story/2023/9/8/أديرة-نقادة-بقنا-تاريخ-شاهد-على-الآثار-القبطية-بالمدينة-تشييد/6297524",
+    "sourceName": "اليوم السابع",
+    "credit": "صورة صحفية منشورة ضمن تقرير عن أديرة نقادة",
+    "verifiedAt": "2026-09-09"
+  },
+  {
     "businessId": "directory:bashlaw-youth-center",
     "imageUrl": "https://www.elaosboa.com/wp-content/uploads/2022/07/elaosboa21806.jpg",
     "imageAlt": "تكريم أحد الطلاب في فعالية لمركز شباب الأوسط قمولا بقرية بشلاو",
