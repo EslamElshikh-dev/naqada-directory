@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
   const { normalizedQuery, tokens } = prepareSearchQuery(query);
   const seen = new Set<string>();
   const items = searchIndex
-    .map((item) => ({
-      item,
-      rank: scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens) + (item.kind === 'listing' ? 6 : 0),
-    }))
+    .map((item) => {
+      const baseRank = scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens);
+      return { item, rank: baseRank < 0 ? -1 : baseRank + (item.kind === 'listing' ? 6 : 0) };
+    })
     .filter(({ rank }) => rank >= 0)
     .sort((a, b) => b.rank - a.rank || a.item.title.localeCompare(b.item.title, 'ar'))
     .map(({ item }) => item)
