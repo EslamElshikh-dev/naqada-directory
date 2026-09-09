@@ -18,7 +18,11 @@ export function VisitorTracker() {
 
   useEffect(() => {
     if (!pathname || pathname.startsWith('/admin')) return;
-    const timer = window.setTimeout(() => {
+
+    let sent = false;
+    const sendVisit = () => {
+      if (sent) return;
+      sent = true;
       void fetch('/api/analytics/visit/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -26,8 +30,24 @@ export function VisitorTracker() {
         keepalive: true,
         body: JSON.stringify({ path: pathname, referrerHost: externalReferrerHost() }),
       }).catch(() => null);
-    }, 120);
-    return () => window.clearTimeout(timer);
+    };
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = typeof idleWindow.requestIdleCallback === 'function'
+      ? idleWindow.requestIdleCallback(sendVisit, { timeout: 2500 })
+      : null;
+    const timerId = idleId === null ? window.setTimeout(sendVisit, 1800) : null;
+
+    window.addEventListener('pagehide', sendVisit, { once: true });
+
+    return () => {
+      window.removeEventListener('pagehide', sendVisit);
+      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
+      if (timerId !== null) window.clearTimeout(timerId);
+    };
   }, [pathname]);
 
   return null;
