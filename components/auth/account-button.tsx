@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState, type MouseEvent } from 'react';
 import { ensureClientSession, subscribeClientSession, type ClientSessionUser } from './client-session';
 import { MemberAvatar } from './member-avatar';
 import type { MemberReputation } from '@/lib/member-reputation';
@@ -11,13 +12,12 @@ function UserIcon() {
 }
 
 export function AccountButton() {
+  const router = useRouter();
   const [user, setUser] = useState<ClientSessionUser | null>(null);
   const [reputation, setReputation] = useState<MemberReputation | null>(null);
   const [ready, setReady] = useState(false);
 
-  const loadSession = useCallback(() => {
-    void ensureClientSession().finally(() => setReady(true));
-  }, []);
+  const loadSession = useCallback(() => ensureClientSession().finally(() => setReady(true)), []);
 
   useEffect(() => {
     const unsubscribe = subscribeClientSession((value) => {
@@ -53,6 +53,14 @@ export function AccountButton() {
     return () => { active = false; };
   }, [user?.id]);
 
+  const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    if (ready) return;
+    event.preventDefault();
+    void loadSession().then((currentUser) => {
+      router.push(currentUser ? '/account' : '/account/login');
+    });
+  }, [loadSession, ready, router]);
+
   return (
     <Link
       className={`account-trigger${user ? ' is-member' : ''}`}
@@ -60,6 +68,7 @@ export function AccountButton() {
       aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}
       onPointerEnter={loadSession}
       onFocus={loadSession}
+      onClick={handleClick}
     >
       <span className="account-trigger__icon" aria-hidden="true">
         {user ? (
