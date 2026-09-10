@@ -1,6 +1,26 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import {knowledgeReferences,primaryKnowledgeContributor} from '@/lib/knowledge';
+import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
+import { knowledgeReferences, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from '../knowledge.module.css';
-export const metadata:Metadata={title:'مراجع موسوعة نقادة',description:'قائمة المراجع التي أوردها مؤلف إقليم نقادة بصعيد مصر، مع حفظها كطبقة مصدر مستقلة.',alternates:{canonical:'/knowledge/references'}};
-export default function ReferencesPage(){const groups=[...new Set(knowledgeReferences.map((item)=>item.group))];return <main id="main-content" className="page-main"><section className={styles.hero}><div className={`shell ${styles.heroGrid}`}><div><span className={styles.eyebrow}>الفهرس المرجعي</span><h1>{knowledgeReferences.length.toLocaleString('ar-EG')} مرجعًا <em>وراء المعرفة</em></h1><p>قائمة ببليوغرافية كما أوردها المؤلف، تحفظ طريق العودة إلى المراجع بدل أن تصبح المعلومة بلا أصل.</p></div></div></section><div className={`shell ${styles.wrap}`}><Link className={styles.back} href="/knowledge">← موسوعة نقادة</Link><section className={styles.attribution}><div className={styles.seal}>أد</div><div><h2>مصدر قائمة المراجع</h2><p>{primaryKnowledgeContributor.attributionFull}</p></div></section>{groups.map((group)=><section className={styles.section} key={group}><div className={styles.sectionHeader}><div><span>مجموعة مراجع</span><h2>{group}</h2></div></div><div className={styles.list}>{knowledgeReferences.filter((item)=>item.group===group).map((item)=><article className={styles.reference} key={item.id}><b>{item.id.replace('ref-','مرجع ')}</b>{item.text}</article>)}</div></section>)}</div></main>;}
+import v3Styles from '../knowledge-v3.module.css';
+
+export const metadata: Metadata = { title: 'مراجع موسوعة نقادة', description: 'قائمة المراجع التي أوردها مؤلف إقليم نقادة بصعيد مصر، مع حفظها كطبقة مصدر مستقلة.', alternates: { canonical: '/knowledge/references' } };
+
+export default function ReferencesPage() {
+  const groups = [...new Set(knowledgeReferences.map((item) => item.group))].map((group) => ({
+    name: group,
+    items: knowledgeReferences.filter((item) => item.group === group),
+  }));
+
+  return <main id="main-content" className="page-main">
+    <section className={styles.hero}><div className={`shell ${styles.heroGrid}`}><div><span className={styles.eyebrow}>الفهرس المرجعي</span><h1>{knowledgeReferences.length.toLocaleString('ar-EG')} مرجعًا <em>وراء المعرفة</em></h1><p>قائمة ببليوغرافية كما أوردها المؤلف، تحفظ طريق العودة إلى المراجع بدل أن تصبح المعلومة بلا أصل.</p></div><aside className={styles.stats}><span><b>{knowledgeReferences.length.toLocaleString('ar-EG')}</b><small>مرجعًا</small></span><span><b>{groups.length.toLocaleString('ar-EG')}</b><small>مجموعة</small></span></aside></div></section>
+    <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="references" /></div>
+    <div className={`shell ${styles.wrap}`}>
+      <Link className={styles.back} href="/knowledge">← موسوعة نقادة</Link>
+      <section className={styles.attribution}><div className={styles.seal}>أد</div><div><h2>مصدر قائمة المراجع</h2><p>{primaryKnowledgeContributor.attributionFull}</p></div></section>
+      <nav className={v3Styles.jumpRail} aria-label="مجموعات المراجع">{groups.map((group, index) => <a key={group.name} href={`#references-group-${index + 1}`}><span>{group.name}</span><small>{group.items.length.toLocaleString('ar-EG')}</small></a>)}</nav>
+      {groups.map((group, index) => <section className={`${styles.section} ${v3Styles.groupSection}`} id={`references-group-${index + 1}`} key={group.name}><div className={v3Styles.groupHeader}><div><span>مجموعة مراجع</span><h2>{group.name}</h2></div><div className={v3Styles.groupCount}>{group.items.length.toLocaleString('ar-EG')} مرجعًا</div></div><div className={styles.list}>{group.items.map((item) => <article className={styles.reference} key={item.id}><b>{item.id.replace('ref-', 'مرجع ')}</b>{item.text}</article>)}</div></section>)}
+    </div>
+  </main>;
+}
