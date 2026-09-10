@@ -1,0 +1,110 @@
+.cardActions {
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(44px, auto)) !important;
+  align-items: stretch;
+}
+
+.cardActions :global(.button) {
+  min-width: 44px;
+  padding-inline: 10px;
+  justify-content: center;
+}
+
+.cardDiscovery {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.cardDiscovery::-webkit-scrollbar,
+.heroDiscovery::-webkit-scrollbar {
+  display: none;
+}
+
+.cardDiscovery a {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid rgba(86, 49, 36, .08);
+  border-radius: 999px;
+  background: #faf6f2;
+  color: #73594e;
+  font-size: .61rem;
+  font-weight: 850;
+}
+
+.cardDiscovery a:last-child {
+  border-color: rgba(43, 114, 119, .12);
+  background: #eef6f4;
+  color: #2b7277;
+}
+
+.heroDiscovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.heroDiscovery a {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .055);
+  color: #ead8ce;
+  font-size: .62rem;
+  font-weight: 850;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.heroDiscovery a:hover,
+.heroDiscovery a:focus-visible {
+  border-color: rgba(230, 185, 111, .34);
+  background: rgba(255, 255, 255, .095);
+  color: #fff;
+}
+
+@media (max-width: 680px) {
+  .cardActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cardActions :global(.button--primary) {
+    grid-column: 1 / -1;
+  }
+
+  .cardActions :global(.button) {
+    width: 100%;
+  }
+
+  .cardDiscovery,
+  .heroDiscovery {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  .heroDiscovery {
+    padding-bottom: 3px;
+  }
+
+  .heroDiscovery a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroDiscovery a {
+    transition: none;
+  }
+}
