@@ -130,7 +130,7 @@ export function DirectoryExplorer({
   const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const trimmedQuery = query.trim();
   const hasActiveFilters = Boolean(trimmedQuery || category || locality);
-  const filterConflict = filtered.length === 0 && rankedQueryMatches.length > 0 && Boolean(category || locality);
+  const filterConflict = Boolean(deferredQuery.trim()) && filtered.length === 0 && rankedQueryMatches.length > 0 && Boolean(category || locality);
 
   useEffect(() => {
     if (!hydratedFromUrl) return;
@@ -211,7 +211,7 @@ export function DirectoryExplorer({
                 <div className={styles.facetGroup}>
                   <span>ضيّق حسب نوع الخدمة</span>
                   <div className={styles.facetList}>
-                    {facets.categories.map((item) => <button key={item.name} type="button" data-active={category === item.name} onClick={() => { setCategory(category === item.name ? '' : item.name); setPage(1); }}>{categoryLabels.get(item.name) || item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+                    {facets.categories.map((item) => <button key={item.name} type="button" data-active={category === item.name} aria-pressed={category === item.name} onClick={() => { setCategory(category === item.name ? '' : item.name); setPage(1); }}>{categoryLabels.get(item.name) || item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
                   </div>
                 </div>
               ) : null}
@@ -219,7 +219,7 @@ export function DirectoryExplorer({
                 <div className={styles.facetGroup}>
                   <span>ضيّق حسب المكان</span>
                   <div className={styles.facetList}>
-                    {facets.localities.map((item) => <button key={item.name} type="button" data-active={locality === item.name} onClick={() => { setLocality(locality === item.name ? '' : item.name); setPage(1); }}>{item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+                    {facets.localities.map((item) => <button key={item.name} type="button" data-active={locality === item.name} aria-pressed={locality === item.name} onClick={() => { setLocality(locality === item.name ? '' : item.name); setPage(1); }}>{item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
                   </div>
                 </div>
               ) : null}
