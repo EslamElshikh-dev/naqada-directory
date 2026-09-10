@@ -1,0 +1,166 @@
+.context {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 16px;
+  padding: 18px;
+  border: 1px solid rgba(113, 51, 33, .12);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(255, 253, 249, .98), rgba(248, 239, 232, .96));
+  box-shadow: 0 12px 30px rgba(54, 29, 20, .07);
+}
+
+.contextHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contextCopy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.contextCopy span {
+  color: #8b7468;
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.contextCopy strong {
+  color: #39271f;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.5;
+}
+
+.contextCopy small {
+  color: #8f7a70;
+  font-size: .64rem;
+  line-height: 1.7;
+}
+
+.count {
+  flex: 0 0 auto;
+  min-width: 72px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: #2b7277;
+  color: #fff;
+}
+
+.count b {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.count small {
+  font-size: .56rem;
+  opacity: .82;
+}
+
+.facets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.facetGroup {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.facetGroup > span {
+  color: #7f685d;
+  font-size: .62rem;
+  font-weight: 900;
+}
+
+.facetList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.facetList button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #eadbd1;
+  border-radius: 999px;
+  background: #fff;
+  color: #65483c;
+  font: inherit;
+  font-size: .62rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.facetList button:hover,
+.facetList button:focus-visible {
+  transform: translateY(-1px);
+  border-color: #c98d73;
+  background: #fffaf6;
+}
+
+.facetList button[data-active='true'] {
+  border-color: #a95337;
+  background: #f4e4dc;
+  color: #713321;
+}
+
+.facetList small {
+  margin-inline-start: 4px;
+  color: #9a8276;
+  font-size: .54rem;
+}
+
+.recovery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.recovery button {
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 1px solid #dfc9bd;
+  border-radius: 999px;
+  background: #fffaf6;
+  color: #7b4432;
+  font: inherit;
+  font-size: .62rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.recovery button:hover,
+.recovery button:focus-visible {
+  border-color: #b76f52;
+  background: #f6e9e1;
+}
+
+@media (max-width: 760px) {
+  .context { padding: 14px; border-radius: 17px; }
+  .contextHead { align-items: center; }
+  .facets { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .contextHead { align-items: flex-start; }
+  .count { min-width: 62px; padding-inline: 9px; }
+  .facetList { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .facetList::-webkit-scrollbar { display: none; }
+  .facetList button { flex: 0 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .facetList button { transition: none; }
+}
