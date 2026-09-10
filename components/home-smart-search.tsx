@@ -2,6 +2,7 @@
 
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './home-smart-search.module.css';
 
@@ -14,6 +15,29 @@ type SearchItem = {
 };
 
 type SearchResponse = { items?: SearchItem[]; error?: string };
+
+type DiscoveryLink = {
+  label: string;
+  href: string;
+};
+
+const discoveryServices: DiscoveryLink[] = [
+  { label: 'صيدليات', href: '/activities/صيدليات' },
+  { label: 'أطباء وعيادات', href: '/activities/اطباء-وعيادات' },
+  { label: 'مدارس ومعاهد', href: '/activities/مدارس-ومعاهد' },
+  { label: 'مطاعم ومقاهي', href: '/activities/مطاعم-ومقاهي' },
+  { label: 'معامل تحاليل', href: '/activities/معامل-تحاليل' },
+  { label: 'موبايلات وكمبيوتر', href: '/activities/محلات-موبايلات-وكمبيوتر' },
+];
+
+const discoveryPlaces: DiscoveryLink[] = [
+  { label: 'مدينة نقادة', href: '/villages/مدينه-نقاده' },
+  { label: 'بشلاو', href: '/villages/بشلاو' },
+  { label: 'الأوسط قمولا', href: '/villages/الاوسط-قمولا' },
+  { label: 'طوخ', href: '/villages/طوخ' },
+  { label: 'الخطارة', href: '/villages/الخطاره' },
+  { label: 'دنفيق', href: '/villages/دنفيق' },
+];
 
 function resultGlyph(kind: SearchItem['kind']) {
   if (kind === 'listing') return '⌖';
@@ -93,7 +117,10 @@ export function HomeSmartSearch() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!trimmedQuery) return;
+    if (!trimmedQuery) {
+      setOpen(true);
+      return;
+    }
     if (activeIndex >= 0 && items[activeIndex]) navigate(items[activeIndex].href);
     else navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`);
   }
@@ -104,7 +131,7 @@ export function HomeSmartSearch() {
       setActiveIndex(-1);
       return;
     }
-    if (!items.length) return;
+    if (!canSearch || !items.length) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       setOpen(true);
@@ -122,7 +149,7 @@ export function HomeSmartSearch() {
     }
   }
 
-  const showPanel = open && canSearch;
+  const showPanel = open;
 
   return (
     <div ref={rootRef} className={styles.root}>
@@ -136,60 +163,93 @@ export function HomeSmartSearch() {
           name="q"
           role="combobox"
           value={query}
-          onChange={(event) => setQuery(event.target.value.slice(0, 100))}
-          onFocus={() => canSearch && setOpen(true)}
+          onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setOpen(true); }}
+          onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="ابحث باسم خدمة أو نشاط أو قرية…"
           autoComplete="off"
           inputMode="search"
           aria-expanded={showPanel}
-          aria-haspopup="listbox"
+          aria-haspopup={canSearch ? 'listbox' : undefined}
           aria-controls="home-smart-search-results"
-          aria-activedescendant={activeIndex >= 0 ? `home-search-result-${activeIndex}` : undefined}
-          aria-autocomplete="list"
+          aria-activedescendant={canSearch && activeIndex >= 0 ? `home-search-result-${activeIndex}` : undefined}
+          aria-autocomplete={canSearch ? 'list' : undefined}
         />
-        {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(false); }}>مسح</button> : null}
+        {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
         <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
       </form>
 
       {showPanel ? (
-        <div id="home-smart-search-results" className={styles.panel} role="listbox" aria-label="نتائج البحث المقترحة" aria-busy={loading}>
-          <div className={styles.panelHead}>
-            <span>{loading ? 'جارٍ البحث…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
-            <button type="button" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>كل النتائج ←</button>
-          </div>
+        <div
+          id="home-smart-search-results"
+          className={styles.panel}
+          role={canSearch ? 'listbox' : undefined}
+          aria-label={canSearch ? 'نتائج البحث المقترحة' : 'وصول مباشر للخدمات والقرى'}
+          aria-busy={canSearch ? loading : undefined}
+        >
+          {canSearch ? (
+            <>
+              <div className={styles.panelHead}>
+                <span>{loading ? 'جارٍ البحث…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
+                <button type="button" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>كل النتائج ←</button>
+              </div>
 
-          {loading ? (
-            <div className={styles.loading} aria-hidden="true"><span /><span /><span /></div>
-          ) : error ? (
-            <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث الموسّع داخل الدليل.</span></div>
-          ) : items.length ? (
-            <div className={styles.results}>
-              {items.map((item, index) => (
-                <button
-                  key={`${item.kind}-${item.href}`}
-                  id={`home-search-result-${index}`}
-                  type="button"
-                  role="option"
-                  aria-selected={activeIndex === index}
-                  className={`${styles.result}${activeIndex === index ? ` ${styles.active}` : ''}`}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => navigate(item.href)}
-                >
-                  <span className={styles.icon} aria-hidden="true">{resultGlyph(item.kind)}</span>
-                  <span className={styles.copy}><strong>{item.title}</strong><small>{item.subtitle}</small></span>
-                  <i>{item.badge}</i>
-                </button>
-              ))}
-            </div>
+              {loading ? (
+                <div className={styles.loading} aria-hidden="true"><span /><span /><span /></div>
+              ) : error ? (
+                <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث الموسّع داخل الدليل.</span></div>
+              ) : items.length ? (
+                <div className={styles.results}>
+                  {items.map((item, index) => (
+                    <button
+                      key={`${item.kind}-${item.href}`}
+                      id={`home-search-result-${index}`}
+                      type="button"
+                      role="option"
+                      aria-selected={activeIndex === index}
+                      className={`${styles.result}${activeIndex === index ? ` ${styles.active}` : ''}`}
+                      onMouseEnter={() => setActiveIndex(index)}
+                      onClick={() => navigate(item.href)}
+                    >
+                      <span className={styles.icon} aria-hidden="true">{resultGlyph(item.kind)}</span>
+                      <span className={styles.copy}><strong>{item.title}</strong><small>{item.subtitle}</small></span>
+                      <i>{item.badge}</i>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح البحث الموسّع لعرض كل ما يطابق عبارتك.</span></div>
+              )}
+
+              <button type="button" className={styles.expanded} onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>
+                البحث الموسّع عن «{trimmedQuery}»
+                <span aria-hidden="true">←</span>
+              </button>
+            </>
           ) : (
-            <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح البحث الموسّع لعرض كل ما يطابق عبارتك.</span></div>
-          )}
+            <div className={styles.discovery}>
+              <div className={styles.discoveryIntro}>
+                <div><span>{trimmedQuery ? 'اكتب حرفًا آخر للبحث الذكي' : 'ابدأ مباشرة بدون كتابة'}</span><strong>اختر خدمة أو قرية ووصل لها بضغطة واحدة</strong></div>
+                <span className={styles.discoveryBadge}>Discovery V3</span>
+              </div>
 
-          <button type="button" className={styles.expanded} onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>
-            البحث الموسّع عن «{trimmedQuery}»
-            <span aria-hidden="true">←</span>
-          </button>
+              <div className={styles.discoveryColumns}>
+                <section className={styles.discoveryGroup} aria-label="خدمات سريعة">
+                  <div className={styles.discoveryGroupHead}><strong>خدمات شائعة</strong><Link href="/activities" prefetch={false} onClick={() => setOpen(false)}>كل الخدمات ←</Link></div>
+                  <div className={styles.discoveryLinks}>
+                    {discoveryServices.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="service" onClick={() => setOpen(false)}>{item.label}</Link>)}
+                  </div>
+                </section>
+
+                <section className={styles.discoveryGroup} aria-label="قرى سريعة">
+                  <div className={styles.discoveryGroupHead}><strong>أماكن مباشرة</strong><Link href="/villages" prefetch={false} onClick={() => setOpen(false)}>كل القرى ←</Link></div>
+                  <div className={styles.discoveryLinks}>
+                    {discoveryPlaces.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="place" onClick={() => setOpen(false)}>{item.label}</Link>)}
+                  </div>
+                </section>
+              </div>
+            </div>
+          )}
         </div>
       ) : null}
     </div>
