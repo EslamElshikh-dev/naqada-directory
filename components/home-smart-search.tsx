@@ -4,6 +4,7 @@ import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { trackEvent } from '@/lib/analytics-client';
 import styles from './home-smart-search.module.css';
 
 type SearchItem = {
@@ -113,6 +114,11 @@ export function HomeSmartSearch() {
     setOpen(false);
     setActiveIndex(-1);
     router.push(href);
+  }
+
+  function handleDiscoveryShortcut(type: 'service' | 'place' | 'index', label: string) {
+    setOpen(false);
+    trackEvent('Home Discovery Shortcut', { type, label });
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -235,16 +241,16 @@ export function HomeSmartSearch() {
 
               <div className={styles.discoveryColumns}>
                 <section className={styles.discoveryGroup} aria-label="خدمات سريعة">
-                  <div className={styles.discoveryGroupHead}><strong>خدمات شائعة</strong><Link href="/activities" prefetch={false} onClick={() => setOpen(false)}>كل الخدمات ←</Link></div>
+                  <div className={styles.discoveryGroupHead}><strong>خدمات شائعة</strong><Link href="/activities" prefetch={false} onClick={() => handleDiscoveryShortcut('index', 'كل الخدمات')}>كل الخدمات ←</Link></div>
                   <div className={styles.discoveryLinks}>
-                    {discoveryServices.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="service" onClick={() => setOpen(false)}>{item.label}</Link>)}
+                    {discoveryServices.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="service" onClick={() => handleDiscoveryShortcut('service', item.label)}>{item.label}</Link>)}
                   </div>
                 </section>
 
                 <section className={styles.discoveryGroup} aria-label="قرى سريعة">
-                  <div className={styles.discoveryGroupHead}><strong>أماكن مباشرة</strong><Link href="/villages" prefetch={false} onClick={() => setOpen(false)}>كل القرى ←</Link></div>
+                  <div className={styles.discoveryGroupHead}><strong>أماكن مباشرة</strong><Link href="/villages" prefetch={false} onClick={() => handleDiscoveryShortcut('index', 'كل القرى')}>كل القرى ←</Link></div>
                   <div className={styles.discoveryLinks}>
-                    {discoveryPlaces.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="place" onClick={() => setOpen(false)}>{item.label}</Link>)}
+                    {discoveryPlaces.map((item) => <Link key={item.href} href={item.href} prefetch={false} className={styles.discoveryLink} data-type="place" onClick={() => handleDiscoveryShortcut('place', item.label)}>{item.label}</Link>)}
                   </div>
                 </section>
               </div>
