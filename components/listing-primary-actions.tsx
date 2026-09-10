@@ -37,6 +37,7 @@ export function ListingPrimaryActions({
         <Link href={localityHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'locality' })}>دليل {locality}<span aria-hidden="true">←</span></Link>
         <Link href={similarHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'nearby-similar' })}>أنشطة مشابهة في {locality}<span aria-hidden="true">←</span></Link>
         <Link href={categoryHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'category' })}>كل {category}<span aria-hidden="true">←</span></Link>
+        <a href="#cross-discovery-title" onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'cross-discovery' })}>استكشاف ذكي<span aria-hidden="true">↓</span></a>
       </nav>
     </>
   );
