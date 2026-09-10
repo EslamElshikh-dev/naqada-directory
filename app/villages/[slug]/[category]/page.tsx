@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
+import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
 import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -91,16 +92,25 @@ export default async function LocalCategoryPage({ params }: Props) {
             <h1>{category.shortLabel} <em>في {locality.name}</em></h1>
             <p>{category.description} هذه الصفحة تعرض النتائج المنشورة داخل {locality.name} فقط.</p>
             <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>مركز نقادة</b> · قنا</span></div>
-            <div className="detail-actions"><Link href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link></div>
+            <div className="detail-actions"><Link href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link><a href="#local-category-discovery" className="button button--outline-light">استكشف أسرع ↓</a></div>
           </div>
           <CategoryVisual category={category.name} size="lg" />
         </div>
       </section>
 
       <section className="shell page-section">
-        <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}>
-          <DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} initialLocality={locality.name} lockedCategory lockedLocality />
-        </Suspense>
+        <LocalCategoryDiscovery
+          localityName={locality.name}
+          localitySlug={locality.slug}
+          categoryName={category.name}
+          categoryLabel={category.shortLabel}
+          scoped={scoped}
+        />
+        <div id="local-category-results">
+          <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}>
+            <DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} initialLocality={locality.name} lockedCategory lockedLocality />
+          </Suspense>
+        </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
