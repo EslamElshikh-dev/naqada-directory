@@ -4,6 +4,7 @@ import { BrandMark } from '@/components/site-shell';
 import { CategoryVisual } from '@/components/category-visual';
 import { CategoryCover } from '@/components/category-cover';
 import { ListingCard } from '@/components/listing-card';
+import { HomeSmartSearch } from '@/components/home-smart-search';
 import { businesses, categories, families, featuredBusinesses, landmarks, localities, meta, officialLocalities, people } from '@/lib/data';
 import { siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
@@ -74,12 +75,7 @@ export default function HomePage() {
             <span className="eyebrow">الدليل والموسوعة المحلية لمركز نقادة وقراه</span>
             <h1>دليل نقادة… <em>خدماتك ومكانك</em> في بحث واحد.</h1>
             <p>ابحث عن الأطباء والمحلات والمدارس والمطاعم والخدمات، واستكشف القرى والنجوع والعائلات والأعلام والمعالم في تجربة محلية واحدة.</p>
-            <form action="/directory" className="hero-search">
-              <span className="hero-search__brand"><BrandMark compact /></span>
-              <label className="sr-only" htmlFor="home-search">ابحث في دليل نقادة</label>
-              <input id="home-search" name="q" placeholder="ابحث باسم خدمة أو نشاط أو قرية…" />
-              <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
-            </form>
+            <HomeSmartSearch />
             <div className="hero__quick-links"><span>وصول سريع</span>{quickCategories.map((name) => { const category = categories.find((item) => item.name === name); return category ? <Link key={category.slug} href={`/directory/${category.slug}`}>{category.shortLabel}</Link> : null; })}<Link href="/villages">دليل القرى</Link><Link href="/knowledge">الموسوعة</Link><Link href="/blog">المدونة</Link></div>
             <div className="hero__trust">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>نشاطًا وخدمة</small></span>
