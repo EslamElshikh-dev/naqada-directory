@@ -24,6 +24,62 @@
   font-size: .66rem !important;
 }
 
+.shortcutRail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  color: rgba(255, 244, 231, .72);
+  font-size: .58rem;
+}
+
+.shortcutRail > span {
+  flex: 0 0 auto;
+  font-weight: 850;
+}
+
+.shortcutRail > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 1px 1px 3px;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.shortcutRail > div::-webkit-scrollbar { display: none; }
+
+.shortcutRail a {
+  flex: 0 0 auto;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border: 1px solid rgba(231, 197, 143, .16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .045);
+  color: #efd3a5;
+  font-size: .57rem;
+  font-weight: 850;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.shortcutRail a[data-type='place'] {
+  border-color: rgba(88, 164, 167, .2);
+  color: #b9dddd;
+}
+
+.shortcutRail a:hover,
+.shortcutRail a:focus-visible {
+  border-color: rgba(255, 255, 255, .32);
+  background: rgba(255, 255, 255, .09);
+  transform: translateY(-1px);
+}
+
 .panel {
   position: absolute;
   z-index: 30;
@@ -325,6 +381,9 @@
 @media (max-width: 700px) {
   .root { width: 100%; }
   .form { grid-template-columns: 42px minmax(0, 1fr) auto; }
+  .shortcutRail { gap: 6px; margin-top: 8px; }
+  .shortcutRail > span { display: none; }
+  .shortcutRail a { min-height: 27px; padding-inline: 8px; font-size: .55rem; }
   .panel { max-height: min(410px, 56vh); border-radius: 17px; }
   .panelHead { font-size: .61rem; }
   .results { max-height: 280px; }
@@ -353,6 +412,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .result,
+  .shortcutRail a,
   .discoveryLink,
   .loading span { transition: none; animation: none !important; }
 }
