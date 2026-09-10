@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
+import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
@@ -42,6 +43,13 @@ export default async function CategoryPage({ params }: Props) {
     .filter((item): item is { locality: NonNullable<typeof item.locality>; count: number } => Boolean(item.locality))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8);
+  const localityDiscoveryItems = topLocalities.map(({ locality, count }) => ({
+    name: locality.name,
+    count,
+    href: count >= 3
+      ? `/villages/${locality.slug}/${category.slug}`
+      : `/directory?category=${encodeURIComponent(category.name)}&locality=${encodeURIComponent(locality.name)}`,
+  }));
   const pageUrl = `${siteConfig.url}/directory/${encodeURIComponent(category.slug)}`;
   const structuredData = {
     '@context': 'https://schema.org',
@@ -76,10 +84,15 @@ export default async function CategoryPage({ params }: Props) {
     <main id="main-content" className="page-main">
       <section className="detail-hero category-hero"><div className="shell category-hero__grid"><div><nav className="breadcrumbs"><Link href="/directory">الدليل</Link><span>/</span><span>{category.shortLabel}</span></nav><span className="eyebrow">قسم محلي متخصص</span><h1>{category.shortLabel} <em>في نقادة</em></h1><p>{category.description}</p><div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span></div></div><CategoryVisual category={category.name} size="lg" /></div></section>
       <section className="shell page-section">
-        {topLocalities.length > 0 && <div className="category-pills" aria-label={`أبرز مناطق ${category.shortLabel} في نقادة`}>
-          {topLocalities.map(({ locality, count }) => <Link key={locality.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/villages/${locality.slug}`}>{locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
-        </div>}
-        <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} lockedCategory /></Suspense>
+        <ServiceLocalityDiscovery
+          title={`${category.shortLabel} حسب القرية والنجع`}
+          description={`ابدأ من المكان الأقرب لك للوصول مباشرة إلى نتائج ${category.shortLabel} المنشورة داخله، بدل إعادة ضبط الفلاتر يدويًا.`}
+          items={localityDiscoveryItems}
+          resultsHref="#category-results"
+        />
+        <div id="category-results">
+          <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer businesses={scopedDirectory} categories={categories} localities={localities} initialCategory={category.name} lockedCategory /></Suspense>
+        </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
