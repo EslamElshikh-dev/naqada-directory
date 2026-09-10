@@ -6,6 +6,7 @@ import { ListingCard } from '@/components/listing-card';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
+import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -65,7 +66,7 @@ export default async function ActivityPage({ params }: Props) {
     name: locality.name,
     count,
     href: useBroadCategory && broadCategory
-      ? `/directory?category=${encodeURIComponent(broadCategory)}&locality=${encodeURIComponent(locality.name)}`
+      ? localCategoryHref(broadCategory, locality.name)
       : `/directory?q=${encodeURIComponent(activity.searchLabel)}&locality=${encodeURIComponent(locality.name)}`,
   }));
   const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`;
