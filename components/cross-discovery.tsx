@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
-import { slugify } from '@/lib/site';
+import { businesses, canonicalLocalityName, localities } from '@/lib/data';
+import { localCategoryHref } from '@/lib/discovery-routing';
 import type { Business } from '@/lib/types';
 import styles from './cross-discovery.module.css';
 
@@ -57,8 +57,7 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
     .slice(0, 4);
   const siblingServices = siblingServiceMatches(listing);
   const otherLocalities = otherLocalitiesWithService(listing);
-  const category = categories.find((item) => item.name === listing.category);
-  const categoryHref = `/directory/${category?.slug || slugify(listing.category)}?locality=${encodeURIComponent(locality)}`;
+  const categoryHref = localCategoryHref(listing.category, locality);
 
   if (!localPeers.length && !siblingServices.length && !otherLocalities.length) return null;
 

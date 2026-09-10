@@ -6,6 +6,7 @@ import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
+import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
@@ -46,9 +47,7 @@ export default async function CategoryPage({ params }: Props) {
   const localityDiscoveryItems = topLocalities.map(({ locality, count }) => ({
     name: locality.name,
     count,
-    href: count >= 3
-      ? `/villages/${locality.slug}/${category.slug}`
-      : `/directory?category=${encodeURIComponent(category.name)}&locality=${encodeURIComponent(locality.name)}`,
+    href: localCategoryHref(category.name, locality.name),
   }));
   const pageUrl = `${siteConfig.url}/directory/${encodeURIComponent(category.slug)}`;
   const structuredData = {

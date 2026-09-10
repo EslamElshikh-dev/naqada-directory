@@ -5,11 +5,10 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
-
-const minimumResults = 3;
 
 export function generateStaticParams() {
   const counts = new Map<string, { slug: string; category: string; count: number }>();
@@ -21,7 +20,7 @@ export function generateStaticParams() {
     const current = counts.get(key);
     counts.set(key, { slug: locality.slug, category: category.slug, count: (current?.count || 0) + 1 });
   }
-  return [...counts.values()].filter((item) => item.count >= minimumResults).map(({ slug, category }) => ({ slug, category }));
+  return [...counts.values()].filter((item) => item.count >= MIN_LOCAL_CATEGORY_RESULTS).map(({ slug, category }) => ({ slug, category }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -30,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) return {};
   const count = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name).length;
-  if (count < minimumResults) return { robots: { index: false, follow: true } };
+  if (count < MIN_LOCAL_CATEGORY_RESULTS) return { robots: { index: false, follow: true } };
   const description = `دليل ${category.shortLabel} في ${locality.name} بمركز نقادة: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`;
   return buildPageMetadata({
     title: `${category.shortLabel} في ${locality.name} — نقادة`,
@@ -48,7 +47,7 @@ export default async function LocalCategoryPage({ params }: Props) {
   if (!locality || !category) notFound();
 
   const scoped = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
-  if (scoped.length < minimumResults) notFound();
+  if (scoped.length < MIN_LOCAL_CATEGORY_RESULTS) notFound();
   const scopedDirectory = directoryBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
   const pageUrl = `${siteConfig.url}/villages/${encodeURIComponent(locality.slug)}/${encodeURIComponent(category.slug)}`;
   const structuredData = {
