@@ -1,0 +1,121 @@
+.discovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.discovery a {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .045);
+  color: #e9c992;
+  font-size: .64rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.discovery a:hover {
+  border-color: rgba(231, 197, 143, .28);
+  background: rgba(255, 255, 255, .075);
+}
+
+.discovery svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+
+.mobileDock {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  .discovery {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+  }
+
+  .discovery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .discovery a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .mobileDock {
+    position: fixed;
+    z-index: 72;
+    inset-inline: 8px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    display: flex;
+    align-items: stretch;
+    gap: 5px;
+    padding: 6px;
+    border: 1px solid rgba(79, 45, 33, .12);
+    border-radius: 18px;
+    background: rgba(255, 253, 249, .97);
+    box-shadow: 0 18px 46px rgba(38, 20, 14, .2);
+    backdrop-filter: blur(16px) saturate(130%);
+  }
+
+  .mobileDock a {
+    min-width: 0;
+    min-height: 48px;
+    flex: 1 1 0;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 4px;
+    padding: 5px 4px;
+    border-radius: 12px;
+    color: #5e4439;
+    font-size: .56rem;
+    font-weight: 900;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .mobileDock a:first-child {
+    background: #36241f;
+    color: #fff;
+  }
+
+  .mobileDock a:hover,
+  .mobileDock a:focus-visible {
+    background: #f4e8de;
+    color: #6f3525;
+  }
+
+  .mobileDock a:first-child:hover,
+  .mobileDock a:first-child:focus-visible {
+    background: #4a3028;
+    color: #fff;
+  }
+
+  .mobileDock svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  :global(body:has(.listing-mobile-discovery-dock)) {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discovery a,
+  .mobileDock a {
+    transition: none;
+  }
+}
