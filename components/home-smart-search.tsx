@@ -22,6 +22,10 @@ type DiscoveryLink = {
   href: string;
 };
 
+type DiscoveryShortcut = DiscoveryLink & {
+  type: 'service' | 'place';
+};
+
 const discoveryServices: DiscoveryLink[] = [
   { label: 'صيدليات', href: '/activities/صيدليات' },
   { label: 'أطباء وعيادات', href: '/activities/اطباء-وعيادات' },
@@ -38,6 +42,15 @@ const discoveryPlaces: DiscoveryLink[] = [
   { label: 'طوخ', href: '/villages/طوخ' },
   { label: 'الخطارة', href: '/villages/الخطاره' },
   { label: 'دنفيق', href: '/villages/دنفيق' },
+];
+
+const oneClickShortcuts: DiscoveryShortcut[] = [
+  { label: 'صيدليات', href: '/activities/صيدليات', type: 'service' },
+  { label: 'أطباء', href: '/activities/اطباء-وعيادات', type: 'service' },
+  { label: 'مطاعم', href: '/activities/مطاعم-ومقاهي', type: 'service' },
+  { label: 'بشلاو', href: '/villages/بشلاو', type: 'place' },
+  { label: 'الأوسط قمولا', href: '/villages/الاوسط-قمولا', type: 'place' },
+  { label: 'مدينة نقادة', href: '/villages/مدينه-نقاده', type: 'place' },
 ];
 
 function resultGlyph(kind: SearchItem['kind']) {
@@ -184,6 +197,23 @@ export function HomeSmartSearch() {
         {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
         <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
       </form>
+
+      <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
+        <span>الأكثر طلبًا</span>
+        <div>
+          {oneClickShortcuts.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch={false}
+              data-type={item.type}
+              onClick={() => handleDiscoveryShortcut(item.type, item.label)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
 
       {showPanel ? (
         <div
