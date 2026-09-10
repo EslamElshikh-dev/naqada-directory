@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CategoryVisual } from '@/components/category-visual';
 import { ListingCard } from '@/components/listing-card';
+import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -58,6 +59,15 @@ export default async function ActivityPage({ params }: Props) {
     .map(([name, count]) => ({ locality: localities.find((item) => item.name === name), count }))
     .filter((item): item is { locality: NonNullable<typeof item.locality>; count: number } => Boolean(item.locality))
     .sort((a, b) => b.count - a.count || a.locality.name.localeCompare(b.locality.name, 'ar'));
+  const broadCategory = activity.categories?.[0] || null;
+  const useBroadCategory = Boolean(broadCategory && activity.categories?.length === 1 && !activity.subcategories?.length);
+  const localityDiscoveryItems = places.map(({ locality, count }) => ({
+    name: locality.name,
+    count,
+    href: useBroadCategory && broadCategory
+      ? `/directory?category=${encodeURIComponent(broadCategory)}&locality=${encodeURIComponent(locality.name)}`
+      : `/directory?q=${encodeURIComponent(activity.searchLabel)}&locality=${encodeURIComponent(locality.name)}`,
+  }));
   const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`;
   const structuredData = {
     '@context': 'https://schema.org',
@@ -109,16 +119,17 @@ export default async function ActivityPage({ params }: Props) {
       </section>
 
       <section className="shell page-section">
-        {places.length > 0 && (
-          <>
-            <div className="section-heading"><div><span className="eyebrow eyebrow--dark">ابحث حسب المكان</span><h2>{activity.name} في قرى ونجوع نقادة</h2><p>انتقل مباشرة إلى صفحة القرية أو النجع لعرض الأنشطة والخدمات المحلية المرتبطة بالمكان.</p></div></div>
-            <div className="category-pills" aria-label={`أماكن وجود ${activity.name}`}>
-              {places.map(({ locality, count }) => <Link key={locality.slug} href={`/villages/${locality.slug}`}>{activity.searchLabel} في {locality.name} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
-            </div>
-          </>
-        )}
-        <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الأسماء داخل الدليل</span><h2>دليل {activity.name}: الأسماء والعناوين</h2><p>اضغط على اسم النشاط لفتح صفحته المستقلة ومعرفة العنوان ووسيلة الاتصال ومصدر الوصول حسب المتاح.</p></div></div>
-        <div className="listing-grid">{scoped.map((item) => <ListingCard key={item.id} listing={item} />)}</div>
+        <ServiceLocalityDiscovery
+          eyebrow="ابحث حسب المكان"
+          title={`${activity.name} في قرى ونجوع نقادة`}
+          description={`اختر المكان للوصول مباشرة إلى نتائج ${activity.searchLabel} المنشورة داخله، بدون المرور بصفحة القرية العامة أولًا.`}
+          items={localityDiscoveryItems}
+          resultsHref="#activity-results"
+        />
+        <div id="activity-results">
+          <div className="section-heading"><div><span className="eyebrow eyebrow--dark">الأسماء داخل الدليل</span><h2>دليل {activity.name}: الأسماء والعناوين</h2><p>اضغط على اسم النشاط لفتح صفحته المستقلة ومعرفة العنوان ووسيلة الاتصال ومصدر الوصول حسب المتاح.</p></div></div>
+          <div className="listing-grid">{scoped.map((item) => <ListingCard key={item.id} listing={item} />)}</div>
+        </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
