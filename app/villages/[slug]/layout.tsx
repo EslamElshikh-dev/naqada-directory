@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { businesses, canonicalLocalityName, categories, getLocalityBySlug } from '@/lib/data';
+import { localCategoryHref } from '@/lib/discovery-routing';
 import styles from './locality-discovery.module.css';
 
 type Props = {
@@ -46,17 +47,12 @@ export default async function LocalityLayout({ children, params }: Props) {
               كل الخدمات
               <span aria-hidden="true">↓</span>
             </Link>
-            {quickCategories.map(({ category, count }) => {
-              const href = count >= 3
-                ? `/villages/${locality.slug}/${category.slug}`
-                : `/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`;
-              return (
-                <Link key={category.slug} href={href} prefetch={false}>
-                  {category.shortLabel}
-                  <small>{count.toLocaleString('ar-EG')}</small>
-                </Link>
-              );
-            })}
+            {quickCategories.map(({ category, count }) => (
+              <Link key={category.slug} href={localCategoryHref(category.name, locality.name)} prefetch={false}>
+                {category.shortLabel}
+                <small>{count.toLocaleString('ar-EG')}</small>
+              </Link>
+            ))}
           </div>
         </div>
       </nav>
