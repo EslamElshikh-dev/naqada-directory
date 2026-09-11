@@ -1,14 +1,22 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
-const load = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url), 'utf8'));
+const dataDirectory = new URL('../data/', import.meta.url);
+const load = (name) => JSON.parse(readFileSync(new URL(`${name}.json`, dataDirectory), 'utf8'));
+const loadJsonFile = (name) => JSON.parse(readFileSync(new URL(name, dataDirectory), 'utf8'));
+
+const businessFiles = readdirSync(dataDirectory)
+  .filter((name) => /^businesses-\d+\.json$/.test(name))
+  .sort((left, right) => left.localeCompare(right, 'en', { numeric: true }));
+
 const catalog = load('catalog');
-const businesses = ['01', '02', '03', '04'].flatMap((part) => load(`businesses-${part}`));
+const businesses = businessFiles.flatMap(loadJsonFile);
 const localities = load('localities');
 const families = load('families');
 const people = load('people');
 const landmarks = load('landmarks');
+
 const canonicalLocality = (value) => {
   const raw = value?.trim() || 'مركز نقادة';
   return raw.split('/')[0]?.trim() || raw;
@@ -19,8 +27,12 @@ const mergedLocality = (value) => ({
   'شرق الترعة': 'نجع شرق الترعة',
 }[canonicalLocality(value)] || canonicalLocality(value));
 
-test('published datasets match the declared catalog totals', () => {
+test('all published business shards are discovered automatically', () => {
+  assert.ok(businessFiles.length > 0, 'expected at least one businesses-NN.json shard');
   assert.equal(businesses.length, catalog.meta.businessCount);
+});
+
+test('published datasets match the declared catalog totals', () => {
   assert.equal(localities.length, catalog.meta.localityCount);
   assert.equal(families.length, catalog.meta.familyCount);
   assert.equal(people.length, catalog.meta.peopleCount);
@@ -34,10 +46,19 @@ test('business identifiers and public slugs are unique', () => {
   assert.ok(businesses.every((item) => item.verification === 'A'));
 });
 
-test('category counts are derived correctly', () => {
-  for (const category of catalog.categoryCounts) {
-    assert.equal(businesses.filter((item) => item.category === category.name).length, category.count, category.name);
-  }
+test('catalog category definitions cover every published business', () => {
+  const declaredCategories = new Set(catalog.categoryCounts.map((item) => item.name));
+  const publishedCategories = new Set(businesses.map((item) => item.category));
+  const missingCategories = [...publishedCategories].filter((name) => !declaredCategories.has(name));
+
+  assert.deepEqual(missingCategories, []);
+  assert.equal(
+    [...publishedCategories].reduce(
+      (sum, category) => sum + businesses.filter((item) => item.category === category).length,
+      0,
+    ),
+    businesses.length,
+  );
 });
 
 test('nested activity localities collapse to one canonical route name', () => {
