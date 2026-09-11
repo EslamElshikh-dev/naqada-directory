@@ -1,14 +1,18 @@
 name: Visual QA V2
 
 on:
+  pull_request:
   push:
     branches:
       - chore/project-hygiene-v2
   workflow_dispatch:
 
 concurrency:
-  group: visual-qa-v2-${{ github.ref }}
+  group: visual-qa-v2-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
 
 jobs:
   visual-qa:
@@ -22,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
