@@ -11,11 +11,18 @@ function UserIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.7 19.5c.8-3.4 3-5.2 6.3-5.2s5.5 1.8 6.3 5.2"/></svg>;
 }
 
+type ReputationState = {
+  userId: string;
+  value: MemberReputation | null;
+};
+
 export function AccountButton() {
   const router = useRouter();
   const [user, setUser] = useState<ClientSessionUser | null>(null);
-  const [reputation, setReputation] = useState<MemberReputation | null>(null);
+  const [reputationState, setReputationState] = useState<ReputationState | null>(null);
   const [ready, setReady] = useState(false);
+  const userId = user?.id ?? null;
+  const reputation = reputationState?.userId === userId ? reputationState.value : null;
 
   const loadSession = useCallback(() => ensureClientSession().finally(() => setReady(true)), []);
 
@@ -41,17 +48,19 @@ export function AccountButton() {
   }, [loadSession]);
 
   useEffect(() => {
-    if (!user) { setReputation(null); return; }
+    if (!userId) return;
+
     let active = true;
     void fetch('/api/profile', { cache: 'no-store', credentials: 'same-origin' })
       .then(async (response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!active) return;
-        setReputation(data?.profile?.reputation || null);
+        setReputationState({ userId, value: data?.profile?.reputation || null });
       })
       .catch(() => null);
+
     return () => { active = false; };
-  }, [user?.id]);
+  }, [userId]);
 
   const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
     if (ready) return;
