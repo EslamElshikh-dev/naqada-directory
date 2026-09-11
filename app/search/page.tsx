@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildSearchContext } from '@/lib/search-context';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
+import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
 
 type SearchScope = 'all' | 'directory' | 'places' | 'knowledge';
@@ -112,6 +114,9 @@ export default async function SearchPage({ searchParams }: Props) {
   const activeScope = scopeValue(params.scope);
   const canSearch = query.length >= 2;
   const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER) : [];
+  const searchContext = canSearch && (activeScope === 'all' || activeScope === 'directory')
+    ? buildSearchContext(query)
+    : null;
 
   const counts = {
     all: allResults.length,
@@ -138,14 +143,14 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className={`shell ${styles.heroGrid}`}>
           <div>
             <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
-            <span className="eyebrow">Search Recovery V9</span>
-            <h1>ابحث بطريقتك ولو مفيش تطابق <em>نساعدك توصل</em></h1>
-            <p>البحث الأساسي يظل دقيقًا وصارمًا، وإذا لم يجد نتيجة نقترح تصحيحًا إملائيًا محافظًا أو بحثًا أوسع بدل عرض نتائج غير مؤكدة.</p>
+            <span className="eyebrow">Search Context V11</span>
+            <h1>ابحث عن الخدمة والمكان… <em>ونوصلك للمسار الأذكى</em></h1>
+            <p>نعرض النتائج الفردية بدقة، وإذا كانت عبارتك تجمع خدمة مع مكان ولدينا صفحة محلية قوية، نضعها أمامك كمسار مباشر قبل القائمة.</p>
           </div>
           <aside className={styles.heroNote}>
-            <span>تعافٍ آمن من صفر نتائج</span>
-            <strong>تطابق دقيق أولًا · اقتراحات منفصلة ثانيًا</strong>
-            <p>الاقتراحات لا تدخل داخل ترتيب النتائج ولا تغيّر بيانات الدليل؛ الزائر يختارها بنفسه فقط عند الحاجة.</p>
+            <span>خدمة + مكان</span>
+            <strong>صفحة محلية مجمعة · نتائج فردية · Recovery آمن</strong>
+            <p>المسار المحلي لا يظهر إلا إذا كانت الصفحة موجودة فعلًا وتحقق نفس حد التغطية المستخدم في بناء صفحات الدليل.</p>
           </aside>
         </div>
       </section>
@@ -158,7 +163,7 @@ export default async function SearchPage({ searchParams }: Props) {
             {activeScope !== 'all' ? <input type="hidden" name="scope" value={activeScope} /> : null}
             <button type="submit">بحث موحّد</button>
           </div>
-          <small>اكتب حرفين على الأقل. صفحات نتائج البحث غير مفهرسة في Google، والاقتراحات لا تظهر إلا عند عدم وجود تطابق دقيق.</small>
+          <small>اكتب حرفين على الأقل. صفحات نتائج البحث غير مفهرسة في Google، وأي تصحيح إملائي يظل اقتراحًا اختياريًا.</small>
         </form>
 
         {canSearch ? (
@@ -176,6 +181,17 @@ export default async function SearchPage({ searchParams }: Props) {
               </Link>
             ))}
           </nav>
+        ) : null}
+
+        {searchContext ? (
+          <Link className={contextStyles.card} href={searchContext.href} prefetch={false} aria-label={`فتح المسار المحلي: ${searchContext.title}`}>
+            <span className={contextStyles.copy}>
+              <span className={contextStyles.kicker}>Search Context V11 · مسار محلي مقترح</span>
+              <strong>{searchContext.title}</strong>
+              <small>{searchContext.subtitle}</small>
+            </span>
+            <span className={contextStyles.action}>فتح الصفحة المحلية ←</span>
+          </Link>
         ) : null}
 
         {!canSearch ? (
