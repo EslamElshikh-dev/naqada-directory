@@ -321,14 +321,3 @@
   overscroll-behavior-inline: contain;
   scroll-padding-inline: 1px;
 }
-
-/* Resolve the legacy <=390px single-column rule through cascade order, not !important. */
-@media (max-width: 430px) {
-  .category-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .category-card {
-    min-width: 0;
-  }
-}
