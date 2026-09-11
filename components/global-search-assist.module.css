@@ -1,0 +1,66 @@
+.assist {
+  width: 100%;
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.assist > button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  grid-template-areas:
+    "reason count"
+    "query count";
+  align-items: center;
+  gap: 2px 10px;
+  padding: 10px 11px;
+  border: 1px solid rgba(84,49,36,.11);
+  border-radius: 12px;
+  background: #fff;
+  color: #3f2b23;
+  text-align: start;
+  font: inherit;
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.assist > button:hover,
+.assist > button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(169,83,55,.28);
+  background: #fffaf6;
+}
+
+.assist span {
+  grid-area: reason;
+  color: #9a5a3f;
+  font-size: .56rem;
+  font-weight: 900;
+}
+
+.assist strong {
+  grid-area: query;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .69rem;
+}
+
+.assist small {
+  grid-area: count;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  min-width: 64px;
+  padding: 5px 7px;
+  border-radius: 9px;
+  background: #eef7f6;
+  color: #2b7277;
+  font-size: .55rem;
+  font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assist > button { transition: none; }
+}
