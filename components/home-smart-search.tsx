@@ -8,7 +8,7 @@ import { trackEvent } from '@/lib/analytics-client';
 import styles from './home-smart-search.module.css';
 
 type SearchItem = {
-  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page';
+  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page' | 'knowledge-place' | 'knowledge-person' | 'knowledge-heritage';
   title: string;
   subtitle: string;
   href: string;
@@ -56,8 +56,9 @@ const oneClickShortcuts: DiscoveryShortcut[] = [
 function resultGlyph(kind: SearchItem['kind']) {
   if (kind === 'listing') return '⌖';
   if (kind === 'category') return '▦';
-  if (kind === 'locality') return '⌂';
-  if (kind === 'landmark') return '◇';
+  if (kind === 'locality' || kind === 'knowledge-place') return '⌂';
+  if (kind === 'knowledge-person') return '◉';
+  if (kind === 'landmark' || kind === 'knowledge-heritage') return '◇';
   return '↗';
 }
 
@@ -176,7 +177,7 @@ export function HomeSmartSearch() {
         <span className="hero-search__brand" aria-hidden="true">
           <Image src="/icon.svg" width={30} height={30} alt="" />
         </span>
-        <label className="sr-only" htmlFor="home-search">ابحث في دليل نقادة</label>
+        <label className="sr-only" htmlFor="home-search">ابحث في دليل وموسوعة نقادة</label>
         <input
           id="home-search"
           name="q"
@@ -185,7 +186,7 @@ export function HomeSmartSearch() {
           onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setOpen(true); }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="ابحث باسم خدمة أو نشاط أو قرية…"
+          placeholder="ابحث بخدمة أو نشاط أو قرية أو شخصية…"
           autoComplete="off"
           inputMode="search"
           aria-expanded={showPanel}
@@ -195,7 +196,7 @@ export function HomeSmartSearch() {
           aria-autocomplete={canSearch ? 'list' : undefined}
         />
         {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
-        <button type="submit">ابحث في الدليل <b aria-hidden="true">←</b></button>
+        <button type="submit">ابحث في نقادة <b aria-hidden="true">←</b></button>
       </form>
 
       <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
@@ -226,14 +227,14 @@ export function HomeSmartSearch() {
           {canSearch ? (
             <>
               <div className={styles.panelHead}>
-                <span>{loading ? 'جارٍ البحث…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
-                <button type="button" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>كل النتائج ←</button>
+                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
+                <button type="button" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>نتائج الأنشطة ←</button>
               </div>
 
               {loading ? (
                 <div className={styles.loading} aria-hidden="true"><span /><span /><span /></div>
               ) : error ? (
-                <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث الموسّع داخل الدليل.</span></div>
+                <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث داخل الدليل.</span></div>
               ) : items.length ? (
                 <div className={styles.results}>
                   {items.map((item, index) => (
@@ -254,11 +255,11 @@ export function HomeSmartSearch() {
                   ))}
                 </div>
               ) : (
-                <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح البحث الموسّع لعرض كل ما يطابق عبارتك.</span></div>
+                <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح دليل الأنشطة لبحث تجاري أوسع.</span></div>
               )}
 
               <button type="button" className={styles.expanded} onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>
-                البحث الموسّع عن «{trimmedQuery}»
+                بحث الأنشطة عن «{trimmedQuery}»
                 <span aria-hidden="true">←</span>
               </button>
             </>
