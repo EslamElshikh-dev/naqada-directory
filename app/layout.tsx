@@ -19,6 +19,7 @@ import './design-system-v2.css';
 import './detail-experience-v2.css';
 import './discovery-experience-v2.css';
 import './ui-quality-v13.css';
+import './detail-content-v15.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
