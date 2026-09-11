@@ -1,0 +1,71 @@
+name: Visual QA V2
+
+on:
+  push:
+    branches:
+      - chore/project-hygiene-v2
+  workflow_dispatch:
+
+concurrency:
+  group: visual-qa-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start production server
+        run: |
+          npm run start > /tmp/naqada-next.log 2>&1 &
+          echo $! > /tmp/naqada-next.pid
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/naqada-next.log
+          exit 1
+
+      - name: Run responsive diagnostics and screenshots
+        run: node .github/visual-qa-v2.mjs
+
+      - name: Upload visual QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa-v2
+          path: artifacts
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa-v2-server-log
+          path: /tmp/naqada-next.log
+          if-no-files-found: ignore
+          retention-days: 7
