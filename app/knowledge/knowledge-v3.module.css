@@ -63,6 +63,7 @@
   padding: 3px 0 8px;
   scrollbar-width: none;
   scroll-snap-type: x proximity;
+  overscroll-behavior-inline: contain;
 }
 
 .jumpRail::-webkit-scrollbar { display: none; }
@@ -70,28 +71,29 @@
 .jumpRail a,
 .jumpRail span {
   flex: none;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 11px;
+  padding: 8px 12px;
   border: 1px solid rgba(84,49,36,.10);
   border-radius: 999px;
   background: #fff;
   color: #5a4035;
   text-decoration: none;
-  font-size: .7rem;
+  font-size: .76rem;
   font-weight: 820;
   scroll-snap-align: start;
 }
 
 .jumpRail small {
-  min-width: 24px;
-  padding: 2px 6px;
+  min-width: 26px;
+  padding: 3px 7px;
   border-radius: 999px;
   background: #f2e7dc;
   color: #8a513a;
   text-align: center;
-  font-size: .58rem;
+  font-size: .64rem;
 }
 
 .groupSection {
@@ -115,7 +117,7 @@
   display: block;
   margin-bottom: 3px;
   color: #996149;
-  font-size: .65rem;
+  font-size: .7rem;
   font-weight: 850;
 }
 
@@ -123,17 +125,21 @@
   margin: 0;
   color: #2e201b;
   font-size: clamp(1.35rem,2.7vw,1.9rem);
+  text-wrap: balance;
 }
 
 .groupCount {
   flex: none;
-  min-width: 72px;
+  min-width: 74px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
   padding: 8px 11px;
   border-radius: 13px;
   background: #f4ebe2;
   color: #7c4a36;
   text-align: center;
-  font-size: .7rem;
+  font-size: .76rem;
   font-weight: 850;
 }
 
@@ -149,14 +155,15 @@
 }
 
 .summaryRail span {
+  min-height: 36px;
   display: inline-flex;
   gap: 7px;
   align-items: center;
-  padding: 7px 10px;
+  padding: 7px 11px;
   border-radius: 999px;
   background: #f1e7dd;
   color: #704b3b;
-  font-size: .68rem;
+  font-size: .74rem;
   font-weight: 800;
 }
 
@@ -180,11 +187,15 @@
   .visual,
   .hubCard:nth-child(1) .visual,
   .hubCard:nth-child(2) .visual { flex-basis: 172px; }
+  .jumpRail a,
+  .jumpRail span { min-height: 44px; font-size: .74rem; }
+  .jumpRail small { font-size: .63rem; }
   .groupHeader { align-items: center; }
-  .groupCount { min-width: 62px; }
-  .summaryRail { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .groupHeader span { font-size: .69rem; }
+  .groupCount { min-width: 66px; min-height: 42px; font-size: .73rem; }
+  .summaryRail { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-inline: contain; }
   .summaryRail::-webkit-scrollbar { display: none; }
-  .summaryRail span { flex: none; }
+  .summaryRail span { flex: none; min-height: 40px; font-size: .72rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
