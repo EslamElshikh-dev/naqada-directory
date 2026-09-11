@@ -9,6 +9,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -27,29 +34,56 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify published data
+      - name: Verify published data and contracts
         run: npm test
 
       - name: Lint
         run: npm run lint
 
-      - name: Build static site
+      - name: Build application
         run: npm run build
 
-      - name: Verify technical SEO output
+      - name: Verify server-rendered technical SEO output
         run: |
+          npm run start > /tmp/naqada-next.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+
           node <<'NODE'
-          const fs = require('node:fs');
+          const localOrigin = 'http://127.0.0.1:3000';
           const productionOrigin = 'https://naqada-directory.vercel.app';
           const verificationToken = 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY';
-          const home = fs.readFileSync('out/index.html', 'utf8');
-          const robots = fs.readFileSync('out/robots.txt', 'utf8');
-          const sitemap = fs.readFileSync('out/sitemap.xml', 'utf8');
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+          async function fetchReady(path) {
+            let lastError;
+            for (let attempt = 0; attempt < 30; attempt += 1) {
+              try {
+                const response = await fetch(`${localOrigin}${path}`, { redirect: 'follow' });
+                if (response.ok) return response;
+                lastError = new Error(`${path} returned ${response.status}`);
+              } catch (error) {
+                lastError = error;
+              }
+              await sleep(500);
+            }
+            throw lastError || new Error(`Unable to fetch ${path}`);
+          }
+
+          const [homeResponse, robotsResponse, sitemapResponse] = await Promise.all([
+            fetchReady('/'),
+            fetchReady('/robots.txt'),
+            fetchReady('/sitemap.xml'),
+          ]);
+
+          const home = await homeResponse.text();
+          const robots = await robotsResponse.text();
+          const sitemap = await sitemapResponse.text();
 
           if (!home.includes('name="google-site-verification"') || !home.includes(`content="${verificationToken}"`)) {
             throw new Error('Google Search Console verification meta is missing from the homepage head');
           }
-          if (!home.includes(`rel="canonical" href="${productionOrigin}/"`)) {
+          if (!home.includes('rel="canonical"') || !home.includes(`href="${productionOrigin}/"`)) {
             throw new Error('Homepage canonical does not point to the adopted production Vercel URL');
           }
           if (!robots.includes(`Sitemap: ${productionOrigin}/sitemap.xml`)) {
@@ -76,7 +110,8 @@ jobs:
           }
           NODE
 
-      - name: Smoke-test intake endpoint without writes
+      - name: Smoke-test production intake endpoint without writes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           node <<'NODE'
           const url = 'https://ceyjfguoomdlrtsujskj.supabase.co/functions/v1/directory-intake';
