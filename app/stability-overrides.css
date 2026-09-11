@@ -1,4 +1,5 @@
-/* Detail Content V15 — focused hierarchy for detail, village, knowledge, and long-form surfaces. */
+/* Final detail/content hierarchy and cross-device stability overrides.
+   Consolidated from the former V15 detail + visual QA closure layers. */
 
 .detail-hero,
 .village-hero {
@@ -302,5 +303,31 @@
 
   [class*="knowledge-module"][class*="detailCard"] {
     padding: 15px !important;
+  }
+}
+
+/* Keep the directory category rail inside its own layout box. Scrolling stays local
+   to the pills instead of widening the document viewport. */
+.category-pills {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: 0 !important;
+  padding-inline: 1px !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline: 1px;
+}
+
+/* Keep the compact two-column activity grid consistent at 390/430px. */
+@media (max-width: 430px) {
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .category-card {
+    min-width: 0;
   }
 }

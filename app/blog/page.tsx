@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -100,7 +101,13 @@ export default function BlogPage() {
             <div className={editorialStyles.editorialGrid}>
               {allEditorialPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
-                  <img src={`/blog-media/${post.hero.asset}`} width={post.hero.width} height={post.hero.height} alt={post.hero.alt} loading="lazy" decoding="async" />
+                  <Image
+                    src={`/blog-media/${encodeURIComponent(post.hero.asset)}`}
+                    width={post.hero.width}
+                    height={post.hero.height}
+                    alt={post.hero.alt}
+                    sizes="(max-width: 680px) calc(100vw - 20px), 50vw"
+                  />
                   <div className={editorialStyles.editorialCardBody}>
                     <div className={styles.cardTop}>
                       <span>{post.locality}</span>

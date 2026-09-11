@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { allEditorialPosts, getAllEditorialPost } from '@/lib/editorial-posts-all';
@@ -15,6 +16,10 @@ export function generateStaticParams() {
 
 function imageUrl(asset: string) {
   return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
+}
+
+function localImageUrl(asset: string) {
+  return `/blog-media/${encodeURIComponent(asset)}`;
 }
 
 function metadataTitle(title: string) {
@@ -82,7 +87,6 @@ export default async function EditorialPostPage({ params }: Props) {
   if (!post) notFound();
 
   const canonicalUrl = `${siteConfig.url}/blog/${post.slug}`;
-  const heroUrl = imageUrl(post.hero.asset);
   const relatedLocality = localities.find((item) => item.name === post.relatedVillage);
   const isDirectLocalityPage = post.locality === post.relatedVillage;
   const allImages = [post.hero, ...post.sections.flatMap((section) => section.image ? [section.image] : [])];
@@ -160,7 +164,14 @@ export default async function EditorialPostPage({ params }: Props) {
                 </div>
               </div>
               <figure className={styles.heroFigure}>
-                <img src={heroUrl} width={post.hero.width} height={post.hero.height} alt={post.hero.alt} fetchPriority="high" />
+                <Image
+                  src={localImageUrl(post.hero.asset)}
+                  width={post.hero.width}
+                  height={post.hero.height}
+                  alt={post.hero.alt}
+                  priority
+                  sizes="(max-width: 900px) calc(100vw - 20px), 46vw"
+                />
                 <figcaption>{post.hero.caption}</figcaption>
               </figure>
             </div>
@@ -184,7 +195,13 @@ export default async function EditorialPostPage({ params }: Props) {
                 {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                 {section.image && (
                   <figure className={styles.inlineFigure}>
-                    <img src={imageUrl(section.image.asset)} width={section.image.width} height={section.image.height} alt={section.image.alt} loading="lazy" decoding="async" />
+                    <Image
+                      src={localImageUrl(section.image.asset)}
+                      width={section.image.width}
+                      height={section.image.height}
+                      alt={section.image.alt}
+                      sizes="(max-width: 900px) calc(100vw - 20px), 860px"
+                    />
                     <figcaption>{section.image.caption}</figcaption>
                   </figure>
                 )}
