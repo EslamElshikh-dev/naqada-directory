@@ -6,6 +6,7 @@ const publicImages = join(root, 'public', 'images');
 const sourceRoots = ['app', 'components', 'lib', 'data', 'tests', 'scripts'];
 const textExtensions = new Set(['.ts', '.tsx', '.js', '.mjs', '.json', '.css', '.md', '.yml', '.yaml']);
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp', '.svg', '.avif']);
+const imageReferencePattern = /\/images\/[A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|svg|avif)/gi;
 
 function walk(directory, predicate = () => true) {
   if (!existsSync(directory)) return [];
@@ -20,21 +21,26 @@ const sourceFiles = sourceRoots.flatMap((directory) =>
   walk(join(root, directory), (path) => textExtensions.has(extname(path).toLowerCase())),
 );
 
-const sourceText = sourceFiles
-  .map((path) => readFileSync(path, 'utf8'))
-  .join('\n');
+const referencesByPath = new Map();
+for (const sourceFile of sourceFiles) {
+  const text = readFileSync(sourceFile, 'utf8');
+  const matches = [...text.matchAll(imageReferencePattern)].map((match) => match[0]);
+  for (const publicPath of new Set(matches)) {
+    if (!referencesByPath.has(publicPath)) referencesByPath.set(publicPath, []);
+    referencesByPath.get(publicPath).push(relative(root, sourceFile).replaceAll('\\', '/'));
+  }
+}
 
-const referencedPaths = new Set(
-  [...sourceText.matchAll(/\/images\/[A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|svg|avif)/gi)]
-    .map((match) => match[0]),
-);
-
+const referencedPaths = new Set(referencesByPath.keys());
 const localAssets = walk(publicImages, (path) => imageExtensions.has(extname(path).toLowerCase()));
 const localPublicPaths = new Set(
   localAssets.map((path) => `/images/${relative(publicImages, path).replaceAll('\\', '/')}`),
 );
 
-const brokenReferences = [...referencedPaths].filter((path) => !localPublicPaths.has(path)).sort();
+const brokenReferences = [...referencedPaths]
+  .filter((path) => !localPublicPaths.has(path))
+  .sort()
+  .map((path) => ({ path, sources: referencesByPath.get(path) || [] }));
 const unusedAssets = [...localPublicPaths].filter((path) => !referencedPaths.has(path)).sort();
 const totalBytes = localAssets.reduce((sum, path) => sum + statSync(path).size, 0);
 const unusedBytes = unusedAssets.reduce((sum, publicPath) => {
