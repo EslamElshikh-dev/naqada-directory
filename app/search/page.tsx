@@ -146,7 +146,7 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className={`shell ${styles.heroGrid}`}>
           <div>
             <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
-            <span className="eyebrow">Search Journey V12</span>
+            <span className="eyebrow">بحث محلي ذكي</span>
             <h1>بحث واحد… <em>ورحلة محلية أوضح</em></h1>
             <p>ابحث بخدمة ومكان، وسنرتّب لك المسار المحلي والنتائج المباشرة والخدمات المرتبطة وخيارات أخرى مبنية على بيانات الدليل المنشورة.</p>
           </div>

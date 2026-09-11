@@ -295,3 +295,163 @@ body {
     border-color: currentColor;
   }
 }
+
+/* Visual System V14 — shared hierarchy for the public-facing product surfaces. */
+:root {
+  --nq-control-height: 44px;
+  --nq-card-border: rgba(84, 49, 36, .105);
+  --nq-card-shadow: 0 10px 30px rgba(55, 30, 21, .05);
+  --nq-card-shadow-hover: 0 18px 42px rgba(55, 30, 21, .09);
+  --nq-card-radius: 20px;
+}
+
+.page-main h1,
+.page-main h2,
+.page-main h3,
+.section-heading h2 {
+  text-wrap: balance;
+}
+
+.page-main p,
+.listing-card__location,
+.village-card p,
+.footer__cta p {
+  text-wrap: pretty;
+}
+
+.home-action,
+.category-card,
+.listing-card,
+.village-card {
+  border-color: var(--nq-card-border);
+  box-shadow: var(--nq-card-shadow);
+}
+
+.catalog-hero__summary,
+.geo-hero__panel,
+.hero__panel {
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+}
+
+.explorer__tools {
+  border-color: var(--nq-card-border);
+  box-shadow: var(--nq-card-shadow);
+}
+
+.search-field,
+.select-field {
+  min-height: 48px;
+}
+
+.search-field input,
+.select-field select {
+  min-height: 46px;
+}
+
+.results-bar {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.results-bar strong {
+  font-size: 1rem;
+}
+
+.village-card {
+  min-width: 0;
+  border-radius: var(--nq-card-radius);
+  background: linear-gradient(155deg, #fff, #fffaf6);
+  overflow: hidden;
+}
+
+.village-card__type {
+  color: #906048;
+  font-size: .7rem;
+  font-weight: 850;
+}
+
+.village-card h2 {
+  margin-block: 8px 6px;
+  color: var(--nq-ink);
+  line-height: 1.55;
+}
+
+.village-card p {
+  color: #6f625b;
+  font-size: .75rem;
+  line-height: 1.9;
+}
+
+.village-card__meta {
+  gap: 7px;
+}
+
+.village-card__meta > * {
+  border-color: rgba(84,49,36,.08);
+  background: #faf6f2;
+}
+
+.village-card__cta {
+  min-height: var(--nq-control-height);
+  display: inline-flex;
+  align-items: center;
+  color: var(--nq-copper-dark);
+  font-weight: 900;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .village-card {
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+
+  .village-card:hover,
+  .village-card:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(169,83,55,.2);
+    box-shadow: var(--nq-card-shadow-hover);
+  }
+}
+
+@media (max-width: 680px) {
+  .page-section {
+    padding-bottom: 48px;
+  }
+
+  .explorer__tools {
+    gap: 8px;
+  }
+
+  .results-bar {
+    padding-inline: 13px;
+  }
+
+  .village-card {
+    border-radius: 18px;
+  }
+
+  .village-card__type {
+    font-size: 11px;
+  }
+
+  .village-card h2 {
+    font-size: 1rem;
+  }
+
+  .village-card p {
+    font-size: 12px;
+    line-height: 1.85;
+  }
+
+  .village-card__meta,
+  .village-card__cta {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .village-card {
+    transition: none !important;
+  }
+}
