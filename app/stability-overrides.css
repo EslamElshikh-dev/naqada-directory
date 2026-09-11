@@ -307,24 +307,25 @@
 }
 
 /* Keep the directory category rail inside its own layout box. Scrolling stays local
-   to the pills instead of widening the document viewport. */
+   to the pills instead of widening the document viewport. This file is imported after
+   the legacy mobile rule, so normal cascade order is sufficient. */
 .category-pills {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  margin-inline: 0 !important;
-  padding-inline: 1px !important;
+  margin-inline: 0;
+  padding-inline: 1px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-inline: contain;
   scroll-padding-inline: 1px;
 }
 
-/* Keep the compact two-column activity grid consistent at 390/430px. */
+/* Resolve the legacy <=390px single-column rule through cascade order, not !important. */
 @media (max-width: 430px) {
   .category-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .category-card {
