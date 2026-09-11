@@ -131,15 +131,17 @@ export function sanitizeSiteSearchQuery(value?: string | null) {
   return (value || '').trim().replace(/\s+/g, ' ').slice(0, 100);
 }
 
-export function searchSite(value: string, limit = 8): SiteSearchResult[] {
+export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[]): SiteSearchResult[] {
   const query = sanitizeSiteSearchQuery(value);
   if (query.length < 2) return [];
 
   const { normalizedQuery, tokens } = prepareSearchQuery(query);
   const seen = new Set<string>();
-  const safeLimit = Math.max(1, Math.min(limit, 100));
+  const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
+  const searchableIndex = allowedKinds ? searchIndex.filter((item) => allowedKinds.has(item.kind)) : searchIndex;
+  const safeLimit = Math.max(1, Math.min(limit, searchableIndex.length));
 
-  return searchIndex
+  return searchableIndex
     .map((item) => {
       const baseRank = scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens);
       return { item, rank: baseRank < 0 ? -1 : baseRank + (item.kind === 'listing' ? 6 : 0) };

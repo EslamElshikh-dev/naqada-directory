@@ -75,6 +75,49 @@
   cursor: pointer;
 }
 
+.scopeRail {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+}
+.scopeRail a {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid rgba(84,49,36,.1);
+  border-radius: 14px;
+  background: #fff;
+  color: #5a4034;
+  text-decoration: none;
+  font-size: .72rem;
+  font-weight: 850;
+  transition: transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.scopeRail a:hover { transform: translateY(-1px); border-color: rgba(169,83,55,.24); }
+.scopeRail a b {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(169,83,55,.08);
+  color: var(--nq-copper-dark);
+  font-size: .64rem;
+}
+.scopeRail a.scopeActive {
+  border-color: rgba(169,83,55,.28);
+  background: linear-gradient(135deg,#fff8f2,#fff);
+  color: var(--nq-copper-dark);
+  box-shadow: 0 9px 24px rgba(55,30,21,.055);
+}
+.scopeRail a.scopeActive b { background: var(--nq-copper); color: #fff; }
+
 .startState,.emptyState {
   margin-top: 18px;
   padding: 24px;
@@ -199,6 +242,7 @@
   .heroNote { max-width: 620px; }
   .summary { grid-template-columns: 1fr; }
   .metrics { width: 100%; }
+  .scopeRail { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 
 @media(max-width:680px){
@@ -207,6 +251,9 @@
   .searchForm { padding: 14px; border-radius: 18px; }
   .searchRow { grid-template-columns: 1fr; }
   .searchRow button { min-height: 46px; }
+  .scopeRail { display: flex; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .scopeRail::-webkit-scrollbar { display: none; }
+  .scopeRail a { flex: 0 0 auto; min-width: 142px; }
   .startState,.emptyState { grid-template-columns: auto 1fr; padding: 17px; }
   .quickLinks,.emptyActions { grid-column: 1 / -1; }
   .summary { padding: 16px; gap: 14px; }
@@ -218,5 +265,5 @@
 }
 
 @media(prefers-reduced-motion:reduce){
-  .resultCard { transition: none; }
+  .scopeRail a,.resultCard { transition: none; }
 }
