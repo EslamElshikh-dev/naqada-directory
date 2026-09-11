@@ -1,0 +1,297 @@
+/* UI Quality V13 — final cross-device readability, touch, and browser-compatibility layer. */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-width: 320px;
+}
+
+.site-header {
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.global-search__trigger,
+.account-trigger,
+.header-contribute,
+.button,
+.mobile-nav a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(169, 83, 55, .12);
+}
+
+.global-search__trigger,
+.account-trigger {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.button,
+.header-contribute {
+  min-height: 44px;
+}
+
+.global-search__panel {
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.global-search__result strong {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.global-search__result small,
+.global-search__empty small,
+.global-search__footer,
+.global-search__status {
+  font-size: 10.5px;
+  line-height: 1.7;
+}
+
+.global-search__result i,
+.global-search__suggestions button,
+.global-search__footer-action {
+  font-size: 10px;
+}
+
+.global-search__result,
+.global-search__suggestions button,
+.global-search__footer-action {
+  min-height: 44px;
+}
+
+.hero-home-v2__copy p,
+.home-v2__hero p,
+.section-heading p,
+.footer__about > p {
+  text-wrap: pretty;
+}
+
+.home-action,
+.listing-card,
+.category-card,
+.detail-card,
+.detail-aside {
+  overflow-wrap: anywhere;
+}
+
+@media (pointer: coarse) {
+  button,
+  input[type='button'],
+  input[type='submit'],
+  a.button,
+  .global-search__trigger,
+  .account-trigger,
+  .mobile-nav a {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 900px) {
+  .site-header__inner {
+    min-height: 68px;
+  }
+
+  .hero-home-v2__copy p,
+  .home-v2__hero p,
+  .hero__content > p {
+    font-size: 14px !important;
+    line-height: 1.9 !important;
+  }
+
+  .search-strip input,
+  .hero-search input,
+  .global-search__input {
+    font-size: 16px !important;
+  }
+
+  .search-strip button,
+  .hero-search button {
+    min-height: 46px;
+    font-size: 12px !important;
+  }
+
+  .search-strip__quick button,
+  .hero__quick-links a {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px !important;
+  }
+
+  .home-v2__trust span,
+  .hero__trust span {
+    font-size: 11.5px !important;
+  }
+
+  .home-v2__trust small,
+  .hero__trust small {
+    font-size: 10.5px !important;
+    line-height: 1.6;
+  }
+
+  .home-action-row strong,
+  .home-action strong {
+    font-size: 12px !important;
+  }
+
+  .home-action-row small,
+  .home-action small {
+    font-size: 10.5px !important;
+    line-height: 1.55;
+  }
+
+  .global-search__input {
+    min-height: 46px;
+  }
+
+  .global-search__result strong {
+    font-size: 13px;
+  }
+
+  .global-search__result small,
+  .global-search__empty small,
+  .global-search__status,
+  .global-search__footer {
+    font-size: 11px;
+  }
+
+  .global-search__result i,
+  .global-search__suggestions button,
+  .global-search__footer-action {
+    font-size: 10.5px;
+  }
+}
+
+@media (max-width: 680px) {
+  body {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom));
+  }
+
+  .site-header {
+    -webkit-backdrop-filter: blur(14px) saturate(125%);
+    backdrop-filter: blur(14px) saturate(125%);
+  }
+
+  .site-header__inner {
+    min-height: 62px;
+  }
+
+  .brand__copy small {
+    font-size: 9.5px !important;
+  }
+
+  .hero-home-v2__copy p,
+  .home-v2__hero p,
+  .hero__content > p {
+    font-size: 13.5px !important;
+    line-height: 1.9 !important;
+  }
+
+  .section-heading p,
+  .footer__about > p,
+  .detail-aside__note {
+    font-size: 12px !important;
+    line-height: 1.85 !important;
+  }
+
+  .search-strip input,
+  .hero-search input,
+  .global-search__input,
+  input[type='search'],
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  input[type='url'],
+  input[type='password'],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .search-strip__quick button,
+  .hero__quick-links a {
+    min-height: 36px;
+    padding-inline: 10px !important;
+    font-size: 11px !important;
+  }
+
+  .home-v2__trust span,
+  .hero__trust span {
+    font-size: 11px !important;
+  }
+
+  .home-v2__trust small,
+  .hero__trust small {
+    font-size: 10px !important;
+  }
+
+  .home-action-row,
+  .home-actions {
+    gap: 9px;
+  }
+
+  .home-action-row strong,
+  .home-action strong {
+    font-size: 11.5px !important;
+    line-height: 1.6;
+  }
+
+  .home-action-row small,
+  .home-action small {
+    font-size: 10px !important;
+  }
+
+  .mobile-nav {
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    backdrop-filter: blur(18px) saturate(130%);
+  }
+
+  .mobile-nav a {
+    min-height: 52px;
+    padding-block: 5px;
+  }
+
+  .mobile-nav__label {
+    font-size: 10px !important;
+    line-height: 1.25;
+  }
+
+  .footer__links a,
+  .footer__bottom,
+  .footer__cta p {
+    font-size: 11.5px !important;
+    line-height: 1.75;
+  }
+
+  .global-search__panel {
+    max-height: min(620px, calc(100dvh - 74px - env(safe-area-inset-bottom)));
+  }
+
+  .global-search__result {
+    min-height: 56px;
+  }
+}
+
+@supports not (height: 100dvh) {
+  @media (max-width: 680px) {
+    .global-search__panel {
+      max-height: min(620px, calc(100vh - 74px));
+    }
+  }
+}
+
+@media (prefers-contrast: more) {
+  .button,
+  .global-search__result,
+  .listing-card,
+  .category-card {
+    border-color: currentColor;
+  }
+}
