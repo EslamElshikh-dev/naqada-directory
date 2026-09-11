@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/lib/analytics-client';
-import type { SiteSearchKind } from '@/lib/site-search';
+import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
 import styles from './home-smart-search.module.css';
 
 type SearchItem = {
@@ -16,7 +16,7 @@ type SearchItem = {
   badge: string;
 };
 
-type SearchResponse = { items?: SearchItem[]; error?: string };
+type SearchResponse = { items?: SearchItem[]; suggestions?: SearchRecoverySuggestion[]; error?: string };
 
 type DiscoveryLink = {
   label: string;
@@ -69,6 +69,7 @@ export function HomeSmartSearch() {
   const requestRef = useRef<AbortController | null>(null);
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SearchItem[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchRecoverySuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
@@ -89,6 +90,7 @@ export function HomeSmartSearch() {
       requestRef.current?.abort();
       const resetTimer = window.setTimeout(() => {
         setItems([]);
+        setSuggestions([]);
         setLoading(false);
         setError('');
         setActiveIndex(-1);
@@ -110,11 +112,13 @@ export function HomeSmartSearch() {
         const payload = await response.json().catch(() => ({})) as SearchResponse;
         if (!response.ok) throw new Error(payload.error || 'تعذر تنفيذ البحث الآن.');
         setItems(Array.isArray(payload.items) ? payload.items.slice(0, 5) : []);
+        setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
         setActiveIndex(-1);
         setOpen(true);
       } catch (cause) {
         if ((cause as Error)?.name === 'AbortError') return;
         setItems([]);
+        setSuggestions([]);
         setError(cause instanceof Error ? cause.message : 'تعذر تنفيذ البحث الآن.');
         setOpen(true);
       } finally {
@@ -138,6 +142,14 @@ export function HomeSmartSearch() {
   function handleDiscoveryShortcut(type: 'service' | 'place' | 'index', label: string) {
     setOpen(false);
     trackEvent('Home Discovery Shortcut', { type, label });
+  }
+
+  function applySuggestion(suggestion: SearchRecoverySuggestion) {
+    setQuery(suggestion.query);
+    setSuggestions([]);
+    setActiveIndex(-1);
+    setOpen(true);
+    trackEvent('Home Search Assist', { reason: suggestion.reason, query: suggestion.query, count: suggestion.count });
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -232,7 +244,7 @@ export function HomeSmartSearch() {
           {canSearch ? (
             <>
               <div className={styles.panelHead}>
-                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
+                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : suggestions.length ? 'Search Assist وجد اقتراحًا قريبًا' : 'لا توجد نتيجة مباشرة'}</span>
                 <button type="button" onClick={() => navigate(unifiedSearchHref())}>كل النتائج ←</button>
               </div>
 
@@ -256,6 +268,17 @@ export function HomeSmartSearch() {
                       <span className={styles.icon} aria-hidden="true">{resultGlyph(item.kind)}</span>
                       <span className={styles.copy}><strong>{item.title}</strong><small>{item.subtitle}</small></span>
                       <i>{item.badge}</i>
+                    </button>
+                  ))}
+                </div>
+              ) : suggestions.length ? (
+                <div className={styles.assist} aria-label="اقتراحات Search Assist">
+                  <div className={styles.assistIntro}><strong>هل تقصد واحدًا من دول؟</strong><span>التصحيح لا يُطبّق تلقائيًا؛ اختاره لو هو المقصود.</span></div>
+                  {suggestions.map((suggestion) => (
+                    <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
+                      <span>{suggestion.reason}</span>
+                      <strong>«{suggestion.query}»</strong>
+                      <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة</small>
                     </button>
                   ))}
                 </div>
