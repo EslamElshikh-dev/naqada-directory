@@ -103,7 +103,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const scope = scopeValue(params.scope);
   const scopeLabel = scopeOptions.find((item) => item.id === scope)?.shortLabel;
   return {
-    title: query ? `نتائج ${scopeLabel} عن ${query} — دليل نقادة` : 'البحث الموحد — دليل نقادة',
+    title: query ? `نتائج ${scopeLabel} عن ${query}` : 'البحث الموحد',
     description: 'ابحث في أنشطة وخدمات وقرى ومعالم وموسوعة نقادة من صفحة بحث واحدة.',
     alternates: { canonical: '/search' },
     robots: { index: false, follow: true },
@@ -147,13 +147,13 @@ export default async function SearchPage({ searchParams }: Props) {
           <div>
             <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
             <span className="eyebrow">Search Journey V12</span>
-            <h1>من سؤال واحد… <em>لرحلة محلية كاملة</em></h1>
-            <p>ابدأ بخدمة ومكان، ثم انتقل للمسار المحلي والخدمات المرتبطة والمواضع في نفس النطاق ونفس الخدمة في قرى أخرى—كلها من بيانات الدليل المنشورة.</p>
+            <h1>بحث واحد… <em>ورحلة محلية أوضح</em></h1>
+            <p>ابحث بخدمة ومكان، وسنرتّب لك المسار المحلي والنتائج المباشرة والخدمات المرتبطة وخيارات أخرى مبنية على بيانات الدليل المنشورة.</p>
           </div>
           <aside className={styles.heroNote}>
-            <span>رحلة بحث بلا تخمين</span>
-            <strong>مسار محلي · خدمات مرتبطة · نطاق إداري · نفس الخدمة</strong>
-            <p>لا نستخدم كلمة «أقرب» بالمسافة بدون إحداثيات موثقة؛ المواضع المقترحة تعتمد على النطاق الإداري والنتائج الفعلية فقط.</p>
+            <span>بحث محلي بلا تخمين</span>
+            <strong>مسار موثوق · نتائج مباشرة · بدائل مرتبطة</strong>
+            <p>لا نرتّب الأماكن حسب المسافة من دون إحداثيات موثقة؛ اقتراحات المواضع تعتمد على النطاق الإداري والبيانات المنشورة فقط.</p>
           </aside>
         </div>
       </section>
@@ -164,9 +164,9 @@ export default async function SearchPage({ searchParams }: Props) {
           <div className={styles.searchRow}>
             <input id="unified-search-input" name="q" defaultValue={query} maxLength={100} autoComplete="off" inputMode="search" placeholder="مثال: صيدلية في الخطارة، دكتور أسنان بشلاو، عبد الرحيم القمولي…" />
             {activeScope !== 'all' ? <input type="hidden" name="scope" value={activeScope} /> : null}
-            <button type="submit">بحث موحّد</button>
+            <button type="submit">ابحث في نقادة</button>
           </div>
-          <small>اكتب حرفين على الأقل. صفحات نتائج البحث غير مفهرسة في Google، وأي تصحيح إملائي يظل اقتراحًا اختياريًا.</small>
+          <small>اكتب حرفين على الأقل. نتائج البحث غير مفهرسة في Google، وأي تصحيح إملائي يظل اقتراحًا اختياريًا.</small>
         </form>
 
         {canSearch ? (
@@ -189,7 +189,7 @@ export default async function SearchPage({ searchParams }: Props) {
         {searchJourney ? <SearchJourneyPanel journey={searchJourney} /> : searchContext ? (
           <Link className={contextStyles.card} href={searchContext.href} prefetch={false} aria-label={`فتح المسار المحلي: ${searchContext.title}`}>
             <span className={contextStyles.copy}>
-              <span className={contextStyles.kicker}>Search Context V11 · مسار محلي مقترح</span>
+              <span className={contextStyles.kicker}>مسار محلي مقترح</span>
               <strong>{searchContext.title}</strong>
               <small>{searchContext.subtitle}</small>
             </span>
@@ -200,7 +200,7 @@ export default async function SearchPage({ searchParams }: Props) {
         {!canSearch ? (
           <div className={styles.startState}>
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
-            <div><strong>ابدأ باسم خدمة أو مكان أو شخصية</strong><p>البحث السريع في الهيدر والصفحة الرئيسية يستخدم نفس المحرك الذي تستخدمه هذه الصفحة.</p></div>
+            <div><strong>ابدأ باسم خدمة أو مكان أو شخصية</strong><p>اكتب ما تحتاجه بطريقة طبيعية؛ نفس محرك البحث يعمل في الهيدر والصفحة الرئيسية وهنا.</p></div>
             <nav className={styles.quickLinks} aria-label="أمثلة بحث سريعة">
               <Link href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
               <Link href="/search?q=بشلاو&scope=places">بشلاو</Link>
@@ -249,11 +249,11 @@ export default async function SearchPage({ searchParams }: Props) {
         ) : (
           <div className={styles.emptyState}>
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
-            <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أقرب مبنية على بيانات الدليل نفسها؛ اختر واحدًا منها لو كان هو المقصود.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل للقسم المناسب يدويًا.'}</p></div>
+            <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أكثر احتمالًا مبنية على بيانات الدليل نفسها؛ اختر الاقتراح الذي يعبّر عن قصدك.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل إلى القسم المناسب يدويًا.'}</p></div>
 
             {recoverySuggestions.length ? (
               <section className={styles.recoveryPanel} aria-label="اقتراحات لاستعادة البحث">
-                <header><span>اقتراحات آمنة</span><strong>هل تقصد واحدًا من دول؟</strong><p>لن نعرض الاقتراح كنتيجة تلقائيًا؛ افتحه فقط إذا كان يعبّر عن قصدك.</p></header>
+                <header><span>اقتراحات آمنة</span><strong>هل تقصد أحد هذه الاقتراحات؟</strong><p>لن نطبّق أي اقتراح تلقائيًا؛ افتحه فقط إذا كان هو المقصود.</p></header>
                 <div className={styles.recoveryGrid}>
                   {recoverySuggestions.map((suggestion) => (
                     <Link href={searchHref(suggestion.query, activeScope)} key={`${suggestion.reason}-${suggestion.query}`} prefetch={false}>

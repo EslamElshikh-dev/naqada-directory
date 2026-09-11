@@ -1,6 +1,6 @@
 .section {
   margin-top: 22px;
-  padding: 20px;
+  padding: 21px;
   border: 1px solid rgba(86, 49, 36, .09);
   border-radius: 20px;
   background: linear-gradient(155deg, #fff, #fffaf6);
@@ -11,41 +11,43 @@
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 14px;
+  gap: 18px;
+  margin-bottom: 15px;
 }
 
 .heading span {
   display: block;
   color: #9a6547;
-  font-size: .63rem;
+  font-size: .7rem;
   font-weight: 900;
 }
 
 .heading h2 {
   margin: 4px 0 0;
   color: #251915;
-  font-size: 1.08rem;
-  line-height: 1.6;
+  font-size: 1.12rem;
+  line-height: 1.65;
+  text-wrap: balance;
 }
 
 .heading p {
-  max-width: 560px;
+  max-width: 590px;
   margin: 0;
   color: #7b6a62;
-  font-size: .7rem;
+  font-size: .78rem;
   line-height: 1.85;
+  text-wrap: pretty;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 11px;
 }
 
 .card {
   min-width: 0;
-  padding: 14px;
+  padding: 15px;
   border: 1px solid rgba(84, 49, 36, .08);
   border-radius: 16px;
   background: #fff;
@@ -53,43 +55,45 @@
 
 .card > span {
   color: #a95337;
-  font-size: .61rem;
+  font-size: .68rem;
   font-weight: 900;
 }
 
 .card h3 {
-  margin: 7px 0 4px;
+  margin: 7px 0 5px;
   color: #251915;
-  font-size: .84rem;
-  line-height: 1.6;
+  font-size: .92rem;
+  line-height: 1.65;
 }
 
 .card p {
   margin: 0;
   color: #7d6d64;
-  font-size: .66rem;
-  line-height: 1.8;
+  font-size: .74rem;
+  line-height: 1.85;
 }
 
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 11px;
+  gap: 7px;
+  margin-top: 12px;
 }
 
 .links a {
-  min-height: 32px;
+  min-height: 38px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 9px;
+  gap: 6px;
+  padding: 7px 10px;
   border: 1px solid rgba(43, 114, 119, .12);
   border-radius: 999px;
   background: #eef6f4;
   color: #2b7277;
-  font-size: .62rem;
+  font-size: .69rem;
   font-weight: 850;
+  line-height: 1.4;
+  touch-action: manipulation;
 }
 
 .links a:hover,
@@ -115,16 +119,16 @@
     display: block;
   }
 
-  .heading p {
-    margin-top: 6px;
-  }
+  .heading h2 { font-size: 1.02rem; }
+  .heading p { margin-top: 7px; font-size: .75rem; }
 
   .grid {
     display: flex;
     overflow-x: auto;
-    gap: 8px;
+    gap: 9px;
     scroll-snap-type: x proximity;
     scrollbar-width: none;
+    overscroll-behavior-inline: contain;
   }
 
   .grid::-webkit-scrollbar {
@@ -132,7 +136,13 @@
   }
 
   .card {
-    flex: 0 0 min(86vw, 320px);
+    flex: 0 0 min(88vw, 330px);
     scroll-snap-align: start;
+    padding: 15px;
   }
+
+  .card > span { font-size: .67rem; }
+  .card h3 { font-size: .9rem; }
+  .card p { font-size: .73rem; }
+  .links a { min-height: 44px; font-size: .68rem; }
 }

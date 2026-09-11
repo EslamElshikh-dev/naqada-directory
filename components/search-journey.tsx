@@ -23,30 +23,30 @@ export function SearchJourneyPanel({ journey }: { journey: SearchJourney }) {
       id: 'route',
       number: '01',
       title: 'المسار المحلي الحالي',
-      description: `ابدأ من الصفحة المجمعة لـ${journey.categoryLabel} داخل ${journey.locality}.`,
+      description: `ابدأ من صفحة ${journey.categoryLabel} المجمّعة في ${journey.locality}.`,
       items: [journey.currentRoute],
     },
     journey.relatedServices.length ? {
       id: 'related',
       number: '02',
       title: `خدمات مرتبطة داخل ${journey.locality}`,
-      description: 'اقتراحات من نفس المجال العام، ولا تظهر إلا لو لها نتائج منشورة فعلًا داخل نفس المكان.',
+      description: 'اقتراحات من المجال نفسه، ولا تظهر إلا عند وجود نتائج منشورة فعلًا داخل الموضع.',
       items: journey.relatedServices,
     } : null,
     journey.sameScopePlaces.length ? {
       id: 'scope',
       number: '03',
-      title: 'مواضع داخل نفس النطاق الإداري',
+      title: 'قرى ونجوع ضمن النطاق الإداري نفسه',
       description: journey.scope
-        ? `مواضع تشترك مع ${journey.locality} في «${journey.scope}». هذا ترابط إداري/خدمي وليس ترتيبًا حسب المسافة.`
-        : 'مواضع مرتبطة بالنطاق الإداري نفسه؛ لا نعرضها كأقرب مسافة بدون إحداثيات موثقة.',
+        ? `مواضع تشترك مع ${journey.locality} في «${journey.scope}». هذه علاقة إدارية وخدمية وليست ترتيبًا حسب المسافة.`
+        : 'مواضع تشترك في النطاق الإداري نفسه؛ لا نعرضها على أنها الأقرب دون إحداثيات موثقة.',
       items: journey.sameScopePlaces,
     } : null,
     journey.sameServiceElsewhere.length ? {
       id: 'elsewhere',
       number: '04',
       title: `${journey.serviceLabel} في مواضع أخرى`,
-      description: 'انتقل لنفس الخدمة في قرية أو نجع آخر، مرتبة حسب عدد النتائج المنشورة لا حسب المسافة.',
+      description: 'استكشف الخدمة نفسها في قرية أو نجع آخر، مرتبة حسب عدد النتائج المنشورة لا حسب المسافة.',
       items: journey.sameServiceElsewhere,
     } : null,
   ].filter(Boolean) as Array<{ id: string; number: string; title: string; description: string; items: SearchJourneyLink[] }>;
@@ -55,14 +55,14 @@ export function SearchJourneyPanel({ journey }: { journey: SearchJourney }) {
     <section className={styles.journey} aria-labelledby="search-journey-title">
       <header className={styles.header}>
         <div>
-          <span>Search Journey V12</span>
-          <h2 id="search-journey-title">كمّل رحلتك بعد «{journey.serviceLabel} في {journey.locality}»</h2>
-          <p>بدل ما نقف عند قائمة النتائج، بنفتح لك مسارات تالية مبنية فقط على البيانات المنشورة والعلاقات الإدارية الموجودة في الدليل.</p>
+          <span>رحلة البحث المحلية</span>
+          <h2 id="search-journey-title">استكشف ما بعد «{journey.serviceLabel} في {journey.locality}»</h2>
+          <p>نرتّب لك خطوات تالية مبنية على البيانات المنشورة والعلاقات الإدارية الموجودة في الدليل، بدل أن تتوقف التجربة عند قائمة نتائج فقط.</p>
         </div>
         <div className={styles.legend} aria-label="مبادئ رحلة البحث">
-          <span>بدون API مدفوع</span>
+          <span>بيانات منشورة</span>
           <span>بدون تخمين مسافة</span>
-          <span>روابط من بيانات الدليل</span>
+          <span>بدون API مدفوع</span>
         </div>
       </header>
 

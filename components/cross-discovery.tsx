@@ -65,26 +65,26 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
     <section className={styles.section} aria-labelledby="cross-discovery-title">
       <div className={styles.heading}>
         <div>
-          <span>استكشف من هنا</span>
-          <h2 id="cross-discovery-title">خدمات قريبة وبدائل مرتبطة بـ {listing.name}</h2>
+          <span>استكشف خيارات مرتبطة</span>
+          <h2 id="cross-discovery-title">خدمات وبدائل مرتبطة بـ {listing.name}</h2>
         </div>
-        <p>تنقل مباشر بين نفس الخدمة، خدمات من نفس المجال، وقرى أخرى بها نتائج مشابهة.</p>
+        <p>انتقل بين بدائل من نفس الخدمة داخل الموضع، وخدمات من المجال نفسه، ومواضع أخرى تتوفر فيها نتائج مشابهة.</p>
       </div>
       <div className={styles.grid}>
         <article className={styles.card}>
           <span>نفس الخدمة · {locality}</span>
-          <h3>{serviceLabel} قريبة</h3>
-          <p>{localPeers.length ? `${localPeers.length.toLocaleString('ar-EG')} بدائل مختارة داخل نفس الموضع.` : 'لا توجد بدائل منشورة من نفس النوع داخل الموضع حاليًا.'}</p>
+          <h3>{serviceLabel} في {locality}</h3>
+          <p>{localPeers.length ? `${localPeers.length.toLocaleString('ar-EG')} بدائل مختارة داخل الموضع نفسه.` : 'لا توجد بدائل منشورة من النوع نفسه داخل الموضع حاليًا.'}</p>
           <div className={styles.links}>
             {localPeers.map((item) => <Link key={item.id} href={`/listing/${item.slug}/`} prefetch={false}>{item.name}<span aria-hidden="true">←</span></Link>)}
-            <Link href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>كل النتائج المحلية<span aria-hidden="true">←</span></Link>
+            <Link href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>كل النتائج في {locality}<span aria-hidden="true">←</span></Link>
           </div>
         </article>
 
         <article className={styles.card}>
           <span>نفس المجال · {locality}</span>
           <h3>{listing.category} في {locality}</h3>
-          <p>خدمات أخرى مرتبطة بنفس المجال داخل القرية أو النجع.</p>
+          <p>خدمات أخرى من المجال نفسه داخل القرية أو النجع.</p>
           <div className={styles.links}>
             {siblingServices.map(([label, count]) => <Link key={label} href={`/directory?q=${encodeURIComponent(label)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>{label} <small>{count.toLocaleString('ar-EG')}</small><span aria-hidden="true">←</span></Link>)}
             <Link href={categoryHref} prefetch={false}>كل {listing.category} في {locality}<span aria-hidden="true">←</span></Link>
@@ -93,8 +93,8 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
 
         <article className={styles.card}>
           <span>نفس الخدمة · مركز نقادة</span>
-          <h3>{serviceLabel} في قرى أخرى</h3>
-          <p>انتقل مباشرة إلى المواضع التي تحتوي على نفس نوع الخدمة.</p>
+          <h3>{serviceLabel} في مواضع أخرى</h3>
+          <p>انتقل إلى القرى والنجوع التي تحتوي على نتائج منشورة من نوع الخدمة نفسه.</p>
           <div className={styles.links}>
             {otherLocalities.map(({ locality: place, count }) => <Link key={place.slug} href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(place.name)}`} prefetch={false}>{place.name} <small>{count.toLocaleString('ar-EG')}</small><span aria-hidden="true">←</span></Link>)}
           </div>
