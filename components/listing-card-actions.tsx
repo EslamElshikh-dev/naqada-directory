@@ -42,7 +42,7 @@ export function ListingCardActions({
       </div>
       <nav className={styles.cardDiscovery} aria-label={`استكشف حول ${listingName}`}>
         <Link href={localityHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'locality' })}>دليل {locality}<span aria-hidden="true">←</span></Link>
-        <Link href={similarHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'similar' })}>أنشطة مشابهة قريبًا<span aria-hidden="true">←</span></Link>
+        <Link href={similarHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'similar' })}>أنشطة مشابهة في {locality}<span aria-hidden="true">←</span></Link>
       </nav>
     </>
   );
