@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 type SearchItem = {
-  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page';
+  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page' | 'knowledge-place' | 'knowledge-person' | 'knowledge-heritage';
   title: string;
   subtitle: string;
   href: string;
@@ -25,8 +25,9 @@ function SearchIcon() {
 function resultGlyph(kind: SearchItem['kind']) {
   if (kind === 'listing') return '⌖';
   if (kind === 'category') return '▦';
-  if (kind === 'locality') return '⌂';
-  if (kind === 'landmark') return '◇';
+  if (kind === 'locality' || kind === 'knowledge-place') return '⌂';
+  if (kind === 'knowledge-person') return '◉';
+  if (kind === 'landmark' || kind === 'knowledge-heritage') return '◇';
   return '↗';
 }
 
@@ -46,7 +47,7 @@ export function GlobalSearch() {
 
   const status = useMemo(() => {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
-    if (loading) return 'جارٍ البحث داخل دليل نقادة…';
+    if (loading) return 'جارٍ البحث داخل دليل وموسوعة نقادة…';
     if (error) return error;
     if (!items.length) return 'لا توجد نتيجة سريعة؛ جرّب البحث الموسّع داخل الدليل.';
     return `${items.length.toLocaleString('ar-EG')} نتائج سريعة مرتبة حسب الصلة`;
@@ -153,7 +154,7 @@ export function GlobalSearch() {
           <form className="global-search__form" role="search" onSubmit={submit}>
             <span className="global-search__field-icon"><SearchIcon /></span>
             <label className="sr-only" htmlFor="global-site-search">ابحث في الموقع</label>
-            <input ref={inputRef} id="global-site-search" value={query} onChange={(event) => setQuery(event.target.value.slice(0, 100))} onKeyDown={onInputKeyDown} placeholder="نشاط، خدمة، قرية أو معلم…" autoComplete="off" inputMode="search" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} />
+            <input ref={inputRef} id="global-site-search" value={query} onChange={(event) => setQuery(event.target.value.slice(0, 100))} onKeyDown={onInputKeyDown} placeholder="نشاط، خدمة، قرية، شخصية أو معلم…" autoComplete="off" inputMode="search" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} />
             {query ? <button type="button" className="global-search__clear" onClick={() => setQuery('')}>مسح</button> : null}
             <button type="submit" className="global-search__submit">ابحث</button>
           </form>
@@ -166,10 +167,10 @@ export function GlobalSearch() {
                 <b aria-hidden="true">←</b>
               </button>
             )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة سريعة</strong><small>قد تظهر نتائج أوسع عند البحث داخل الدليل الكامل.</small><button type="button" className="global-search__empty-action" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>بحث موسّع عن «{trimmedQuery}» ←</button></div> : (
-              <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('بشلاو')}>بشلاو</button><button type="button" onClick={() => setQuery('مطعم')}>مطعم</button></div></div>
+              <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('بشلاو')}>بشلاو</button><button type="button" onClick={() => setQuery('عبد الرحيم القمولي')}>علم من نقادة</button></div></div>
             )}
           </div>
-          <div className="global-search__footer"><span>بحث ذكي في الأنشطة والأقسام والقرى والمعالم</span><button type="button" onClick={() => navigate('/directory')}>فتح الدليل كاملًا ←</button></div>
+          <div className="global-search__footer"><span>بحث ذكي في الأنشطة والأقسام والقرى والموسوعة</span><button type="button" onClick={() => navigate('/knowledge')}>فتح موسوعة نقادة ←</button></div>
         </div>
       ) : null}
     </div>
