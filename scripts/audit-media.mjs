@@ -6,7 +6,9 @@ const publicImages = join(root, 'public', 'images');
 const sourceRoots = ['app', 'components', 'lib', 'data', 'tests', 'scripts'];
 const textExtensions = new Set(['.ts', '.tsx', '.js', '.mjs', '.json', '.css', '.md', '.yml', '.yaml']);
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp', '.svg', '.avif']);
-const imageReferencePattern = /\/images\/[A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|svg|avif)/gi;
+// Match local root-relative image paths, but not `/images/...` fragments embedded
+// inside full external URLs such as https://example.com/images/foo.jpg.
+const imageReferencePattern = /(?<![A-Za-z0-9.-])\/images\/[A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|svg|avif)/gi;
 
 function walk(directory, predicate = () => true) {
   if (!existsSync(directory)) return [];
