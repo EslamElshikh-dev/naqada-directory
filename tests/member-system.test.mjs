@@ -10,6 +10,7 @@ const reviewsApi = read('app/api/site-reviews/route.ts');
 const home = read('app/page.tsx');
 const nextConfig = read('next.config.ts');
 const accountButton = read('components/auth/account-button.tsx');
+const memberAvatar = read('components/auth/member-avatar.tsx');
 const memberDashboard = read('components/auth/member-dashboard.tsx');
 const landmarksPage = read('app/landmarks/page.tsx');
 const sitemap = read('app/sitemap.ts');
@@ -84,10 +85,13 @@ test('the deployment uses the Next.js server runtime for protected routes', () =
   assert.ok(!nextConfig.includes("output: 'export'"));
 });
 
-test('Google profile photos are rendered with a constrained image host and graceful fallback', () => {
+test('Google profile photos use the shared avatar component with constrained delivery and graceful fallback', () => {
   assert.ok(nextConfig.includes("hostname: 'lh3.googleusercontent.com'"));
-  assert.ok(accountButton.includes('user!.avatarUrl'));
-  assert.ok(accountButton.includes('setFailedAvatarUrl'));
+  assert.ok(accountButton.includes('<MemberAvatar'));
+  assert.ok(accountButton.includes('src={user.avatarUrl}'));
+  assert.ok(memberAvatar.includes("import Image from 'next/image'"));
+  assert.ok(memberAvatar.includes('Boolean(src && !failed)'));
+  assert.ok(memberAvatar.includes('onError={() => setFailed(true)}'));
   assert.ok(memberDashboard.includes('profile.avatarUrl || user.avatarUrl'));
 });
 
