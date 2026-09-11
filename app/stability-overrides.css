@@ -321,13 +321,6 @@
   scroll-padding-inline: 1px;
 }
 
-/* Article images carry intrinsic width/height attributes; preserve the source ratio. */
-main#main-content > article figure > img {
-  width: 100%;
-  height: auto !important;
-  aspect-ratio: auto !important;
-}
-
 /* Keep the compact two-column activity grid consistent at 390/430px. */
 @media (max-width: 430px) {
   .category-grid {
