@@ -37,6 +37,9 @@ jobs:
       - name: Verify published data and contracts
         run: npm test
 
+      - name: Audit local media references
+        run: npm run audit:media
+
       - name: Lint
         run: npm run lint
 
