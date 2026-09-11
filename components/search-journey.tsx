@@ -1,0 +1,82 @@
+import Link from 'next/link';
+import type { SearchJourney, SearchJourneyLink } from '@/lib/search-journey';
+import styles from './search-journey.module.css';
+
+function JourneyCards({ items }: { items: SearchJourneyLink[] }) {
+  return (
+    <div className={styles.cards}>
+      {items.map((item) => (
+        <Link key={`${item.badge}-${item.href}`} href={item.href} prefetch={false} className={styles.card}>
+          <span className={styles.badge}>{item.badge}</span>
+          <strong>{item.title}</strong>
+          <small>{item.subtitle}</small>
+          <span className={styles.cardAction}>استكشف ←</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export function SearchJourneyPanel({ journey }: { journey: SearchJourney }) {
+  const steps = [
+    {
+      id: 'route',
+      number: '01',
+      title: 'المسار المحلي الحالي',
+      description: `ابدأ من الصفحة المجمعة لـ${journey.categoryLabel} داخل ${journey.locality}.`,
+      items: [journey.currentRoute],
+    },
+    journey.relatedServices.length ? {
+      id: 'related',
+      number: '02',
+      title: `خدمات مرتبطة داخل ${journey.locality}`,
+      description: 'اقتراحات من نفس المجال العام، ولا تظهر إلا لو لها نتائج منشورة فعلًا داخل نفس المكان.',
+      items: journey.relatedServices,
+    } : null,
+    journey.sameScopePlaces.length ? {
+      id: 'scope',
+      number: '03',
+      title: 'مواضع داخل نفس النطاق الإداري',
+      description: journey.scope
+        ? `مواضع تشترك مع ${journey.locality} في «${journey.scope}». هذا ترابط إداري/خدمي وليس ترتيبًا حسب المسافة.`
+        : 'مواضع مرتبطة بالنطاق الإداري نفسه؛ لا نعرضها كأقرب مسافة بدون إحداثيات موثقة.',
+      items: journey.sameScopePlaces,
+    } : null,
+    journey.sameServiceElsewhere.length ? {
+      id: 'elsewhere',
+      number: '04',
+      title: `${journey.serviceLabel} في مواضع أخرى`,
+      description: 'انتقل لنفس الخدمة في قرية أو نجع آخر، مرتبة حسب عدد النتائج المنشورة لا حسب المسافة.',
+      items: journey.sameServiceElsewhere,
+    } : null,
+  ].filter(Boolean) as Array<{ id: string; number: string; title: string; description: string; items: SearchJourneyLink[] }>;
+
+  return (
+    <section className={styles.journey} aria-labelledby="search-journey-title">
+      <header className={styles.header}>
+        <div>
+          <span>Search Journey V12</span>
+          <h2 id="search-journey-title">كمّل رحلتك بعد «{journey.serviceLabel} في {journey.locality}»</h2>
+          <p>بدل ما نقف عند قائمة النتائج، بنفتح لك مسارات تالية مبنية فقط على البيانات المنشورة والعلاقات الإدارية الموجودة في الدليل.</p>
+        </div>
+        <div className={styles.legend} aria-label="مبادئ رحلة البحث">
+          <span>بدون API مدفوع</span>
+          <span>بدون تخمين مسافة</span>
+          <span>روابط من بيانات الدليل</span>
+        </div>
+      </header>
+
+      <div className={styles.steps}>
+        {steps.map((step) => (
+          <section className={styles.step} key={step.id} aria-label={step.title}>
+            <div className={styles.stepHead}>
+              <b>{step.number}</b>
+              <div><strong>{step.title}</strong><p>{step.description}</p></div>
+            </div>
+            <JourneyCards items={step.items} />
+          </section>
+        ))}
+      </div>
+    </section>
+  );
+}
