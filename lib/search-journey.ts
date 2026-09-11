@@ -17,6 +17,7 @@ export type SearchJourney = {
   serviceLabel: string;
   categoryLabel: string;
   scope: string | null;
+  currentRoute: SearchJourneyLink;
   relatedServices: SearchJourneyLink[];
   sameScopePlaces: SearchJourneyLink[];
   sameServiceElsewhere: SearchJourneyLink[];
@@ -145,6 +146,13 @@ export function buildSearchJourney(query: string): SearchJourney | null {
     serviceLabel: activityLabel(currentActivity),
     categoryLabel: category.shortLabel,
     scope: currentLocality.scope,
+    currentRoute: {
+      title: context.title,
+      subtitle: context.subtitle,
+      href: context.href,
+      count: context.count,
+      badge: 'المسار الحالي',
+    },
     relatedServices,
     sameScopePlaces,
     sameServiceElsewhere,
