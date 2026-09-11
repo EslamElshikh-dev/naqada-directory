@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { SearchJourneyPanel } from '@/components/search-journey';
 import { buildSearchContext } from '@/lib/search-context';
+import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
 import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
@@ -117,6 +119,7 @@ export default async function SearchPage({ searchParams }: Props) {
   const searchContext = canSearch && (activeScope === 'all' || activeScope === 'directory')
     ? buildSearchContext(query)
     : null;
+  const searchJourney = searchContext ? buildSearchJourney(query) : null;
 
   const counts = {
     all: allResults.length,
@@ -143,14 +146,14 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className={`shell ${styles.heroGrid}`}>
           <div>
             <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
-            <span className="eyebrow">Search Context V11</span>
-            <h1>ابحث عن الخدمة والمكان… <em>ونوصلك للمسار الأذكى</em></h1>
-            <p>نعرض النتائج الفردية بدقة، وإذا كانت عبارتك تجمع خدمة مع مكان ولدينا صفحة محلية قوية، نضعها أمامك كمسار مباشر قبل القائمة.</p>
+            <span className="eyebrow">Search Journey V12</span>
+            <h1>من سؤال واحد… <em>لرحلة محلية كاملة</em></h1>
+            <p>ابدأ بخدمة ومكان، ثم انتقل للمسار المحلي والخدمات المرتبطة والمواضع في نفس النطاق ونفس الخدمة في قرى أخرى—كلها من بيانات الدليل المنشورة.</p>
           </div>
           <aside className={styles.heroNote}>
-            <span>خدمة + مكان</span>
-            <strong>صفحة محلية مجمعة · نتائج فردية · Recovery آمن</strong>
-            <p>المسار المحلي لا يظهر إلا إذا كانت الصفحة موجودة فعلًا وتحقق نفس حد التغطية المستخدم في بناء صفحات الدليل.</p>
+            <span>رحلة بحث بلا تخمين</span>
+            <strong>مسار محلي · خدمات مرتبطة · نطاق إداري · نفس الخدمة</strong>
+            <p>لا نستخدم كلمة «أقرب» بالمسافة بدون إحداثيات موثقة؛ المواضع المقترحة تعتمد على النطاق الإداري والنتائج الفعلية فقط.</p>
           </aside>
         </div>
       </section>
@@ -183,7 +186,7 @@ export default async function SearchPage({ searchParams }: Props) {
           </nav>
         ) : null}
 
-        {searchContext ? (
+        {searchJourney ? <SearchJourneyPanel journey={searchJourney} /> : searchContext ? (
           <Link className={contextStyles.card} href={searchContext.href} prefetch={false} aria-label={`فتح المسار المحلي: ${searchContext.title}`}>
             <span className={contextStyles.copy}>
               <span className={contextStyles.kicker}>Search Context V11 · مسار محلي مقترح</span>
