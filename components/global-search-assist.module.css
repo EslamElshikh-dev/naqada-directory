@@ -1,27 +1,29 @@
 .assist {
   width: 100%;
   display: grid;
-  gap: 7px;
+  gap: 8px;
   margin-top: 10px;
 }
 
 .assist > button {
   width: 100%;
+  min-height: 58px;
   display: grid;
   grid-template-columns: minmax(0,1fr) auto;
   grid-template-areas:
     "reason count"
     "query count";
   align-items: center;
-  gap: 2px 10px;
-  padding: 10px 11px;
+  gap: 3px 10px;
+  padding: 11px 12px;
   border: 1px solid rgba(84,49,36,.11);
-  border-radius: 12px;
+  border-radius: 13px;
   background: #fff;
   color: #3f2b23;
   text-align: start;
   font: inherit;
   cursor: pointer;
+  touch-action: manipulation;
   transition: transform .16s ease, border-color .16s ease, background .16s ease;
 }
 
@@ -35,7 +37,7 @@
 .assist span {
   grid-area: reason;
   color: #9a5a3f;
-  font-size: .56rem;
+  font-size: .64rem;
   font-weight: 900;
 }
 
@@ -44,7 +46,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .69rem;
+  font-size: .76rem;
+  line-height: 1.55;
 }
 
 .assist small {
@@ -52,13 +55,20 @@
   align-self: stretch;
   display: grid;
   place-items: center;
-  min-width: 64px;
-  padding: 5px 7px;
-  border-radius: 9px;
+  min-width: 72px;
+  padding: 6px 8px;
+  border-radius: 10px;
   background: #eef7f6;
   color: #2b7277;
-  font-size: .55rem;
+  font-size: .62rem;
   font-weight: 900;
+}
+
+@media (max-width: 680px) {
+  .assist > button { min-height: 62px; padding: 11px; }
+  .assist span { font-size: .63rem; }
+  .assist strong { font-size: .75rem; }
+  .assist small { min-width: 68px; font-size: .61rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
