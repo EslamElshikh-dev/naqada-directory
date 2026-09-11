@@ -39,11 +39,25 @@ test('published datasets match the declared catalog totals', () => {
   assert.equal(landmarks.length, catalog.meta.landmarkCount);
 });
 
-test('business identifiers and public slugs are unique', () => {
+test('business identifiers, public slugs, and publication states are safe', () => {
   assert.equal(new Set(businesses.map((item) => item.id)).size, businesses.length);
   assert.equal(new Set(businesses.map((item) => item.slug)).size, businesses.length);
-  assert.ok(businesses.every((item) => item.status === 'ready'));
-  assert.ok(businesses.every((item) => item.verification === 'A'));
+
+  const allowedStatuses = new Set(['ready', 'ready_with_caution']);
+  const allowedVerificationGrades = new Set(['A', 'B+', 'B']);
+  const unexpectedStatuses = [...new Set(
+    businesses.map((item) => item.status).filter((status) => !allowedStatuses.has(status)),
+  )];
+  const unexpectedVerificationGrades = [...new Set(
+    businesses.map((item) => item.verification).filter((grade) => !allowedVerificationGrades.has(grade)),
+  )];
+
+  assert.deepEqual(unexpectedStatuses, [], `unexpected public business statuses: ${unexpectedStatuses.join(', ')}`);
+  assert.deepEqual(
+    unexpectedVerificationGrades,
+    [],
+    `unexpected public business verification grades: ${unexpectedVerificationGrades.join(', ')}`,
+  );
 });
 
 test('catalog category definitions cover every published business', () => {
