@@ -161,6 +161,33 @@
   font-weight: 800;
 }
 
+.recoveryPanel {
+  grid-column: 1 / -1;
+  padding: 18px;
+  border: 1px solid rgba(43,114,119,.14);
+  border-radius: 18px;
+  background: linear-gradient(135deg,rgba(43,114,119,.055),#fff);
+}
+.recoveryPanel header > span { display: block; color: var(--nq-teal); font-size: .66rem; font-weight: 900; }
+.recoveryPanel header > strong { display: block; margin-top: 3px; color: var(--nq-ink); font-size: 1rem; }
+.recoveryPanel header > p { margin: 5px 0 0; color: #786b63; font-size: .72rem; line-height: 1.75; }
+.recoveryGrid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin-top: 13px; }
+.recoveryGrid a {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(43,114,119,.12);
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 7px 20px rgba(55,30,21,.035);
+  transition: transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.recoveryGrid a:hover { transform: translateY(-1px); border-color: rgba(43,114,119,.28); box-shadow: 0 10px 26px rgba(55,30,21,.065); }
+.recoveryGrid a > span { display: block; color: var(--nq-teal); font-size: .6rem; font-weight: 900; }
+.recoveryGrid a > strong { display: block; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #38251e; font-size: .84rem; }
+.recoveryGrid a > small { display: block; margin-top: 4px; color: #7e7169; font-size: .64rem; }
+
 .summary {
   margin-top: 20px;
   padding: 20px;
@@ -256,6 +283,8 @@
   .scopeRail a { flex: 0 0 auto; min-width: 142px; }
   .startState,.emptyState { grid-template-columns: auto 1fr; padding: 17px; }
   .quickLinks,.emptyActions { grid-column: 1 / -1; }
+  .recoveryPanel { padding: 14px; }
+  .recoveryGrid { grid-template-columns: 1fr; }
   .summary { padding: 16px; gap: 14px; }
   .metrics { grid-template-columns: repeat(3,1fr); }
   .metrics span { padding: 9px 5px; }
@@ -265,5 +294,5 @@
 }
 
 @media(prefers-reduced-motion:reduce){
-  .scopeRail a,.resultCard { transition: none; }
+  .scopeRail a,.recoveryGrid a,.resultCard { transition: none; }
 }

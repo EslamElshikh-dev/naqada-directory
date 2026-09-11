@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
+import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
 import styles from './search.module.css';
 
 type SearchScope = 'all' | 'directory' | 'places' | 'knowledge';
@@ -126,6 +126,9 @@ export default async function SearchPage({ searchParams }: Props) {
   const grouped = groups
     .map((group) => ({ ...group, items: results.filter((item) => group.kinds.includes(item.kind)) }))
     .filter((group) => group.items.length > 0);
+  const recoverySuggestions = canSearch && !scopedResults.length
+    ? recoverSiteSearch(query, activeOption.kinds, 4)
+    : [];
 
   const hasMore = scopedResults.length > results.length;
 
@@ -135,14 +138,14 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className={`shell ${styles.heroGrid}`}>
           <div>
             <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
-            <span className="eyebrow">Search Intent V7</span>
-            <h1>ابحث في نقادة كلها ثم <em>حدد نيتك</em></h1>
-            <p>ابدأ ببحث واحد، ثم اعرض الأنشطة فقط أو الأماكن فقط أو المادة الموسوعية. نفس الترتيب الذكي، لكن بنتائج أنظف حسب ما تقصده.</p>
+            <span className="eyebrow">Search Recovery V9</span>
+            <h1>ابحث بطريقتك ولو مفيش تطابق <em>نساعدك توصل</em></h1>
+            <p>البحث الأساسي يظل دقيقًا وصارمًا، وإذا لم يجد نتيجة نقترح تصحيحًا إملائيًا محافظًا أو بحثًا أوسع بدل عرض نتائج غير مؤكدة.</p>
           </div>
           <aside className={styles.heroNote}>
-            <span>فلترة بدون JavaScript</span>
-            <strong>الكل · الأنشطة · الأماكن · الموسوعة</strong>
-            <p>كل فلتر له رابط مستقل قابل للمشاركة، مع الحفاظ على عبارة البحث نفسها وعدم خلط المادة المرجعية بالسجل التجاري.</p>
+            <span>تعافٍ آمن من صفر نتائج</span>
+            <strong>تطابق دقيق أولًا · اقتراحات منفصلة ثانيًا</strong>
+            <p>الاقتراحات لا تدخل داخل ترتيب النتائج ولا تغيّر بيانات الدليل؛ الزائر يختارها بنفسه فقط عند الحاجة.</p>
           </aside>
         </div>
       </section>
@@ -151,11 +154,11 @@ export default async function SearchPage({ searchParams }: Props) {
         <form className={styles.searchForm} action="/search" method="get" role="search">
           <label htmlFor="unified-search-input">ما الذي تبحث عنه؟</label>
           <div className={styles.searchRow}>
-            <input id="unified-search-input" name="q" defaultValue={query} maxLength={100} autoComplete="off" inputMode="search" placeholder="مثال: صيدلية، بشلاو، عبد الرحيم القمولي، هرم جُرن الشعير…" />
+            <input id="unified-search-input" name="q" defaultValue={query} maxLength={100} autoComplete="off" inputMode="search" placeholder="مثال: صيدلية في الخطارة، دكتور أسنان بشلاو، عبد الرحيم القمولي…" />
             {activeScope !== 'all' ? <input type="hidden" name="scope" value={activeScope} /> : null}
             <button type="submit">بحث موحّد</button>
           </div>
-          <small>اكتب حرفين على الأقل. صفحات نتائج البحث غير مفهرسة في Google، والروابط داخلها تظل قابلة للتتبع.</small>
+          <small>اكتب حرفين على الأقل. صفحات نتائج البحث غير مفهرسة في Google، والاقتراحات لا تظهر إلا عند عدم وجود تطابق دقيق.</small>
         </form>
 
         {canSearch ? (
@@ -180,7 +183,7 @@ export default async function SearchPage({ searchParams }: Props) {
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
             <div><strong>ابدأ باسم خدمة أو مكان أو شخصية</strong><p>البحث السريع في الهيدر والصفحة الرئيسية يستخدم نفس المحرك الذي تستخدمه هذه الصفحة.</p></div>
             <nav className={styles.quickLinks} aria-label="أمثلة بحث سريعة">
-              <Link href="/search?q=صيدلية&scope=directory">صيدلية</Link>
+              <Link href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
               <Link href="/search?q=بشلاو&scope=places">بشلاو</Link>
               <Link href="/search?q=عبد%20الرحيم%20القمولي&scope=knowledge">عبد الرحيم القمولي</Link>
               <Link href="/search?q=تراث&scope=knowledge">تراث</Link>
@@ -227,7 +230,23 @@ export default async function SearchPage({ searchParams }: Props) {
         ) : (
           <div className={styles.emptyState}>
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
-            <div><strong>لا توجد نتائج داخل «{activeOption.label}» لعبارة «{query}»</strong><p>جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل للقسم المناسب يدويًا.</p></div>
+            <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أقرب مبنية على بيانات الدليل نفسها؛ اختر واحدًا منها لو كان هو المقصود.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل للقسم المناسب يدويًا.'}</p></div>
+
+            {recoverySuggestions.length ? (
+              <section className={styles.recoveryPanel} aria-label="اقتراحات لاستعادة البحث">
+                <header><span>اقتراحات آمنة</span><strong>هل تقصد واحدًا من دول؟</strong><p>لن نعرض الاقتراح كنتيجة تلقائيًا؛ افتحه فقط إذا كان يعبّر عن قصدك.</p></header>
+                <div className={styles.recoveryGrid}>
+                  {recoverySuggestions.map((suggestion) => (
+                    <Link href={searchHref(suggestion.query, activeScope)} key={`${suggestion.reason}-${suggestion.query}`} prefetch={false}>
+                      <span>{suggestion.reason}</span>
+                      <strong>«{suggestion.query}»</strong>
+                      <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة متوقعة</small>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             <div className={styles.emptyActions}>
               <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link>
               <Link href="/directory">فتح دليل الأنشطة</Link>
