@@ -421,8 +421,18 @@ body {
 .search-field input,
 .select-field select { color: var(--nq-ink); }
 .category-pills {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: 0;
   gap: 7px;
   padding-block: 12px 4px;
+  padding-inline: 1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline: 1px;
   scrollbar-width: thin;
 }
 .category-pills button {
