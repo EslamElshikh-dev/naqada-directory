@@ -40,6 +40,9 @@ jobs:
       - name: Audit local media references
         run: npm run audit:media
 
+      - name: Audit CSS architecture
+        run: npm run audit:css
+
       - name: Lint
         run: npm run lint
 
