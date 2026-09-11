@@ -5,10 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/lib/analytics-client';
+import type { SiteSearchKind } from '@/lib/site-search';
 import styles from './home-smart-search.module.css';
 
 type SearchItem = {
-  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page' | 'knowledge-place' | 'knowledge-person' | 'knowledge-heritage';
+  kind: SiteSearchKind;
   title: string;
   subtitle: string;
   href: string;
@@ -130,6 +131,10 @@ export function HomeSmartSearch() {
     router.push(href);
   }
 
+  function unifiedSearchHref() {
+    return trimmedQuery ? `/search?q=${encodeURIComponent(trimmedQuery)}` : '/search';
+  }
+
   function handleDiscoveryShortcut(type: 'service' | 'place' | 'index', label: string) {
     setOpen(false);
     trackEvent('Home Discovery Shortcut', { type, label });
@@ -142,7 +147,7 @@ export function HomeSmartSearch() {
       return;
     }
     if (activeIndex >= 0 && items[activeIndex]) navigate(items[activeIndex].href);
-    else navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`);
+    else navigate(unifiedSearchHref());
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -228,13 +233,13 @@ export function HomeSmartSearch() {
             <>
               <div className={styles.panelHead}>
                 <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : 'لا توجد نتيجة مباشرة'}</span>
-                <button type="button" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>نتائج الأنشطة ←</button>
+                <button type="button" onClick={() => navigate(unifiedSearchHref())}>كل النتائج ←</button>
               </div>
 
               {loading ? (
                 <div className={styles.loading} aria-hidden="true"><span /><span /><span /></div>
               ) : error ? (
-                <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث داخل الدليل.</span></div>
+                <div className={styles.empty}><strong>البحث السريع غير متاح الآن</strong><span>يمكنك متابعة البحث من صفحة النتائج الموحدة.</span></div>
               ) : items.length ? (
                 <div className={styles.results}>
                   {items.map((item, index) => (
@@ -255,11 +260,11 @@ export function HomeSmartSearch() {
                   ))}
                 </div>
               ) : (
-                <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح دليل الأنشطة لبحث تجاري أوسع.</span></div>
+                <div className={styles.empty}><strong>جرّب عبارة أقصر أو مختلفة</strong><span>أو افتح صفحة البحث الموحد لرؤية كل الأنواع في مكان واحد.</span></div>
               )}
 
-              <button type="button" className={styles.expanded} onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>
-                بحث الأنشطة عن «{trimmedQuery}»
+              <button type="button" className={styles.expanded} onClick={() => navigate(unifiedSearchHref())}>
+                كل نتائج «{trimmedQuery}»
                 <span aria-hidden="true">←</span>
               </button>
             </>

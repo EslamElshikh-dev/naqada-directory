@@ -2,9 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+import type { SiteSearchKind } from '@/lib/site-search';
 
 type SearchItem = {
-  kind: 'listing' | 'category' | 'locality' | 'landmark' | 'page' | 'knowledge-place' | 'knowledge-person' | 'knowledge-heritage';
+  kind: SiteSearchKind;
   title: string;
   subtitle: string;
   href: string;
@@ -49,7 +50,7 @@ export function GlobalSearch() {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
     if (loading) return 'جارٍ البحث داخل دليل وموسوعة نقادة…';
     if (error) return error;
-    if (!items.length) return 'لا توجد نتيجة سريعة؛ جرّب البحث الموسّع داخل الدليل.';
+    if (!items.length) return 'لا توجد نتيجة سريعة؛ افتح البحث الموحد لنتائج أوسع.';
     return `${items.length.toLocaleString('ar-EG')} نتائج سريعة مرتبة حسب الصلة`;
   }, [canSearch, error, items.length, loading]);
 
@@ -113,11 +114,15 @@ export function GlobalSearch() {
     router.push(href);
   }
 
+  function unifiedSearchHref() {
+    return trimmedQuery ? `/search?q=${encodeURIComponent(trimmedQuery)}` : '/search';
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!trimmedQuery) return;
     if (activeIndex >= 0 && items[activeIndex]) navigate(items[activeIndex].href);
-    else navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`);
+    else navigate(unifiedSearchHref());
   }
 
   function onInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -158,7 +163,7 @@ export function GlobalSearch() {
             {query ? <button type="button" className="global-search__clear" onClick={() => setQuery('')}>مسح</button> : null}
             <button type="submit" className="global-search__submit">ابحث</button>
           </form>
-          <div className={`global-search__status${error ? ' is-error' : ''}`} aria-live="polite"><span>{status}</span>{canSearch && !loading && !error ? <small>Enter لعرض كل النتائج</small> : null}</div>
+          <div className={`global-search__status${error ? ' is-error' : ''}`} aria-live="polite"><span>{status}</span>{canSearch && !loading && !error ? <small>Enter لعرض صفحة النتائج الموحدة</small> : null}</div>
           <div id="global-search-results" className="global-search__results" role="listbox" aria-label="نتائج البحث السريع" aria-busy={loading}>
             {loading ? <div className="global-search__loading" aria-hidden="true"><span /><span /><span /></div> : items.length ? items.map((item, index) => (
               <button key={`${item.kind}-${item.href}`} id={`global-search-result-${index}`} type="button" role="option" aria-selected={activeIndex === index} className={`global-search__result${activeIndex === index ? ' is-active' : ''}`} onMouseEnter={() => setActiveIndex(index)} onClick={() => navigate(item.href)}>
@@ -166,11 +171,11 @@ export function GlobalSearch() {
                 <span className="global-search__result-copy"><span><strong>{item.title}</strong><i>{item.badge}</i></span><small>{item.subtitle}</small></span>
                 <b aria-hidden="true">←</b>
               </button>
-            )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة سريعة</strong><small>قد تظهر نتائج أوسع عند البحث داخل الدليل الكامل.</small><button type="button" className="global-search__empty-action" onClick={() => navigate(`/directory?q=${encodeURIComponent(trimmedQuery)}`)}>بحث موسّع عن «{trimmedQuery}» ←</button></div> : (
+            )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة سريعة</strong><small>قد تظهر نتائج أوسع في صفحة البحث الموحد.</small><button type="button" className="global-search__empty-action" onClick={() => navigate(unifiedSearchHref())}>بحث موحّد عن «{trimmedQuery}» ←</button></div> : (
               <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('بشلاو')}>بشلاو</button><button type="button" onClick={() => setQuery('عبد الرحيم القمولي')}>علم من نقادة</button></div></div>
             )}
           </div>
-          <div className="global-search__footer"><span>بحث ذكي في الأنشطة والأقسام والقرى والموسوعة</span><button type="button" onClick={() => navigate('/knowledge')}>فتح موسوعة نقادة ←</button></div>
+          <div className="global-search__footer"><span>بحث ذكي في الأنشطة والأقسام والقرى والموسوعة</span><button type="button" onClick={() => navigate(unifiedSearchHref())}>فتح البحث الموحد ←</button></div>
         </div>
       ) : null}
     </div>
