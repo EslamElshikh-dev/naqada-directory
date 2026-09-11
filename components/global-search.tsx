@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
-import type { SiteSearchKind } from '@/lib/site-search';
+import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
+import assistStyles from './global-search-assist.module.css';
 
 type SearchItem = {
   kind: SiteSearchKind;
@@ -12,7 +13,7 @@ type SearchItem = {
   badge: string;
 };
 
-type SearchResponse = { items?: SearchItem[]; error?: string };
+type SearchResponse = { items?: SearchItem[]; suggestions?: SearchRecoverySuggestion[]; error?: string };
 
 function SearchIcon() {
   return (
@@ -40,6 +41,7 @@ export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SearchItem[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchRecoverySuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -50,9 +52,10 @@ export function GlobalSearch() {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
     if (loading) return 'جارٍ البحث داخل دليل وموسوعة نقادة…';
     if (error) return error;
+    if (!items.length && suggestions.length) return 'لم نجد تطابقًا مباشرًا، لكن وجدنا اقتراحًا قريبًا.';
     if (!items.length) return 'لا توجد نتيجة سريعة؛ افتح البحث الموحد لنتائج أوسع.';
     return `${items.length.toLocaleString('ar-EG')} نتائج سريعة مرتبة حسب الصلة`;
-  }, [canSearch, error, items.length, loading]);
+  }, [canSearch, error, items.length, loading, suggestions.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -77,6 +80,7 @@ export function GlobalSearch() {
       requestRef.current?.abort();
       const resetTimer = window.setTimeout(() => {
         setItems([]);
+        setSuggestions([]);
         setLoading(false);
         setError('');
         setActiveIndex(-1);
@@ -96,10 +100,12 @@ export function GlobalSearch() {
         const payload = await response.json().catch(() => ({})) as SearchResponse;
         if (!response.ok) throw new Error(payload.error || 'تعذر تنفيذ البحث الآن.');
         setItems(Array.isArray(payload.items) ? payload.items : []);
+        setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
         setActiveIndex(-1);
       } catch (cause) {
         if ((cause as Error)?.name === 'AbortError') return;
         setItems([]);
+        setSuggestions([]);
         setError(cause instanceof Error ? cause.message : 'تعذر تنفيذ البحث الآن.');
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -116,6 +122,13 @@ export function GlobalSearch() {
 
   function unifiedSearchHref() {
     return trimmedQuery ? `/search?q=${encodeURIComponent(trimmedQuery)}` : '/search';
+  }
+
+  function applySuggestion(suggestion: SearchRecoverySuggestion) {
+    setQuery(suggestion.query);
+    setSuggestions([]);
+    setActiveIndex(-1);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -153,7 +166,7 @@ export function GlobalSearch() {
       {open ? (
         <div className="global-search__panel" role="dialog" aria-label="البحث في دليل نقادة">
           <div className="global-search__head">
-            <div><span>بحث موحّد</span><strong>ماذا تبحث عنه في نقادة؟</strong></div>
+            <div><span>Search Assist V10</span><strong>ماذا تبحث عنه في نقادة؟</strong></div>
             <button type="button" onClick={() => setOpen(false)} aria-label="إغلاق البحث">×</button>
           </div>
           <form className="global-search__form" role="search" onSubmit={submit}>
@@ -171,7 +184,25 @@ export function GlobalSearch() {
                 <span className="global-search__result-copy"><span><strong>{item.title}</strong><i>{item.badge}</i></span><small>{item.subtitle}</small></span>
                 <b aria-hidden="true">←</b>
               </button>
-            )) : canSearch && !loading && !error ? <div className="global-search__empty"><span>⌕</span><strong>لا توجد نتيجة سريعة</strong><small>قد تظهر نتائج أوسع في صفحة البحث الموحد.</small><button type="button" className="global-search__empty-action" onClick={() => navigate(unifiedSearchHref())}>بحث موحّد عن «{trimmedQuery}» ←</button></div> : (
+            )) : canSearch && !loading && !error ? (
+              <div className="global-search__empty">
+                <span>⌕</span>
+                <strong>{suggestions.length ? 'لقينا صياغة أقرب لبحثك' : 'لا توجد نتيجة سريعة'}</strong>
+                <small>{suggestions.length ? 'اختر الاقتراح المناسب لنحدّث النتائج هنا فورًا.' : 'قد تظهر نتائج أوسع في صفحة البحث الموحد.'}</small>
+                {suggestions.length ? (
+                  <div className={assistStyles.assist} aria-label="اقتراحات Search Assist">
+                    {suggestions.map((suggestion) => (
+                      <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
+                        <span>{suggestion.reason}</span>
+                        <strong>«{suggestion.query}»</strong>
+                        <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة</small>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                <button type="button" className="global-search__empty-action" onClick={() => navigate(unifiedSearchHref())}>بحث موحّد عن «{trimmedQuery}» ←</button>
+              </div>
+            ) : (
               <div className="global-search__suggestions"><span>اقتراحات سريعة</span><div><button type="button" onClick={() => setQuery('حضانة')}>حضانة</button><button type="button" onClick={() => setQuery('صيدلية')}>صيدلية</button><button type="button" onClick={() => setQuery('بشلاو')}>بشلاو</button><button type="button" onClick={() => setQuery('عبد الرحيم القمولي')}>علم من نقادة</button></div></div>
             )}
           </div>
