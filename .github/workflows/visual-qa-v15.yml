@@ -1,0 +1,107 @@
+name: Visual QA V15
+
+on:
+  push:
+    branches:
+      - qa/visual-v15
+  workflow_dispatch:
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx --yes playwright@1.55.0 install --with-deps chromium
+
+      - name: Start production server
+        run: |
+          npm run start > /tmp/naqada-next.log 2>&1 &
+          echo $! > /tmp/naqada-next.pid
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/naqada-next.log
+          exit 1
+
+      - name: Verify representative routes
+        run: |
+          set -euo pipefail
+          routes=(
+            "/"
+            "/directory"
+            "/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88"
+            "/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87"
+            "/knowledge"
+            "/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9"
+            "/blog"
+            "/blog/bashlaw-today-quran-youth-education"
+            "/search?q=%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AE%D8%B7%D8%A7%D8%B1%D8%A9"
+          )
+          for route in "${routes[@]}"; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" "http://127.0.0.1:3000${route}")
+            echo "$code $route"
+            test "$code" = "200"
+          done
+
+      - name: Capture desktop screenshots
+        run: |
+          mkdir -p artifacts/desktop artifacts/mobile-390 artifacts/mobile-430
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/ artifacts/desktop/home.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/directory artifacts/desktop/directory.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/desktop/village-bashlaw.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/desktop/listing.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/desktop/knowledge-place.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/desktop/blog-article.png
+
+      - name: Capture mobile 390 screenshots
+        run: |
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/ artifacts/mobile-390/home.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/directory artifacts/mobile-390/directory.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-390/village-bashlaw.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-390/listing.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/mobile-390/knowledge-place.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-390/blog-article.png
+
+      - name: Capture mobile 430 screenshots
+        run: |
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/ artifacts/mobile-430/home.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-430/village-bashlaw.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-430/listing.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-430/blog-article.png
+
+      - name: Upload visual QA screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa-v15
+          path: artifacts
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa-v15-server-log
+          path: /tmp/naqada-next.log
+          if-no-files-found: ignore
+          retention-days: 7
