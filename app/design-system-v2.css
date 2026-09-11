@@ -614,8 +614,11 @@ body {
   .shell { width: min(100% - 18px, 370px); }
   .brand__copy small { display: none; }
   .hero h1 { font-size: 1.9rem !important; }
-  .category-grid { grid-template-columns: 1fr; }
-  .category-card { min-height: 220px !important; }
+  .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .category-card {
+    min-width: 0;
+    min-height: 220px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
