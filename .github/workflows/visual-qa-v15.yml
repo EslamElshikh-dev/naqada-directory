@@ -27,8 +27,10 @@ jobs:
       - name: Build Next.js
         run: npm run build
 
-      - name: Install Chromium
-        run: npx --yes playwright@1.55.0 install --with-deps chromium
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
 
       - name: Start production server
         run: |
@@ -66,28 +68,31 @@ jobs:
       - name: Capture desktop screenshots
         run: |
           mkdir -p artifacts/desktop artifacts/mobile-390 artifacts/mobile-430
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/ artifacts/desktop/home.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/directory artifacts/desktop/directory.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/desktop/village-bashlaw.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/desktop/listing.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/desktop/knowledge-place.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/desktop/blog-article.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/ artifacts/desktop/home.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/directory artifacts/desktop/directory.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/desktop/village-bashlaw.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/desktop/listing.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/desktop/knowledge-place.png
+          npx playwright screenshot --browser=chromium --viewport-size="1440,1000" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/desktop/blog-article.png
 
       - name: Capture mobile 390 screenshots
         run: |
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/ artifacts/mobile-390/home.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/directory artifacts/mobile-390/directory.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-390/village-bashlaw.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-390/listing.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/mobile-390/knowledge-place.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-390/blog-article.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/ artifacts/mobile-390/home.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/directory artifacts/mobile-390/directory.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-390/village-bashlaw.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-390/listing.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page "http://127.0.0.1:3000/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9" artifacts/mobile-390/knowledge-place.png
+          npx playwright screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-390/blog-article.png
 
       - name: Capture mobile 430 screenshots
         run: |
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/ artifacts/mobile-430/home.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-430/village-bashlaw.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-430/listing.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-430/blog-article.png
+          npx playwright screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/ artifacts/mobile-430/home.png
+          npx playwright screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88" artifacts/mobile-430/village-bashlaw.png
+          npx playwright screenshot --browser=chromium --viewport-size="430,932" --full-page "http://127.0.0.1:3000/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87" artifacts/mobile-430/listing.png
+          npx playwright screenshot --browser=chromium --viewport-size="430,932" --full-page http://127.0.0.1:3000/blog/bashlaw-today-quran-youth-education artifacts/mobile-430/blog-article.png
+
+      - name: Run computed-layout diagnostics
+        run: node .github/visual-qa-v15.mjs
 
       - name: Upload visual QA screenshots
         uses: actions/upload-artifact@v4
