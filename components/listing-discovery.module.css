@@ -75,20 +75,26 @@
 }
 
 @media (max-width: 680px) {
-  .cardActions {
+  :global(.listing-card__actions).cardActions.cardActions {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-flow: row;
+    grid-auto-rows: minmax(44px, auto) !important;
+    align-content: start;
+    align-items: stretch;
   }
 
-  .cardActions :global(.button--primary),
-  .cardActions :global(.button--ghost) {
-    grid-column: 1 / -1;
+  :global(.listing-card__actions).cardActions.cardActions :global(.button--primary),
+  :global(.listing-card__actions).cardActions.cardActions :global(.button--ghost) {
+    grid-column: 1 / -1 !important;
   }
 
-  .cardActions :global(.button) {
+  :global(.listing-card__actions).cardActions.cardActions :global(.button) {
     width: 100%;
     min-width: 0;
-    min-height: 44px;
+    min-height: 44px !important;
+    height: auto !important;
+    align-self: stretch;
   }
 
   .cardDiscovery,
