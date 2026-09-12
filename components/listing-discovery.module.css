@@ -1,4 +1,5 @@
 .cardActions {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) repeat(3, minmax(44px, auto)) !important;
   align-items: stretch;
 }
@@ -75,15 +76,19 @@
 
 @media (max-width: 680px) {
   .cardActions {
+    display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .cardActions :global(.button--primary) {
+  .cardActions :global(.button--primary),
+  .cardActions :global(.button--ghost) {
     grid-column: 1 / -1;
   }
 
   .cardActions :global(.button) {
     width: 100%;
+    min-width: 0;
+    min-height: 44px;
   }
 
   .cardDiscovery,
