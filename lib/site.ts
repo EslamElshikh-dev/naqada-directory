@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import type { Business } from './types';
 
 export const siteConfig = {
-  name: 'دليل نقادة | دليل الخدمات والقرى والنجوع',
+  name: 'دليل نقادة | دليل الخدمات والأنشطة والقرى والنجوع',
   shortName: 'دليل نقادة',
+  alternateNames: ['دليل مركز نقادة', 'دليل خدمات نقادة', 'موسوعة نقادة المحلية'],
   url: 'https://naqada-directory.vercel.app',
   locale: 'ar_EG',
-  description: 'دليل نقادة للخدمات والأنشطة بالأسماء: أطباء وصيدليات ومدارس ومطاعم ومحلات، مع صفحات قرى ونجوع مركز نقادة بمحافظة قنا وروابط وصول مباشرة.',
+  description: 'دليل نقادة هو الدليل المحلي للخدمات والأنشطة والقرى والنجوع في مركز نقادة بمحافظة قنا، ويضم أطباء وصيدليات ومدارس ومطاعم ومحلات وروابط وصول مباشرة.',
   socialImage: 'https://naqada-directory.vercel.app/social-card',
   logoImage: 'https://naqada-directory.vercel.app/pwa-icon-192',
 };
