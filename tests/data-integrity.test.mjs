@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const load = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url), 'utf8'));
+const dataDir = new URL('../data/', import.meta.url);
+const load = (name) => JSON.parse(readFileSync(new URL(`${name}.json`, dataDir), 'utf8'));
 const catalog = load('catalog');
-const businesses = ['01', '02', '03', '04'].flatMap((part) => load(`businesses-${part}`));
+const businessFiles = readdirSync(dataDir)
+  .filter((name) => /^businesses-\d+\.json$/.test(name))
+  .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+const businesses = businessFiles.flatMap((file) => JSON.parse(readFileSync(new URL(file, dataDir), 'utf8')));
 const localities = load('localities');
 const families = load('families');
 const people = load('people');
