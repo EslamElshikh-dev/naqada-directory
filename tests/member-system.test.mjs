@@ -10,6 +10,7 @@ const reviewsApi = read('app/api/site-reviews/route.ts');
 const home = read('app/page.tsx');
 const nextConfig = read('next.config.ts');
 const accountButton = read('components/auth/account-button.tsx');
+const memberAvatar = read('components/auth/member-avatar.tsx');
 const memberDashboard = read('components/auth/member-dashboard.tsx');
 const landmarksPage = read('app/landmarks/page.tsx');
 const sitemap = read('app/sitemap.ts');
@@ -86,8 +87,11 @@ test('the deployment uses the Next.js server runtime for protected routes', () =
 
 test('Google profile photos are rendered with a constrained image host and graceful fallback', () => {
   assert.ok(nextConfig.includes("hostname: 'lh3.googleusercontent.com'"));
-  assert.ok(accountButton.includes('user!.avatarUrl'));
-  assert.ok(accountButton.includes('setFailedAvatarUrl'));
+  assert.ok(accountButton.includes('<MemberAvatar'));
+  assert.ok(accountButton.includes('src={user.avatarUrl}'));
+  assert.ok(memberAvatar.includes('onError={() => setFailed(true)}'));
+  assert.ok(memberAvatar.includes('showImage ?'));
+  assert.ok(memberAvatar.includes('<b>{initial}</b>'));
   assert.ok(memberDashboard.includes('profile.avatarUrl || user.avatarUrl'));
 });
 
