@@ -175,23 +175,25 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   };
 }
 
-function buildCoveragePriorities() {
+function buildCoveragePriorities(): GrowthPriority[] {
   return localityStats
     .filter((locality) => locality.count < 15)
-    .flatMap((locality) => primaryCategoryNames.map((categoryName) => {
+    .flatMap((locality): GrowthPriority[] => primaryCategoryNames.flatMap((categoryName): GrowthPriority[] => {
       const category = categories.find((item) => item.name === categoryName);
-      if (!category) return null;
+      if (!category) return [];
       const pairCount = localCategoryCount(locality.name, category.name);
-      if (pairCount >= 3) return null;
-      const score = Math.min(59,
+      if (pairCount >= 3) return [];
+      const score = Math.min(
+        59,
         20
-        + (essentialCategoryWeight[category.name] || 3)
-        + localityWeakness(locality.count)
-        + (pairCount === 0 ? 12 : pairCount === 1 ? 7 : 3),
+          + (essentialCategoryWeight[category.name] || 3)
+          + localityWeakness(locality.count)
+          + (pairCount === 0 ? 12 : pairCount === 1 ? 7 : 3),
       );
-      return {
+
+      return [{
         id: `coverage:${locality.slug}:${category.slug}`,
-        source: 'coverage' as const,
+        source: 'coverage',
         title: `${category.shortLabel} في ${locality.name}`,
         query: null,
         demandCount: 0,
@@ -210,8 +212,8 @@ function buildCoveragePriorities() {
         ],
         actionHref: contributionHref(`${category.shortLabel} في ${locality.name}`, category.name, locality.name),
         localityHref: `/villages/${locality.slug}`,
-      } satisfies GrowthPriority;
-    }).filter((item): item is GrowthPriority => Boolean(item)));
+      }];
+    }));
 }
 
 export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18) {
