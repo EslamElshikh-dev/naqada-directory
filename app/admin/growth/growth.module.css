@@ -1,0 +1,59 @@
+.hero {
+  padding: 34px;
+  border: 1px solid rgba(16, 42, 36, .12);
+  border-radius: 28px;
+  background: linear-gradient(135deg, #102a24, #214b3d);
+  color: #fff;
+  box-shadow: 0 26px 70px rgba(10, 32, 26, .14);
+}
+.hero span { color: #efce79; font-size: 13px; font-weight: 900; }
+.hero h1 { margin: 8px 0 12px; font-size: clamp(30px, 4vw, 48px); line-height: 1.35; }
+.hero p { max-width: 820px; margin: 0; color: #d3dfda; line-height: 2; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 22px 0; }
+.metrics article { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+.metrics span { display: block; color: var(--muted); font-size: 12px; }
+.metrics strong { display: block; margin-top: 6px; color: var(--green-900); font-size: 28px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 28px 0 16px; }
+.toolbar h2 { margin: 0; font-size: 26px; }
+.toolbar p { margin: 5px 0 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.toolbar nav { display: flex; flex-wrap: wrap; gap: 8px; }
+.toolbar a { padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--green-800); font-size: 12px; font-weight: 900; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.card { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 21px; background: var(--paper); }
+.cardTop { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
+.score { width: 68px; height: 68px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 20px; background: var(--green-950); color: #fff; text-align: center; }
+.score strong { display: block; font-size: 21px; line-height: 1; }
+.score small { display: block; margin-top: 3px; color: #b9ccc5; font-size: 10px; }
+.cardTitle { min-width: 0; }
+.cardTitle div { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.badge { display: inline-flex; padding: 5px 8px; border-radius: 999px; background: var(--green-50); color: var(--green-800); font-size: 11px; font-weight: 900; }
+.badgeDemand { background: #f3e6c5; color: #785817; }
+.card h3 { margin: 0; font-size: 18px; line-height: 1.6; overflow-wrap: anywhere; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 13px 0; color: var(--muted); font-size: 12px; }
+.meta span { padding: 6px 8px; border-radius: 9px; background: #f3f5f2; }
+.signals { margin: 0; padding: 0 18px 0 0; color: #53615b; font-size: 12px; line-height: 2; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.actions a { padding: 9px 11px; border-radius: 10px; background: var(--green-900); color: #fff; font-size: 12px; font-weight: 900; }
+.actions a + a { border: 1px solid var(--line); background: #fff; color: var(--green-800); }
+.method { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.method article { padding: 17px; border: 1px solid var(--line); border-radius: 17px; background: #eef1ec; }
+.method b { color: var(--gold-dark); }
+.method h3 { margin: 8px 0 5px; font-size: 15px; }
+.method p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.9; }
+.empty { padding: 40px; border: 1px dashed #bdc8c1; border-radius: 20px; background: #fff; text-align: center; color: var(--muted); }
+@media (max-width: 900px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid { grid-template-columns: 1fr; }
+  .method { grid-template-columns: 1fr; }
+  .toolbar { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 520px) {
+  .hero { padding: 24px 18px; border-radius: 22px; }
+  .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .metrics article { padding: 14px; }
+  .metrics strong { font-size: 22px; }
+  .card { padding: 16px; }
+  .cardTop { align-items: stretch; flex-direction: column-reverse; }
+  .score { width: 100%; height: auto; min-height: 50px; grid-template-columns: auto auto; gap: 6px; border-radius: 14px; }
+  .score small { margin-top: 0; }
+}
