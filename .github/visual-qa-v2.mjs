@@ -6,6 +6,7 @@ const routes = [
   ['home', '/'],
   ['directory', '/directory'],
   ['activities', '/activities'],
+  ['coverage', '/coverage'],
   ['village-bashlaw', '/villages/%D8%A8%D8%B4%D9%84%D8%A7%D9%88'],
   ['listing', '/listing/%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D9%87-%D8%AF-%D8%A7%D9%8A%D9%86%D8%A7%D8%B3-%D9%85%D8%AD%D9%85%D8%AF-%D9%85%D8%AF%D9%8A%D9%86%D9%87-%D9%86%D9%82%D8%A7%D8%AF%D9%87'],
   ['knowledge-place', '/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9'],
