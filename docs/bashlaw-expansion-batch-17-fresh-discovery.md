@@ -44,6 +44,15 @@ Run a fresh Bashlaw discovery pass without inflating the directory. A candidate 
 - No phone, owner bridge, or second independent current identity was resolved.
 - Decision: keep separate from official fruit/vegetable proprietors and do not publish/merge from name similarity.
 
+## Official freshness / closure lead
+
+### بائع فول وفلافل — محمد عطيتو عادلي — REOPEN VERIFY
+- Qena Governorate published an administrative-closure decision dated 2025-12-17 covering food establishments that had not yet regularized their status / completed required health conditions.
+- The decision explicitly includes a `بائع فول وفلافل` in `الأوسط قمولا بشلاو` with the responsible person named `محمد عطيتو عادلي`.
+- No newer indexed reopening or current storefront identity was resolved in this pass.
+- Decision: **do not publish as OPEN**. Keep as a closure/reopening-verification lead until a later official or direct current source proves reopening.
+- Source: https://www.qena.gov.eg/Goffice/orders/Lists/List/AllItems.aspx
+
 ## Freshness conflict retained
 - An older Dezone result still describes محل حمو لقطع غيار الموتوسيكلات والتوكتوك at Bashlaw as OPEN.
 - Batch 16 already resolved newer sources tying the identity to a different current point and marking it closed since 2025.
@@ -51,11 +60,12 @@ Run a fresh Bashlaw discovery pass without inflating the directory. A candidate 
 
 ## Batch 17 result
 - New visitor-facing records: **0**.
-- New HOLD candidates: **2** (سنتر الاسطوره; unnamed reproductive-service map lead).
+- New HOLD/service candidates: **2** (سنتر الاسطوره; unnamed reproductive-service map lead).
+- New official closure/reopen-verification lead: **1** (محمد عطيتو عادلي — فول وفلافل).
 - Existing records strengthened/deduped: **multiple**, especially مركز شباب الأوسط قمولا.
 - Weak locality assumptions: **0**.
 - Weak owner→storefront merges: **0**.
 - Production/Main: unchanged.
 
 ## Next useful pass
-Prioritize phone-first discovery around Bashlaw and Awsat Qamoula where an exact public phone can be searched across social/business indexes, then accept only identities whose address explicitly names Bashlaw or whose direct map point is independently tied to Bashlaw.
+Prioritize phone-first discovery around Bashlaw and Awsat Qamoula where an exact public phone can be searched across social/business indexes, then accept only identities whose address explicitly names Bashlaw or whose direct map point is independently tied to Bashlaw. In parallel, check official/local reopening evidence for the 2025 administratively closed Bashlaw food-service lead before treating it as current.
