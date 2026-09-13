@@ -116,7 +116,7 @@ export default function CoveragePage() {
             </div>
             <div className="principles-grid">
               {crawlable.slice(0, 24).map(({ locality, items, routes }) => (
-                <article key={locality.slug}>
+                <article key={locality.slug} style={{ minWidth: 0 }}>
                   <b>{routes.length.toLocaleString('ar-EG')}</b>
                   <h3><Link href={`/villages/${locality.slug}`}>{locality.name}</Link></h3>
                   <p>{items.length.toLocaleString('ar-EG')} سجلًا منشورًا · {routes.length.toLocaleString('ar-EG')} مسار خدمة ثابتًا.</p>
@@ -146,7 +146,7 @@ export default function CoveragePage() {
           <div className="section-heading"><div><span className="eyebrow eyebrow--dark">فرص الاستكمال</span><h2>فئات شائعة غير ممثلة بعد في بعض المواضع</h2><p>استخدم هذه القائمة كخريطة عمل لجمع بيانات حقيقية. كل زر يجهز مساهمة بالموضع والتصنيف تلقائيًا.</p></div><Link href="/contribute" className="text-link">إضافة نشاط أو تصحيح بيانات ←</Link></div>
           <div className="principles-grid">
             {needsCoverage.map(({ locality, items, missing }) => (
-              <article key={locality.slug}>
+              <article key={locality.slug} style={{ minWidth: 0 }}>
                 <b>{items.length.toLocaleString('ar-EG')}</b>
                 <h3>{locality.name}</h3>
                 <p>{items.length ? `يوجد ${items.length.toLocaleString('ar-EG')} سجلًا منشورًا حاليًا.` : 'لا توجد أنشطة منشورة لهذا الموضع حتى الآن.'}</p>
