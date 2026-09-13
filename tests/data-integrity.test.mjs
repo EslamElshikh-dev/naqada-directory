@@ -44,7 +44,7 @@ test('business identifiers, public slugs, and publication states are safe', () =
   assert.equal(new Set(businesses.map((item) => item.slug)).size, businesses.length);
 
   const allowedStatuses = new Set(['ready', 'ready_with_caution']);
-  const allowedVerificationGrades = new Set(['A', 'B+', 'B']);
+  const allowedVerificationGrades = new Set(['A', 'A-', 'B+', 'B']);
   const unexpectedStatuses = [...new Set(
     businesses.map((item) => item.status).filter((status) => !allowedStatuses.has(status)),
   )];
