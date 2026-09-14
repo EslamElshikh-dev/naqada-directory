@@ -203,7 +203,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setOpen(true); }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="خدمة، مكان، أو اسم…"
+          placeholder="ابحث باسم خدمة أو نشاط أو قرية…"
           autoComplete="off"
           inputMode="search"
           aria-expanded={showPanel}
@@ -213,7 +213,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           aria-autocomplete={canSearch ? 'list' : undefined}
         />
         {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
-        <button type="submit">ابحث</button>
+        <button type="submit"><span>ابحث في الدليل</span><b aria-hidden="true">←</b></button>
       </form>
 
       {!compact ? <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
