@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';
+import { SanadAssistant } from '@/components/sanad-assistant';
 import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
@@ -118,6 +119,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <VisitorTracker />
         {children}
         <Footer />
+        <SanadAssistant />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />
         <script dangerouslySetInnerHTML={{ __html: speedInsightsBootstrap }} />
         <script defer src="/_vercel/speed-insights/script.js" />
