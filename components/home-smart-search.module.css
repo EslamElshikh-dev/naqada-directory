@@ -516,3 +516,17 @@
   0%, 100% { opacity: .35; transform: translateY(0); }
   50% { opacity: 1; transform: translateY(-4px); }
 }
+
+/* Legible mobile search, including suggestions and empty states. */
+@media (max-width: 700px) {
+ .shortcutRail { margin-top: 12px; }
+ .shortcutRail a { min-height: 44px; font-size: .8125rem; padding-inline: 13px; color: #f0dfb0; border-color: #ffffff35; }
+ .copy strong, .discoveryIntro strong, .assistIntro strong { font-size: .9375rem; line-height: 1.8; }
+ .copy small, .panelHead, .assistIntro span, .empty span, .discoveryIntro > div > span { font-size: .8125rem; line-height: 1.8; }
+ .copy strong { white-space: normal; }
+ .expanded, .discoveryGroupHead strong, .discoveryGroupHead a, .discoveryLink { font-size: .875rem; min-height: 44px; }
+ .panel { max-height: min(460px,60dvh); overflow-y: auto; }
+ .results { max-height: 300px; }
+ .panelHead { align-items: flex-start; }
+ .panelHead button { min-height: 44px; flex-shrink: 0; }
+}

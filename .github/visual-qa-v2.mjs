@@ -66,6 +66,17 @@ async function inspectRoute(viewportName, width, height, routeName, path) {
       scrollWidth,
       horizontalOverflow: scrollWidth > window.innerWidth + 1,
       overflowing,
+      mobileNavVisible: (() => {
+        if (window.innerWidth > 980) return true;
+        const nav = document.querySelector('nav[aria-label="التنقل على الجوال"]');
+        if (!nav || getComputedStyle(nav).display === 'none') return false;
+        const rect = nav.getBoundingClientRect();
+        return rect.height > 0 && rect.top >= 0 && rect.bottom <= window.innerHeight + 1;
+      })(),
+      heroControlsClipped: [...document.querySelectorAll('.home-hero .hero__content, .home-hero .hero-search, .home-hero .hero-search button[type="submit"]')].some((el) => {
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && (rect.left < -1 || rect.right > window.innerWidth + 1);
+      }),
       categoryGridColumns: categoryGridStyle?.gridTemplateColumns || null,
       categoryCardCount: categoryGrid?.querySelectorAll('.category-card').length || 0,
     };
@@ -74,6 +85,8 @@ async function inspectRoute(viewportName, width, height, routeName, path) {
   const status = response?.status() ?? 0;
   const key = `${routeName}-${viewportName}`;
   out.checks[key] = { status, ...metrics };
+  if (!metrics.mobileNavVisible) out.failures.push(`${key}: mobile navigation missing or outside viewport`);
+  if (metrics.heroControlsClipped) out.failures.push(`${key}: homepage content or search button clipped by viewport`);
   if (status !== 200) out.failures.push(`${key}: HTTP ${status}`);
   if (metrics.horizontalOverflow) out.failures.push(`${key}: document horizontal overflow (${metrics.scrollWidth}px > ${width}px)`);
 

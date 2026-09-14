@@ -183,3 +183,9 @@
   .facetList button,
   .recovery button { transition: none; }
 }
+
+@media (max-width: 700px) {
+ .contextCopy span, .contextCopy small, .count small, .facetGroup > span { font-size: .8125rem; line-height: 1.85; }
+ .facetList button, .recovery button { min-height: 44px; font-size: .875rem; line-height: 1.8; }
+ .facetList small { font-size: .75rem; }
+}

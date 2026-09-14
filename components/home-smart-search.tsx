@@ -203,7 +203,7 @@ export function HomeSmartSearch() {
           onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setOpen(true); }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="ابحث بخدمة أو نشاط أو قرية أو شخصية…"
+          placeholder="خدمة، مكان، أو اسم…"
           autoComplete="off"
           inputMode="search"
           aria-expanded={showPanel}
@@ -213,7 +213,7 @@ export function HomeSmartSearch() {
           aria-autocomplete={canSearch ? 'list' : undefined}
         />
         {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
-        <button type="submit">ابحث في نقادة <b aria-hidden="true">←</b></button>
+        <button type="submit">ابحث</button>
       </form>
 
       <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
@@ -244,7 +244,7 @@ export function HomeSmartSearch() {
           {canSearch ? (
             <>
               <div className={styles.panelHead}>
-                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : suggestions.length ? 'Search Assist وجد اقتراحًا قريبًا' : 'لا توجد نتيجة مباشرة'}</span>
+                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : suggestions.length ? 'وجدنا اقتراحًا قريبًا' : 'لا توجد نتيجة مباشرة'}</span>
                 <button type="button" onClick={() => navigate(unifiedSearchHref())}>كل النتائج ←</button>
               </div>
 
@@ -272,7 +272,7 @@ export function HomeSmartSearch() {
                   ))}
                 </div>
               ) : suggestions.length ? (
-                <div className={styles.assist} aria-label="اقتراحات Search Assist">
+                <div className={styles.assist} aria-label="اقتراحات البحث">
                   <div className={styles.assistIntro}><strong>هل تقصد واحدًا من دول؟</strong><span>التصحيح لا يُطبّق تلقائيًا؛ اختاره لو هو المقصود.</span></div>
                   {suggestions.map((suggestion) => (
                     <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
@@ -295,7 +295,7 @@ export function HomeSmartSearch() {
             <div className={styles.discovery}>
               <div className={styles.discoveryIntro}>
                 <div><span>{trimmedQuery ? 'اكتب حرفًا آخر للبحث الذكي' : 'ابدأ مباشرة بدون كتابة'}</span><strong>اختر خدمة أو قرية ووصل لها بضغطة واحدة</strong></div>
-                <span className={styles.discoveryBadge}>Discovery V3</span>
+
               </div>
 
               <div className={styles.discoveryColumns}>

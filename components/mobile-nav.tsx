@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import styles from './mobile-nav.module.css';
 
 type NavIconName = 'home' | 'search' | 'add' | 'landmarks' | 'account';
 
@@ -22,7 +23,7 @@ function NavIcon({ name }: { name: NavIconName }) {
     account: <><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20v-1.7a5.8 5.8 0 0 1 5.8-5.8h1.4a5.8 5.8 0 0 1 5.8 5.8V20"/><path d="M4 20h16"/></>,
   };
   return (
-    <span className="mobile-nav__icon" aria-hidden="true">
+    <span className={styles.icon} aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         {paths[name]}
       </svg>
@@ -33,13 +34,13 @@ function NavIcon({ name }: { name: NavIconName }) {
 export function MobileNav() {
   const pathname = usePathname();
   return (
-    <nav className="mobile-nav" aria-label="التنقل على الجوال">
+    <nav className={styles.nav} aria-label="التنقل على الجوال">
       {items.map((item) => {
         const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
         return (
-          <Link key={item.href} href={item.href} className={item.featured ? 'mobile-nav__featured' : undefined} aria-current={active ? 'page' : undefined}>
+          <Link key={item.href} href={item.href} className={item.featured ? styles.featured : undefined} aria-current={active ? 'page' : undefined}>
             <NavIcon name={item.icon} />
-            <span className="mobile-nav__label">{item.label}</span>
+            <span className={styles.label}>{item.label}</span>
           </Link>
         );
       })}
