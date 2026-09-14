@@ -1,0 +1,557 @@
+/* Design V20 — Editorial & Knowledge Surfaces
+   Brings blog and knowledge hubs into the V18/V19 visual system without changing content or data. */
+
+:root {
+  --v20-ink: #30211c;
+  --v20-muted: #75645b;
+  --v20-line: rgba(76,45,34,.105);
+  --v20-copper: #984c34;
+  --v20-copper-dark: #6f3525;
+  --v20-teal: #286c70;
+  --v20-gold: #d7a65a;
+  --v20-paper: #fffdfa;
+  --v20-warm: #f8f2ec;
+  --v20-shadow: 0 18px 50px rgba(48,27,20,.075);
+  --v20-shadow-hover: 0 26px 64px rgba(48,27,20,.11);
+}
+
+/* -------------------------------------------
+   Blog landing — editorial, not directory cards
+-------------------------------------------- */
+main > section[class*="blog-module"][class*="hero"] {
+  min-height: 430px;
+  display: flex;
+  align-items: center;
+  padding-block: clamp(52px, 7vw, 78px) 58px !important;
+  background:
+    radial-gradient(circle at 17% 22%, rgba(215,166,90,.21), transparent 31rem),
+    radial-gradient(circle at 87% 82%, rgba(40,108,112,.17), transparent 27rem),
+    linear-gradient(132deg,#1d1411 0%,#302019 56%,#513027 100%) !important;
+}
+
+main > section[class*="blog-module"][class*="hero"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to left, transparent 4%, #000 34%, #000 68%, transparent 96%);
+}
+
+main > section[class*="blog-module"][class*="hero"]::after {
+  width: 220px !important;
+  height: 318px !important;
+  inset-inline-end: 7% !important;
+  inset-block-start: 12% !important;
+  border-color: rgba(239,192,128,.16) !important;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(215,166,90,.08), transparent 46%),
+    linear-gradient(to bottom, rgba(25,15,12,.28) 0 23%, rgba(185,88,57,.08) 24% 100%) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.13);
+}
+
+main > section[class*="blog-module"][class*="hero"] > div[class*="heroInner"] {
+  max-width: 1020px !important;
+}
+
+main > section[class*="blog-module"][class*="hero"] [class*="kicker"] {
+  min-height: 34px;
+  padding: 7px 12px !important;
+  border-color: rgba(255,255,255,.16) !important;
+  background: rgba(255,255,255,.055) !important;
+  color: #edc58d !important;
+  backdrop-filter: blur(8px);
+}
+
+main > section[class*="blog-module"][class*="hero"] h1 {
+  max-width: 850px !important;
+  font-size: clamp(2.55rem,5.8vw,4.35rem) !important;
+  line-height: 1.22 !important;
+  letter-spacing: -.04em !important;
+}
+
+main > section[class*="blog-module"][class*="hero"] p {
+  max-width: 800px !important;
+  color: #ded0c9 !important;
+  font-size: .9rem !important;
+  line-height: 2 !important;
+}
+
+main > section[class*="blog-module"][class*="hero"] [class*="stats"] {
+  gap: 7px !important;
+  margin-top: 24px !important;
+}
+
+main > section[class*="blog-module"][class*="hero"] [class*="stats"] > span {
+  min-height: 42px !important;
+  padding: 9px 12px !important;
+  border-color: rgba(255,255,255,.11) !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.055) !important;
+  backdrop-filter: blur(9px);
+}
+
+/* Archive rhythm */
+section[class*="blog-module"][class*="archive"] {
+  padding-block: 48px 82px !important;
+}
+
+section[class*="blog-module"][class*="archive"] [class*="heading"] {
+  margin-bottom: 22px !important;
+}
+
+section[class*="blog-module"][class*="archive"] [class*="heading"] h2 {
+  color: var(--v20-ink) !important;
+  letter-spacing: -.025em;
+}
+
+/* Featured first story + consistent remaining cards */
+div[class*="editorial-module"][class*="editorialGrid"] {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 14px !important;
+}
+
+a[class*="editorial-module"][class*="editorialCard"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--v20-line) !important;
+  border-radius: 24px !important;
+  background: var(--v20-paper) !important;
+  box-shadow: var(--v20-shadow) !important;
+}
+
+a[class*="editorial-module"][class*="editorialCard"]::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg,transparent,rgba(152,76,52,.5),rgba(215,166,90,.45),transparent);
+  opacity: .6;
+  pointer-events: none;
+}
+
+a[class*="editorial-module"][class*="editorialCard"] > img {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  object-fit: cover !important;
+  background: #eadfd5;
+}
+
+div[class*="editorial-module"][class*="editorialCardBody"] {
+  min-height: 260px !important;
+  padding: 20px !important;
+}
+
+div[class*="editorial-module"][class*="editorialCardBody"] h2 {
+  color: var(--v20-ink) !important;
+  font-size: clamp(1.16rem,2vw,1.48rem) !important;
+  line-height: 1.65 !important;
+  text-wrap: balance;
+}
+
+div[class*="editorial-module"][class*="editorialCardBody"] p {
+  color: var(--v20-muted) !important;
+  line-height: 1.95 !important;
+  text-wrap: pretty;
+}
+
+/* First article behaves like a magazine lead on wide screens. */
+a[class*="editorial-module"][class*="editorialCard"]:first-child {
+  grid-column: 1 / -1;
+  display: grid !important;
+  grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
+  min-height: 400px;
+}
+
+a[class*="editorial-module"][class*="editorialCard"]:first-child > img {
+  height: 100% !important;
+  min-height: 400px;
+  aspect-ratio: auto !important;
+}
+
+a[class*="editorial-module"][class*="editorialCard"]:first-child > div[class*="editorialCardBody"] {
+  min-height: 400px !important;
+  justify-content: center;
+  padding: clamp(24px,3vw,36px) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(215,166,90,.1), transparent 40%),
+    linear-gradient(145deg,#fffdfa,#fbf5ef);
+}
+
+a[class*="editorial-module"][class*="editorialCard"]:first-child h2 {
+  font-size: clamp(1.55rem,3vw,2.25rem) !important;
+  line-height: 1.52 !important;
+}
+
+a[class*="editorial-module"][class*="editorialCard"]:first-child p {
+  font-size: .82rem !important;
+}
+
+[class*="blog-module"][class*="cardTop"] {
+  gap: 6px !important;
+  margin-bottom: 12px !important;
+}
+
+[class*="blog-module"][class*="cardTop"] > * {
+  border: 1px solid rgba(76,45,34,.055);
+  background: #f5eee8 !important;
+}
+
+[class*="blog-module"][class*="cardTop"] > span:first-child {
+  background: rgba(152,76,52,.1) !important;
+  color: var(--v20-copper-dark) !important;
+}
+
+[class*="blog-module"][class*="cardFooter"] {
+  border-top-color: rgba(76,45,34,.075) !important;
+}
+
+[class*="blog-module"][class*="cardFooter"] b {
+  color: var(--v20-copper-dark) !important;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  a[class*="editorial-module"][class*="editorialCard"] {
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"] > img {
+    transition: transform .45s ease, filter .45s ease;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"]:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(152,76,52,.19) !important;
+    box-shadow: var(--v20-shadow-hover) !important;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"]:hover > img {
+    transform: scale(1.018);
+    filter: saturate(1.03) contrast(1.015);
+  }
+}
+
+/* Author band becomes a quiet credibility strip. */
+aside[class*="blog-module"][class*="authorBand"] {
+  margin-top: 30px !important;
+  padding: 18px 20px !important;
+  border-color: rgba(152,76,52,.13) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(215,166,90,.09), transparent 38%),
+    linear-gradient(135deg,#fff9f0,#f8eee6) !important;
+  box-shadow: 0 10px 30px rgba(48,27,20,.045);
+}
+
+aside[class*="blog-module"][class*="authorBand"] [class*="authorMark"] {
+  border: 1px solid rgba(215,166,90,.25);
+  box-shadow: 0 9px 24px rgba(48,27,20,.15);
+}
+
+/* -------------------------------------------
+   Knowledge hub — visual reference library
+-------------------------------------------- */
+main.page-main > section[class*="knowledge-module"][class*="hero"] {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  padding-block: 56px 52px !important;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(215,166,90,.21), transparent 31rem),
+    radial-gradient(circle at 87% 82%, rgba(40,108,112,.17), transparent 28rem),
+    linear-gradient(132deg,#1d1411,#302019 58%,#4b2b23) !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg,transparent 0 58%,rgba(255,255,255,.018) 58% 59%,transparent 59% 100%);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="heroGrid"] {
+  gap: clamp(28px,4vw,50px) !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
+  max-width: 800px !important;
+  font-size: clamp(2.55rem,5vw,4.2rem) !important;
+  line-height: 1.23 !important;
+  letter-spacing: -.04em !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] p {
+  color: #ded0c8 !important;
+  font-size: .9rem !important;
+  text-wrap: pretty;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+  gap: 8px !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] > span {
+  min-height: 96px !important;
+  padding: 14px !important;
+  border-color: rgba(255,255,255,.12) !important;
+  border-radius: 19px !important;
+  background: rgba(255,255,255,.058) !important;
+  backdrop-filter: blur(11px) saturate(110%);
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
+  color: #edc47f !important;
+  font-size: 1.55rem !important;
+}
+
+/* Attribution feels like editorial provenance, not an alert box. */
+section[class*="knowledge-module"][class*="attribution"] {
+  position: relative;
+  overflow: hidden;
+  padding: 19px 20px !important;
+  border-color: rgba(152,76,52,.13) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(215,166,90,.09), transparent 40%),
+    linear-gradient(135deg,#fff9f1,#fffdfa) !important;
+  box-shadow: 0 11px 32px rgba(48,27,20,.05) !important;
+}
+
+section[class*="knowledge-module"][class*="attribution"]::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -55px;
+  inset-block-end: -62px;
+  width: 145px;
+  height: 145px;
+  border: 1px solid rgba(152,76,52,.07);
+  border-radius: 50%;
+  box-shadow: 0 0 0 32px rgba(152,76,52,.02);
+  pointer-events: none;
+}
+
+section[class*="knowledge-module"][class*="attribution"] [class*="seal"] {
+  border: 1px solid rgba(215,166,90,.23);
+  box-shadow: 0 9px 24px rgba(48,27,20,.14);
+}
+
+/* Hub cards: stronger imagery and less empty vertical space. */
+section[class*="knowledge-v3-module"][class*="hubGrid"] {
+  gap: 13px !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] {
+  min-height: 315px !important;
+  border-color: var(--v20-line) !important;
+  border-radius: 24px !important;
+  background: var(--v20-paper) !important;
+  box-shadow: var(--v20-shadow) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(1),
+article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(2) {
+  min-height: 360px !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"] {
+  background: #e8ddd2 !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"]::after {
+  background: linear-gradient(0deg,rgba(31,18,14,.48),rgba(31,18,14,.03) 68%) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] h2 {
+  color: var(--v20-ink) !important;
+  letter-spacing: -.018em;
+  text-wrap: balance;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] p {
+  color: var(--v20-muted) !important;
+  line-height: 1.9 !important;
+  text-wrap: pretty;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] a {
+  margin-top: auto;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(76,45,34,.07);
+  color: var(--v20-copper-dark) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="cardBadge"] {
+  border: 1px solid rgba(152,76,52,.07);
+  background: rgba(152,76,52,.09) !important;
+  color: var(--v20-copper-dark) !important;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  article[class*="knowledge-v3-module"][class*="hubCard"] {
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+  }
+
+  article[class*="knowledge-v3-module"][class*="hubCard"]:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(40,108,112,.18) !important;
+    box-shadow: var(--v20-shadow-hover) !important;
+  }
+}
+
+/* Method cards and reference rows */
+section[class*="knowledge-module"][class*="section"] > div[class*="grid"] > article[class*="card"] {
+  min-height: 190px !important;
+  border-color: var(--v20-line) !important;
+  background: linear-gradient(150deg,#fff,#fbf6f1) !important;
+  box-shadow: 0 9px 28px rgba(48,27,20,.045) !important;
+}
+
+[class*="knowledge-v3-module"][class*="jumpRail"] > *,
+[class*="knowledge-v3-module"][class*="summaryRail"] > span {
+  border-color: var(--v20-line) !important;
+  box-shadow: 0 4px 14px rgba(48,27,20,.025);
+}
+
+/* -------------------------------------------
+   Shared responsive editorial behavior
+-------------------------------------------- */
+@media (max-width: 900px) {
+  a[class*="editorial-module"][class*="editorialCard"]:first-child {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="heroGrid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 680px) {
+  main > section[class*="blog-module"][class*="hero"],
+  main.page-main > section[class*="knowledge-module"][class*="hero"] {
+    min-height: 0;
+    padding-block: 35px 32px !important;
+  }
+
+  main > section[class*="blog-module"][class*="hero"]::before,
+  main.page-main > section[class*="knowledge-module"][class*="hero"]::before {
+    opacity: .5;
+  }
+
+  main > section[class*="blog-module"][class*="hero"] h1,
+  main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
+    max-width: 100% !important;
+    font-size: clamp(2rem,9vw,2.75rem) !important;
+    line-height: 1.34 !important;
+  }
+
+  main > section[class*="blog-module"][class*="hero"] p,
+  main.page-main > section[class*="knowledge-module"][class*="hero"] p {
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    grid-template-columns: repeat(4,minmax(118px,1fr)) !important;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] > span {
+    min-height: 78px !important;
+    scroll-snap-align: start;
+  }
+
+  div[class*="editorial-module"][class*="editorialGrid"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"],
+  a[class*="editorial-module"][class*="editorialCard"]:first-child {
+    grid-column: auto;
+    display: flex !important;
+    min-height: 0;
+    border-radius: 19px !important;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"] > img,
+  a[class*="editorial-module"][class*="editorialCard"]:first-child > img {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0;
+    aspect-ratio: 16 / 9 !important;
+  }
+
+  div[class*="editorial-module"][class*="editorialCardBody"],
+  a[class*="editorial-module"][class*="editorialCard"]:first-child > div[class*="editorialCardBody"] {
+    min-height: 0 !important;
+    padding: 16px !important;
+  }
+
+  a[class*="editorial-module"][class*="editorialCard"]:first-child h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.65 !important;
+  }
+
+  section[class*="knowledge-module"][class*="attribution"] {
+    padding: 15px !important;
+    border-radius: 18px !important;
+  }
+
+  article[class*="knowledge-v3-module"][class*="hubCard"],
+  article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(1),
+  article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(2) {
+    min-height: 300px !important;
+    border-radius: 19px !important;
+  }
+
+  aside[class*="blog-module"][class*="authorBand"] {
+    border-radius: 18px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    grid-template-columns: repeat(4,112px) !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
+    font-size: 1.35rem !important;
+  }
+
+  section[class*="blog-module"][class*="archive"] {
+    padding-block: 32px 58px !important;
+  }
+
+  [class*="blog-module"][class*="cardFooter"] {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 6px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a[class*="editorial-module"][class*="editorialCard"],
+  a[class*="editorial-module"][class*="editorialCard"] > img,
+  article[class*="knowledge-v3-module"][class*="hubCard"],
+  article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"] img {
+    transition: none !important;
+    animation: none !important;
+  }
+}
