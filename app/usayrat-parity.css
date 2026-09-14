@@ -193,13 +193,18 @@ body.encyclopedia-ui .footer {
 body.encyclopedia-ui .footer::before {
   content: '';
   position: absolute;
+  inset: auto;
+  inset-inline: auto;
+  inset-block: auto;
   width: 460px;
   height: 460px;
   left: -210px;
   top: 80px;
   border: 1px solid rgba(227, 182, 85, .08);
   border-radius: 50%;
+  background: transparent;
   box-shadow: 0 0 0 62px rgba(227, 182, 85, .02), 0 0 0 124px rgba(227, 182, 85, .012);
+  pointer-events: none;
 }
 
 body.encyclopedia-ui .footer__accent {
@@ -302,16 +307,22 @@ body.encyclopedia-ui .footer__signature b { color: #fff; }
   body.encyclopedia-ui .site-header .global-search__trigger,
   body.encyclopedia-ui .site-header .account-trigger,
   body.encyclopedia-ui .header-actions [aria-label='عرض أهم الإشعارات'] { width: 40px !important; min-width: 40px !important; height: 40px !important; min-height: 40px !important; border-radius: 12px !important; }
-  body.encyclopedia-ui .footer__top { padding: 38px 0 25px; }
-  body.encyclopedia-ui .footer__brand-lockup { gap: 12px; }
+  body.encyclopedia-ui .footer::before { display: none; }
+  body.encyclopedia-ui .footer__top { justify-items: center; padding: 36px 0 25px; text-align: center; }
+  body.encyclopedia-ui .footer__brand-lockup { max-width: 560px; flex-direction: column; align-items: center; gap: 12px; }
   body.encyclopedia-ui .footer__brand-emblem { width: 48px; height: 48px; border-radius: 15px; }
   body.encyclopedia-ui .footer__brand-copy h2 { font-size: 1.12rem; }
   body.encyclopedia-ui .footer__brand-copy p { font-size: .7rem; }
-  body.encyclopedia-ui .footer__top-actions { grid-template-columns: 1fr; }
+  body.encyclopedia-ui .footer__top-actions { width: min(100%, 420px); grid-template-columns: 1fr; }
   body.encyclopedia-ui .footer__grid { grid-template-columns: 1fr 1fr; gap: 22px 14px; padding-block: 27px; }
   body.encyclopedia-ui .footer__about,
   body.encyclopedia-ui .footer__trust-column { grid-column: 1 / -1; }
-  body.encyclopedia-ui .footer__bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
+  body.encyclopedia-ui .footer__about,
+  body.encyclopedia-ui .footer__column { text-align: center; }
+  body.encyclopedia-ui .footer__links { justify-items: center; }
+  body.encyclopedia-ui .footer__trust-title,
+  body.encyclopedia-ui .footer__legal { justify-content: center; }
+  body.encyclopedia-ui .footer__bottom { flex-direction: column; align-items: center; gap: 10px; text-align: center; }
 }
 
 @media (max-width: 390px) {
