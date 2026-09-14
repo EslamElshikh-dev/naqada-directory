@@ -166,7 +166,7 @@ export function GlobalSearch() {
       {open ? (
         <div className="global-search__panel" role="dialog" aria-label="البحث في دليل نقادة">
           <div className="global-search__head">
-            <div><span>Search Assist V10</span><strong>ماذا تبحث عنه في نقادة؟</strong></div>
+            <div><span>ابحث في نقادة</span><strong>ماذا تبحث عنه في نقادة؟</strong></div>
             <button type="button" onClick={() => setOpen(false)} aria-label="إغلاق البحث">×</button>
           </div>
           <form className="global-search__form" role="search" onSubmit={submit}>
@@ -190,7 +190,7 @@ export function GlobalSearch() {
                 <strong>{suggestions.length ? 'لقينا صياغة أقرب لبحثك' : 'لا توجد نتيجة سريعة'}</strong>
                 <small>{suggestions.length ? 'اختر الاقتراح المناسب لنحدّث النتائج هنا فورًا.' : 'قد تظهر نتائج أوسع في صفحة البحث الموحد.'}</small>
                 {suggestions.length ? (
-                  <div className={assistStyles.assist} aria-label="اقتراحات Search Assist">
+                  <div className={assistStyles.assist} aria-label="اقتراحات البحث">
                     {suggestions.map((suggestion) => (
                       <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
                         <span>{suggestion.reason}</span>

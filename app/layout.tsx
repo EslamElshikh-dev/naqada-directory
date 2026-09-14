@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
+import { MobileNav } from '@/components/mobile-nav';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';
 import { SanadAssistant } from '@/components/sanad-assistant';
@@ -120,6 +121,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <VisitorTracker />
         {children}
         <Footer />
+        <MobileNav />
         <SanadAssistant />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />
         <script dangerouslySetInnerHTML={{ __html: speedInsightsBootstrap }} />

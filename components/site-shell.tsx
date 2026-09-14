@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { meta } from '@/lib/data';
-import { MobileNav } from './mobile-nav';
 import { AccountButton } from './auth/account-button';
 import { HeaderNav } from './header-nav';
 import { ActionIcon } from './action-icon';
@@ -87,7 +86,6 @@ export function Footer() {
         <span>آخر تحديث للبيانات: {meta.updatedAt}</span>
         <span>التصميم والتطوير بواسطة <a href="https://eslam-elshikh.com/" target="_blank" rel="noreferrer">المهندس إسلام الشيخ</a></span>
       </div>
-      <MobileNav />
     </footer>
   );
 }
