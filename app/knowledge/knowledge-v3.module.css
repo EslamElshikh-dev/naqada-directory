@@ -6,16 +6,21 @@
 .hubGrid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
 }
 
 .hubCard {
   position: relative;
   grid-column: span 4;
-  min-height: 330px;
+  min-height: 350px;
   overflow: hidden;
-  padding: 0 20px 20px;
+  padding: 0 22px 22px;
+  border-radius: 32px 32px 11px 32px;
+  background: linear-gradient(150deg, #fff, #fff5e5);
 }
+
+.hubCard:nth-child(even) { border-radius: 32px 11px 32px 32px; background: linear-gradient(150deg, #fff, #edf8f3); }
+.hubCard:nth-child(3n) { background: linear-gradient(150deg, #fff, #fff0e9); }
 
 .hubCard:nth-child(1),
 .hubCard:nth-child(2) {
@@ -26,18 +31,21 @@
 .visual {
   position: relative;
   flex: 0 0 170px;
-  width: calc(100% + 40px);
-  margin-inline: -20px;
+  width: calc(100% + 44px);
+  margin-inline: -22px;
   overflow: hidden;
   background: #e8ddd2;
+  border-radius: 31px 31px 9px 31px;
 }
+
+.hubCard:nth-child(even) .visual { border-radius: 31px 9px 31px 31px; }
 
 .hubCard:nth-child(1) .visual,
 .hubCard:nth-child(2) .visual { flex-basis: 205px; }
 
 .visual img {
   object-fit: cover;
-  transition: transform .36s ease, filter .36s ease;
+  transition: transform .55s cubic-bezier(.2,.7,.2,1), filter .55s ease;
 }
 
 .visual::after {
@@ -48,7 +56,7 @@
   pointer-events: none;
 }
 
-.hubCard:hover .visual img { transform: scale(1.025); filter: saturate(1.03) contrast(1.02); }
+.hubCard:hover .visual img { transform: scale(1.065); filter: saturate(1.08) contrast(1.03); }
 
 .hubCard > div:not(.visual) { margin-top: 15px; }
 
@@ -182,8 +190,9 @@
   .hubCard:nth-child(2) {
     grid-column: 1;
     min-height: 318px;
-    border-radius: 18px;
+    border-radius: 25px 25px 9px 25px;
   }
+  .hubCard:nth-child(even) { border-radius: 25px 9px 25px 25px; }
   .visual,
   .hubCard:nth-child(1) .visual,
   .hubCard:nth-child(2) .visual { flex-basis: 172px; }
