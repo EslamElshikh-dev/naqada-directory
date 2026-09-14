@@ -38,52 +38,45 @@ export function SiteHeader() {
 export function Footer() {
   return (
     <footer className="footer">
-      <div className="shell footer__cta">
-        <div><span>الدليل يكبر بمشاركة أهله</span><strong>أضف مكانًا. شارك معلومة.</strong><p>أضف نشاطك أو صحّح بياناته، وساعد أهل نقادة في الوصول إليه.</p></div>
-        <nav aria-label="المشاركة في الدليل"><Link href="/contribute" className="button button--light"><ActionIcon name="add" /><span>أضف أو صحح نشاطًا</span></Link><Link href="/#site-reviews" className="button footer__review-button"><ActionIcon name="star" /><span>قيّم تجربتك</span></Link></nav>
-      </div>
-      <div className="shell footer__grid">
+      <div className="shell footer__primary">
         <div className="footer__about">
           <Link href="/" className="brand brand--footer"><BrandMark /><span className="brand__copy"><strong>دليل نقادة</strong><small>المكان وأهله، في دليل واحد</small></span></Link>
-          <p>منصة معلوماتية مستقلة تنظّم البيانات القابلة للنشر عن مركز نقادة. ظهور أي نشاط لا يُعد اعتمادًا رسميًا أو ضمانًا للخدمة.</p>
-          <div className="footer__stats">
-            <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b> نشاطًا</span>
-            <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b> موضعًا</span>
-            <span><b>{meta.familyCount.toLocaleString('ar-EG')}</b> سجلًا عائليًا</span>
-          </div>
+          <p>موسوعة محلية ودليل خدمات مستقل لمركز نقادة، مكتوب للناس الذين يعيشون المكان ويبحثون عنه.</p>
         </div>
-        <div>
-          <h2>الخدمات والمكان</h2>
-          <div className="footer__links">
-            <Link href="/directory">كل الأنشطة</Link>
-            <Link href="/activities">الأنشطة والخدمات بالأسماء</Link>
-            <Link href="/updates">آخر تحديثات الدليل</Link>
-            <Link href="/coverage">خريطة تغطية الدليل</Link>
-            <Link href="/villages">القرى والنجوع</Link>
-          </div>
-        </div>
-        <div>
-          <h2>الذاكرة والمحتوى</h2>
-          <div className="footer__links">
-            <Link href="/blog">مدونة دليل نقادة</Link>
-            <Link href="/families">السجل العائلي</Link>
-            <Link href="/landmarks">معالم نقادة بالصور</Link>
-            <Link href="/heritage">الأعلام والمعالم</Link>
-            <Link href="/about">عن الدليل ومنهجيته</Link>
-          </div>
-        </div>
-        <div>
-          <h2>الحساب والمشاركة</h2>
-          <div className="footer__links">
-            <Link href="/account">لوحة العضو</Link>
-            <Link href="/account/login">تسجيل الدخول</Link>
-            <Link href="/contribute">أضف أو صحح بيانات</Link>
-            <Link href="/privacy">الخصوصية واستخدام البيانات</Link>
-          </div>
+        <div className="footer__action">
+          <span>عندك معلومة أحدث؟</span>
+          <strong>ساعدنا نخلي الدليل أدق.</strong>
+          <Link href="/contribute"><ActionIcon name="add" /><span>أضف أو صحّح بيانات</span></Link>
         </div>
       </div>
+      <nav className="shell footer__grid" aria-label="روابط دليل نقادة">
+        <div>
+          <h2>استكشف</h2>
+          <div className="footer__links">
+            <Link href="/directory">دليل الخدمات</Link>
+            <Link href="/villages">القرى والنجوع</Link>
+            <Link href="/knowledge">موسوعة نقادة</Link>
+          </div>
+        </div>
+        <div>
+          <h2>اقرأ وشارك</h2>
+          <div className="footer__links">
+            <Link href="/blog">حكايات نقادة</Link>
+            <Link href="/contribute">أضف أو صحّح</Link>
+            <Link href="/account">حسابي</Link>
+          </div>
+        </div>
+        <div>
+          <h2>معلومات</h2>
+          <div className="footer__links">
+            <Link href="/about">عن الدليل والمنهجية</Link>
+            <Link href="/emergency">أرقام مهمة</Link>
+            <Link href="/privacy">الخصوصية</Link>
+          </div>
+        </div>
+      </nav>
       <div className="shell footer__bottom">
-        <span>آخر تحديث للبيانات: {meta.updatedAt}</span>
+        <span>{meta.businessCount.toLocaleString('ar-EG')} خدمة · {meta.localityCount.toLocaleString('ar-EG')} موضعًا · آخر تحديث {meta.updatedAt}</span>
         <span>التصميم والتطوير بواسطة <a href="https://eslam-elshikh.com/" target="_blank" rel="noreferrer">المهندس إسلام الشيخ</a></span>
       </div>
     </footer>

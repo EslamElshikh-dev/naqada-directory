@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const items = [
-  { href: '/', label: 'الرئيسية' },
-  { href: '/directory', label: 'دليل الخدمات' },
-  { href: '/villages', label: 'القرى والنجوع' },
-  { href: '/knowledge', label: 'موسوعة نقادة' },
-  { href: '/blog', label: 'المدونة' },
+  { href: '/directory', label: 'الخدمات' },
+  { href: '/villages', label: 'الأماكن' },
+  { href: '/knowledge', label: 'الموسوعة' },
 ];
 
 export function HeaderNav() {
