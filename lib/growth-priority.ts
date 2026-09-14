@@ -146,7 +146,9 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const category = inferCategory(query);
   const localityCount = locality?.count || 0;
   const pairCount = locality && category ? localCategoryCount(locality.name, category.name) : null;
-  const demand = 30 + Math.min(30, Math.max(1, item.count) * 6);
+  // A real zero-result search must always outrank a coverage-only suggestion.
+  // One observed search starts at 55; proactive coverage is hard-capped at 49 below.
+  const demand = 50 + Math.min(20, Math.max(1, item.count) * 5);
   const pairGap = pairCount === null ? 0 : pairCount === 0 ? 22 : pairCount === 1 ? 14 : pairCount === 2 ? 8 : 0;
   const specificity = locality && category ? 8 : locality || category ? 4 : 0;
   const score = Math.min(100, demand + pairGap + (locality ? localityWeakness(localityCount) : 0) + specificity);
@@ -184,7 +186,7 @@ function buildCoveragePriorities(): GrowthPriority[] {
       const pairCount = localCategoryCount(locality.name, category.name);
       if (pairCount >= 3) return [];
       const score = Math.min(
-        59,
+        49,
         20
           + (essentialCategoryWeight[category.name] || 3)
           + localityWeakness(locality.count)
