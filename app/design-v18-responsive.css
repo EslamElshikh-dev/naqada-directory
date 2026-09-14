@@ -1,0 +1,26 @@
+/* Design V18 responsive hardening discovered during screenshot review. */
+
+@media (max-width: 680px) {
+  .detail-hero__grid > div,
+  .village-hero__grid > div {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .detail-hero h1,
+  .village-hero h1 {
+    width: 100%;
+    max-width: 100%;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+
+  .detail-hero .breadcrumbs,
+  .village-hero .breadcrumbs,
+  .detail-hero__badges,
+  .village-hero__identity {
+    max-width: 100%;
+  }
+}
