@@ -68,8 +68,8 @@ export default function HomePage() {
         <div className={`shell ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
             <span className={styles.location}><i /> مركز نقادة · محافظة قنا</span>
-            <h1>نقادة كلها،<br /><em>أقرب وأسهل.</em></h1>
-            <p>ابحث عن خدمة، افتح دليل قريتك، أو اقرأ حكاية موثقة عن المكان وأهله.</p>
+            <h1>نقادة بين إيديك،<br /><em>من الخدمة للحكاية.</em></h1>
+            <p>دوّر على خدمة جنبك، افتح صفحة قريتك، واكتشف حكايات المكان وأهله — كل نقادة من نقطة واحدة.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <small className={styles.searchHint}>ابحث باسم الخدمة أو النشاط أو القرية</small>
           </div>
