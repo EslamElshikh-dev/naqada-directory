@@ -19,7 +19,11 @@ export default async function ContributionOperationsPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
 
-  const snapshot = await getContributionQueue(session.accessToken).catch(() => emptyContributionQueue);
+  let queueError = false;
+  const snapshot = await getContributionQueue(session.accessToken).catch(() => {
+    queueError = true;
+    return emptyContributionQueue;
+  });
   const items = enrichContributionQueue(snapshot);
 
   return (
@@ -38,6 +42,12 @@ export default async function ContributionOperationsPage() {
             <Link href="/directory" className="text-link">الدليل المنشور ←</Link>
           </div>
         </section>
+
+        {queueError ? (
+          <div role="alert" style={{ margin: '18px 0', padding: 16, border: '1px solid #e6bcb4', borderRadius: 14, background: '#fff3f0', color: '#84483f', fontSize: 13, lineHeight: 1.8 }}>
+            تعذر تحميل طابور المراجعة من قاعدة البيانات. لا تعتبر العدادات الصفرية أدناه حالة فعلية، وأعد المحاولة بعد التحقق من اتصال Supabase وصلاحيات الإدارة.
+          </div>
+        ) : null}
 
         <ContributionReviewQueue items={items} summary={snapshot.summary} />
       </div>
