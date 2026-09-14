@@ -21,6 +21,7 @@ import './design-v18.css';
 import './design-v18-responsive.css';
 import './design-v18-directory.css';
 import './design-v19-detail.css';
+import './design-v20-editorial.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
