@@ -22,7 +22,7 @@ export function SiteHeader() {
       <div className="shell site-header__inner">
         <Link href="/" className="brand" aria-label="دليل نقادة — الرئيسية">
           <span className="brand__emblem"><BrandMark priority /></span>
-          <span className="brand__copy"><strong>دليل نقادة</strong><small>الموسوعة المحلية لمركز نقادة</small></span>
+          <span className="brand__copy"><strong>دليل نقادة</strong><small>الموسوعة المحلية</small></span>
           <span className="brand__scope">قنا</span>
         </Link>
         <HeaderNav />
@@ -40,12 +40,12 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="shell footer__cta">
-        <div><span>الدليل يكبر بمشاركة أهله</span><strong>نشاطك غير موجود أو بياناته تحتاج تحديثًا؟</strong><p>ساعدنا نحافظ على دليل نقادة دقيقًا ومفيدًا للجميع.</p></div>
-        <nav><Link href="/contribute" className="button button--light"><ActionIcon name="add" /><span>أضف أو صحح نشاطًا</span></Link><Link href="/#site-reviews" className="button footer__review-button"><ActionIcon name="star" /><span>قيّم تجربتك</span></Link></nav>
+        <div><span>الدليل يكبر بمشاركة أهله</span><strong>أضف مكانًا. شارك معلومة.</strong><p>أضف نشاطك أو صحّح بياناته، وساعد أهل نقادة في الوصول إليه.</p></div>
+        <nav aria-label="المشاركة في الدليل"><Link href="/contribute" className="button button--light"><ActionIcon name="add" /><span>أضف أو صحح نشاطًا</span></Link><Link href="/#site-reviews" className="button footer__review-button"><ActionIcon name="star" /><span>قيّم تجربتك</span></Link></nav>
       </div>
       <div className="shell footer__grid">
         <div className="footer__about">
-          <Link href="/" className="brand brand--footer"><BrandMark /><span className="brand__copy"><strong>دليل نقادة</strong><small>خدمات ومكان وذاكرة محلية في دليل واحد</small></span></Link>
+          <Link href="/" className="brand brand--footer"><BrandMark /><span className="brand__copy"><strong>دليل نقادة</strong><small>المكان وأهله، في دليل واحد</small></span></Link>
           <p>منصة معلوماتية مستقلة تنظّم البيانات القابلة للنشر عن مركز نقادة. ظهور أي نشاط لا يُعد اعتمادًا رسميًا أو ضمانًا للخدمة.</p>
           <div className="footer__stats">
             <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b> نشاطًا</span>

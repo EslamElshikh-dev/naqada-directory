@@ -92,3 +92,11 @@
 @media (prefers-reduced-motion: reduce) {
   .item { transition: none; }
 }
+
+@media (max-width: 700px) {
+ .nav { margin-top: 16px; }
+ .rail { box-shadow: 0 4px 16px #183f3009; gap: 6px; }
+ .item { flex: 0 0 auto; min-height: 48px; min-width: 124px; }
+ .item span { font-size: .875rem; line-height: 1.8; }
+ .item small { font-size: .75rem; }
+}

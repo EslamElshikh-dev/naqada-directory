@@ -23,6 +23,7 @@ import './design-v18-responsive.css';
 import './design-v18-directory.css';
 import './design-v19-detail.css';
 import './design-v20-editorial.css';
+import './mobile-editorial.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
@@ -113,7 +114,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const speedInsightsBootstrap = `window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };`;
   return (
     <html lang="ar-EG" dir="rtl" className={notoKufi.variable}>
-      <body>
+      <body className="mobile-editorial">
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
         <VisitorTracker />

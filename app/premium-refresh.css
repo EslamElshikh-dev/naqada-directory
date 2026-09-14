@@ -144,7 +144,7 @@
 .listing-card__actions .button { min-height: 43px; gap: 7px; padding: 8px 11px; border-radius: 13px; font-size: 9px; }
 .listing-card__actions .button svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .listing-card__actions .button--primary { justify-content: space-between; background: linear-gradient(145deg,#512d22,#2d1b16); box-shadow: 0 9px 20px rgba(54,27,20,.16); }
-.listing-card__actions .button--primary svg { transform: rotate(180deg); }
+.listing-card__actions .button--primary svg { transform: none; }
 .listing-card__actions .button--soft, .listing-card__actions .button--ghost { padding-inline: 10px; }
 
 /* Google authentication */
