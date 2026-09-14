@@ -3,7 +3,11 @@ export const runtime = 'nodejs';
 const headers = { 'Cache-Control': 'no-store' };
 export async function POST(request: Request) {
   const origin = request.headers.get('origin');
-  if (origin && origin !== new URL(request.url).origin) return Response.json({ error: 'طلب غير مسموح.' }, { status: 403, headers });
+  // Next.js can normalize request.url to localhost; Host retains the requested origin.
+  const requestUrl = new URL(request.url);
+  const host = request.headers.get('host');
+  if (host) requestUrl.host = host;
+  if (origin && origin !== requestUrl.origin) return Response.json({ error: 'طلب غير مسموح.' }, { status: 403, headers });
   if (Number(request.headers.get('content-length')) > 6000) return Response.json({ error: 'الرسالة طويلة جدًا.' }, { status: 413, headers });
   try {
     const raw = await request.text();

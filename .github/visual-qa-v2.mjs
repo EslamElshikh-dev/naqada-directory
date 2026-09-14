@@ -137,6 +137,34 @@ for (const viewportName of ['mobile-390', 'mobile-430']) {
   }
 }
 
+// Sanad: a compact non-modal conversation above the mobile navigation.
+for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390, 844], ['desktop', 1440, 1000]]) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  await page.goto(baseURL, { waitUntil: 'networkidle' });
+  const launcher = page.getByRole('button', { name: 'افتح محادثة سند، مساعد دليل نقادة' });
+  const icon = await launcher.boundingBox();
+  if (!icon || Math.abs(icon.width - icon.height) > 1 || icon.width > 60) out.failures.push(`sanad-${name}: launcher must be a compact circle`);
+  const nav = await page.locator('.mobile-nav').boundingBox();
+  if (icon && nav && nav.height && icon.y + icon.height >= nav.y) out.failures.push(`sanad-${name}: launcher overlaps bottom navigation`);
+  await page.screenshot({ path: `artifacts/sanad-${name}-closed.png` });
+  await launcher.click();
+  const dialog = page.getByRole('dialog', { name: 'محادثة سند' });
+  const panel = await dialog.boundingBox();
+  if (!panel || panel.x < 0 || panel.y < 0 || panel.x + panel.width > width || panel.y + panel.height > height || panel.height > height * .65) out.failures.push(`sanad-${name}: chat is outside the viewport or too tall`);
+  if (panel && nav && nav.height && panel.y + panel.height >= nav.y) out.failures.push(`sanad-${name}: chat overlaps bottom navigation`);
+  if (width < 981 && await page.getByRole('textbox', { name: 'سؤالك لسند' }).evaluate(el => document.activeElement === el)) out.failures.push(`sanad-${name}: opening chat must not focus the mobile keyboard`);
+  await page.getByRole('textbox', { name: 'سؤالك لسند' }).fill('حضانة النجوم الصغيرة');
+  await page.getByRole('button', { name: 'إرسال السؤال' }).click();
+  await dialog.getByRole('link', { name: /حضانة النجوم الصغيرة/ }).waitFor();
+  await page.getByRole('button', { name: 'رقمها', exact: true }).click();
+  await dialog.getByText('دي الأرقام المنشورة المتاحة للنتائج المطابقة. تقدر تضغط «اتصال» مباشرة.').waitFor();
+  await page.screenshot({ path: `artifacts/sanad-${name}-open.png` });
+  await page.getByRole('textbox', { name: 'سؤالك لسند' }).press('Escape');
+  if (await dialog.count()) out.failures.push(`sanad-${name}: Escape did not close chat`);
+  out.checks[`sanad-${name}`] = { icon, panel, nav, conversation: 'passed' };
+  await page.close();
+}
+
 await fs.writeFile('artifacts/visual-qa-v2-diagnostics.json', JSON.stringify(out, null, 2));
 await browser.close();
 
