@@ -63,7 +63,9 @@
   gap: clamp(48px, 7vw, 104px);
 }
 
-.heroCopy { max-width: 760px; animation: homeRise .72s cubic-bezier(.18, .78, .24, 1) both; }
+.heroCopy { position: relative; z-index: 8; max-width: 760px; animation: homeRise .72s cubic-bezier(.18, .78, .24, 1) both; }
+
+.hero:has(.searchWrap [role='listbox']) { z-index: 60; overflow: visible; }
 
 .location {
   width: fit-content;
@@ -126,6 +128,7 @@
 
 .atlas {
   position: relative;
+  z-index: 1;
   min-height: 420px;
   display: flex;
   flex-direction: column;

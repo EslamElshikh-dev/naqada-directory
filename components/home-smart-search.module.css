@@ -1,6 +1,6 @@
 .root {
   position: relative;
-  z-index: 12;
+  z-index: 80;
   width: min(100%, 720px);
 }
 
@@ -82,7 +82,7 @@
 
 .panel {
   position: absolute;
-  z-index: 30;
+  z-index: 120;
   inset-block-start: calc(100% + 9px);
   inset-inline: 0;
   overflow: hidden;
