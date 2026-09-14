@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Category, LocalityPage } from '@/lib/types';
@@ -8,15 +9,11 @@ import { submitContribution, trackEvent } from '@/lib/analytics-client';
 type ContributionType = 'add' | 'correction' | 'missing';
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error';
 
-const fieldStyle = {
-  width: '100%',
-  border: '1px solid var(--line)',
-  borderRadius: '12px',
-  background: '#fff',
-  color: 'var(--ink)',
-  padding: '12px 13px',
-  font: 'inherit',
-} as const;
+const typeOptions: Array<{ value: ContributionType; label: string; description: string }> = [
+  { value: 'add', label: 'إضافة نشاط', description: 'نشاط أو خدمة غير موجودة في الدليل.' },
+  { value: 'correction', label: 'تصحيح بيانات', description: 'رقم أو عنوان أو تصنيف يحتاج مراجعة.' },
+  { value: 'missing', label: 'نتيجة مفقودة', description: 'بحثت عن خدمة ولم تجد النتيجة المناسبة.' },
+];
 
 function normalizeType(value: string | null): ContributionType {
   return value === 'correction' || value === 'missing' ? value : 'add';
@@ -52,14 +49,27 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
   const requestText = useMemo(() => [
     'مساهمة في دليل نقادة',
     `نوع الطلب: ${typeLabel}`,
-    `الاسم أو الخدمة: ${name || 'غير محدد'}`,
+    `الاسم أو الخدمة: ${name.trim() || 'غير محدد'}`,
     `التصنيف: ${category || 'غير محدد'}`,
     `الموضع: ${locality || 'غير محدد'}`,
-    `التفاصيل: ${details || 'لا توجد تفاصيل إضافية'}`,
-    `مصدر عام داعم: ${source || 'غير مرفق'}`,
-    `وسيلة تواصل اختيارية: ${contact || 'غير مضافة'}`,
+    `التفاصيل: ${details.trim() || 'لا توجد تفاصيل إضافية'}`,
+    `مصدر عام داعم: ${source.trim() || 'غير مرفق'}`,
+    `وسيلة تواصل اختيارية: ${contact.trim() || 'غير مضافة'}`,
     ...(listingSlug ? [`السجل المرتبط: ${listingSlug}`] : []),
   ].join('\n'), [category, contact, details, listingSlug, locality, name, source, typeLabel]);
+
+  const readinessItems = useMemo(() => [
+    { label: 'اسم واضح للنشاط أو الخدمة', done: Boolean(name.trim()) },
+    { label: 'موضع أو تصنيف يساعد في التحديد', done: Boolean(locality || category) },
+    { label: 'تفاصيل تشرح المطلوب', done: details.trim().length >= 10 },
+    { label: 'مصدر عام داعم', done: Boolean(source.trim()) },
+  ], [category, details, locality, name, source]);
+  const readinessCount = readinessItems.filter((item) => item.done).length;
+  const readinessLabel = readinessCount === readinessItems.length
+    ? 'جاهز للمراجعة'
+    : readinessCount >= 3
+      ? 'طلب جيد'
+      : 'أضف تفاصيل أكثر';
 
   function markChanged() {
     setPrepared(false);
@@ -85,12 +95,12 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
 
     const result = await submitContribution({
       requestType: type,
-      name,
+      name: name.trim(),
       category: category || undefined,
       locality: locality || undefined,
-      details: details || undefined,
-      sourceUrl: source || undefined,
-      contact: contact || undefined,
+      details: details.trim() || undefined,
+      sourceUrl: source.trim() || undefined,
+      contact: contact.trim() || undefined,
       listingSlug: listingSlug || undefined,
       formStartedAt,
       website,
@@ -127,31 +137,112 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
   }
 
   return (
-    <div className="detail-layout">
-      <form className="detail-card" onSubmit={submitRequest}>
-        <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">بيانات المساهمة</span><h2>أرسل الطلب مباشرة إلى قائمة المراجعة</h2></div>
-        <div className="detail-grid">
-          <label><span>نوع الطلب</span><select style={fieldStyle} value={type} onChange={(event) => { setType(event.target.value as ContributionType); markChanged(); }}><option value="add">إضافة نشاط أو خدمة</option><option value="correction">تصحيح بيانات سجل</option><option value="missing">نتيجة بحث مفقودة</option></select></label>
-          <label><span>اسم النشاط أو الخدمة</span><input style={fieldStyle} required maxLength={160} value={name} onChange={(event) => { setName(event.target.value); markChanged(); }} placeholder="مثال: معمل تحاليل أو اسم النشاط" /></label>
-          <label><span>التصنيف</span><select style={fieldStyle} value={category} onChange={(event) => { setCategory(event.target.value); markChanged(); }}><option value="">اختر التصنيف إن كان معروفًا</option>{categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel}</option>)}</select></label>
-          <label><span>الموضع</span><select style={fieldStyle} value={locality} onChange={(event) => { setLocality(event.target.value); markChanged(); }}><option value="">اختر القرية أو الموضع إن كان معروفًا</option>{localities.map((item) => <option key={item.slug} value={item.name}>{item.name}</option>)}</select></label>
+    <div className="contribution-workspace">
+      <form className="contribution-card contribution-form" onSubmit={submitRequest} aria-busy={status === 'submitting'}>
+        <div className="contribution-heading">
+          <span className="eyebrow eyebrow--dark">بيانات المساهمة</span>
+          <h2>أرسل طلبًا واضحًا إلى قائمة المراجعة</h2>
+          <p>كلما كان الاسم والموضع والمصدر أوضح، كانت مراجعة الطلب أسرع وأسهل.</p>
         </div>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>التفاصيل أو المعلومة المطلوب تعديلها</span><textarea style={{ ...fieldStyle, minHeight: 120, resize: 'vertical' }} maxLength={2000} value={details} onChange={(event) => { setDetails(event.target.value); markChanged(); }} placeholder="اكتب العنوان أو الهاتف أو وصف الخطأ أو أي تفاصيل تساعد في المراجعة" /></label>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>مصدر عام داعم — موصى به</span><input style={fieldStyle} type="url" maxLength={1000} value={source} onChange={(event) => { setSource(event.target.value); markChanged(); }} placeholder="رابط خرائط Google أو موقع رسمي أو مصدر عام يبدأ بـ https://" /></label>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>وسيلة تواصل اختيارية</span><input style={fieldStyle} maxLength={320} value={contact} onChange={(event) => { setContact(event.target.value); markChanged(); }} placeholder="للتواصل عند الحاجة فقط — اختياري" /></label>
-        <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+
+        {listingSlug && (
+          <div className="contribution-context">
+            <div><span>تصحيح مرتبط بسجل موجود</span><strong>{name.trim() || listingSlug}</strong></div>
+            <Link href={`/listing/${listingSlug}`}>فتح السجل الحالي ←</Link>
+          </div>
+        )}
+
+        <fieldset className="contribution-type-fieldset">
+          <legend>ما نوع المساهمة؟</legend>
+          <div className="contribution-type-grid">
+            {typeOptions.map((option) => (
+              <label key={option.value} className={`contribution-type-option${type === option.value ? ' is-active' : ''}`}>
+                <input
+                  type="radio"
+                  name="contribution-type"
+                  value={option.value}
+                  checked={type === option.value}
+                  onChange={() => { setType(option.value); markChanged(); }}
+                />
+                <span className="contribution-type-mark" aria-hidden="true">{option.value === 'add' ? '+' : option.value === 'correction' ? '✓' : '?'}</span>
+                <span><strong>{option.label}</strong><small>{option.description}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="contribution-fields">
+          <label className="contribution-field">
+            <span>اسم النشاط أو الخدمة <b>مطلوب</b></span>
+            <input className="contribution-input" required maxLength={160} value={name} onChange={(event) => { setName(event.target.value); markChanged(); }} placeholder="مثال: معمل تحاليل أو اسم النشاط" />
+          </label>
+          <label className="contribution-field">
+            <span>التصنيف</span>
+            <select className="contribution-input" value={category} onChange={(event) => { setCategory(event.target.value); markChanged(); }}>
+              <option value="">اختر التصنيف إن كان معروفًا</option>
+              {categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel}</option>)}
+            </select>
+          </label>
+          <label className="contribution-field">
+            <span>الموضع</span>
+            <select className="contribution-input" value={locality} onChange={(event) => { setLocality(event.target.value); markChanged(); }}>
+              <option value="">اختر القرية أو الموضع إن كان معروفًا</option>
+              {localities.map((item) => <option key={item.slug} value={item.name}>{item.name}</option>)}
+            </select>
+          </label>
+          <label className="contribution-field contribution-field--wide">
+            <span>التفاصيل أو المعلومة المطلوب تعديلها</span>
+            <textarea className="contribution-input contribution-textarea" maxLength={2000} value={details} onChange={(event) => { setDetails(event.target.value); markChanged(); }} placeholder="اكتب العنوان أو الهاتف أو وصف الخطأ أو أي تفاصيل تساعد في المراجعة" />
+          </label>
+          <label className="contribution-field contribution-field--wide">
+            <span>مصدر عام داعم <b>موصى به</b></span>
+            <input className="contribution-input" type="url" maxLength={1000} value={source} onChange={(event) => { setSource(event.target.value); markChanged(); }} placeholder="رابط خرائط Google أو موقع رسمي أو مصدر عام يبدأ بـ https://" />
+            <small>المصدر يساعدنا على التحقق، لكنه لا يجعل التعديل يُنشر تلقائيًا.</small>
+          </label>
+          <label className="contribution-field contribution-field--wide">
+            <span>وسيلة تواصل اختيارية</span>
+            <input className="contribution-input" maxLength={320} value={contact} onChange={(event) => { setContact(event.target.value); markChanged(); }} placeholder="للتواصل عند الحاجة فقط — اختياري" />
+            <small>لا تظهر داخل صفحات الدليل ولا تُرسل ضمن قياسات البحث والاستخدام.</small>
+          </label>
+        </div>
+
+        <div className="contribution-honeypot" aria-hidden="true">
           <label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
         </div>
-        <div className="detail-actions" style={{ marginTop: 20 }}><button className="button button--primary" type="submit" disabled={status === 'submitting'}>{status === 'submitting' ? 'جارٍ الإرسال…' : 'إرسال للمراجعة'}</button></div>
+
+        <div className="contribution-actions">
+          <button className="button button--primary" type="submit" disabled={status === 'submitting' || !name.trim()}>{status === 'submitting' ? 'جارٍ الإرسال…' : 'إرسال للمراجعة'}</button>
+          <button className="button button--ghost" type="button" disabled={!name.trim()} onClick={() => setPrepared(true)}>معاينة ملخص الطلب</button>
+        </div>
       </form>
 
-      <aside className="detail-aside">
-        <span className="eyebrow eyebrow--dark">قبل الإرسال</span><h2>ما الذي يجعل الطلب قابلًا للاعتماد؟</h2>
-        <p className="detail-aside__note">اذكر اسم السجل بوضوح، وحدد المعلومة المطلوب إضافتها أو تعديلها، وأرفق مصدرًا عامًا مباشرًا متى أمكن. وسيلة التواصل الاختيارية لا تُعرض داخل صفحات الدليل ولا تُرسل ضمن قياسات البحث والاستخدام.</p>
-        {status === 'success' && <div className="source-panel" style={{ marginTop: 16 }}><span>تم استلام الطلب للمراجعة ✓</span><strong>مرجع الطلب: {submissionId}</strong><p>الحفظ تم داخل قاعدة مراجعة مستقلة، ولا يُنشر أي تعديل تلقائيًا قبل فحص المصدر.</p></div>}
-        {status === 'error' && <div className="source-panel" style={{ marginTop: 16 }}><span>لم يتم حفظ الطلب</span><strong>{errorMessage}</strong><p>يمكنك تعديل أي حقل أو إعادة المحاولة، كما يمكنك نسخ النص أدناه كنسخة احتياطية.</p></div>}
-        {prepared && <div className="source-panel" style={{ marginTop: 16 }}><span>نسخة الطلب</span><pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.9, margin: '10px 0 0' }}>{requestText}</pre></div>}
-        {prepared && <div className="detail-actions" style={{ marginTop: 16, display: 'grid' }}><button className="button button--ghost" type="button" onClick={copyRequest}>{copied ? 'تم النسخ ✓' : 'نسخ الطلب'}</button><button className="button button--ghost" type="button" onClick={shareRequest}>مشاركة الطلب</button><a className="button button--ghost" href="https://eslam-elshikh.com/" target="_blank" rel="noreferrer" onClick={() => trackEvent('Contribution Contact Opened', { type })}>قناة تواصل بديلة ↗</a></div>}
+      <aside className="contribution-aside">
+        <div className="contribution-readiness">
+          <div className="contribution-readiness-head"><span>جاهزية الطلب</span><strong>{readinessCount}/{readinessItems.length} · {readinessLabel}</strong></div>
+          <progress max={readinessItems.length} value={readinessCount} aria-label={`جاهزية الطلب ${readinessCount} من ${readinessItems.length}`} />
+          <ul>
+            {readinessItems.map((item) => <li key={item.label} className={item.done ? 'is-done' : ''}><span aria-hidden="true">{item.done ? '✓' : '○'}</span>{item.label}</li>)}
+          </ul>
+          <p>يمكن إرسال الطلب بمجرد كتابة الاسم. العناصر الأخرى ترفع جودة المراجعة ولا تُعامل كمتطلبات إلزامية.</p>
+        </div>
+
+        <div className="contribution-guidance">
+          <span className="eyebrow eyebrow--dark">قبل الإرسال</span>
+          <h2>ماذا يحدث بعد الضغط على الإرسال؟</h2>
+          <ol>
+            <li><b>استلام</b><span>يحصل الطلب على مرجع مراجعة.</span></li>
+            <li><b>تحقق</b><span>تُراجع المعلومة والمصدر والسجل المرتبط إن وجد.</span></li>
+            <li><b>قرار نشر</b><span>لا يتغير الدليل قبل اجتياز المراجعة.</span></li>
+          </ol>
+        </div>
+
+        <div className="contribution-live" aria-live="polite" aria-atomic="true">
+          {status === 'success' && <div className="contribution-status is-success" role="status"><span>تم استلام الطلب للمراجعة ✓</span><strong>مرجع الطلب: {submissionId}</strong><p>احتفظ بالمرجع إذا احتجت الرجوع إلى الطلب. لا يُنشر أي تعديل تلقائيًا قبل فحص المصدر.</p></div>}
+          {status === 'error' && <div className="contribution-status is-error" role="alert"><span>لم يتم حفظ الطلب</span><strong>{errorMessage}</strong><p>يمكنك تعديل أي حقل أو إعادة المحاولة، كما يمكنك نسخ النص أدناه كنسخة احتياطية.</p></div>}
+        </div>
+
+        {prepared && <div className="contribution-preview"><span>معاينة الطلب</span><pre>{requestText}</pre></div>}
+        {prepared && <div className="contribution-share-actions"><button className="button button--ghost" type="button" onClick={copyRequest}>{copied ? 'تم النسخ ✓' : 'نسخ الطلب'}</button><button className="button button--ghost" type="button" onClick={shareRequest}>مشاركة الطلب</button><a className="button button--ghost" href="https://eslam-elshikh.com/" target="_blank" rel="noreferrer" onClick={() => trackEvent('Contribution Contact Opened', { type })}>قناة تواصل بديلة ↗</a></div>}
       </aside>
     </div>
   );

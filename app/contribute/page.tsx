@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import { ContributionBuilder } from '@/components/contribution-builder';
 import { categories, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
+import '../contribution-v21.css';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'أضف نشاطًا أو صحح بيانات',
@@ -41,7 +42,7 @@ export default function ContributePage() {
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز نموذج المساهمة…</div>}>
           <ContributionBuilder categories={categories} localities={localities.filter((item) => item.businessCount > 0 || item.verification)} />
         </Suspense>
-        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 13, lineHeight: 1.9 }}>
+        <p className="contribution-privacy-note">
           بإرسال المساهمة، تُستخدم البيانات للمراجعة وتحسين الدليل وفق <Link href="/privacy" className="text-link">سياسة الخصوصية واستخدام البيانات</Link>. وسيلة التواصل اختيارية ولا تُنشر داخل صفحات الدليل.
         </p>
       </section>
