@@ -63,7 +63,7 @@ function resultGlyph(kind: SearchItem['kind']) {
   return '↗';
 }
 
-export function HomeSmartSearch() {
+export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const requestRef = useRef<AbortController | null>(null);
@@ -186,7 +186,7 @@ export function HomeSmartSearch() {
     }
   }
 
-  const showPanel = open;
+  const showPanel = open && (!compact || canSearch);
 
   return (
     <div ref={rootRef} className={styles.root}>
@@ -216,7 +216,7 @@ export function HomeSmartSearch() {
         <button type="submit">ابحث</button>
       </form>
 
-      <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
+      {!compact ? <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
         <span>الأكثر طلبًا</span>
         <div>
           {oneClickShortcuts.map((item) => (
@@ -231,7 +231,7 @@ export function HomeSmartSearch() {
             </Link>
           ))}
         </div>
-      </nav>
+      </nav> : null}
 
       {showPanel ? (
         <div
