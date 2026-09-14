@@ -5,9 +5,11 @@ import { ActionIcon } from '@/components/action-icon';
 import { CategoryVisual } from '@/components/category-visual';
 import { HomeSmartSearch } from '@/components/home-smart-search';
 import { SiteReviews } from '@/components/site-reviews';
+import { BrandMark } from '@/components/site-shell';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { businesses, localities, meta, officialLocalities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { getCategoryMedia } from '@/lib/category-media';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
@@ -65,59 +67,72 @@ export default function HomePage() {
   return (
     <main id="main-content" className={styles.page}>
       <section className={styles.hero}>
+        <div className={styles.heroMesh} aria-hidden="true" />
         <div className={`shell ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
-            <span className={styles.location}><i /> مركز نقادة · محافظة قنا</span>
-            <h1>نقادة بين إيديك،<br /><em>من الخدمة للحكاية.</em></h1>
-            <p>دوّر على خدمة جنبك، افتح صفحة قريتك، واكتشف حكايات المكان وأهله — كل نقادة من نقطة واحدة.</p>
+            <div className={styles.heroMetaLine}>
+              <span className={styles.liveBadge}><i /> دليل محلي متجدد باستمرار</span>
+              <span className={styles.location}>مركز نقادة · محافظة قنا</span>
+            </div>
+            <span className={styles.heroEyebrow}>الموسوعة المحلية لمركز نقادة وقراه</span>
+            <h1>دليل نقادة المحلي… <em>خدمتك وقريتك</em> في بحث واحد.</h1>
+            <p>ابحث عن الأطباء والصيدليات والمدارس والمحلات والخدمات داخل مركز نقادة، وافتح دليل قريتك أو حكايات المكان من نقطة واحدة واضحة وسريعة.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
-            <small className={styles.searchHint}>ابحث باسم الخدمة أو النشاط أو القرية</small>
+            <nav className={styles.quickLinks} aria-label="وصول سريع">
+              <span>وصول سريع</span>
+              {featuredActivities.slice(0, 4).map((activity) => <Link key={activity.slug} href={`/activities/${activity.slug}`}>{activity.searchLabel}</Link>)}
+              <Link href="/villages">القرى</Link>
+              <Link href="/knowledge">الموسوعة</Link>
+            </nav>
+            <div className={styles.trust} aria-label="إحصاءات الدليل">
+              <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>خدمة ونشاط</small></span>
+              <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية وموضعًا</small></span>
+              <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><small>علمًا ومعلمًا</small></span>
+            </div>
           </div>
 
-          <aside className={styles.atlas} aria-label="نطاق دليل نقادة">
-            <div className={styles.atlasHead}><span>دليل محلي حي</span><i>٢٤° شمالًا</i></div>
-            <strong>من احتياجك اليومي<br />إلى ذاكرة المكان.</strong>
-            <div className={styles.atlasLine} aria-hidden="true"><span /><span /><span /></div>
-            <dl>
-              <div><dt>{meta.businessCount.toLocaleString('ar-EG')}</dt><dd>خدمة ونشاط</dd></div>
-              <div><dt>{meta.localityCount.toLocaleString('ar-EG')}</dt><dd>قرية وموضعًا</dd></div>
-              <div><dt>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</dt><dd>علمًا ومعلمًا</dd></div>
-            </dl>
+          <aside className={styles.placeCard} aria-label="مشهد تعبيري من مركز نقادة">
+            <Image
+              src="/blog-media/bashlaw-today-hero.jpg"
+              alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"
+              fill
+              priority
+              sizes="(max-width: 900px) 100vw, 420px"
+            />
+            <span className={styles.placeShade} aria-hidden="true" />
+            <div className={styles.placeTop}>
+              <span className={styles.placeBrand}><BrandMark /></span>
+              <span>صورة تعبيرية محلية</span>
+            </div>
+            <div className={styles.placeCaption}>
+              <span>مركز نقادة · محافظة قنا</span>
+              <strong>الأرض والقرى والخدمات في دليل واحد</strong>
+              <Link href="/villages">استكشف قرى نقادة <b aria-hidden="true">←</b></Link>
+            </div>
           </aside>
         </div>
       </section>
 
-      <nav className={`shell ${styles.routes}`} aria-label="المسارات الرئيسية">
-        <Link href="/directory" className={styles.routePrimary}>
-          <span className={styles.routeNumber}>١</span>
-          <span><small>ماذا تحتاج؟</small><strong>ابحث في الخدمات</strong><em>صيدليات، أطباء، مدارس، مطاعم ومحلات</em></span>
-          <ActionIcon name="arrow" />
-        </Link>
-        <Link href="/villages">
-          <span className={styles.routeNumber}>٢</span>
-          <span><small>أين تبحث؟</small><strong>استكشف الأماكن</strong><em>القرى والنجوع وخدماتها</em></span>
-          <ActionIcon name="map" />
-        </Link>
-        <Link href="/knowledge">
-          <span className={styles.routeNumber}>٣</span>
-          <span><small>ماذا تريد أن تعرف؟</small><strong>افتح الموسوعة</strong><em>المكان والناس والتراث</em></span>
-          <ActionIcon name="landmark" />
-        </Link>
-      </nav>
-
       <section className={`shell ${styles.section}`}>
         <header className={styles.sectionHead}>
-          <div><span>الأكثر طلبًا</span><h2>خدمات تبدأ منها بسرعة</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة، مرتبة للوصول المباشر.</p></div>
+          <div><span>أقسام الدليل</span><h2>ابدأ بنوع الخدمة التي تحتاج إليها</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة، داخل أقسام مصوّرة ومرتبة للوصول بأقل عدد من الخطوات.</p></div>
           <Link href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
         </header>
         <div className={styles.serviceGrid}>
           {featuredActivities.map((activity) => {
             const count = getBusinessesForActivity(activity).length;
+            const media = getCategoryMedia(activity.visualCategory);
             return (
               <Link key={activity.slug} href={`/activities/${activity.slug}`} className={styles.serviceItem}>
-                <CategoryVisual category={activity.visualCategory} size="sm" />
-                <span><strong>{activity.name}</strong><small>{count.toLocaleString('ar-EG')} نتيجة</small></span>
-                <ActionIcon name="arrow" />
+                <span className={styles.serviceMedia}>
+                  <Image src={media.imageUrl} alt={media.imageAlt} fill sizes="(max-width: 720px) 112px, 33vw" />
+                  <i aria-hidden="true" />
+                  <CategoryVisual category={activity.visualCategory} size="sm" />
+                </span>
+                <span className={styles.serviceCount}>{count.toLocaleString('ar-EG')} نتيجة</span>
+                <h3>{activity.name}</h3>
+                <p>{activity.description}</p>
+                <span className={styles.serviceArrow}>استكشف القسم <ActionIcon name="arrow" /></span>
               </Link>
             );
           })}
