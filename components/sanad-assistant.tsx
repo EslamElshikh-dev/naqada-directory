@@ -35,7 +35,12 @@ export function SanadAssistant() {
     resize(); viewport?.addEventListener('resize', resize); viewport?.addEventListener('scroll', resize);
     return () => { viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); };
   }, [open]);
-  useEffect(() => { if (open && log.current) log.current.scrollTop = log.current.scrollHeight; }, [messages, pending, open]);
+  useEffect(() => {
+    if (!open || !log.current) return;
+    const last = log.current.lastElementChild;
+    if (pending || !last) log.current.scrollTop = log.current.scrollHeight;
+    else log.current.scrollTop += last.getBoundingClientRect().top - log.current.getBoundingClientRect().top - 12;
+  }, [messages, pending, open]);
   function close() { setOpen(false); launcher.current?.focus(); }
   async function send(value: string, retry = false) {
     const text = value.trim();
