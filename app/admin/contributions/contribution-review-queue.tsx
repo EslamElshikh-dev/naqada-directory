@@ -42,12 +42,22 @@ function isOpen(status: ContributionStatus) {
   return status === 'pending' || status === 'reviewing' || status === 'needs_info';
 }
 
+function safeExternalUrl(value?: string | null) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ContributionReviewQueue({ items, summary }: { items: ReviewQueueItem[]; summary: ContributionQueueSnapshot['summary'] }) {
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('open');
   const [typeFilter, setTypeFilter] = useState('all');
   const [query, setQuery] = useState('');
-  const [selectedId, setSelectedId] = useState(items[0]?.id || '');
+  const [selectedId, setSelectedId] = useState(items.find((item) => isOpen(item.status))?.id || items[0]?.id || '');
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState<ContributionReviewAction | ''>('');
@@ -66,6 +76,7 @@ export function ContributionReviewQueue({ items, summary }: { items: ReviewQueue
   }, [items, query, statusFilter, typeFilter]);
 
   const selected = items.find((item) => item.id === selectedId) || filtered[0] || null;
+  const sourceHref = safeExternalUrl(selected?.sourceUrl);
 
   async function runAction(action: ContributionReviewAction) {
     if (!selected || busy) return;
@@ -147,7 +158,7 @@ export function ContributionReviewQueue({ items, summary }: { items: ReviewQueue
 
               <section className={styles.block}>
                 <span>المصدر والمطابقة</span>
-                {selected.sourceUrl ? <a href={selected.sourceUrl} target="_blank" rel="noreferrer">فتح المصدر الداعم ↗</a> : <p>لم يُرفق مصدر عام.</p>}
+                {sourceHref ? <a href={sourceHref} target="_blank" rel="noopener noreferrer">فتح المصدر الداعم ↗</a> : selected.sourceUrl ? <p>رابط المصدر غير صالح للفتح الآمن؛ راجع النص فقط داخل السجل الخام.</p> : <p>لم يُرفق مصدر عام.</p>}
                 {selected.listingMatch ? <div className={styles.match}><div><b>مطابقة محتملة {selected.listingMatch.score}%</b><p>{selected.listingMatch.name} · {selected.listingMatch.reason}</p></div><Link href={`/listing/${selected.listingMatch.slug}`} target="_blank">فتح السجل ↗</Link></div> : <p>لا توجد مطابقة موثوقة مع سجل منشور حاليًا.</p>}
                 {selected.duplicateCount ? <p className={styles.warning}>يوجد {selected.duplicateCount.toLocaleString('ar-EG')} طلب آخر يطابق الاسم/السجل؛ راجعه قبل إنشاء سجل جديد.</p> : null}
               </section>
