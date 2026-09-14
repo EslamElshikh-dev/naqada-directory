@@ -19,11 +19,10 @@ export default async function ContributionOperationsPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
 
-  let queueError = false;
-  const snapshot = await getContributionQueue(session.accessToken).catch(() => {
-    queueError = true;
-    return emptyContributionQueue;
-  });
+  const queueResult = await getContributionQueue(session.accessToken)
+    .then((snapshot) => ({ snapshot, queueError: false as const }))
+    .catch(() => ({ snapshot: emptyContributionQueue, queueError: true as const }));
+  const { snapshot, queueError } = queueResult;
   const items = enrichContributionQueue(snapshot);
 
   return (
