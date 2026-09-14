@@ -20,6 +20,7 @@ import './stability-overrides.css';
 import './design-v18.css';
 import './design-v18-responsive.css';
 import './design-v18-directory.css';
+import './design-v19-detail.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
