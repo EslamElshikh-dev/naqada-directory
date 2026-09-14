@@ -167,7 +167,16 @@ export default function HomePage() {
             <div className={styles.storyList}>
               {featuredArticles.slice(1).map((article, index) => (
                 <Link key={article.slug} href={`/blog/${article.slug}`}>
-                  <span>0{index + 2}</span>
+                  <span className={styles.storyThumb}>
+                    <Image
+                      src={`/blog-media/${encodeURIComponent(article.hero.asset)}`}
+                      width={article.hero.width}
+                      height={article.hero.height}
+                      alt=""
+                      sizes="(max-width: 720px) 92px, 116px"
+                    />
+                    <b>0{index + 2}</b>
+                  </span>
                   <div><small>{article.locality} · {article.category}</small><h3>{article.title}</h3><b>بقلم {villageArticleAuthor.name}</b></div>
                   <ActionIcon name="arrow" />
                 </Link>
