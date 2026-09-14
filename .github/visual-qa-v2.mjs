@@ -144,7 +144,7 @@ for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390,
   const launcher = page.getByRole('button', { name: 'افتح محادثة سند، مساعد دليل نقادة' });
   const icon = await launcher.boundingBox();
   if (!icon || Math.abs(icon.width - icon.height) > 1 || icon.width > 60) out.failures.push(`sanad-${name}: launcher must be a compact circle`);
-  const nav = await page.locator('.mobile-nav').boundingBox();
+  const nav = await page.getByRole('navigation', { name: 'التنقل على الجوال' }).boundingBox();
   if (icon && nav && nav.height && icon.y + icon.height >= nav.y) out.failures.push(`sanad-${name}: launcher overlaps bottom navigation`);
   await page.screenshot({ path: `artifacts/sanad-${name}-closed.png` });
   await launcher.click();
