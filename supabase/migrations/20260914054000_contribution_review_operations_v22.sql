@@ -13,6 +13,64 @@ alter table public.directory_contributions
   add constraint directory_contributions_status_check
   check (status in ('pending','reviewing','needs_info','approved','rejected','published'));
 
+create or replace view insights.pending_contributions
+with (security_invoker = true)
+as
+select
+  id,
+  created_at,
+  request_type,
+  name,
+  category,
+  locality,
+  listing_slug,
+  details,
+  source_url,
+  (contact is not null) as has_contact,
+  status,
+  case
+    when request_type = 'correction' and source_url is not null then 100
+    when request_type = 'correction' then 90
+    when request_type = 'missing' and source_url is not null then 80
+    when request_type = 'missing' then 70
+    when request_type = 'add' and source_url is not null then 60
+    else 50
+  end
+  + least(20, floor(extract(epoch from (now() - created_at)) / 86400)::int) as review_priority,
+  floor(extract(epoch from (now() - created_at)) / 86400)::int as age_days
+from public.directory_contributions
+where status in ('pending','reviewing','needs_info')
+order by review_priority desc, created_at asc;
+
+revoke all on insights.pending_contributions from public, anon, authenticated;
+grant select on insights.pending_contributions to service_role;
+
+create or replace function public.get_naqada_admin_stats()
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_directory_admin() then
+    raise exception 'not authorized';
+  end if;
+
+  return jsonb_build_object(
+    'members', (select count(*) from public.member_profiles),
+    'siteReviews', (select count(*) from public.site_reviews where status = 'published'),
+    'siteRating', (select coalesce(round(avg(rating)::numeric, 1), 0) from public.site_reviews where status = 'published'),
+    'listingRatings', (select count(*) from public.directory_ratings),
+    'pendingContributions', (select count(*) from public.directory_contributions where status in ('pending','reviewing','needs_info')),
+    'events30d', (select count(*) from public.directory_events where created_at >= now() - interval '30 days')
+  );
+end;
+$$;
+
+revoke all on function public.get_naqada_admin_stats() from public, anon;
+grant execute on function public.get_naqada_admin_stats() to authenticated;
+
 create or replace function public.get_naqada_contribution_queue()
 returns jsonb
 language plpgsql
@@ -151,7 +209,7 @@ begin
   update public.directory_contributions
   set
     status = v_status,
-    review_notes = case when p_action = 'reopen' then coalesce(v_notes, review_notes) else v_notes end,
+    review_notes = coalesce(v_notes, review_notes),
     review_message = case
       when p_action = 'request_info' then v_message
       when p_action in ('approve','reject','mark_published') then v_message
