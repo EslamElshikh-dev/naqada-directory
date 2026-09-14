@@ -77,6 +77,7 @@ export function ContributionReviewQueue({ items, summary }: { items: ReviewQueue
 
   const selected = items.find((item) => item.id === selectedId) || filtered[0] || null;
   const sourceHref = safeExternalUrl(selected?.sourceUrl);
+  const canRequestInfo = Boolean(selected && isOpen(selected.status) && (selected.submittedByUserId || selected.contact));
 
   async function runAction(action: ContributionReviewAction) {
     if (!selected || busy) return;
@@ -165,7 +166,7 @@ export function ContributionReviewQueue({ items, summary }: { items: ReviewQueue
 
               <section className={styles.block}>
                 <span>قناة المتابعة</span>
-                {selected.contact ? <p className={styles.contact} dir="auto">{selected.contact}</p> : <p>لا توجد وسيلة تواصل اختيارية. {selected.submittedByUserId ? 'الطلب مرتبط بعضو مسجل ويمكنه رؤية رسالة المراجعة في حسابه.' : 'للطلب المجهول لن يمكن طلب معلومات إضافية خارج الموقع.'}</p>}
+                {selected.contact ? <p className={styles.contact} dir="auto">{selected.contact}</p> : <p>لا توجد وسيلة تواصل اختيارية. {selected.submittedByUserId ? 'الطلب مرتبط بعضو مسجل ويمكنه رؤية رسالة المراجعة في حسابه.' : 'للطلب المجهول لا يمكن طلب معلومات إضافية؛ يلزم اتخاذ قرار اعتماد أو رفض وفق الأدلة المتاحة.'}</p>}
               </section>
 
               <section className={styles.reviewBox}>
@@ -173,7 +174,7 @@ export function ContributionReviewQueue({ items, summary }: { items: ReviewQueue
                 <label><span>رسالة للمساهم</span><textarea value={message} onChange={(event) => setMessage(event.target.value.slice(0, 600))} maxLength={600} placeholder="مطلوبة عند طلب معلومات إضافية؛ لا تستخدمها لملاحظات داخلية." /></label>
                 <div className={styles.actionGrid}>
                   {selected.status === 'pending' ? <button onClick={() => runAction('start_review')} disabled={Boolean(busy)}>بدء المراجعة</button> : null}
-                  {isOpen(selected.status) ? <button onClick={() => runAction('request_info')} disabled={Boolean(busy)}>طلب معلومات</button> : null}
+                  {canRequestInfo ? <button onClick={() => runAction('request_info')} disabled={Boolean(busy)}>طلب معلومات</button> : null}
                   {isOpen(selected.status) ? <button className={styles.approve} onClick={() => runAction('approve')} disabled={Boolean(busy)}>اعتماد</button> : null}
                   {isOpen(selected.status) ? <button className={styles.reject} onClick={() => runAction('reject')} disabled={Boolean(busy)}>رفض</button> : null}
                   {selected.status === 'approved' ? <button className={styles.approve} onClick={() => runAction('mark_published')} disabled={Boolean(busy)}>تأكيد تحديث الدليل</button> : null}
