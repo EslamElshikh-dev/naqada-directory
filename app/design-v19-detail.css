@@ -1,0 +1,611 @@
+/* Design V19 — Detail & Discovery Experience
+   Focus: listing cards, village discovery, activity cards and detail-page hierarchy.
+   Loaded after V18 so changes stay isolated and reversible. */
+
+:root {
+  --v19-surface: rgba(255, 253, 250, .94);
+  --v19-surface-strong: #fffdfa;
+  --v19-line: rgba(76, 45, 34, .105);
+  --v19-line-strong: rgba(76, 45, 34, .16);
+  --v19-copper: #9b4f37;
+  --v19-copper-dark: #713725;
+  --v19-teal: #286c70;
+  --v19-teal-dark: #1f5558;
+  --v19-gold: #d9a95d;
+  --v19-ink: #2f211c;
+  --v19-muted: #75645b;
+  --v19-shadow: 0 18px 48px rgba(48, 27, 20, .075);
+  --v19-shadow-soft: 0 10px 28px rgba(48, 27, 20, .05);
+}
+
+/* Results cards — stronger scanning hierarchy */
+.listing-grid {
+  align-items: stretch;
+}
+
+.listing-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-color: var(--v19-line) !important;
+  background:
+    radial-gradient(circle at 110% -5%, rgba(217,169,93,.1), transparent 30%),
+    linear-gradient(160deg, #fff 0%, #fffdfb 72%, #fbf6f1 100%) !important;
+  box-shadow: var(--v19-shadow-soft) !important;
+}
+
+.listing-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(155,79,55,.44), rgba(40,108,112,.35), transparent);
+  opacity: .55;
+  pointer-events: none;
+}
+
+.listing-card > figure {
+  width: calc(100% + 30px);
+  margin: -15px -15px 14px !important;
+  border-radius: 20px 20px 14px 14px !important;
+  overflow: hidden;
+}
+
+.listing-card__head {
+  align-items: center;
+}
+
+.listing-card__eyebrow {
+  min-width: 0;
+  flex: 1;
+}
+
+.listing-card__eyebrow > div {
+  min-width: 0;
+}
+
+.listing-card__eyebrow a {
+  color: var(--v19-copper-dark);
+  font-weight: 900;
+}
+
+.listing-card__eyebrow small {
+  color: #98847a;
+}
+
+.source-chip {
+  flex: 0 0 auto;
+  min-height: 27px;
+  padding: 4px 8px !important;
+  border: 1px solid rgba(40,108,112,.12) !important;
+  border-radius: 999px !important;
+  background: rgba(40,108,112,.07) !important;
+  color: var(--v19-teal-dark) !important;
+  font-size: .58rem !important;
+}
+
+.listing-card__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.listing-card h3 {
+  margin-block: 13px 6px !important;
+  color: var(--v19-ink) !important;
+  font-size: clamp(1rem, 1.5vw, 1.12rem) !important;
+  line-height: 1.65 !important;
+  text-wrap: balance;
+}
+
+.listing-card h3 a {
+  color: inherit;
+}
+
+.listing-card__location {
+  align-items: flex-start !important;
+  gap: 6px !important;
+  color: var(--v19-muted) !important;
+  line-height: 1.8 !important;
+}
+
+.listing-card__location svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--v19-teal);
+}
+
+.listing-card__meta {
+  margin-top: 10px !important;
+  padding-top: 10px;
+  border-top: 1px solid rgba(76,45,34,.065);
+}
+
+.listing-card__meta > * {
+  min-height: 28px;
+  display: inline-flex !important;
+  align-items: center;
+  padding: 4px 8px !important;
+  border-radius: 999px;
+  background: #f7f1ec;
+  color: #76665e !important;
+  font-weight: 800;
+}
+
+.listing-card__meta > a {
+  background: rgba(40,108,112,.07);
+  color: var(--v19-teal-dark) !important;
+}
+
+.listing-card .rating {
+  background: rgba(217,169,93,.13) !important;
+  color: #745526 !important;
+}
+
+.listing-card__actions {
+  margin-top: 14px !important;
+  padding-top: 12px;
+  border-top: 1px solid rgba(76,45,34,.07);
+}
+
+.listing-card__actions .button {
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .listing-card {
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+
+  .listing-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(155,79,55,.2) !important;
+    box-shadow: 0 24px 58px rgba(48,27,20,.1) !important;
+  }
+}
+
+/* Village explorer — more useful than decorative */
+.locality-explorer {
+  gap: 18px !important;
+}
+
+.locality-explorer .explorer__tools {
+  padding: 10px !important;
+  border: 1px solid var(--v19-line) !important;
+  border-radius: 22px !important;
+  background: rgba(255,253,250,.88) !important;
+  box-shadow: var(--v19-shadow-soft);
+}
+
+.locality-explorer .results-bar {
+  margin-block: 2px 0 !important;
+}
+
+.village-grid {
+  gap: 12px !important;
+}
+
+.village-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 246px !important;
+  padding: 18px !important;
+  border-color: var(--v19-line) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(40,108,112,.11), transparent 38%),
+    linear-gradient(150deg, #fff 0%, #fffdfa 64%, #f8f1ea 100%) !important;
+  box-shadow: var(--v19-shadow-soft) !important;
+}
+
+.village-card::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -52px;
+  inset-block-end: -58px;
+  width: 130px;
+  height: 130px;
+  border: 1px solid rgba(155,79,55,.08);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(155,79,55,.025);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.village-card__visual {
+  width: 48px !important;
+  height: 48px !important;
+  border-color: rgba(40,108,112,.13) !important;
+  border-radius: 15px !important;
+  background: linear-gradient(145deg, rgba(40,108,112,.11), rgba(40,108,112,.045)) !important;
+}
+
+.village-card__index {
+  min-width: 36px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(155,79,55,.07);
+  color: var(--v19-copper-dark) !important;
+  letter-spacing: .04em !important;
+}
+
+.village-card__type {
+  margin-top: 15px !important;
+  color: var(--v19-copper-dark) !important;
+  letter-spacing: .01em;
+}
+
+.village-card h2 {
+  margin: 5px 0 6px !important;
+  color: var(--v19-ink) !important;
+  font-size: 1.08rem !important;
+  text-wrap: balance;
+}
+
+.village-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  color: #786960 !important;
+  line-height: 1.85 !important;
+}
+
+.village-card__meta {
+  gap: 6px !important;
+  padding-top: 14px !important;
+}
+
+.village-card__meta span {
+  min-height: 29px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px !important;
+  border: 1px solid rgba(76,45,34,.055);
+  background: rgba(255,255,255,.72) !important;
+}
+
+.village-card__cta {
+  margin-top: 10px !important;
+  padding-top: 10px !important;
+  color: var(--v19-copper-dark) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .village-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(40,108,112,.18) !important;
+    box-shadow: var(--v19-shadow) !important;
+  }
+}
+
+/* Activities page — clearer service discovery cards */
+.page-main .category-grid {
+  gap: 12px !important;
+}
+
+.page-main .category-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--v19-line) !important;
+  background:
+    radial-gradient(circle at 105% -5%, rgba(217,169,93,.09), transparent 38%),
+    linear-gradient(155deg, #fff 0%, #fffdf9 100%) !important;
+  box-shadow: var(--v19-shadow-soft) !important;
+}
+
+.page-main .category-card h3 {
+  color: var(--v19-ink) !important;
+  text-wrap: balance;
+}
+
+.page-main .category-card > p {
+  color: #786960 !important;
+}
+
+.page-main .category-card__footer {
+  margin-top: auto;
+  border-top-color: rgba(76,45,34,.07) !important;
+}
+
+.page-main .category-card__footer b {
+  color: var(--v19-teal-dark) !important;
+}
+
+.page-main .category-card__footer span {
+  color: var(--v19-copper-dark) !important;
+  font-weight: 900;
+}
+
+/* Business detail hero — immediate action and trust hierarchy */
+.detail-hero {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(217,169,93,.18), transparent 30rem),
+    radial-gradient(circle at 6% 92%, rgba(40,108,112,.16), transparent 28rem),
+    linear-gradient(132deg, #1e1512 0%, #2f211b 54%, #4f2b22 100%) !important;
+}
+
+.detail-hero__grid {
+  gap: clamp(26px, 4vw, 52px) !important;
+}
+
+.detail-hero__grid > div:first-child {
+  min-width: 0;
+}
+
+.detail-hero__badges > * {
+  min-height: 33px !important;
+  border-color: rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.065) !important;
+}
+
+.detail-hero h1 {
+  max-width: 19ch !important;
+  margin-block: 12px 8px !important;
+  font-size: clamp(2.35rem, 4.5vw, 3.8rem) !important;
+  line-height: 1.28 !important;
+  letter-spacing: -.035em !important;
+}
+
+.detail-hero__grid > div > p {
+  max-width: 720px !important;
+  color: #decfc7 !important;
+}
+
+.detail-actions {
+  margin-top: 18px !important;
+}
+
+.detail-actions .button {
+  min-height: 46px !important;
+  padding-inline: 15px !important;
+  border-radius: 14px !important;
+}
+
+.detail-hero__summary {
+  padding: 12px !important;
+  border-color: rgba(255,255,255,.14) !important;
+  border-radius: 26px !important;
+  background: rgba(255,255,255,.065) !important;
+  box-shadow: 0 24px 60px rgba(12,7,5,.2) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+.detail-hero__summary > figure {
+  margin: 0 !important;
+  overflow: hidden;
+  border-radius: 18px !important;
+}
+
+.detail-hero__summary > span,
+.detail-hero__summary > strong,
+.detail-hero__summary > p {
+  margin-inline: 7px;
+}
+
+.detail-hero__summary > span {
+  margin-top: 12px !important;
+  color: #cdbcb3 !important;
+}
+
+.detail-hero__summary > strong {
+  color: #fff9f3 !important;
+}
+
+/* Detail body — reduce cognitive load */
+.detail-layout {
+  gap: 18px !important;
+  padding-top: 30px !important;
+}
+
+.detail-card,
+.detail-aside {
+  border-color: var(--v19-line) !important;
+  background: var(--v19-surface-strong) !important;
+  box-shadow: var(--v19-shadow-soft) !important;
+}
+
+.detail-grid {
+  gap: 8px !important;
+}
+
+.detail-grid > div {
+  min-height: 78px !important;
+  border-color: rgba(76,45,34,.075) !important;
+  background: linear-gradient(145deg, #fbf7f3, #fffdfb) !important;
+}
+
+.detail-grid > div span {
+  color: #8b786f !important;
+}
+
+.detail-grid > div strong {
+  color: #3a2a23 !important;
+}
+
+.listing-description {
+  border: 1px solid rgba(155,79,55,.08);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(217,169,93,.08), transparent 42%),
+    linear-gradient(135deg, #faf4ee, #fffdfb) !important;
+}
+
+.source-panel {
+  border-color: rgba(40,108,112,.15) !important;
+  background: linear-gradient(145deg, rgba(239,248,247,.96), rgba(252,255,254,.98)) !important;
+}
+
+/* Village detail composition */
+.village-hero__summary {
+  border-color: rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.locality-summary {
+  gap: 8px !important;
+}
+
+.locality-summary > div {
+  border-color: var(--v19-line) !important;
+  background: linear-gradient(145deg, #fff, #fcf8f4) !important;
+  box-shadow: 0 7px 22px rgba(48,27,20,.035) !important;
+}
+
+/* Keyboard focus, important for dense directory navigation */
+.listing-card a:focus-visible,
+.village-card:focus-visible,
+.category-card:focus-visible,
+.detail-actions .button:focus-visible {
+  outline: 3px solid rgba(40,108,112,.24) !important;
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .village-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .detail-hero h1 {
+    max-width: 24ch !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .listing-card > figure {
+    width: calc(100% + 30px);
+  }
+
+  .listing-card__meta {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .listing-card__meta::-webkit-scrollbar {
+    display: none;
+  }
+
+  .listing-card__meta > * {
+    flex: 0 0 auto;
+  }
+
+  .locality-explorer .explorer__tools {
+    padding: 8px !important;
+    border-radius: 18px !important;
+  }
+
+  .village-grid {
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+
+  .village-card {
+    min-height: 0 !important;
+    padding: 15px !important;
+    border-radius: 18px !important;
+  }
+
+  .village-card__head {
+    gap: 8px !important;
+  }
+
+  .village-card__visual {
+    width: 43px !important;
+    height: 43px !important;
+    border-radius: 13px !important;
+  }
+
+  .village-card p {
+    -webkit-line-clamp: 2;
+    font-size: .72rem !important;
+  }
+
+  .detail-hero {
+    padding-block: 28px 26px !important;
+  }
+
+  .detail-hero h1 {
+    max-width: 100% !important;
+    font-size: clamp(1.95rem, 8.8vw, 2.55rem) !important;
+    line-height: 1.38 !important;
+  }
+
+  .detail-actions {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .detail-actions .button:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .detail-hero__summary {
+    padding: 10px !important;
+    border-radius: 20px !important;
+  }
+
+  .detail-card,
+  .detail-aside {
+    border-radius: 18px !important;
+  }
+
+  .detail-grid > div {
+    min-height: 64px !important;
+  }
+
+  .page-main .category-grid {
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .listing-card {
+    border-radius: 18px !important;
+  }
+
+  .listing-card > figure {
+    border-radius: 18px 18px 12px 12px !important;
+  }
+
+  .source-chip {
+    display: none !important;
+  }
+
+  .detail-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-actions .button,
+  .detail-actions .button:first-child {
+    grid-column: auto;
+  }
+
+  .village-card__meta {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .village-card__meta::-webkit-scrollbar {
+    display: none;
+  }
+
+  .village-card__meta span {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listing-card,
+  .village-card,
+  .category-card {
+    transition: none !important;
+  }
+}
