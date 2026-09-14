@@ -37,8 +37,8 @@
 .card>p { margin: 0; padding: 0 10px 8px; }
 .actions { display: flex; flex-wrap: wrap; border-top: 1px solid #e1e8db; background: #f1f5ee; }
 .actions a { flex: 1; min-height: 40px; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 5px; font-size: 11px; color: #235743; text-decoration: none; }
-.suggestions { display: flex; gap: 6px; padding: 6px 12px; flex-shrink: 0; overflow-x: auto; scrollbar-width: thin; }
-.suggestions button { flex-shrink: 0; min-height: 36px; padding: 6px 10px; border: 1px solid #dbe3d5; border-radius: 12px; background: #fffef9; color: #385a47; font-size: 11px; }
+.suggestions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; padding: 6px 12px; flex-shrink: 0; }
+.suggestions button { min-width: 0; min-height: 32px; padding: 5px 7px; border: 1px solid #dbe3d5; border-radius: 12px; background: #fffef9; color: #385a47; font-size: 12px; line-height: 1.65; }
 .suggestions button:hover { border-color: #b5c7ab; background: #edf3e8; }
 .form { display: flex; align-items: center; flex-shrink: 0; margin: 3px 10px 0; padding: 4px; border: 1px solid #becfba; background: white; border-radius: 14px; }
 .form:focus-within { border-color: #517c5b; box-shadow: 0 0 0 2px #dfeadd; }
