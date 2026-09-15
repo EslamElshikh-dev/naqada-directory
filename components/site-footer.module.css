@@ -165,7 +165,7 @@
   .signature { width: auto; min-height: 44px; }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 340px) {
   .actions { grid-template-columns: 1fr; }
   .routes { grid-template-columns: 1fr; }
   .route { min-height: 58px; }
