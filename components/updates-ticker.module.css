@@ -148,9 +148,9 @@
 .control:focus-visible { outline: 2px solid #f0c66d; outline-offset: -4px; }
 
 .root[data-paused='true'] .track,
-.root:hover .track,
-.root:focus-within .track,
-.root:active .track { animation-play-state: paused; }
+.viewport:hover .track,
+.viewport:focus-within .track,
+.viewport:active .track { animation-play-state: paused; }
 
 @keyframes tickerFlow {
   to { transform: translate3d(-50%, 0, 0); }
