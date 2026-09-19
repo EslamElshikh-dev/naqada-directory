@@ -37,7 +37,7 @@ export function ListingCardActions({
           <span>عرض التفاصيل</span><ActionIcon name="arrow" />
         </Link>
         {phone && <a className="button button--soft" href={`tel:${phone}`} aria-label={`الاتصال بـ ${listingName}`} onClick={() => trackEvent('Listing Call', data)}><ActionIcon name="call" /><span>اتصال</span></a>}
-        {whatsapp && <a className="button button--whatsapp" href={whatsapp} target="_blank" rel="noreferrer" aria-label={`مراسلة ${listingName} عبر واتساب`} onClick={() => trackEvent('Listing WhatsApp', data)}><ActionIcon name="call" /><span>واتساب</span></a>}
+        {whatsapp && <a className="button button--whatsapp" href={whatsapp} target="_blank" rel="noreferrer" aria-label={`مراسلة ${listingName} عبر واتساب`} onClick={() => trackEvent('Listing WhatsApp', data)}><ActionIcon name="message" /><span>واتساب</span></a>}
         {mapsUrl && <a className="button button--ghost" href={mapsUrl} target="_blank" rel="noreferrer" aria-label={`فتح موقع ${listingName} على الخريطة`} onClick={() => trackEvent('Listing Map Opened', data)}><ActionIcon name="map" /><span>الخريطة</span></a>}
       </div>
       <nav className={`listing-card__discovery ${styles.cardDiscovery}`} aria-label={`استكشف حول ${listingName}`}>

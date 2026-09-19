@@ -1,25 +1,80 @@
 /*
- * Listing card layout contract.
+ * Premium listing-card system.
  *
- * This file is intentionally imported last from the root layout. The project
- * carries several historical design layers, so the card's structural rules
- * live here in one stable place instead of depending on their cascade order.
+ * Imported last from the root layout so these rules form one dependable
+ * contract above the project's historical design layers.
  */
 
-.listing-card {
-  min-width: 0;
-  min-height: 0 !important;
-  padding: 0 !important;
-  border-radius: 22px !important;
-  background: #fffdf9 !important;
+:root {
+  --listing-ink: #183b31;
+  --listing-muted: #71665f;
+  --listing-line: rgba(50, 78, 66, .12);
+  --listing-green: #165d49;
+  --listing-green-deep: #0d4738;
+  --listing-copper: #9c5139;
 }
 
-.listing-card > .listing-card__media {
+.listing-grid {
+  align-items: stretch;
+  gap: clamp(16px, 2vw, 24px) !important;
+}
+
+.listing-card,
+body.encyclopedia-ui .listing-card,
+body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2),
+body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0 !important;
+  overflow: hidden;
+  padding: 0 !important;
+  border: 1px solid var(--listing-line) !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 100% 100%, rgba(219, 172, 94, .08), transparent 34%),
+    linear-gradient(165deg, #fff 0%, #fffdf9 70%, #fbf5ed 100%) !important;
+  box-shadow: 0 14px 42px rgba(24, 59, 49, .075) !important;
+}
+
+.listing-card::before,
+body.encyclopedia-ui .listing-card::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  height: 3px !important;
+  background: linear-gradient(90deg, var(--listing-copper), #d8a956 52%, #3d8874) !important;
+  opacity: .9 !important;
+  pointer-events: none;
+}
+
+.listing-card::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-inline-end: -54px;
+  inset-block-end: 88px;
+  width: 126px;
+  aspect-ratio: 1;
+  border: 22px solid rgba(156, 81, 57, .035);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.listing-card__cover {
+  position: relative;
   flex: 0 0 auto;
+  min-width: 0;
+}
+
+.listing-card__cover > .listing-card__media,
+body.encyclopedia-ui .listing-card__cover > .listing-card__media,
+body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) .listing-card__cover > .listing-card__media {
   width: 100% !important;
   margin: 0 !important;
   border: 0 !important;
-  border-radius: 21px 21px 13px 13px !important;
+  border-radius: 25px 25px 15px 15px !important;
   box-shadow: none !important;
 }
 
@@ -28,11 +83,92 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: #e8ede9;
+  background: #e6ece8;
+}
+
+.listing-card__media-visual::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 30, 24, .16), transparent 32%),
+    linear-gradient(0deg, rgba(8, 30, 24, .24), transparent 34%);
+  pointer-events: none;
 }
 
 .listing-card__media-visual > img {
   object-fit: cover;
+}
+
+.listing-card__cover-link {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: 25px 25px 15px 15px;
+}
+
+.listing-card__cover-link:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, .9) !important;
+  outline-offset: -7px !important;
+}
+
+.listing-card__category-mark {
+  position: absolute;
+  z-index: 4;
+  inset-inline-start: 18px;
+  inset-block-end: -23px;
+  display: grid;
+  place-items: center;
+  border-radius: 17px;
+  color: var(--listing-green-deep);
+}
+
+.listing-card__category-mark .category-visual,
+body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual {
+  width: 50px !important;
+  height: 50px !important;
+  border: 3px solid rgba(255, 255, 255, .94) !important;
+  border-radius: 17px !important;
+  background: rgba(255, 253, 249, .95) !important;
+  box-shadow: 0 10px 28px rgba(13, 71, 56, .2) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.listing-card__category-mark .category-visual svg {
+  width: 24px;
+  height: 24px;
+}
+
+.listing-card .source-chip {
+  position: absolute;
+  z-index: 4;
+  inset-inline-end: 14px;
+  inset-block-start: 14px;
+  min-height: 30px;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px !important;
+  border: 1px solid rgba(255, 255, 255, .44) !important;
+  border-radius: 999px !important;
+  background: rgba(12, 55, 44, .78) !important;
+  box-shadow: 0 7px 22px rgba(9, 33, 27, .18);
+  color: #fff !important;
+  font-size: .65rem !important;
+  font-weight: 850;
+  line-height: 1;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.listing-card .source-chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #89e1b9;
+  box-shadow: 0 0 0 4px rgba(137, 225, 185, .15);
 }
 
 .listing-card__head,
@@ -44,42 +180,312 @@
 }
 
 .listing-card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 !important;
-  padding: 16px 18px 0 !important;
+  padding: 17px 20px 0 !important;
+  padding-inline-start: 82px !important;
+}
+
+.listing-card__eyebrow,
+.listing-card__eyebrow > div {
+  min-width: 0;
+}
+
+.listing-card__eyebrow {
+  flex: 1;
+  display: block !important;
+}
+
+.listing-card__eyebrow > div {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+}
+
+.listing-card__eyebrow a {
+  overflow: hidden;
+  color: var(--listing-copper) !important;
+  font-size: .72rem;
+  font-weight: 900;
+  line-height: 1.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listing-card__eyebrow small {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: #9a8b82 !important;
+  font-size: .62rem !important;
+  font-weight: 750;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.listing-card__eyebrow small::before {
+  content: '';
+  width: 3px;
+  height: 3px;
+  margin-inline-end: 7px;
+  border-radius: 50%;
+  background: #d6a453;
 }
 
 .listing-card__body {
-  padding: 0 18px !important;
+  min-width: 0;
+  flex: 1;
+  padding: 0 20px !important;
 }
 
-.listing-card__actions {
-  margin: 14px 18px 0 !important;
-  padding: 12px 0 0 !important;
+.listing-card h3,
+body.encyclopedia-ui .listing-card h3 {
+  margin: 13px 0 7px !important;
+  color: var(--listing-ink) !important;
+  font-size: clamp(1.03rem, 1.45vw, 1.18rem) !important;
+  line-height: 1.65 !important;
+  text-wrap: balance;
+}
+
+.listing-card h3 a {
+  color: inherit;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.listing-card__location,
+body.encyclopedia-ui .listing-card__location {
+  min-height: 47px !important;
+  display: grid !important;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start !important;
+  gap: 7px !important;
+  margin: 0 !important;
+  color: var(--listing-muted) !important;
+  font-size: .78rem !important;
+  line-height: 1.9 !important;
+}
+
+.listing-card__location svg {
+  width: 17px;
+  height: 17px;
+  margin-top: 4px;
+  color: var(--listing-copper) !important;
+}
+
+.listing-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  margin-top: 10px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(50, 78, 66, .075);
+}
+
+.listing-card__meta > * {
+  min-height: 29px !important;
+  display: inline-flex !important;
+  align-items: center;
+  padding: 5px 9px !important;
+  border: 1px solid rgba(50, 78, 66, .055) !important;
+  border-radius: 999px !important;
+  background: #f5f0ea !important;
+  color: #72675f !important;
+  font-size: .66rem !important;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.listing-card__meta > a {
+  background: #ecf5f1 !important;
+  color: var(--listing-green) !important;
+}
+
+.listing-card__meta .rating {
+  background: #fff5df !important;
+  color: #74551f !important;
+}
+
+.listing-card__actions,
+body.mobile-editorial .listing-card .listing-card__actions[class] {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px !important;
+  margin: 15px 20px 0 !important;
+  padding: 13px 0 0 !important;
+  border-top: 1px solid rgba(50, 78, 66, .09) !important;
+}
+
+.listing-card__actions .button,
+body.mobile-editorial .listing-card .listing-card__actions .button {
+  position: relative;
+  flex: 1 1 0;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 46px !important;
+  height: auto !important;
+  padding: 9px 10px !important;
+  border-radius: 14px !important;
+  gap: 7px !important;
+  box-shadow: none !important;
+  font-size: .7rem !important;
+  line-height: 1.4 !important;
+  white-space: nowrap;
+}
+
+.listing-card__actions .button--primary,
+body.mobile-editorial .listing-card .listing-card__actions .button--primary {
+  flex: 0 0 100%;
+  justify-content: space-between !important;
+  min-height: 50px !important;
+  padding-inline: 16px !important;
+  border: 1px solid rgba(255, 255, 255, .08) !important;
+  background: linear-gradient(135deg, var(--listing-green) 0%, var(--listing-green-deep) 100%) !important;
+  box-shadow: 0 10px 24px rgba(13, 71, 56, .18) !important;
+  color: #fff !important;
+  font-size: .8rem !important;
+}
+
+.listing-card__actions .button--primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(100deg, transparent 15%, rgba(255, 255, 255, .12), transparent 62%);
+  opacity: 0;
+  transform: translateX(25%);
+  transition: opacity .24s ease, transform .36s ease;
+}
+
+.listing-card__actions .button--soft {
+  border: 1px solid rgba(22, 93, 73, .09) !important;
+  background: #edf6f2 !important;
+  color: #185a48 !important;
+}
+
+.listing-card__actions .button--whatsapp {
+  border: 1px solid rgba(24, 133, 72, .1) !important;
+  background: #e8f8ed !important;
+  color: #176f3a !important;
+}
+
+.listing-card__actions .button--ghost {
+  border: 1px solid rgba(156, 81, 57, .1) !important;
+  background: #fcf3ed !important;
+  color: #8b4935 !important;
+}
+
+.listing-card__actions .button span,
+body.mobile-editorial .listing-card .listing-card__actions .button span {
+  position: relative !important;
+  z-index: 1;
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+}
+
+.listing-card__actions .button svg,
+body.mobile-editorial .listing-card .listing-card__actions .button svg {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 17px !important;
+  height: 17px !important;
 }
 
 .listing-card__discovery {
-  margin: 8px 0 0 !important;
-  padding: 0 18px 18px !important;
+  display: flex !important;
+  gap: 7px !important;
+  margin: 9px 0 0 !important;
+  padding: 0 20px 20px !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.listing-card__discovery::-webkit-scrollbar {
+  display: none;
+}
+
+.listing-card__discovery a {
+  min-height: 35px;
+  flex: 0 0 auto;
+  padding: 6px 10px !important;
+  border: 1px solid rgba(50, 78, 66, .08) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, .72) !important;
+  color: #746057 !important;
+  font-size: .62rem !important;
+  white-space: nowrap;
+}
+
+.listing-card__discovery a:last-child {
+  border-color: rgba(22, 93, 73, .1) !important;
+  background: rgba(232, 244, 239, .82) !important;
+  color: var(--listing-green) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .listing-card,
+  body.encyclopedia-ui .listing-card {
+    transition: transform .28s cubic-bezier(.2, .72, .24, 1), box-shadow .28s ease, border-color .28s ease !important;
+  }
+
+  .listing-card:hover,
+  body.encyclopedia-ui .listing-card:hover {
+    transform: translateY(-7px) !important;
+    border-color: rgba(22, 93, 73, .22) !important;
+    box-shadow: 0 24px 58px rgba(24, 59, 49, .13) !important;
+  }
+
+  .listing-card:hover .listing-card__media-visual > img {
+    transform: scale(1.045);
+  }
+
+  .listing-card h3 a:hover {
+    color: var(--listing-green) !important;
+    text-decoration-color: rgba(22, 93, 73, .34);
+  }
+
+  .listing-card__actions .button--primary:hover::before {
+    opacity: 1;
+    transform: translateX(-22%);
+  }
+
+  .listing-card__discovery a:hover {
+    border-color: rgba(22, 93, 73, .2) !important;
+    color: var(--listing-green) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .listing-grid {
+    gap: 17px !important;
+  }
 }
 
 @media (max-width: 680px) {
   .listing-grid {
-    gap: 14px !important;
+    gap: 15px !important;
   }
 
   .listing-card,
   body.encyclopedia-ui .listing-card,
-  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) {
-    border-radius: 20px !important;
+  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2),
+  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
+    border-radius: 22px !important;
+    box-shadow: 0 10px 32px rgba(24, 59, 49, .07) !important;
   }
 
-  .listing-card > .listing-card__media,
-  body.encyclopedia-ui .listing-card > .listing-card__media,
-  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) > .listing-card__media {
-    width: 100% !important;
+  .listing-card__cover > .listing-card__media,
+  body.encyclopedia-ui .listing-card__cover > .listing-card__media,
+  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) .listing-card__cover > .listing-card__media {
     max-height: 250px;
-    margin: 0 !important;
-    border-radius: 19px 19px 12px 12px !important;
+    border-radius: 21px 21px 13px 13px !important;
   }
 
   .listing-card__media-visual {
@@ -87,33 +493,53 @@
     max-height: 250px;
   }
 
-  .listing-card__head {
-    gap: 10px !important;
-    padding: 14px 14px 0 !important;
+  .listing-card__cover-link {
+    border-radius: 21px 21px 13px 13px;
   }
 
-  .listing-card__head .category-visual {
-    width: 44px !important;
-    height: 44px !important;
-    border-radius: 13px !important;
+  .listing-card__category-mark {
+    inset-inline-start: 14px;
+    inset-block-end: -21px;
+  }
+
+  .listing-card__category-mark .category-visual,
+  body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual {
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 15px !important;
+  }
+
+  .listing-card .source-chip {
+    inset-inline-end: 11px;
+    inset-block-start: 11px;
+    min-height: 28px;
+    padding: 5px 9px !important;
+    font-size: .61rem !important;
+  }
+
+  .listing-card__head {
+    padding: 15px 15px 0 !important;
+    padding-inline-start: 70px !important;
   }
 
   .listing-card__body {
-    padding: 0 14px !important;
+    padding: 0 15px !important;
   }
 
+  .listing-card h3,
   body.mobile-editorial .listing-card h3,
   body.encyclopedia-ui .listing-card h3 {
-    margin: 12px 0 6px !important;
+    margin: 11px 0 6px !important;
     font-size: 1rem !important;
     line-height: 1.7 !important;
   }
 
+  .listing-card__location,
   body.mobile-editorial .listing-card__location,
   body.encyclopedia-ui .listing-card__location {
     min-height: 0 !important;
-    margin-bottom: 10px !important;
-    font-size: .8rem !important;
+    margin-bottom: 9px !important;
+    font-size: .75rem !important;
     line-height: 1.85 !important;
   }
 
@@ -132,73 +558,70 @@
 
   .listing-card__meta > * {
     flex: 0 0 auto;
-    min-height: 30px !important;
-    font-size: .72rem !important;
-    line-height: 1.5 !important;
+    min-height: 29px !important;
+    font-size: .66rem !important;
   }
 
+  .listing-card__actions,
   body.mobile-editorial .listing-card .listing-card__actions[class] {
-    display: flex !important;
-    flex-wrap: wrap;
     gap: 7px !important;
-    margin: 13px 14px 0 !important;
-    padding: 12px 0 0 !important;
+    margin: 13px 15px 0 !important;
+    padding-top: 12px !important;
   }
 
+  .listing-card__actions .button,
   body.mobile-editorial .listing-card .listing-card__actions .button {
-    flex: 1 1 0;
-    width: auto !important;
-    min-width: 0 !important;
-    min-height: 48px !important;
-    height: auto !important;
+    min-height: 46px !important;
     padding: 9px 8px !important;
     border-radius: 13px !important;
     gap: 6px !important;
-    font-size: .78rem !important;
-    line-height: 1.4 !important;
-    white-space: nowrap;
+    font-size: .72rem !important;
   }
 
+  .listing-card__actions .button--primary,
   body.mobile-editorial .listing-card .listing-card__actions .button--primary {
-    flex: 0 0 100%;
-    justify-content: center !important;
-    gap: 10px !important;
-  }
-
-  body.mobile-editorial .listing-card .listing-card__actions .button span {
-    position: static !important;
-    display: inline !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-    clip: auto !important;
-  }
-
-  body.mobile-editorial .listing-card .listing-card__actions .button svg {
-    flex: 0 0 auto;
-    width: 17px !important;
-    height: 17px !important;
+    min-height: 49px !important;
+    padding-inline: 14px !important;
+    font-size: .79rem !important;
   }
 
   .listing-card__discovery {
     margin-top: 8px !important;
-    padding: 0 14px 16px !important;
+    padding: 0 15px 17px !important;
   }
 
   .listing-card__discovery a {
-    min-height: 36px;
-    font-size: .7rem !important;
-    white-space: nowrap;
+    min-height: 34px;
+    font-size: .62rem !important;
   }
 }
 
 @media (max-width: 370px) {
+  .listing-card__actions .button,
   body.mobile-editorial .listing-card .listing-card__actions .button {
     flex-basis: calc(50% - 4px);
   }
 
+  .listing-card__actions .button--primary,
   body.mobile-editorial .listing-card .listing-card__actions .button--primary,
+  .listing-card__actions .button--ghost:last-child,
   body.mobile-editorial .listing-card .listing-card__actions .button--ghost:last-child {
     flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listing-card,
+  .listing-card__media-visual > img,
+  .listing-card__actions .button--primary::before {
+    transition: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .listing-card,
+  .listing-card__actions .button,
+  .listing-card__meta > * {
+    border-color: currentColor !important;
   }
 }

@@ -14,6 +14,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   const mapsUrl = hasMapReference ? listing.mapsUrl : null;
   const detailHref = `/listing/${listing.slug}/`;
+  const categoryHref = `/directory/${slugify(listing.category)}`;
   const localityHref = `/villages/${slugify(locality)}`;
   const similarHref = listing.subcategory
     ? `/directory?q=${encodeURIComponent(listing.subcategory)}&locality=${encodeURIComponent(locality)}`
@@ -21,12 +22,17 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
 
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
-      <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />
+      <div className="listing-card__cover">
+        <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />
+        <Link className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
+        <Link className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
+          <CategoryVisual category={listing.category} size="sm" />
+        </Link>
+        {hasMapReference && <span className="source-chip"><i /> موثّق على الخريطة</span>}
+      </div>
       <div className="listing-card__head">
-        <CategoryVisual category={listing.category} size="sm" />
         <div className="listing-card__eyebrow">
-          <div><Link href={`/directory/${slugify(listing.category)}`}>{listing.subcategory || listing.category}</Link><small>{listing.category}</small></div>
-          {hasMapReference && <span className="source-chip"><i /> موثّق بالخرائط</span>}
+          <div><Link href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
         </div>
       </div>
       <div className="listing-card__body">
