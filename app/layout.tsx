@@ -5,6 +5,7 @@ import { MobileNav } from '@/components/mobile-nav';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';
 import { SanadAssistant } from '@/components/sanad-assistant';
+import { UpdatesTicker } from '@/components/updates-ticker';
 import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
@@ -121,6 +122,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="mobile-editorial encyclopedia-ui">
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
+        <UpdatesTicker />
         <VisitorTracker />
         {children}
         <Footer />

@@ -11,7 +11,8 @@ const welcome: Message = { role: 'assistant', text: 'يا مرحب بيك! أن�
 function Icon({ close = false }: { close?: boolean }) { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{close ? <path d="m6 6 12 12M6 18 18 6" /> : <path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3" />}</svg>; }
 export function SanadAssistant() {
   const [open, setOpen] = useState(false);
-  const [hint, setHint] = useState(true);
+  const [hint, setHint] = useState(false);
+  const hintDismissed = useRef(false);
   const root = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([welcome]);
   const [input, setInput] = useState('');
@@ -26,8 +27,11 @@ export function SanadAssistant() {
   const field = useRef<HTMLInputElement>(null);
   const log = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const timer = setTimeout(() => setHint(false), 10000);
-    return () => { clearTimeout(timer); abort.current?.abort(); };
+    const showTimer = setTimeout(() => {
+      if (!hintDismissed.current) setHint(true);
+    }, 650);
+    const hideTimer = setTimeout(() => setHint(false), 4650);
+    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); abort.current?.abort(); };
   }, []);
   useEffect(() => {
     if (!open) return;
@@ -50,6 +54,7 @@ export function SanadAssistant() {
     if (pending || !last) log.current.scrollTop = log.current.scrollHeight;
     else log.current.scrollTop += last.getBoundingClientRect().top - log.current.getBoundingClientRect().top - 12;
   }, [messages, pending, open]);
+  function dismissHint() { hintDismissed.current = true; setHint(false); }
   function close() { setOpen(false); launcher.current?.focus(); }
   async function send(value: string, retry = false) {
     const text = value.trim();
@@ -69,8 +74,8 @@ export function SanadAssistant() {
   }
   const suggestions = messages.at(-1)?.reply?.suggestions || prompts;
   return <div ref={root} className={styles.root} dir="rtl" data-open={open}>
-    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { setOpen(true); setHint(false); }} tabIndex={hint ? 0 : -1}>محتاج مساعدة ؟</button>}
-    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { setHint(false); if (open) close(); else setOpen(true); }}>
+    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); setOpen(true); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
+    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else setOpen(true); }}>
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
     </button>
     {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
