@@ -1,0 +1,204 @@
+/*
+ * Listing card layout contract.
+ *
+ * This file is intentionally imported last from the root layout. The project
+ * carries several historical design layers, so the card's structural rules
+ * live here in one stable place instead of depending on their cascade order.
+ */
+
+.listing-card {
+  min-width: 0;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 22px !important;
+  background: #fffdf9 !important;
+}
+
+.listing-card > .listing-card__media {
+  flex: 0 0 auto;
+  width: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 21px 21px 13px 13px !important;
+  box-shadow: none !important;
+}
+
+.listing-card__media-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #e8ede9;
+}
+
+.listing-card__media-visual > img {
+  object-fit: cover;
+}
+
+.listing-card__head,
+.listing-card__body,
+.listing-card__actions,
+.listing-card__discovery {
+  position: relative;
+  z-index: 1;
+}
+
+.listing-card__head {
+  margin: 0 !important;
+  padding: 16px 18px 0 !important;
+}
+
+.listing-card__body {
+  padding: 0 18px !important;
+}
+
+.listing-card__actions {
+  margin: 14px 18px 0 !important;
+  padding: 12px 0 0 !important;
+}
+
+.listing-card__discovery {
+  margin: 8px 0 0 !important;
+  padding: 0 18px 18px !important;
+}
+
+@media (max-width: 680px) {
+  .listing-grid {
+    gap: 14px !important;
+  }
+
+  .listing-card,
+  body.encyclopedia-ui .listing-card,
+  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) {
+    border-radius: 20px !important;
+  }
+
+  .listing-card > .listing-card__media,
+  body.encyclopedia-ui .listing-card > .listing-card__media,
+  body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) > .listing-card__media {
+    width: 100% !important;
+    max-height: 250px;
+    margin: 0 !important;
+    border-radius: 19px 19px 12px 12px !important;
+  }
+
+  .listing-card__media-visual {
+    aspect-ratio: 16 / 9 !important;
+    max-height: 250px;
+  }
+
+  .listing-card__head {
+    gap: 10px !important;
+    padding: 14px 14px 0 !important;
+  }
+
+  .listing-card__head .category-visual {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 13px !important;
+  }
+
+  .listing-card__body {
+    padding: 0 14px !important;
+  }
+
+  body.mobile-editorial .listing-card h3,
+  body.encyclopedia-ui .listing-card h3 {
+    margin: 12px 0 6px !important;
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+  }
+
+  body.mobile-editorial .listing-card__location,
+  body.encyclopedia-ui .listing-card__location {
+    min-height: 0 !important;
+    margin-bottom: 10px !important;
+    font-size: .8rem !important;
+    line-height: 1.85 !important;
+  }
+
+  .listing-card__meta {
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
+    padding-top: 9px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .listing-card__meta::-webkit-scrollbar {
+    display: none;
+  }
+
+  .listing-card__meta > * {
+    flex: 0 0 auto;
+    min-height: 30px !important;
+    font-size: .72rem !important;
+    line-height: 1.5 !important;
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions[class] {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 7px !important;
+    margin: 13px 14px 0 !important;
+    padding: 12px 0 0 !important;
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions .button {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    height: auto !important;
+    padding: 9px 8px !important;
+    border-radius: 13px !important;
+    gap: 6px !important;
+    font-size: .78rem !important;
+    line-height: 1.4 !important;
+    white-space: nowrap;
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions .button--primary {
+    flex: 0 0 100%;
+    justify-content: center !important;
+    gap: 10px !important;
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions .button span {
+    position: static !important;
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions .button svg {
+    flex: 0 0 auto;
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .listing-card__discovery {
+    margin-top: 8px !important;
+    padding: 0 14px 16px !important;
+  }
+
+  .listing-card__discovery a {
+    min-height: 36px;
+    font-size: .7rem !important;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 370px) {
+  body.mobile-editorial .listing-card .listing-card__actions .button {
+    flex-basis: calc(50% - 4px);
+  }
+
+  body.mobile-editorial .listing-card .listing-card__actions .button--primary,
+  body.mobile-editorial .listing-card .listing-card__actions .button--ghost:last-child {
+    flex-basis: 100%;
+  }
+}

@@ -40,7 +40,7 @@ export function ListingCardActions({
         {whatsapp && <a className="button button--whatsapp" href={whatsapp} target="_blank" rel="noreferrer" aria-label={`مراسلة ${listingName} عبر واتساب`} onClick={() => trackEvent('Listing WhatsApp', data)}><ActionIcon name="call" /><span>واتساب</span></a>}
         {mapsUrl && <a className="button button--ghost" href={mapsUrl} target="_blank" rel="noreferrer" aria-label={`فتح موقع ${listingName} على الخريطة`} onClick={() => trackEvent('Listing Map Opened', data)}><ActionIcon name="map" /><span>الخريطة</span></a>}
       </div>
-      <nav className={styles.cardDiscovery} aria-label={`استكشف حول ${listingName}`}>
+      <nav className={`listing-card__discovery ${styles.cardDiscovery}`} aria-label={`استكشف حول ${listingName}`}>
         <Link href={localityHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'locality' })}>دليل {locality}<span aria-hidden="true">←</span></Link>
         <Link href={similarHref} prefetch={false} onClick={() => trackEvent('Listing Discovery Shortcut', { ...data, target: 'similar' })}>أنشطة مشابهة في {locality}<span aria-hidden="true">←</span></Link>
       </nav>

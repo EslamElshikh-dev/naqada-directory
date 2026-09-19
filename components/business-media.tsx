@@ -39,10 +39,16 @@ export function BusinessMedia({
     '--cover-accent': `hsl(${35 + (seed % 36)} 68% 58%)`,
   } as CSSProperties);
   const isDetail = variant === 'detail';
+  const visualStyle = {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: isDetail ? '16 / 10' : '16 / 9',
+    overflow: 'hidden',
+  } as const;
 
   return (
-    <figure style={coverStyle} className={`${styles.media} ${isDetail ? styles.detail : styles.card}${media ? '' : ` ${styles.illustrative}`}`}>
-      <div className={styles.visual}>
+    <figure style={coverStyle} className={`listing-card__media ${styles.media} ${isDetail ? styles.detail : styles.card}${media ? '' : ` ${styles.illustrative}`}`}>
+      <div className={`listing-card__media-visual ${styles.visual}`} style={visualStyle}>
         <Image
           src={imageUrl}
           alt={imageAlt}
