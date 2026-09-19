@@ -23,6 +23,10 @@
 body.encyclopedia-ui .listing-card,
 body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2),
 body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
+  --card-accent: var(--listing-green);
+  --card-accent-deep: var(--listing-green-deep);
+  --card-accent-soft: #ecf5f1;
+  --card-spark: var(--listing-copper);
   position: relative;
   isolation: isolate;
   min-width: 0;
@@ -32,9 +36,63 @@ body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
   border: 1px solid var(--listing-line) !important;
   border-radius: 26px !important;
   background:
-    radial-gradient(circle at 100% 100%, rgba(219, 172, 94, .08), transparent 34%),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--card-spark) 9%, transparent), transparent 34%),
     linear-gradient(165deg, #fff 0%, #fffdf9 70%, #fbf5ed 100%) !important;
   box-shadow: 0 14px 42px rgba(24, 59, 49, .075) !important;
+}
+
+.listing-card:has(.category-visual--health) {
+  --card-accent: #216b70;
+  --card-accent-deep: #124c51;
+  --card-accent-soft: #e7f4f4;
+  --card-spark: #c45d47;
+}
+
+.listing-card:has(.category-visual--shop),
+.listing-card:has(.category-visual--food) {
+  --card-accent: #92543e;
+  --card-accent-deep: #653728;
+  --card-accent-soft: #faeee7;
+  --card-spark: #d29a43;
+}
+
+.listing-card:has(.category-visual--education),
+.listing-card:has(.category-visual--tech) {
+  --card-accent: #4b6480;
+  --card-accent-deep: #33465d;
+  --card-accent-soft: #eaf0f6;
+  --card-spark: #d4a34e;
+}
+
+.listing-card:has(.category-visual--worship),
+.listing-card:has(.category-visual--community) {
+  --card-accent: #47705f;
+  --card-accent-deep: #2a5141;
+  --card-accent-soft: #eaf4ef;
+  --card-spark: #c99c43;
+}
+
+.listing-card:has(.category-visual--build),
+.listing-card:has(.category-visual--work) {
+  --card-accent: #765448;
+  --card-accent-deep: #51372e;
+  --card-accent-soft: #f3ece8;
+  --card-spark: #bf7658;
+}
+
+.listing-card:has(.category-visual--transport),
+.listing-card:has(.category-visual--government) {
+  --card-accent: #376978;
+  --card-accent-deep: #244b58;
+  --card-accent-soft: #e8f2f5;
+  --card-spark: #bc7654;
+}
+
+.listing-card:has(.category-visual--emergency) {
+  --card-accent: #a7463d;
+  --card-accent-deep: #712c28;
+  --card-accent-soft: #faeae8;
+  --card-spark: #d9a24b;
 }
 
 .listing-card::before,
@@ -47,7 +105,7 @@ body.encyclopedia-ui .listing-card::before {
   height: 3px !important;
   border: 0 !important;
   border-radius: 0 !important;
-  background: linear-gradient(90deg, var(--listing-copper), #d8a956 52%, #3d8874) !important;
+  background: linear-gradient(90deg, var(--card-spark), #d8a956 52%, var(--card-accent)) !important;
   box-shadow: none !important;
   opacity: .9 !important;
   pointer-events: none;
@@ -117,7 +175,8 @@ body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) .listing-ca
   display: grid;
   place-items: center;
   border-radius: 17px;
-  color: var(--listing-green-deep);
+  color: var(--card-accent-deep);
+  transition: transform .24s cubic-bezier(.2, .72, .24, 1), filter .24s ease;
 }
 
 .listing-card__category-mark .category-visual,
@@ -126,8 +185,8 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
   height: 50px !important;
   border: 3px solid rgba(255, 255, 255, .94) !important;
   border-radius: 17px !important;
-  background: rgba(255, 253, 249, .95) !important;
-  box-shadow: 0 10px 28px rgba(13, 71, 56, .2) !important;
+  background: color-mix(in srgb, var(--card-accent-soft) 82%, #fff) !important;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--card-accent) 20%, transparent) !important;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -202,7 +261,7 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
 
 .listing-card__eyebrow a {
   overflow: hidden;
-  color: var(--listing-copper) !important;
+  color: var(--card-accent) !important;
   font-size: .72rem;
   font-weight: 900;
   line-height: 1.6;
@@ -227,7 +286,7 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
   height: 3px;
   margin-inline-end: 7px;
   border-radius: 50%;
-  background: #d6a453;
+  background: var(--card-spark);
 }
 
 .listing-card__body {
@@ -269,7 +328,7 @@ body.encyclopedia-ui .listing-card__location {
   width: 17px;
   height: 17px;
   margin-top: 4px;
-  color: var(--listing-copper) !important;
+  color: var(--card-spark) !important;
 }
 
 .listing-card__meta {
@@ -296,8 +355,8 @@ body.encyclopedia-ui .listing-card__location {
 }
 
 .listing-card__meta > a {
-  background: #ecf5f1 !important;
-  color: var(--listing-green) !important;
+  background: var(--card-accent-soft) !important;
+  color: var(--card-accent-deep) !important;
 }
 
 .listing-card__meta .rating {
@@ -339,8 +398,8 @@ body.mobile-editorial .listing-card .listing-card__actions .button--primary {
   min-height: 50px !important;
   padding-inline: 16px !important;
   border: 1px solid rgba(255, 255, 255, .08) !important;
-  background: linear-gradient(135deg, var(--listing-green) 0%, var(--listing-green-deep) 100%) !important;
-  box-shadow: 0 10px 24px rgba(13, 71, 56, .18) !important;
+  background: linear-gradient(135deg, var(--card-accent) 0%, var(--card-accent-deep) 100%) !important;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--card-accent) 20%, transparent) !important;
   color: #fff !important;
   font-size: .8rem !important;
 }
@@ -357,9 +416,9 @@ body.mobile-editorial .listing-card .listing-card__actions .button--primary {
 }
 
 .listing-card__actions .button--soft {
-  border: 1px solid rgba(22, 93, 73, .09) !important;
-  background: #edf6f2 !important;
-  color: #185a48 !important;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 12%, transparent) !important;
+  background: var(--card-accent-soft) !important;
+  color: var(--card-accent-deep) !important;
 }
 
 .listing-card__actions .button--whatsapp {
@@ -394,6 +453,24 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   height: 17px !important;
 }
 
+.listing-card__actions .button--primary svg {
+  width: 28px !important;
+  height: 28px !important;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .1);
+  transition: transform .22s ease, background .22s ease;
+}
+
+.listing-card__actions .button:not(.button--primary) svg {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 5px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .68);
+}
+
 .listing-card__discovery {
   display: flex !important;
   gap: 7px !important;
@@ -420,9 +497,127 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
 }
 
 .listing-card__discovery a:last-child {
-  border-color: rgba(22, 93, 73, .1) !important;
-  background: rgba(232, 244, 239, .82) !important;
-  color: var(--listing-green) !important;
+  border-color: color-mix(in srgb, var(--card-accent) 13%, transparent) !important;
+  background: color-mix(in srgb, var(--card-accent-soft) 84%, transparent) !important;
+  color: var(--card-accent-deep) !important;
+}
+
+/* Directory discovery tools: useful polish above decoration. */
+.explorer__tools {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-color: rgba(29, 84, 65, .12) !important;
+  background: rgba(255, 253, 248, .9) !important;
+  box-shadow: 0 16px 42px rgba(24, 59, 49, .08) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  backdrop-filter: blur(18px) saturate(1.12);
+}
+
+.explorer__tools::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #b76546 24%, #d7a850 52%, #2f7561 78%, transparent);
+  opacity: .8;
+}
+
+.search-field > span:first-child {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  font-size: 0 !important;
+}
+
+.search-field > span:first-child::before,
+.search-field > span:first-child::after {
+  content: '';
+  position: absolute;
+}
+
+.search-field > span:first-child::before {
+  inset: 3px 5px 5px 3px;
+  border: 1.7px solid currentColor;
+  border-radius: 50%;
+}
+
+.search-field > span:first-child::after {
+  width: 7px;
+  height: 1.7px;
+  inset-inline-end: 1px;
+  inset-block-end: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: rotate(45deg);
+  transform-origin: center;
+}
+
+.explorer > .category-pills {
+  overflow-x: auto;
+  padding-inline: 27px !important;
+  scroll-padding-inline: 27px;
+  scroll-snap-type: inline proximity;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.explorer > .category-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.explorer > .category-pills button {
+  position: relative;
+  scroll-snap-align: start;
+}
+
+.explorer > .category-pills button:focus-visible,
+.results-bar button:focus-visible {
+  outline: 3px solid rgba(32, 105, 80, .2);
+  outline-offset: 2px;
+}
+
+.explorer > .category-pills button.is-active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 7px;
+  border-radius: 50%;
+  background: #f1cf7e;
+  box-shadow: 0 0 0 4px rgba(241, 207, 126, .12);
+}
+
+.results-bar {
+  border-color: rgba(29, 84, 65, .09) !important;
+  background: linear-gradient(135deg, rgba(255, 253, 248, .86), rgba(238, 247, 242, .72)) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .75);
+}
+
+.results-bar > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.results-bar > div::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 4px;
+  border-radius: 50%;
+  background: #3b9373;
+  box-shadow: 0 0 0 5px rgba(59, 147, 115, .1);
+}
+
+@media (min-width: 901px) {
+  .explorer__tools {
+    position: sticky;
+    z-index: 20;
+    top: 96px;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -434,8 +629,8 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   .listing-card:hover,
   body.encyclopedia-ui .listing-card:hover {
     transform: translateY(-7px) !important;
-    border-color: rgba(22, 93, 73, .22) !important;
-    box-shadow: 0 24px 58px rgba(24, 59, 49, .13) !important;
+    border-color: color-mix(in srgb, var(--card-accent) 24%, transparent) !important;
+    box-shadow: 0 24px 58px color-mix(in srgb, var(--card-accent) 14%, rgba(24, 59, 49, .08)) !important;
   }
 
   .listing-card:hover .listing-card__media-visual > img {
@@ -443,8 +638,14 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   }
 
   .listing-card h3 a:hover {
-    color: var(--listing-green) !important;
-    text-decoration-color: rgba(22, 93, 73, .34);
+    color: var(--card-accent-deep) !important;
+    text-decoration-color: color-mix(in srgb, var(--card-accent) 38%, transparent);
+  }
+
+  .listing-card__category-mark:hover,
+  .listing-card__category-mark:focus-visible {
+    transform: translateY(-3px) rotate(-3deg);
+    filter: saturate(1.08);
   }
 
   .listing-card__actions .button--primary:hover::before {
@@ -452,9 +653,14 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
     transform: translateX(-22%);
   }
 
+  .listing-card__actions .button--primary:hover svg {
+    transform: translateX(-3px);
+    background: rgba(255, 255, 255, .16);
+  }
+
   .listing-card__discovery a:hover {
-    border-color: rgba(22, 93, 73, .2) !important;
-    color: var(--listing-green) !important;
+    border-color: color-mix(in srgb, var(--card-accent) 22%, transparent) !important;
+    color: var(--card-accent-deep) !important;
   }
 }
 
@@ -581,6 +787,18 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
     font-size: .79rem !important;
   }
 
+  .listing-card__actions .button--primary svg,
+  body.mobile-editorial .listing-card .listing-card__actions .button--primary svg {
+    width: 27px !important;
+    height: 27px !important;
+  }
+
+  .listing-card__actions .button:not(.button--primary) svg,
+  body.mobile-editorial .listing-card .listing-card__actions .button:not(.button--primary) svg {
+    width: 25px !important;
+    height: 25px !important;
+  }
+
   .listing-card__discovery {
     margin-top: 8px !important;
     padding: 0 15px 17px !important;
@@ -608,8 +826,10 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
 
 @media (prefers-reduced-motion: reduce) {
   .listing-card,
+  .listing-card__category-mark,
   .listing-card__media-visual > img,
-  .listing-card__actions .button--primary::before {
+  .listing-card__actions .button--primary::before,
+  .listing-card__actions .button--primary svg {
     transition: none !important;
   }
 }
@@ -619,5 +839,10 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   .listing-card__actions .button,
   .listing-card__meta > * {
     border-color: currentColor !important;
+  }
+
+  .explorer > .category-pills {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
