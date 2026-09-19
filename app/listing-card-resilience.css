@@ -41,54 +41,54 @@ body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
   box-shadow: 0 14px 42px rgba(24, 59, 49, .075) !important;
 }
 
-.listing-card:has(.category-visual--health) {
+body .listing-card:has(.category-visual--health) {
   --card-accent: #216b70;
   --card-accent-deep: #124c51;
   --card-accent-soft: #e7f4f4;
   --card-spark: #c45d47;
 }
 
-.listing-card:has(.category-visual--shop),
-.listing-card:has(.category-visual--food) {
+body .listing-card:has(.category-visual--shop),
+body .listing-card:has(.category-visual--food) {
   --card-accent: #92543e;
   --card-accent-deep: #653728;
   --card-accent-soft: #faeee7;
   --card-spark: #d29a43;
 }
 
-.listing-card:has(.category-visual--education),
-.listing-card:has(.category-visual--tech) {
+body .listing-card:has(.category-visual--education),
+body .listing-card:has(.category-visual--tech) {
   --card-accent: #4b6480;
   --card-accent-deep: #33465d;
   --card-accent-soft: #eaf0f6;
   --card-spark: #d4a34e;
 }
 
-.listing-card:has(.category-visual--worship),
-.listing-card:has(.category-visual--community) {
+body .listing-card:has(.category-visual--worship),
+body .listing-card:has(.category-visual--community) {
   --card-accent: #47705f;
   --card-accent-deep: #2a5141;
   --card-accent-soft: #eaf4ef;
   --card-spark: #c99c43;
 }
 
-.listing-card:has(.category-visual--build),
-.listing-card:has(.category-visual--work) {
+body .listing-card:has(.category-visual--build),
+body .listing-card:has(.category-visual--work) {
   --card-accent: #765448;
   --card-accent-deep: #51372e;
   --card-accent-soft: #f3ece8;
   --card-spark: #bf7658;
 }
 
-.listing-card:has(.category-visual--transport),
-.listing-card:has(.category-visual--government) {
+body .listing-card:has(.category-visual--transport),
+body .listing-card:has(.category-visual--government) {
   --card-accent: #376978;
   --card-accent-deep: #244b58;
   --card-accent-soft: #e8f2f5;
   --card-spark: #bc7654;
 }
 
-.listing-card:has(.category-visual--emergency) {
+body .listing-card:has(.category-visual--emergency) {
   --card-accent: #a7463d;
   --card-accent-deep: #712c28;
   --card-accent-soft: #faeae8;
