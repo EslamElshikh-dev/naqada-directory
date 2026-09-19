@@ -23,6 +23,19 @@ export const metadata: Metadata = {
 
 const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];
 const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];
+const serviceToneByCategory: Record<string, string> = {
+  'الطب والصحة': 'health',
+  'التعليم': 'learning',
+  'المطاعم والأطعمة': 'food',
+  'التجزئة والتسوق': 'retail',
+  'دور العبادة': 'faith',
+  'البناء والصيانة': 'craft',
+  'السيارات والنقل': 'transport',
+  'الإلكترونيات والهواتف': 'tech',
+  'الخدمات المهنية': 'professional',
+  'الخدمات الحكومية': 'civic',
+  'الجمعيات والمجتمع': 'community',
+};
 const faq = [
   { question: 'ما الذي أستطيع البحث عنه؟', answer: 'خدمات وأنشطة محلية، قرى ونجوع، أشخاص ومعالم وموضوعات من موسوعة نقادة.' },
   { question: 'هل كل نشاط ظاهر معتمد رسميًا؟', answer: 'لا. الدليل منصة معلوماتية مستقلة، ويعرض مصدر البيانات وتاريخ المراجعة بقدر ما تسمح به المادة المتاحة.' },
@@ -111,19 +124,30 @@ export default function HomePage() {
             </div>
           </aside>
         </div>
+
+        <Link className={styles.heroScroll} href="#home-services">
+          <span>ابدأ الاستكشاف</span>
+          <ActionIcon name="chevron" />
+        </Link>
       </section>
 
-      <section className={`shell ${styles.section}`}>
+      <section className={`shell ${styles.section}`} id="home-services">
         <header className={styles.sectionHead}>
           <div><span>أقسام الدليل</span><h2>ابدأ بنوع الخدمة التي تحتاج إليها</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة، داخل أقسام مصوّرة ومرتبة للوصول بأقل عدد من الخطوات.</p></div>
           <Link href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
         </header>
         <div className={styles.serviceGrid}>
-          {featuredActivities.map((activity) => {
+          {featuredActivities.map((activity, index) => {
             const count = getBusinessesForActivity(activity).length;
             const media = getCategoryMedia(activity.visualCategory);
             return (
-              <Link key={activity.slug} href={`/activities/${activity.slug}`} className={styles.serviceItem}>
+              <Link
+                key={activity.slug}
+                href={`/activities/${activity.slug}`}
+                className={styles.serviceItem}
+                data-index={String(index + 1).padStart(2, '0')}
+                data-tone={serviceToneByCategory[activity.visualCategory] || 'local'}
+              >
                 <span className={styles.serviceMedia}>
                   <Image src={media.imageUrl} alt={media.imageAlt} fill sizes="(max-width: 720px) 112px, 33vw" />
                   <i aria-hidden="true" />

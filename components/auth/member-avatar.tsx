@@ -12,17 +12,18 @@ type Props = {
   size?: number;
   badge?: string | null;
   compact?: boolean;
+  header?: boolean;
   priority?: boolean;
 };
 
-export function MemberAvatar({ name, src, frame = 'gray', size = 72, badge, compact = false, priority = false }: Props) {
+export function MemberAvatar({ name, src, frame = 'gray', size = 72, badge, compact = false, header = false, priority = false }: Props) {
   const [failed, setFailed] = useState(false);
   const initial = name.trim().charAt(0) || 'ع';
   const showImage = Boolean(src && !failed);
   const style = { '--avatar-size': `${size}px` } as CSSProperties;
 
   return (
-    <span className={`${styles.avatarShell} ${styles[frame]} ${compact ? styles.compact : ''}`} style={style}>
+    <span className={`${styles.avatarShell} ${styles[frame]} ${compact ? styles.compact : ''} ${header ? styles.header : ''}`} style={style}>
       <span className={styles.ring}>
         <span className={styles.inner} aria-label={`صورة حساب ${name}`}>
           {showImage ? (
