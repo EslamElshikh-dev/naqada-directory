@@ -19,14 +19,17 @@
   gap: clamp(16px, 2vw, 24px) !important;
 }
 
-.listing-card,
-body.encyclopedia-ui .listing-card,
-body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2),
-body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
+:where(.listing-card) {
   --card-accent: var(--listing-green);
   --card-accent-deep: var(--listing-green-deep);
   --card-accent-soft: #ecf5f1;
   --card-spark: var(--listing-copper);
+}
+
+.listing-card,
+body.encyclopedia-ui .listing-card,
+body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2),
+body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 3) {
   position: relative;
   isolation: isolate;
   min-width: 0;
