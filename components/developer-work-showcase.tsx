@@ -87,7 +87,7 @@ export function DeveloperWorkShowcase() {
                   </div>
                 </div>
                 <div className={styles.projectMeta}>
-                  <span>{project.code}</span>
+                  <div className={styles.projectMetaTop}><span>{project.code}</span><small dir="ltr">CASE 0{index + 1}</small></div>
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
                   <div className={styles.projectHighlights} aria-label={`محاور مشروع ${project.title}`}>

@@ -30,6 +30,33 @@ const workflow = [
   { number: '04', title: 'نحدّث', text: 'نستقبل التصحيحات ونراجع التغييرات حتى يبقى المحتوى حيًا.' },
 ];
 
+const experiencePaths = [
+  {
+    code: '01', href: '/directory', title: 'دليل الخدمات',
+    value: meta.businessCount.toLocaleString('ar-EG'), label: 'خدمة ونشاط',
+    description: 'وصول مباشر إلى الأطباء والصيدليات والمدارس والمحلات والخدمات اليومية داخل المركز.',
+    image: '/images/businesses/nile-hospital-naqada.webp', alt: 'واجهة مستشفى النيل في نقادة ضمن دليل الخدمات',
+  },
+  {
+    code: '02', href: '/villages', title: 'خريطة المكان',
+    value: meta.localityCount.toLocaleString('ar-EG'), label: 'قرية وموضعًا',
+    description: 'صفحات تجمع كل قرية ونجع بما يرتبط بهما من خدمات ومحتوى محلي قابل للتوسع.',
+    image: '/images/landmarks/naqada-city.webp', alt: 'مشهد من مدينة نقادة ضمن صفحات القرى والأماكن',
+  },
+  {
+    code: '03', href: '/knowledge', title: 'الذاكرة المحلية',
+    value: (meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG'), label: 'علمًا ومعلمًا',
+    description: 'أماكن وأعلام وتراث ومراجع محفوظة في موسوعة توضح المصدر وحدود المعلومة.',
+    image: '/images/landmarks/naqada-royal-tomb.webp', alt: 'المقبرة الملكية في نقادة ضمن الموسوعة المحلية',
+  },
+  {
+    code: '04', href: '/news', title: 'نبض نقادة وقنا',
+    value: 'محدّث', label: 'من المصدر',
+    description: 'متابعة الأخبار المحلية في عرض منظم يحفظ اسم الناشر ويقود إلى الخبر الأصلي.',
+    image: '/images/categories/community.webp', alt: 'صورة رمزية لأخبار المجتمع المحلي في نقادة وقنا',
+  },
+] as const;
+
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -115,6 +142,23 @@ export default function AboutPage() {
           <h3>مشروع خدمي تطوعي مجاني.</h3>
           <ul><li>التصفح والوصول إلى المحتوى مجانيان.</li><li>إرسال إضافة أو تصحيح لا يتطلب رسومًا.</li><li>ظهور النشاط لا يعني اعتمادًا حكوميًا أو ضمانًا لجودته.</li><li>كل مساهمة تخضع للمراجعة قبل النشر.</li></ul>
         </aside>
+      </section>
+
+      <section className={`shell ${styles.experienceSection}`} aria-labelledby="experience-title">
+        <header className={styles.experienceHeader}>
+          <div><p className={styles.kicker}>أربعة أبواب للمكان</p><h2 id="experience-title">ليس مجرد دليل.<br /><em>إنها تجربة نقادة كاملة.</em></h2></div>
+          <p>كل باب صُمّم لاحتياج مختلف، لكن جميعها متصلة حتى تنتقل من المعلومة إلى المكان والخدمة والمصدر دون أن تضيع.</p>
+        </header>
+        <div className={styles.experienceGrid}>
+          {experiencePaths.map((item, index) => (
+            <Link key={item.href} href={item.href} className={styles.experienceCard} style={{ '--i': index } as CSSProperties}>
+              <Image src={item.image} alt={item.alt} fill sizes="(max-width: 720px) 94vw, (max-width: 1100px) 50vw, 680px" />
+              <span className={styles.experienceShade} aria-hidden="true" />
+              <span className={styles.experienceTop}><small>{item.code}</small><b>{item.value}<em>{item.label}</em></b></span>
+              <div className={styles.experienceCopy}><h3>{item.title}</h3><small>{item.description}</small><i>افتح القسم <span aria-hidden="true">←</span></i></div>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className={styles.principlesSection}>

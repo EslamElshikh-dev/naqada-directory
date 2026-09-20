@@ -5,6 +5,7 @@ import test from 'node:test';
 const page = readFileSync('app/about/developer/page.tsx', 'utf8');
 const legacyPage = readFileSync('app/knowledge/developer/page.tsx', 'utf8');
 const aboutPage = readFileSync('app/about/page.tsx', 'utf8');
+const aboutCss = readFileSync('app/about/about.module.css', 'utf8');
 const css = readFileSync('app/knowledge/developer/developer.module.css', 'utf8');
 const showcase = readFileSync('components/developer-work-showcase.tsx', 'utf8');
 const projectData = readFileSync('lib/developer-profile.ts', 'utf8');
@@ -42,6 +43,16 @@ test('developer profile includes verified identity, metrics, and selected work',
   assert.doesNotMatch(projectData, /alanoudfaraj|puritylife/);
 });
 
+test('about experience connects the four useful doors of the guide', () => {
+  for (const path of ['/directory', '/villages', '/knowledge', '/news']) {
+    assert.match(aboutPage, new RegExp(`href: '${path}'`));
+  }
+  assert.match(aboutPage, /أربعة أبواب للمكان/);
+  assert.match(aboutPage, /experiencePaths\.map/);
+  assert.match(aboutCss, /\.experienceGrid/);
+  assert.match(aboutCss, /animation-timeline: view/);
+});
+
 test('selected work is interactive, accessible, and covered by visual QA', () => {
   assert.match(showcase, /'use client'/);
   assert.match(showcase, /aria-pressed/);
@@ -53,6 +64,8 @@ test('selected work is interactive, accessible, and covered by visual QA', () =>
   assert.match(projectData, /id: 'identity'/);
   assert.match(showcase, /next\/image/);
   assert.match(showcase, /project\.image/);
+  assert.match(showcase, /CASE 0/);
+  assert.match(css, /\.projectCard:first-child/);
   assert.match(visualQa, /\/about\/developer/);
   assert.match(visualQa, /\/about/);
   for (const image of ['tawod.webp', 'sama-scan.webp', 'bowdy-labs.webp', 'alahmadi.svg']) {
