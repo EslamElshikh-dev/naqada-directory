@@ -60,7 +60,7 @@
 @keyframes sparkle { 0%,100% { opacity: .55; transform: scale(.8) rotate(0); } 50% { opacity: 1; transform: scale(1.2) rotate(25deg); } }
 @keyframes thinking { 50% { opacity: .35; } }
 @media (max-width: 980px) {
- .root { --sanad-gap: max(16px,calc(env(safe-area-inset-bottom) + 8px)); --sanad-size: 52px; left: clamp(17px,3.2vw,25px); }
+ .root { --sanad-gap: max(88px,calc(env(safe-area-inset-bottom) + 80px)); --sanad-size: 52px; left: clamp(17px,3.2vw,25px); }
  .hint { left: 0; bottom: calc(var(--sanad-size) + 12px); padding: 7px 10px; border-radius: 12px 12px 12px 4px; font-size: 11px !important; }
  .hint::before { left: 16px; bottom: -5px; border: 0; border-right: 1px solid #decdaa; border-bottom: 1px solid #decdaa; }
  .panel { left: 10px; bottom: max(calc(var(--sanad-gap) + var(--sanad-size) + 12px),calc(var(--sanad-keyboard,0px) + 8px)); width: min(350px,calc(100vw - 20px)); height: min(460px,58dvh,calc(var(--sanad-viewport,100dvh) - 172px)); border-radius: 20px 20px 8px 20px; z-index: 1; }
