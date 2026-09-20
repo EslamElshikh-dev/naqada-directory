@@ -37,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/knowledge/heritage', lastModified: knowledgeDate },
     { path: '/knowledge/references', lastModified: knowledgeDate },
     { path: '/knowledge/fieldwork', lastModified: knowledgeDate },
-    { path: '/knowledge/developer', lastModified: knowledgeDate },
+    { path: '/about/developer', lastModified: knowledgeDate },
     { path: `/contributors/${primaryKnowledgeContributor.slug}`, lastModified: knowledgeDate },
     { path: '/updates', lastModified: latestBusinessDate },
     { path: '/coverage', lastModified: latestBusinessDate },

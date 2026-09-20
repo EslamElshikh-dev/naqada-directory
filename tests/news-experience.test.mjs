@@ -8,6 +8,7 @@ const newsPage = read('app/news/page.tsx');
 const storyPage = read('app/news/[id]/page.tsx');
 const newsApi = read('app/api/news/route.ts');
 const ticker = read('components/updates-ticker.tsx');
+const tickerCss = read('components/updates-ticker.module.css');
 const sitemap = read('app/sitemap.ts');
 const nextConfig = read('next.config.ts');
 
@@ -24,6 +25,10 @@ test('the external-news experience exposes all public entry points', () => {
   assert.ok(sitemap.includes("{ path: '/news'"));
   assert.ok(ticker.includes("fetch('/api/news'"));
   assert.ok(ticker.includes('href="/news"'));
+  assert.match(tickerCss, /--ticker-duration: 86s/);
+  assert.match(tickerCss, /\.group[^}]*direction: ltr/s);
+  assert.match(tickerCss, /\.item[^}]*direction: rtl/s);
+  assert.match(tickerCss, /translate3d\(-50%, 0, 0\)/);
 });
 
 test('news sources are fetched concurrently and cached at the server boundary', () => {

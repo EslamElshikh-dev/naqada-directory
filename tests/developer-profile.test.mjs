@@ -2,21 +2,31 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const page = readFileSync('app/knowledge/developer/page.tsx', 'utf8');
+const page = readFileSync('app/about/developer/page.tsx', 'utf8');
+const legacyPage = readFileSync('app/knowledge/developer/page.tsx', 'utf8');
+const aboutPage = readFileSync('app/about/page.tsx', 'utf8');
 const css = readFileSync('app/knowledge/developer/developer.module.css', 'utf8');
+const showcase = readFileSync('components/developer-work-showcase.tsx', 'utf8');
+const projectData = readFileSync('lib/developer-profile.ts', 'utf8');
 const nav = readFileSync('components/knowledge-section-nav.tsx', 'utf8');
 const knowledge = readFileSync('app/knowledge/page.tsx', 'utf8');
 const shell = readFileSync('components/site-shell.tsx', 'utf8');
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
+const visualQa = readFileSync('.github/visual-qa-v2.mjs', 'utf8');
 
 test('developer portrait is stored with the site', () => {
   assert.equal(existsSync('public/images/eslam-elshikh.jpg'), true);
 });
 
-test('developer profile is connected to the encyclopedia and site shell', () => {
-  for (const source of [nav, knowledge, shell, sitemap]) {
-    assert.match(source, /\/knowledge\/developer/);
+test('about pages are separated from the encyclopedia and connected to the site shell', () => {
+  for (const source of [shell, sitemap]) {
+    assert.match(source, /\/about\/developer/);
   }
+  assert.doesNotMatch(nav, /developer/);
+  assert.doesNotMatch(knowledge, /\/knowledge\/developer/);
+  assert.match(legacyPage, /permanentRedirect\('\/about\/developer'\)/);
+  assert.match(aboutPage, /مشروع محلي <em>خدمي وتطوعي ومجاني<\/em>/);
+  assert.match(aboutPage, /isAccessibleForFree: true/);
   assert.match(nav, /current: KnowledgeSection/);
 });
 
@@ -25,12 +35,29 @@ test('developer profile includes verified identity, metrics, and selected work',
   assert.match(page, /٤٧٢/);
   assert.match(page, /٢٣٣/);
   assert.match(page, /٧٣/);
-  assert.match(page, /https:\/\/tawodco\.com\//);
-  assert.match(page, /https:\/\/samascan\.vercel\.app\//);
-  assert.match(page, /https:\/\/bowdylabs\.com\//);
-  assert.match(page, /https:\/\/alahmadi-contracting-riyadh\.vercel\.app\//);
-  assert.match(page, /https:\/\/alanoudfaraj\.com\//);
-  assert.match(page, /https:\/\/puritylife\.vercel\.app\//);
+  assert.match(projectData, /https:\/\/tawodco\.com\//);
+  assert.match(projectData, /https:\/\/samascan\.vercel\.app\//);
+  assert.match(projectData, /https:\/\/bowdylabs\.com\//);
+  assert.match(projectData, /https:\/\/alahmadi-contracting-riyadh\.vercel\.app\//);
+  assert.doesNotMatch(projectData, /alanoudfaraj|puritylife/);
+});
+
+test('selected work is interactive, accessible, and covered by visual QA', () => {
+  assert.match(showcase, /'use client'/);
+  assert.match(showcase, /aria-pressed/);
+  assert.match(showcase, /aria-live="polite"/);
+  assert.match(showcase, /DeveloperProjectFilter/);
+  assert.match(projectData, /id: 'local'/);
+  assert.match(projectData, /id: 'business'/);
+  assert.match(projectData, /id: 'product'/);
+  assert.match(projectData, /id: 'identity'/);
+  assert.match(showcase, /next\/image/);
+  assert.match(showcase, /project\.image/);
+  assert.match(visualQa, /\/about\/developer/);
+  assert.match(visualQa, /\/about/);
+  for (const image of ['tawod.webp', 'sama-scan.webp', 'bowdy-labs.webp', 'alahmadi.svg']) {
+    assert.equal(existsSync(`public/images/developer-projects/${image}`), true);
+  }
 });
 
 test('developer profile connects the official social channels', () => {
@@ -48,6 +75,8 @@ test('developer profile publishes Person and ProfilePage structured data', () =>
   assert.match(page, /'@type': 'Person'/);
   assert.match(page, /Q138800449/);
   assert.match(page, /EslamElshikh-dev/);
+  assert.match(page, /'@type': 'ItemList'/);
+  assert.match(page, /numberOfItems: developerProjects\.length/);
 });
 
 test('developer animations respect reduced-motion preferences', () => {

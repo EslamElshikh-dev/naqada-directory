@@ -1,5 +1,5 @@
 .root {
-  --ticker-duration: 54s;
+  --ticker-duration: 86s;
   position: relative;
   z-index: 80;
   min-height: 42px;
@@ -83,7 +83,7 @@
   display: flex;
   flex: 0 0 auto;
   align-items: stretch;
-  direction: rtl;
+  direction: ltr;
 }
 
 .item {
@@ -97,6 +97,7 @@
   color: #dceae4;
   text-decoration: none;
   white-space: nowrap;
+  direction: rtl;
 }
 
 .item::after {
@@ -153,6 +154,7 @@
 .viewport:active .track { animation-play-state: paused; }
 
 @keyframes tickerFlow {
+  from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
 }
 
@@ -162,7 +164,7 @@
 }
 
 @media (max-width: 720px) {
-  .root { --ticker-duration: 48s; min-height: 37px; grid-template-columns: auto minmax(0, 1fr) 38px; }
+  .root { --ticker-duration: 74s; min-height: 37px; grid-template-columns: auto minmax(0, 1fr) 38px; }
   .heading { min-width: 82px; gap: 7px; padding: 4px 10px; }
   .heading i { width: 7px; height: 7px; }
   .heading small { display: none; }
