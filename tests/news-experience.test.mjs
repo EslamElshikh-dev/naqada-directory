@@ -37,6 +37,9 @@ test('external article and image URLs are constrained to known secure publishers
   assert.ok(newsLibrary.includes("if (parsed.protocol !== 'https:' || !publisherForHostname(parsed.hostname)) return null"));
   assert.ok(newsLibrary.includes('TRUSTED_IMAGE_HOSTS.has(hostname)'));
   assert.ok(newsLibrary.includes("'qena.gov.eg'"));
+  assert.ok(newsLibrary.includes("extractTag(block, 'News:Image')"));
+  assert.ok(newsLibrary.includes("q=%D9%82%D9%86%D8%A7&format=rss"));
+  assert.ok(nextConfig.includes("hostname: 'www.bing.com'"));
   assert.ok(nextConfig.includes("hostname: 'img.youm7.com'"));
   assert.ok(nextConfig.includes("hostname: 'media.elwatannews.com'"));
   assert.ok(nextConfig.includes("hostname: 'mediaaws.almasryalyoum.com'"));

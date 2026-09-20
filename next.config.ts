@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
       { protocol: 'https', hostname: 'www.elaosboa.com', pathname: '/wp-content/uploads/**' },
       { protocol: 'https', hostname: 'asc-mek.org', pathname: '/storage/Foundation_Graduate_Images/**' },
+      { protocol: 'https', hostname: 'www.bing.com', pathname: '/th*' },
       { protocol: 'https', hostname: 'img.youm7.com', pathname: '/**' },
       { protocol: 'https', hostname: 'www.youm7.com', pathname: '/**' },
       { protocol: 'https', hostname: 'media.elwatannews.com', pathname: '/**' },

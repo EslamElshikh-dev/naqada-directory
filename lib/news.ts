@@ -44,8 +44,12 @@ const MAX_ITEMS_TO_ENRICH = 14;
 
 const NEWS_FEEDS: FeedDefinition[] = [
   {
-    name: 'بحث الأخبار المحلي',
-    url: 'https://www.bing.com/news/search?q=%28%22%D9%86%D9%82%D8%A7%D8%AF%D8%A9%22+OR+%22%D9%85%D8%B1%D9%83%D8%B2+%D9%86%D9%82%D8%A7%D8%AF%D8%A9%22+OR+%22%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9+%D9%82%D9%86%D8%A7%22%29&format=rss&setlang=ar-eg&cc=eg',
+    name: 'بحث أخبار نقادة',
+    url: 'https://www.bing.com/news/search?q=%D9%86%D9%82%D8%A7%D8%AF%D8%A9&format=rss&setlang=ar-eg&cc=eg',
+  },
+  {
+    name: 'بحث أخبار قنا',
+    url: 'https://www.bing.com/news/search?q=%D9%82%D9%86%D8%A7&format=rss&setlang=ar-eg&cc=eg',
   },
   {
     name: 'اليوم السابع',
@@ -73,6 +77,7 @@ const PUBLISHERS: Record<string, PublisherDefinition> = {
 };
 
 const TRUSTED_IMAGE_HOSTS = new Set([
+  'www.bing.com',
   'img.youm7.com',
   'media.elwatannews.com',
   'mediaaws.almasryalyoum.com',
@@ -208,6 +213,7 @@ function safeImageUrl(value: string, baseUrl?: string) {
   try {
     const parsed = new URL(decodeEntities(value.trim()), baseUrl);
     const hostname = parsed.hostname.toLowerCase();
+    if (parsed.protocol === 'http:' && hostname === 'www.bing.com') parsed.protocol = 'https:';
     if (parsed.protocol !== 'https:') return null;
     return TRUSTED_IMAGE_HOSTS.has(hostname) ? parsed.toString() : null;
   } catch {
@@ -275,7 +281,8 @@ function parseFeed(xml: string): ExternalNewsItem[] {
 
     const feedImage = extractAttribute(block, 'media:content', 'url')
       || extractAttribute(block, 'media:thumbnail', 'url')
-      || extractAttribute(block, 'enclosure', 'url');
+      || extractAttribute(block, 'enclosure', 'url')
+      || extractTag(block, 'News:Image');
     const imageUrl = safeImageUrl(feedImage, url) || imageFromDescription(rawDescription, url);
     const publishedAt = dateToIso(extractTag(block, 'pubDate') || extractTag(block, 'dc:date'));
 
