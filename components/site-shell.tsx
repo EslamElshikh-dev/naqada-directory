@@ -21,6 +21,7 @@ const footerUtilities = [
   { href: '/updates', label: 'آخر التحديثات' },
   { href: '/coverage', label: 'نطاق التغطية' },
   { href: '/knowledge/references', label: 'مراجع الموسوعة' },
+  { href: '/knowledge/developer', label: 'عن المطوّر' },
   { href: '/account', label: 'حسابي' },
 ];
 
@@ -122,7 +123,7 @@ export function Footer() {
         <div className={footerStyles.bottom}>
           <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
           <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link href="/privacy">الخصوصية</Link><Link href="/about">عن الدليل</Link></div>
-          <a href="https://eslam-elshikh.com/" target="_blank" rel="noreferrer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">↗</span></a>
+          <Link href="/knowledge/developer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">←</span></Link>
         </div>
       </div>
     </footer>
