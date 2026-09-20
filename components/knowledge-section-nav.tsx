@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { fieldInformants, knowledgeSummary, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from './knowledge-section-nav.module.css';
 
-type KnowledgeSection = 'overview' | 'places' | 'people' | 'heritage' | 'references' | 'fieldwork' | 'contributor';
+type KnowledgeSection = 'overview' | 'places' | 'people' | 'heritage' | 'references' | 'fieldwork' | 'contributor' | 'developer';
 
 type Props = {
   current: KnowledgeSection;
@@ -16,6 +16,7 @@ const items = [
   { key: 'references', href: '/knowledge/references', label: 'المراجع', meta: knowledgeSummary.counts.references.toLocaleString('ar-EG') },
   { key: 'fieldwork', href: '/knowledge/fieldwork', label: 'العمل الميداني', meta: fieldInformants.length.toLocaleString('ar-EG') },
   { key: 'contributor', href: `/contributors/${primaryKnowledgeContributor.slug}`, label: 'المساهم', meta: 'أد' },
+  { key: 'developer', href: '/knowledge/developer', label: 'المطوّر', meta: 'إس' },
 ] as const;
 
 export function KnowledgeSectionNav({ current }: Props) {

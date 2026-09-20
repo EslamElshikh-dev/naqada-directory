@@ -19,6 +19,7 @@ const sections = [
   { href: '/knowledge/references', title: 'المراجع', count: knowledgeReferences.length, text: 'الفهرس المرجعي الذي استند إليه المؤلف، محفوظ كطبقة مستقلة لتتبع أصل المعرفة.', image: '/images/categories/education.webp', alt: 'صورة رمزية للتعليم والمراجع' },
   { href: '/knowledge/fieldwork', title: 'العمل الميداني', count: fieldInformants.length, text: 'الأسماء والنطاقات الجغرافية التي أوردها المؤلف ضمن المقابلات أو المساعدة الميدانية، بلا بيانات اتصال.', image: '/images/landmarks/deir-mikhail-entrance.webp', alt: 'مدخل دير الملاك ميخائيل في نقادة' },
   { href: `/contributors/${primaryKnowledgeContributor.slug}`, title: 'المؤلف والمساهم', count: knowledgeSources.length, text: 'ملف الأستاذ أحمد الدعباسي، مؤلف «إقليم نقادة بصعيد مصر» ومشرف ومساهم ذهبي في دليل نقادة.', image: '/images/landmarks/deir-mikhail-churches.webp', alt: 'عمارة تراثية من نقادة' },
+  { href: '/knowledge/developer', title: 'المطوّر خلف الدليل', count: 73, text: 'تعرّف إلى المهندس إسلام الشيخ، ورؤيته في بناء دليل محلي يجمع هندسة الويب والأمان والذكاء الاصطناعي والأثر الحقيقي.', image: '/images/eslam-elshikh.jpg', alt: 'المهندس إسلام الشيخ مطوّر دليل نقادة' },
 ];
 
 export default function KnowledgePage() {
