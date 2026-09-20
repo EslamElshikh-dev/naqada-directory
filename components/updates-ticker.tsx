@@ -1,33 +1,49 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './updates-ticker.module.css';
 
-const siteUpdates = [
+type TickerItem = { href: string; tag: string; text: string };
+
+const fallbackUpdates: TickerItem[] = [
+  { href: '/news', tag: 'الأخبار', text: 'تابع أخبار نقادة وقنا من مصادرها الصحفية والرسمية' },
   { href: '/updates', tag: 'تحديث', text: 'مراجعة أحدث بيانات الأنشطة والخدمات داخل دليل نقادة' },
   { href: '/directory', tag: 'تصميم', text: 'تطوير بطاقات الدليل وتجربة التصفح على الجوال والكمبيوتر' },
   { href: '/knowledge', tag: 'الموسوعة', text: 'توسعة صفحات الأماكن والأعلام والتراث المحلي في مركز نقادة' },
   { href: '/search', tag: 'البحث', text: 'تحسين البحث الموحّد للوصول إلى النشاط أو القرية أو المعلومة بسرعة' },
   { href: '/contribute', tag: 'شاركنا', text: 'إضافة مسار واضح لإرسال نشاط أو تصحيح موثّق ومراجعته قبل النشر' },
   { href: '/updates', tag: 'سند', text: 'تطوير المساعد الذكي سند وتحسين وصوله السريع على الهاتف' },
-] as const;
+];
 
 export function UpdatesTicker() {
   const [paused, setPaused] = useState(false);
+  const [liveItems, setLiveItems] = useState<TickerItem[]>([]);
+  const tickerItems = liveItems.length ? liveItems : fallbackUpdates;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/news', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('News unavailable')))
+      .then((payload: { items?: TickerItem[] }) => {
+        if (Array.isArray(payload.items) && payload.items.length) setLiveItems(payload.items);
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, []);
 
   return (
-    <section className={styles.root} data-paused={paused} aria-label="آخر تحديثات دليل نقادة">
-      <Link href="/updates" className={styles.heading}>
+    <section className={styles.root} data-paused={paused} aria-label="آخر أخبار وتحديثات دليل نقادة">
+      <Link href="/news" className={styles.heading}>
         <i aria-hidden="true" />
-        <span><small>نبض الدليل</small><strong>آخر التحديثات</strong></span>
+        <span><small>نبض نقادة</small><strong>الأخبار الآن</strong></span>
       </Link>
 
       <div className={styles.viewport}>
         <div className={styles.track}>
           <div className={styles.group}>
-            {siteUpdates.map((item) => (
-              <Link className={styles.item} href={item.href} key={`${item.tag}-${item.href}`}>
+            {tickerItems.map((item) => (
+              <Link className={styles.item} href={item.href} key={`${item.tag}-${item.href}-${item.text}`}>
                 <span>{item.tag}</span>
                 <strong>{item.text}</strong>
                 <b aria-hidden="true">←</b>
@@ -35,8 +51,8 @@ export function UpdatesTicker() {
             ))}
           </div>
           <div className={`${styles.group} ${styles.clone}`} aria-hidden="true">
-            {siteUpdates.map((item) => (
-              <span className={styles.item} key={`clone-${item.tag}-${item.href}`}>
+            {tickerItems.map((item) => (
+              <span className={styles.item} key={`clone-${item.tag}-${item.href}-${item.text}`}>
                 <span>{item.tag}</span>
                 <strong>{item.text}</strong>
                 <b aria-hidden="true">←</b>
@@ -50,7 +66,7 @@ export function UpdatesTicker() {
         type="button"
         className={styles.control}
         aria-pressed={paused}
-        aria-label={paused ? 'استئناف حركة شريط التحديثات' : 'إيقاف حركة شريط التحديثات'}
+        aria-label={paused ? 'استئناف حركة شريط الأخبار' : 'إيقاف حركة شريط الأخبار'}
         onClick={() => setPaused((value) => !value)}
       >
         <span aria-hidden="true">{paused ? '▶' : 'Ⅱ'}</span>

@@ -11,8 +11,9 @@ import footerStyles from './site-footer.module.css';
 const footerRoutes = [
   { href: '/directory', index: '01', title: 'دليل الخدمات', description: 'ابحث داخل الأنشطة والخدمات المحلية' },
   { href: '/villages', index: '02', title: 'القرى والنجوع', description: 'افتح صفحة قريتك ومحتواها المحلي' },
-  { href: '/knowledge', index: '03', title: 'موسوعة نقادة', description: 'أماكن وأعلام وتراث موثّق' },
-  { href: '/blog', index: '04', title: 'حكايات نقادة', description: 'قصص وصور من ذاكرة المكان' },
+  { href: '/news', index: '03', title: 'أخبار نقادة وقنا', description: 'آخر الأخبار مع رابط المصدر الأصلي' },
+  { href: '/knowledge', index: '04', title: 'موسوعة نقادة', description: 'أماكن وأعلام وتراث موثّق' },
+  { href: '/blog', index: '05', title: 'حكايات نقادة', description: 'قصص وصور من ذاكرة المكان' },
 ];
 
 const footerUtilities = [
