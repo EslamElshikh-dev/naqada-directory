@@ -26,9 +26,11 @@ test('the external-news experience exposes all public entry points', () => {
   assert.ok(ticker.includes("fetch('/api/news'"));
   assert.ok(ticker.includes('href="/news"'));
   assert.match(tickerCss, /--ticker-duration: 86s/);
-  assert.match(tickerCss, /\.group[^}]*direction: ltr/s);
+  assert.match(tickerCss, /\.group[^}]*direction: rtl/s);
   assert.match(tickerCss, /\.item[^}]*direction: rtl/s);
-  assert.match(tickerCss, /translate3d\(-50%, 0, 0\)/);
+  assert.match(tickerCss, /container-type: inline-size/);
+  assert.match(tickerCss, /from \{ transform: translate3d\(calc\(100cqi - 50%\), 0, 0\)/);
+  assert.match(tickerCss, /to \{ transform: translate3d\(calc\(100cqi - 100%\), 0, 0\)/);
 });
 
 test('news sources are fetched concurrently and cached at the server boundary', () => {

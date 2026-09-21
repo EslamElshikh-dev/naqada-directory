@@ -29,6 +29,7 @@ import './mobile-editorial.css';
 import './encyclopedia-refresh.css';
 import './usayrat-parity.css';
 import './listing-card-resilience.css';
+import './navigation-refresh.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',

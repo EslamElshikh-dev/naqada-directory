@@ -1,0 +1,95 @@
+/* Shared breadcrumb language for the legacy routes that do not own a CSS module. */
+body.encyclopedia-ui nav.breadcrumbs {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-block-end: 24px;
+  padding: 5px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  background: rgba(7, 35, 27, .24);
+  color: #c5d4ce;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05), 0 8px 22px rgba(4, 25, 19, .08);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  backdrop-filter: blur(12px) saturate(120%);
+  scrollbar-width: none;
+}
+
+body.encyclopedia-ui nav.breadcrumbs::-webkit-scrollbar { display: none; }
+
+body.encyclopedia-ui nav.breadcrumbs > a,
+body.encyclopedia-ui nav.breadcrumbs > span:not(:nth-child(even)) {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding-inline: 9px;
+  border-radius: 999px;
+  color: #d7e2dd;
+  font-size: .67rem;
+  font-weight: 800;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > a {
+  background: rgba(255, 255, 255, .055);
+  transition: color .2s ease, background .2s ease, transform .2s ease;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > a:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, .11);
+  color: #fff;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even) {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even)::before {
+  content: '←';
+  color: #78ae99;
+  font: 800 .65rem/1 sans-serif;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > :last-child {
+  border: 1px solid rgba(239, 201, 114, .13);
+  background: rgba(239, 201, 114, .1);
+  color: #f1d38c;
+}
+
+body.encyclopedia-ui nav.breadcrumbs > :first-child:not(a) { color: #d7e2dd; }
+
+@media (max-width: 720px) {
+  body.encyclopedia-ui nav.breadcrumbs {
+    min-height: 35px;
+    max-width: calc(100vw - 24px);
+    gap: 3px;
+    margin-block-end: 18px;
+    padding: 4px;
+  }
+  body.encyclopedia-ui nav.breadcrumbs > a,
+  body.encyclopedia-ui nav.breadcrumbs > span:not(:nth-child(even)) {
+    min-height: 27px;
+    padding-inline: 8px;
+    font-size: .61rem !important;
+  }
+  body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even) { width: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.encyclopedia-ui nav.breadcrumbs > a { transition: none; }
+}

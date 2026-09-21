@@ -33,7 +33,7 @@ export function UpdatesTicker() {
   }, []);
 
   return (
-    <section className={styles.root} data-paused={paused} aria-label="آخر أخبار وتحديثات دليل نقادة">
+    <section className={styles.root} data-paused={paused} dir="rtl" aria-label="آخر أخبار وتحديثات دليل نقادة">
       <Link href="/news" className={styles.heading}>
         <i aria-hidden="true" />
         <span><small>نبض نقادة</small><strong>الأخبار الآن</strong></span>

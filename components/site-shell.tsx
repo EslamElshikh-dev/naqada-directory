@@ -7,6 +7,7 @@ import { ActionIcon } from './action-icon';
 import { GlobalSearch } from './global-search';
 import { HeaderNotifications } from './header-notifications';
 import footerStyles from './site-footer.module.css';
+import headerStyles from './site-header.module.css';
 
 const footerRoutes = [
   { href: '/directory', index: '01', title: 'دليل الخدمات', description: 'ابحث داخل الأنشطة والخدمات المحلية' },
@@ -36,23 +37,26 @@ export function BrandMark({ compact = false, priority = false }: { compact?: boo
 
 export function SiteHeader() {
   return (
-    <header className="site-header">
-      <div className="shell site-header__inner">
-        <Link href="/" className="brand site-header__brand" aria-label="دليل نقادة — الرئيسية">
-          <span className="brand__emblem"><BrandMark priority /></span>
-          <span className="brand__copy"><strong>دليل نقادة</strong><small>الموسوعة المحلية لمركز نقادة</small></span>
-          <span className="brand__scope">قنا</span>
+    <header className={headerStyles.header}>
+      <div className={`shell ${headerStyles.inner}`}>
+        <Link href="/" className={headerStyles.brand} aria-label="دليل نقادة — الرئيسية">
+          <span className={headerStyles.emblem}><BrandMark priority /></span>
+          <span className={headerStyles.brandCopy}>
+            <small><i aria-hidden="true" /> المرجع المحلي</small>
+            <strong>دليل نقادة</strong>
+          </span>
+          <span className={headerStyles.scope}>قنا</span>
         </Link>
         <HeaderNav />
-        <div className="header-actions">
+        <div className={headerStyles.actions}>
           <GlobalSearch />
           <HeaderNotifications />
           <AccountButton />
-          <Link href="/emergency" className="header-emergency" aria-label="أرقام الطوارئ والخدمات المهمة">
-            <span className="header-emergency__dot" aria-hidden="true" />
+          <Link href="/emergency" className={headerStyles.emergency} aria-label="أرقام الطوارئ والخدمات المهمة">
+            <span className={headerStyles.emergencyDot} aria-hidden="true" />
             <span>أرقام مهمة</span>
           </Link>
-          <Link href="/directory" className="header-contribute"><span>استكشف الدليل</span><ActionIcon name="arrow" /></Link>
+          <Link href="/directory" className={headerStyles.explore}><span>استكشف الدليل</span><ActionIcon name="arrow" /></Link>
         </div>
       </div>
     </header>

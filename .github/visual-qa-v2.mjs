@@ -139,7 +139,7 @@ for (const viewportName of ['mobile-390', 'mobile-430']) {
   }
 }
 
-// Sanad: a compact non-modal conversation above the mobile navigation.
+// Sanad: a compact non-modal conversation integrated into the mobile navigation.
 for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390, 844], ['desktop', 1440, 1000]]) {
   const page = await browser.newPage({ viewport: { width, height } });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
@@ -148,7 +148,12 @@ for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390,
   if (!icon || Math.abs(icon.width - icon.height) > 1 || icon.width > 60) out.failures.push(`sanad-${name}: launcher must be a compact circle`);
   const mobileNav = page.locator('nav[aria-label="التنقل على الجوال"]');
   const nav = await mobileNav.count() ? await mobileNav.first().boundingBox() : null;
-  if (icon && nav && nav.height && icon.y + icon.height >= nav.y) out.failures.push(`sanad-${name}: launcher overlaps bottom navigation`);
+  if (width < 981 && icon && nav && nav.height) {
+    const launcherCenter = icon.x + (icon.width / 2);
+    const navCenter = nav.x + (nav.width / 2);
+    if (Math.abs(launcherCenter - navCenter) > 2) out.failures.push(`sanad-${name}: launcher must be centered in the bottom navigation`);
+    if (icon.y + icon.height <= nav.y || icon.y + icon.height > nav.y + nav.height + 1) out.failures.push(`sanad-${name}: launcher is not docked inside the bottom navigation`);
+  }
   await page.screenshot({ path: `artifacts/sanad-${name}-closed.png` });
   await launcher.click();
   const dialog = page.getByRole('dialog', { name: 'محادثة سند' });

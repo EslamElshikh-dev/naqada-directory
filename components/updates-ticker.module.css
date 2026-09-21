@@ -64,6 +64,7 @@
   min-width: 0;
   overflow: hidden;
   direction: ltr;
+  container-type: inline-size;
   mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
 }
@@ -74,6 +75,7 @@
   display: flex;
   align-items: stretch;
   direction: ltr;
+  transform: translate3d(calc(100cqi - 50%), 0, 0);
   will-change: transform;
   animation: tickerFlow var(--ticker-duration) linear infinite;
 }
@@ -83,7 +85,7 @@
   display: flex;
   flex: 0 0 auto;
   align-items: stretch;
-  direction: ltr;
+  direction: rtl;
 }
 
 .item {
@@ -154,8 +156,8 @@
 .viewport:active .track { animation-play-state: paused; }
 
 @keyframes tickerFlow {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
+  from { transform: translate3d(calc(100cqi - 50%), 0, 0); }
+  to { transform: translate3d(calc(100cqi - 100%), 0, 0); }
 }
 
 @keyframes livePulse {
@@ -187,9 +189,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .heading i { animation: none; }
-  .track { animation: none; }
+  .track { animation: none; transform: none; }
   .clone { display: none; }
-  .viewport { overflow-x: auto; mask-image: none; -webkit-mask-image: none; scrollbar-width: none; }
+  .viewport { overflow-x: auto; direction: rtl; mask-image: none; -webkit-mask-image: none; scrollbar-width: none; }
   .viewport::-webkit-scrollbar { display: none; }
 }
 
