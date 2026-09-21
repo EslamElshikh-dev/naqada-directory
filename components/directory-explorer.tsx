@@ -202,8 +202,7 @@ export function DirectoryExplorer({
     return `${routePath}${suffix ? `?${suffix}` : ''}`;
   }
 
-  function preparePageNavigation(targetPage: number) {
-    setPage(targetPage);
+  function preparePageNavigation() {
     window.requestAnimationFrame(() => document.querySelector('.results-bar')?.scrollIntoView({ behavior: 'smooth' }));
   }
 
@@ -268,11 +267,11 @@ export function DirectoryExplorer({
 
       {totalPages > 1 && <nav className="pagination" aria-label="صفحات النتائج">
         {currentPage > 1
-          ? <Link className="pagination__link" href={paginationHref(currentPage - 1)} rel="prev" scroll={false} onClick={() => preparePageNavigation(currentPage - 1)}>السابق</Link>
+          ? <Link className="pagination__link" href={paginationHref(currentPage - 1)} rel="prev" scroll={false} onClick={preparePageNavigation}>السابق</Link>
           : <span className="pagination__link" aria-disabled="true">السابق</span>}
         <span>صفحة {currentPage.toLocaleString('ar-EG')} من {totalPages.toLocaleString('ar-EG')}</span>
         {currentPage < totalPages
-          ? <Link className="pagination__link" href={paginationHref(currentPage + 1)} rel="next" scroll={false} onClick={() => preparePageNavigation(currentPage + 1)}>التالي</Link>
+          ? <Link className="pagination__link" href={paginationHref(currentPage + 1)} rel="next" scroll={false} onClick={preparePageNavigation}>التالي</Link>
           : <span className="pagination__link" aria-disabled="true">التالي</span>}
       </nav>}
     </div>
