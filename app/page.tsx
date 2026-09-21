@@ -11,7 +11,7 @@ import { businesses, localities, meta, officialLocalities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { getCategoryMedia } from '@/lib/category-media';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
-import { siteConfig } from '@/lib/site';
+import { absoluteUrl, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
 
@@ -69,11 +69,11 @@ export default function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'دليل وموسوعة مركز نقادة',
-    url: siteConfig.url,
+    url: absoluteUrl('/'),
     inLanguage: 'ar-EG',
     dateModified: meta.updatedAt,
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
-    contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: `${siteConfig.url}/contributors/${primaryKnowledgeContributor.slug}` },
+    contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: absoluteUrl(`/contributors/${primaryKnowledgeContributor.slug}`) },
   };
   const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) };
 

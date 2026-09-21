@@ -388,6 +388,16 @@ export function getBusinessBySlug(slug: string) {
   return businesses.find((item) => item.slug.toLowerCase() === normalized);
 }
 
+const canonicalBusinessSlugAliases: Record<string, string> = {
+  'ورشه-الاخوه-الثلاثه-طريق-اسمنت-بشلاو': 'ورشة-الاخوة-الثلاثة-الاوسط-قمولا-نقادة',
+  'ستديو-البرنس-طريق-بشلاو-دراو': 'ستديو-البرنس-الاوسط-قمولا-نقادة',
+  'حضانه-المهندس-عبدالصبور-سمري-طريق-بشلاو-دراو': 'حضانة-المهندس-عبدالصبور-سمري-الاوسط-قمولا',
+};
+
+export function getCanonicalBusinessSlugAlias(slug: string) {
+  return canonicalBusinessSlugAliases[normalizeRouteSlug(slug)] || null;
+}
+
 export function getLocalityBySlug(slug: string) {
   const normalized = normalizeRouteSlug(slug);
   return localities.find((item) => item.slug === normalized);

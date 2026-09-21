@@ -446,7 +446,7 @@ body {
   background: #faf6f2;
 }
 .results-bar strong { color: var(--nq-copper-dark); }
-.pagination button { border-radius: 12px; }
+.pagination .pagination__link { border-radius: 12px; }
 .empty-state {
   border: 1px dashed rgba(83,49,37,.18);
   border-radius: 22px;

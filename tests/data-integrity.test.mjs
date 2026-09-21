@@ -60,6 +60,22 @@ test('business identifiers, public slugs, and publication states are safe', () =
   );
 });
 
+test('a named business and public phone resolve to one canonical listing', () => {
+  const normalizeIdentity = (value) => value
+    .normalize('NFKD')
+    .replace(/[\u064B-\u065F\u0670]/g, '')
+    .replace(/[إأآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/[^\p{L}\p{N}]/gu, '')
+    .toLowerCase();
+  const identities = businesses
+    .filter((item) => item.phone)
+    .map((item) => `${normalizeIdentity(item.name)}|${item.phone.replace(/\D/g, '')}`);
+
+  assert.equal(new Set(identities).size, identities.length);
+});
+
 test('catalog category definitions cover every published business', () => {
   const declaredCategories = new Set(catalog.categoryCounts.map((item) => item.name));
   const publishedCategories = new Set(businesses.map((item) => item.category));

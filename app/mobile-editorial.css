@@ -170,7 +170,7 @@
  body.mobile-editorial main .category-pills button { min-height: 44px; font-size: .875rem !important; line-height: 1.7; }
  body.mobile-editorial main .category-pills small { font-size: .75rem !important; }
  body.mobile-editorial main .results-bar { font-size: .875rem !important; line-height: 1.8; }
- body.mobile-editorial main .results-bar button,body.mobile-editorial main .pagination button { min-height: 44px; font-size: .875rem !important; }
+ body.mobile-editorial main .results-bar button,body.mobile-editorial main .pagination .pagination__link { min-height: 44px; font-size: .875rem !important; }
  body.mobile-editorial main .pagination { gap: 8px; flex-wrap: wrap; font-size: .875rem !important; }
  body.mobile-editorial .global-search__panel { max-height: calc(100dvh - 160px); overflow-y: auto; }
  body.mobile-editorial .global-search__head strong { font-size: 1rem !important; }

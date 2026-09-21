@@ -13,11 +13,7 @@ export const siteConfig = {
 };
 
 const defaultIndexRobots: Metadata['robots'] = {
-  index: true,
-  follow: true,
   googleBot: {
-    index: true,
-    follow: true,
     'max-video-preview': -1,
     'max-image-preview': 'large',
     'max-snippet': -1,
@@ -28,6 +24,11 @@ export function canonicalPath(path: string) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   if (normalizedPath === '/') return '/';
   return `${normalizedPath.replace(/\/+$/, '')}/`;
+}
+
+export function absoluteUrl(path = '/') {
+  const normalizedPath = canonicalPath(path);
+  return normalizedPath === '/' ? `${siteConfig.url}/` : `${siteConfig.url}${normalizedPath}`;
 }
 
 export function buildPageMetadata({
@@ -46,7 +47,7 @@ export function buildPageMetadata({
   keywords?: string[];
 }): Metadata {
   const normalizedPath = canonicalPath(path);
-  const url = normalizedPath === '/' ? `${siteConfig.url}/` : `${siteConfig.url}${normalizedPath}`;
+  const url = absoluteUrl(normalizedPath);
   const image = socialImage
     ? { url: socialImage.url, alt: socialImage.alt || title }
     : {

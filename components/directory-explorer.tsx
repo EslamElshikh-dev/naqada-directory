@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { hasBusinessMedia } from '@/lib/business-media';
@@ -20,24 +21,32 @@ export function DirectoryExplorer({
   businesses,
   categories,
   localities,
+  initialQuery = '',
   initialCategory = '',
   initialLocality = '',
+  initialSort = 'recommended',
+  initialPage = 1,
   lockedCategory = false,
   lockedLocality = false,
 }: {
   businesses: DirectoryItem[];
   categories: Category[];
   localities: LocalityPage[];
+  initialQuery?: string;
   initialCategory?: string;
   initialLocality?: string;
+  initialSort?: SortMode;
+  initialPage?: number;
   lockedCategory?: boolean;
   lockedLocality?: boolean;
 }) {
-  const [query, setQuery] = useState('');
+  const pathname = usePathname();
+  const routePath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+  const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory);
   const [locality, setLocality] = useState(initialLocality);
-  const [sort, setSort] = useState<SortMode>('recommended');
-  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState<SortMode>(initialSort);
+  const [page, setPage] = useState(initialPage);
   const [hydratedFromUrl, setHydratedFromUrl] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const pageSize = 12;
@@ -48,16 +57,20 @@ export function DirectoryExplorer({
 
     queueMicrotask(() => {
       if (cancelled) return;
-      setQuery(searchParams.get('q') || '');
+      setQuery(initialQuery || searchParams.get('q') || '');
       setCategory(lockedCategory ? initialCategory : (initialCategory || searchParams.get('category') || ''));
       setLocality(lockedLocality ? initialLocality : (initialLocality || searchParams.get('locality') || ''));
+      const requestedSort = searchParams.get('sort');
+      setSort(initialSort !== 'recommended' ? initialSort : requestedSort === 'rating' || requestedSort === 'name' ? requestedSort : 'recommended');
+      const requestedPage = Number.parseInt(searchParams.get('page') || '', 10);
+      setPage(initialPage > 1 ? initialPage : Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1);
       setHydratedFromUrl(true);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [initialCategory, initialLocality, lockedCategory, lockedLocality]);
+  }, [initialCategory, initialLocality, initialPage, initialQuery, initialSort, lockedCategory, lockedLocality]);
 
   const indexedBusinesses = useMemo(() => businesses.map((item) => ({
     item,
@@ -126,7 +139,7 @@ export function DirectoryExplorer({
 
   const categoryLabels = useMemo(() => new Map(categories.map((item) => [item.name, item.shortLabel])), [categories]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const currentPage = Math.min(page, totalPages);
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
   const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const trimmedQuery = query.trim();
   const hasActiveFilters = Boolean(trimmedQuery || category || locality);
@@ -138,9 +151,11 @@ export function DirectoryExplorer({
     if (query) params.set('q', query);
     if (category && !lockedCategory) params.set('category', category);
     if (locality && !lockedLocality) params.set('locality', locality);
+    if (sort !== 'recommended') params.set('sort', sort);
+    if (currentPage > 1) params.set('page', String(currentPage));
     const suffix = params.toString();
-    window.history.replaceState(null, '', `${window.location.pathname}${suffix ? `?${suffix}` : ''}`);
-  }, [category, hydratedFromUrl, locality, lockedCategory, lockedLocality, query]);
+    window.history.replaceState(null, '', `${routePath}${suffix ? `?${suffix}` : ''}`);
+  }, [category, currentPage, hydratedFromUrl, locality, lockedCategory, lockedLocality, query, routePath, sort]);
 
   useEffect(() => {
     const term = deferredQuery.trim();
@@ -175,6 +190,22 @@ export function DirectoryExplorer({
   }
 
   const missingHref = `/contribute?type=missing${query ? `&q=${encodeURIComponent(query)}` : ''}`;
+
+  function paginationHref(targetPage: number) {
+    const params = new URLSearchParams();
+    if (trimmedQuery) params.set('q', trimmedQuery);
+    if (category && !lockedCategory) params.set('category', category);
+    if (locality && !lockedLocality) params.set('locality', locality);
+    if (sort !== 'recommended') params.set('sort', sort);
+    if (targetPage > 1) params.set('page', String(targetPage));
+    const suffix = params.toString();
+    return `${routePath}${suffix ? `?${suffix}` : ''}`;
+  }
+
+  function preparePageNavigation(targetPage: number) {
+    setPage(targetPage);
+    window.requestAnimationFrame(() => document.querySelector('.results-bar')?.scrollIntoView({ behavior: 'smooth' }));
+  }
 
   return (
     <div className="explorer">
@@ -236,9 +267,13 @@ export function DirectoryExplorer({
       {visible.length ? <div className="listing-grid">{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : <div className="empty-state"><strong>{filterConflict ? 'العبارة موجودة لكن الفلاتر ضيّقت النتائج أكثر من اللازم' : 'لا توجد نتيجة مطابقة'}</strong><p>{filterConflict ? 'وسّع المكان أو القسم مع الاحتفاظ بعبارة البحث، وستظهر النتائج المطابقة المتاحة.' : 'جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.'}</p>{filterConflict ? <div className={styles.recovery}>{category && !lockedCategory ? <button type="button" onClick={() => { setCategory(''); setPage(1); }}>إزالة فلتر القسم</button> : null}{locality && !lockedLocality ? <button type="button" onClick={() => { setLocality(''); setPage(1); }}>إزالة فلتر المكان</button> : null}{category && locality && (!lockedCategory || !lockedLocality) ? <button type="button" onClick={clearResultFilters}>عرض كل نتائج العبارة</button> : null}</div> : null}<div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link className="button button--ghost" href={missingHref} onClick={() => trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' })}>اقترح نتيجة مفقودة</Link></div></div>}
 
       {totalPages > 1 && <nav className="pagination" aria-label="صفحات النتائج">
-        <button type="button" disabled={currentPage === 1} onClick={() => { setPage((value) => Math.max(1, value - 1)); document.querySelector('.results-bar')?.scrollIntoView({ behavior: 'smooth' }); }}>السابق</button>
+        {currentPage > 1
+          ? <Link className="pagination__link" href={paginationHref(currentPage - 1)} rel="prev" scroll={false} onClick={() => preparePageNavigation(currentPage - 1)}>السابق</Link>
+          : <span className="pagination__link" aria-disabled="true">السابق</span>}
         <span>صفحة {currentPage.toLocaleString('ar-EG')} من {totalPages.toLocaleString('ar-EG')}</span>
-        <button type="button" disabled={currentPage === totalPages} onClick={() => { setPage((value) => Math.min(totalPages, value + 1)); document.querySelector('.results-bar')?.scrollIntoView({ behavior: 'smooth' }); }}>التالي</button>
+        {currentPage < totalPages
+          ? <Link className="pagination__link" href={paginationHref(currentPage + 1)} rel="next" scroll={false} onClick={() => preparePageNavigation(currentPage + 1)}>التالي</Link>
+          : <span className="pagination__link" aria-disabled="true">التالي</span>}
       </nav>}
     </div>
   );
