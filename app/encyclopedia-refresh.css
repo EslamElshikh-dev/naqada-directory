@@ -13,6 +13,16 @@ body.encyclopedia-ui .skip-link:not(:focus) {
   white-space: nowrap;
 }
 
+body.encyclopedia-ui .skip-link:focus,
+body.encyclopedia-ui .skip-link:focus-visible {
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  transform: translateY(0);
+}
+
 body.encyclopedia-ui .site-header {
   z-index: 190;
   border-bottom: 1px solid rgba(18, 70, 53, .1);

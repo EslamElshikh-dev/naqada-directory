@@ -4,13 +4,13 @@ import { notFound } from 'next/navigation';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { RelatedKnowledge } from '@/components/related-knowledge';
 import { localities } from '@/lib/data';
-import { aliasesForPlace, childrenForPlace, getKnowledgePlace, knowledgeAttribution, knowledgePlaces, sourceById } from '@/lib/knowledge';
+import { aliasesForPlace, childrenForPlace, getKnowledgePlace, isKnowledgePlaceIndexable, knowledgeAttribution, knowledgePlaces, sourceById } from '@/lib/knowledge';
 import styles from '../../knowledge.module.css';
 import v3Styles from '../../knowledge-v3.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams(){ return knowledgePlaces.map((item) => ({ slug: item.slug })); }
-export async function generateMetadata({ params }: Props): Promise<Metadata>{ const { slug } = await params; const place = getKnowledgePlace(slug); if(!place) return {}; return { title: `${place.name} — موسوعة نقادة`, description: `بيانات ${place.name} المكانية والتاريخية كما وردت في مصادر موسوعة دليل نقادة.`, alternates: { canonical: `/knowledge/places/${place.slug}` } }; }
+export async function generateMetadata({ params }: Props): Promise<Metadata>{ const { slug } = await params; const place = getKnowledgePlace(slug); if(!place) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } }; return { title: `${place.name} — موسوعة نقادة`, description: `بيانات ${place.name} المكانية والتاريخية كما وردت في مصادر موسوعة دليل نقادة.`, alternates: { canonical: `/knowledge/places/${place.slug}` }, ...(!isKnowledgePlaceIndexable(place) ? { robots: { index: false, follow: true } } : {}) }; }
 
 export default async function KnowledgePlacePage({ params }: Props){
   const { slug } = await params;
@@ -20,6 +20,7 @@ export default async function KnowledgePlacePage({ params }: Props){
   const children = childrenForPlace(place.name);
   const source = sourceById(place.sourceId);
   const live = localities.find((item) => item.name === place.name || item.name === place.shortName);
+  const isIndexable = isKnowledgePlaceIndexable(place);
 
   return <main id="main-content" className="page-main">
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="places" /></div>
@@ -33,6 +34,7 @@ export default async function KnowledgePlacePage({ params }: Props){
         {aliases.length ? <section><h2>أسماء وتهجئات مرتبطة</h2><div className={styles.tags}>{aliases.map((item) => <span className={styles.tag} key={item.id}>{item.alias}</span>)}</div></section> : null}
         {children.length ? <section className={styles.section}><h2>مواضع مرتبطة بالتبعية</h2><div className={styles.tags}>{children.map((item) => <Link className={styles.tag} href={`/knowledge/places/${encodeURIComponent(item.slug)}`} key={item.id}>{item.name}</Link>)}</div></section> : null}
         {live ? <p><Link href={`/villages/${encodeURIComponent(live.slug)}`}>فتح صفحة {live.name} في دليل الخدمات والأنشطة الحالي ←</Link></p> : null}
+        {!isIndexable ? <div className={styles.sourceBox}><strong>سجل أولي يحتاج استكمالًا</strong><p>نحافظ على اسم الموضع وتبعيته كما وردا في المصدر، لكن الصفحة لن تدخل نتائج البحث قبل إضافة معلومة محلية مميزة وموثقة.</p><Link href={`/contribute?type=correction&name=${encodeURIComponent(place.name)}`}>أرسل معلومة أو تصحيحًا موثقًا ←</Link></div> : null}
         <div className={styles.sourceBox}><strong>الإسناد</strong><p>{knowledgeAttribution(place.contributorId)}</p><small>المصدر: {source?.title || 'مصدر موسوعة نقادة'}{source?.year ? ` · ${source.year}` : ''}</small></div>
         <RelatedKnowledge kind="place" item={place} />
       </article>

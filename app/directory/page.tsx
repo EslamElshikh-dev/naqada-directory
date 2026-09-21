@@ -5,13 +5,57 @@ import { BrandMark } from '@/components/site-shell';
 import { businesses, categories, directoryBusinesses, localities } from '@/lib/data';
 import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: 'دليل الخدمات والأنشطة في نقادة',
-  description: 'ابحث وصَفِّ الأنشطة والخدمات المنشورة في مدينة نقادة وقراها ونجوعها بحسب الاسم والتصنيف والمكان.',
-  alternates: { canonical: '/directory' },
-};
+type DirectorySearchParams = Promise<{
+  q?: string | string[];
+  category?: string | string[];
+  locality?: string | string[];
+  sort?: string | string[];
+  page?: string | string[];
+}>;
 
-export default function DirectoryPage() {
+type Props = { searchParams: DirectorySearchParams };
+
+const pageSize = 12;
+const description = 'ابحث وصَفِّ الأنشطة والخدمات المنشورة في مدينة نقادة وقراها ونجوعها بحسب الاسم والتصنيف والمكان.';
+
+function firstValue(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] || '' : value || '';
+}
+
+function resolveDirectoryState(params: Awaited<DirectorySearchParams>) {
+  const q = firstValue(params.q).trim().slice(0, 100);
+  const requestedCategory = firstValue(params.category);
+  const requestedLocality = firstValue(params.locality);
+  const requestedSort = firstValue(params.sort);
+  const category = categories.some((item) => item.name === requestedCategory) ? requestedCategory : '';
+  const locality = localities.some((item) => item.name === requestedLocality) ? requestedLocality : '';
+  const sort = requestedSort === 'rating' || requestedSort === 'name' ? requestedSort : 'recommended';
+  const requestedPage = Number.parseInt(firstValue(params.page), 10);
+  const totalPages = Math.max(1, Math.ceil(directoryBusinesses.length / pageSize));
+  const page = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPages) : 1;
+  return { q, category, locality, sort, page, totalPages } as const;
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const state = resolveDirectoryState(await searchParams);
+  const hasFilters = Boolean(state.q || state.category || state.locality || state.sort !== 'recommended');
+  const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString('ar-EG')}` : '';
+  const pageHref = state.page > 1 ? `/directory/?page=${state.page}` : '/directory/';
+
+  return {
+    title: `دليل الخدمات والأنشطة في نقادة${pageLabel}`,
+    description,
+    alternates: { canonical: hasFilters ? '/directory/' : pageHref },
+    ...(hasFilters ? { robots: { index: false, follow: true } } : {}),
+    pagination: hasFilters ? undefined : {
+      previous: state.page > 1 ? (state.page === 2 ? '/directory/' : `/directory/?page=${state.page - 1}`) : null,
+      next: state.page < state.totalPages ? `/directory/?page=${state.page + 1}` : null,
+    },
+  };
+}
+
+export default async function DirectoryPage({ searchParams }: Props) {
+  const state = resolveDirectoryState(await searchParams);
   const mapped = businesses.filter((item) => item.mapsUrl).length;
   const phoned = businesses.filter((item) => item.phone).length;
   return (
@@ -28,7 +72,17 @@ export default function DirectoryPage() {
       </section>
       <section className="shell page-section">
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز الدليل…</div>}>
-          <DirectoryExplorer businesses={directoryBusinesses} categories={categories} localities={localities} />
+          <DirectoryExplorer
+            key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
+            businesses={directoryBusinesses}
+            categories={categories}
+            localities={localities}
+            initialQuery={state.q}
+            initialCategory={state.category}
+            initialLocality={state.locality}
+            initialSort={state.sort}
+            initialPage={state.page}
+          />
         </Suspense>
       </section>
     </main>

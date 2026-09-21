@@ -234,8 +234,8 @@ img, svg { display: block; max-width: 100%; }
 .empty-state p { color: var(--muted); font-size: 13px; }
 .empty-state .button { margin-top: 10px; }
 .pagination { display: flex; align-items: center; justify-content: center; gap: 13px; margin-top: 28px; }
-.pagination button { min-height: 40px; padding-inline: 15px; border: 1px solid var(--line); border-radius: 11px; background: #fff; color: var(--green-900); font-size: 12px; font-weight: 800; }
-.pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.pagination .pagination__link { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding-inline: 15px; border: 1px solid var(--line); border-radius: 11px; background: #fff; color: var(--green-900); font-size: 12px; font-weight: 800; }
+.pagination .pagination__link[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
 .pagination span { color: var(--muted); font-size: 12px; }
 
 .category-hero__grid { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
@@ -494,7 +494,7 @@ img, svg { display: block; max-width: 100%; }
 .select-field select,
 .category-pills button,
 .results-bar button,
-.pagination button,
+.pagination .pagination__link,
 .tabs button,
 .source-links a { font-size: 14px; }
 .hero-search input,

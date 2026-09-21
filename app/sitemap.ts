@@ -4,7 +4,7 @@ import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
-import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
+import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
 
 export const dynamic = 'force-static';
 
@@ -62,7 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...baseRoutes.map(({ path, lastModified }) => ({ url: sitemapUrl(path), ...(lastModified ? { lastModified } : {}) })),
-    ...knowledgePlaces.map((item) => ({ url: sitemapUrl(`/knowledge/places/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
+    ...indexableKnowledgePlaces.map((item) => ({ url: sitemapUrl(`/knowledge/places/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...knowledgePeople.map((item) => ({ url: sitemapUrl(`/knowledge/people/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...knowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...allEditorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),

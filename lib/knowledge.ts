@@ -50,6 +50,20 @@ export function sourceById(id:string){return knowledgeSources.find((item)=>item.
 export function contributorById(id:string){return knowledgeContributors.find((item)=>item.id===id);}
 export function knowledgeAttribution(contributorId?:string){const contributor=contributorById(contributorId||knowledgeSummary.primaryContributorId)||primaryKnowledgeContributor;return contributor.attributionFull;}
 
+export function isKnowledgePlaceIndexable(place:KnowledgePlace){
+  return Boolean(
+    place.population1897
+    || place.male1897
+    || place.female1897
+    || place.houses1897
+    || place.population2014
+    || aliasesForPlace(place.name).length
+    || childrenForPlace(place.name).length
+  );
+}
+
+export const indexableKnowledgePlaces = knowledgePlaces.filter(isKnowledgePlaceIndexable);
+
 function normalizedPlaceLabel(value:string){
   return value
     .normalize('NFKD')

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
 import { MobileNav } from '@/components/mobile-nav';
-import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';
 import { SanadAssistant } from '@/components/sanad-assistant';
 import { UpdatesTicker } from '@/components/updates-ticker';
@@ -51,11 +51,7 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: '/' },
   robots: {
-    index: true,
-    follow: true,
     googleBot: {
-      index: true,
-      follow: true,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
@@ -64,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: siteConfig.locale,
-    url: siteConfig.url,
+    url: absoluteUrl('/'),
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.shortName,
@@ -92,25 +88,26 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const homeUrl = absoluteUrl('/');
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebSite',
-        '@id': `${siteConfig.url}#website`,
+        '@id': `${homeUrl}#website`,
         name: siteConfig.shortName,
         alternateName: siteConfig.alternateNames,
-        url: siteConfig.url,
+        url: homeUrl,
         inLanguage: 'ar-EG',
         description: siteConfig.description,
-        publisher: { '@id': `${siteConfig.url}#organization` },
+        publisher: { '@id': `${homeUrl}#organization` },
       },
       {
         '@type': 'Organization',
-        '@id': `${siteConfig.url}#organization`,
+        '@id': `${homeUrl}#organization`,
         name: siteConfig.shortName,
         alternateName: ['الموسوعة المحلية لمركز نقادة', ...siteConfig.alternateNames],
-        url: siteConfig.url,
+        url: homeUrl,
         logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         areaServed: { '@type': 'AdministrativeArea', name: 'مركز نقادة، محافظة قنا، مصر' },
       },

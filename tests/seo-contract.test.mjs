@@ -17,6 +17,13 @@ const activityPage = read('app/activities/[slug]/page.tsx');
 const activityData = read('lib/activity-landings.ts');
 const listingPage = read('app/listing/[slug]/page.tsx');
 const businesses05 = read('data/businesses-05.json');
+const directoryPage = read('app/directory/page.tsx');
+const directoryExplorer = read('components/directory-explorer.tsx');
+const globalNotFound = read('app/global-not-found.tsx');
+const nextConfig = read('next.config.ts');
+const knowledge = read('lib/knowledge.ts');
+const dataSource = read('lib/data.ts');
+const knowledgePlacePage = read('app/knowledge/places/[slug]/page.tsx');
 const villagePage = read('app/villages/[slug]/page.tsx');
 const villageCategoryPage = read('app/villages/[slug]/[category]/page.tsx');
 const villageArticleIndex = read('lib/village-articles/index.ts');
@@ -37,6 +44,8 @@ test('indexable pages expose unrestricted Google preview directives', () => {
     assert.ok(source.includes("'max-video-preview': -1"));
   }
   assert.ok(site.includes('robots: robots ?? defaultIndexRobots'));
+  assert.ok(!layout.includes('index: true'));
+  assert.ok(!site.includes('index: true'));
 });
 
 test('canonical URLs match the trailing-slash production URL shape', () => {
@@ -44,6 +53,15 @@ test('canonical URLs match the trailing-slash production URL shape', () => {
   assert.ok(site.includes("return `${normalizedPath.replace(/\\/+$/, '')}/`;"));
   assert.ok(site.includes('alternates: { canonical: normalizedPath }'));
   assert.ok(activityPage.includes('const pageUrl = `${siteConfig.url}/activities/${encodeURIComponent(activity.slug)}/`;'));
+  assert.ok(layout.includes("const homeUrl = absoluteUrl('/');"));
+  assert.ok(listingPage.includes('const canonicalUrl = absoluteUrl(`/listing/${encodeURIComponent(listing.slug)}`);'));
+});
+
+test('global 404 metadata is isolated from indexable page metadata', () => {
+  assert.ok(nextConfig.includes('globalNotFound: true'));
+  assert.ok(globalNotFound.includes("title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }"));
+  assert.ok(globalNotFound.includes('robots: { index: false, follow: true }'));
+  assert.ok(globalNotFound.includes('alternates: { canonical: null }'));
 });
 
 test('robots.txt stays crawlable and points at the canonical sitemap', () => {
@@ -67,6 +85,35 @@ test('sitemap remains focused on canonical content collections and listings', ()
   assert.ok(sitemap.includes('...indexableLocalities.map'));
   assert.ok(sitemap.includes('item.count >= 3'));
   assert.ok(sitemap.includes('...businesses.map'));
+  assert.ok(sitemap.includes('...indexableKnowledgePlaces.map'));
+});
+
+test('thin encyclopedia place records stay available but out of the search index', () => {
+  assert.ok(knowledge.includes('export function isKnowledgePlaceIndexable'));
+  assert.ok(knowledge.includes('export const indexableKnowledgePlaces'));
+  assert.ok(knowledgePlacePage.includes('robots: { index: false, follow: true }'));
+  assert.ok(knowledgePlacePage.includes('سجل أولي يحتاج استكمالًا'));
+});
+
+test('directory pagination has server state and crawlable links', () => {
+  assert.ok(directoryPage.includes('searchParams: DirectorySearchParams'));
+  assert.ok(directoryPage.includes('initialPage={state.page}'));
+  assert.ok(directoryPage.includes('pagination: hasFilters ? undefined'));
+  assert.ok(directoryExplorer.includes('className="pagination__link"'));
+  assert.ok(directoryExplorer.includes('rel="next"'));
+  assert.ok(directoryExplorer.includes("params.set('page', String(targetPage))"));
+});
+
+test('retired duplicate listing URLs permanently redirect to their canonical records', () => {
+  for (const slug of [
+    'ورشه-الاخوه-الثلاثه-طريق-اسمنت-بشلاو',
+    'ستديو-البرنس-طريق-بشلاو-دراو',
+    'حضانه-المهندس-عبدالصبور-سمري-طريق-بشلاو-دراو',
+  ]) {
+    assert.ok(dataSource.includes(slug));
+  }
+  assert.ok(dataSource.includes('export function getCanonicalBusinessSlugAlias'));
+  assert.ok(listingPage.includes('permanentRedirect(`/listing/${encodeURIComponent(canonicalAlias)}`)'));
 });
 
 test('search landing pages connect activity intent to published business names', () => {

@@ -218,7 +218,7 @@
   font-size: 11px;
 }
 
-.pagination button {
+.pagination .pagination__link {
   min-height: 42px;
   border: 1px solid rgba(32,83,64,.11);
   border-radius: 12px;
@@ -228,7 +228,7 @@
   font-weight: 850;
 }
 
-.pagination button:disabled {
+.pagination .pagination__link[aria-disabled="true"] {
   opacity: .42;
   cursor: default;
 }
@@ -377,7 +377,7 @@
     padding: 7px;
   }
 
-  .pagination button {
+  .pagination .pagination__link {
     min-height: 40px;
     padding-inline: 7px;
     font-size: 10px;

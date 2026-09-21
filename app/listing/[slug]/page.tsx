@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { BusinessMedia } from '@/components/business-media';
 import { ListingCard } from '@/components/listing-card';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { getBusinessMedia } from '@/lib/business-media';
-import { businesses, canonicalLocalityName, getBusinessBySlug, relatedBusinesses } from '@/lib/data';
-import { buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
+import { businesses, canonicalLocalityName, getBusinessBySlug, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
+import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -33,7 +33,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const listing = getBusinessBySlug(slug);
-  if (!listing) return {};
+  if (!listing) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } };
   const media = getBusinessMedia(listing.id);
   const locality = canonicalLocalityName(listing.locality);
   const description = truncateMetaDescription(listing.description || businessSummary({ ...listing, locality }));
@@ -47,6 +47,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
+  const canonicalAlias = getCanonicalBusinessSlugAlias(slug);
+  if (canonicalAlias) permanentRedirect(`/listing/${encodeURIComponent(canonicalAlias)}`);
   const listing = getBusinessBySlug(slug);
   if (!listing) notFound();
   const media = getBusinessMedia(listing.id);
@@ -57,8 +59,8 @@ export default async function ListingPage({ params }: Props) {
   const safeMapsUrl = isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : null;
   const safeMediaSourceUrl = media && isSafeExternalUrl(media.sourceUrl) ? media.sourceUrl : null;
   const related = relatedBusinesses(listing);
-  const canonicalUrl = `${siteConfig.url}/listing/${encodeURIComponent(listing.slug)}`;
-  const categoryUrl = `${siteConfig.url}/directory/${encodeURIComponent(slugify(listing.category))}`;
+  const canonicalUrl = absoluteUrl(`/listing/${encodeURIComponent(listing.slug)}`);
+  const categoryUrl = absoluteUrl(`/directory/${encodeURIComponent(slugify(listing.category))}`);
   const correctionUrl = `/contribute?type=correction&name=${encodeURIComponent(listing.name)}&category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}&listing=${encodeURIComponent(listing.slug)}`;
   const summary = listing.description || businessSummary({ ...listing, locality });
   const completenessSignals = [
@@ -123,7 +125,7 @@ export default async function ListingPage({ params }: Props) {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: siteConfig.url },
+          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: absoluteUrl('/') },
           { '@type': 'ListItem', position: 2, name: listing.category, item: categoryUrl },
           { '@type': 'ListItem', position: 3, name: listing.name, item: canonicalUrl },
         ],
