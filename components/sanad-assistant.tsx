@@ -77,6 +77,7 @@ export function SanadAssistant() {
     {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); setOpen(true); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
     <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else setOpen(true); }}>
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
+      <span className={styles.mobileLabel} aria-hidden="true">سند</span>
     </button>
     {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
       <header className={styles.header}>
