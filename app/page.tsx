@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
+import { NavigationIcon, type NavigationIconName } from '@/components/navigation-icon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ActionIcon } from '@/components/action-icon';
@@ -36,11 +38,17 @@ const serviceToneByCategory: Record<string, string> = {
   'الخدمات الحكومية': 'civic',
   'الجمعيات والمجتمع': 'community',
 };
+const homeRoutes: { href: string; title: string; description: string; icon: NavigationIconName }[] = [
+  { href: '/directory', title: 'خلّص مشوارك', description: 'شوف الخدمة اللي محتاجها', icon: 'services' },
+  { href: '/villages', title: 'شوف بلدك', description: 'قرى ونجوع وناس مننا', icon: 'villages' },
+  { href: '/knowledge', title: 'اعرفها زين', description: 'أماكن وأعلام وتراث بلدنا', icon: 'knowledge' },
+  { href: '/blog', title: 'خد لك حكاية', description: 'الشاي عليك والحكاوي علينا', icon: 'stories' },
+];
 const faq = [
-  { question: 'ما الذي أستطيع البحث عنه؟', answer: 'خدمات وأنشطة محلية، قرى ونجوع، أشخاص ومعالم وموضوعات من موسوعة نقادة.' },
-  { question: 'هل كل نشاط ظاهر معتمد رسميًا؟', answer: 'لا. الدليل منصة معلوماتية مستقلة، ويعرض مصدر البيانات وتاريخ المراجعة بقدر ما تسمح به المادة المتاحة.' },
-  { question: 'كيف تُراجع المعلومات المحلية؟', answer: 'تُربط البيانات بمصدرها، وتُعرض حدود المعلومة بوضوح، ويمكن لأهل نقادة إرسال تصحيح للمراجعة.' },
-  { question: 'هل تغطي الموسوعة كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
+  { question: 'أقدر أدوّر على إيه أهنه؟', answer: 'خدمات ومحلات، قرى ونجوع، وشخصيات ومعالم وحكايات من نقادة. اكتب اللي في بالك وشوف النتائج.' },
+  { question: 'كل نشاط في الدليل معتمد رسميًا؟', answer: 'لا. الدليل منصة معلوماتية مستقلة، ويعرض مصدر البيانات وتاريخ المراجعة بقدر ما تسمح به المادة المتاحة.' },
+  { question: 'بتراجعوا المعلومات كيف؟', answer: 'تُربط البيانات بمصدرها، وتُعرض حدود المعلومة بوضوح، ويمكن لأهل نقادة إرسال تصحيح للمراجعة.' },
+  { question: 'الموسوعة فيها كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
 ];
 
 export default function HomePage() {
@@ -87,12 +95,12 @@ export default function HomePage() {
               <span className={styles.liveBadge}><i /> دليل محلي متجدد باستمرار</span>
               <span className={styles.location}>مركز نقادة · محافظة قنا</span>
             </div>
-            <span className={styles.heroEyebrow}>دليل نقادة · من أهل المكان، لأهل المكان</span>
-            <h1>كل دروب نقادة،<br /><em>تبدأ من هنا.</em></h1>
-            <p>خدمة قريبة، قرية تعرفها، وحكاية تستحق أن تُروى.<br />ابحث في دليل نقادة واكتشف ما حولك.</p>
+            <span className={styles.heroEyebrow}>دليل نقادة · من أهل البلد، لأهل البلد</span>
+            <h1>عاوز إيه من نقادة؟<br /><em>تعال نوصّلك.</em></h1>
+            <p>بتدوّر على خدمة، ولا عاوز تعرف بلدك أكتر؟<br />قول لنا محتاج إيه… ونوفّر عليك اللفّة.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <nav className={styles.quickLinks} aria-label="وصول سريع">
-              <span>وصول سريع</span>
+              <span>على طول</span>
               {featuredActivities.slice(0, 4).map((activity) => <Link prefetch={false} key={activity.slug} href={`/activities/${activity.slug}`}>{activity.searchLabel}</Link>)}
               <Link prefetch={false} href="/villages">القرى</Link>
               <Link prefetch={false} href="/knowledge">الموسوعة</Link>
@@ -120,21 +128,31 @@ export default function HomePage() {
             </div>
             <div className={styles.placeCaption}>
               <span>مركز نقادة · محافظة قنا</span>
-              <strong>بلادنا، بتفاصيلها.</strong>
-              <Link prefetch={false} href="/villages">استكشف قرى نقادة <b aria-hidden="true">←</b></Link>
+              <strong>بلدنا… ونعرفها زين.</strong>
+              <Link prefetch={false} href="/villages">خد لك لفّة في القرى <b aria-hidden="true">←</b></Link>
             </div>
           </aside>
         </div>
 
         <Link prefetch={false} className={styles.heroScroll} href="#home-services">
-          <span>ابدأ الاستكشاف</span>
+          <span>تعال نشوف طلبك</span>
           <ActionIcon name="chevron" />
         </Link>
       </section>
 
+      <nav className={`shell ${styles.routeRibbon}`} aria-label="اختار مشوارك في دليل نقادة">
+        {homeRoutes.map((route, index) => (
+          <Link key={route.href} href={route.href} prefetch={false} className={styles.routeCard} style={{ '--route-delay': `${index * 65}ms` } as CSSProperties}>
+            <span className={styles.routeIcon}><NavigationIcon name={route.icon} /></span>
+            <span className={styles.routeCopy}><strong>{route.title}</strong><small>{route.description}</small></span>
+            <ActionIcon name="arrow" />
+          </Link>
+        ))}
+      </nav>
+
       <section className={`shell ${styles.section}`} id="home-services">
         <header className={styles.sectionHead}>
-          <div><span>قريب منك</span><h2>ما الذي تبحث عنه اليوم؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختر قسمك وابدأ.</p></div>
+          <div><span>قريب منك</span><h2>مشوارك على فين النهارده؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختار طلبك، وسيب اللفّة علينا.</p></div>
           <Link prefetch={false} href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
         </header>
         <div className={styles.serviceGrid}>
@@ -144,6 +162,7 @@ export default function HomePage() {
             return (
               <Link
                 key={activity.slug}
+                prefetch={false}
                 href={`/activities/${activity.slug}`}
                 className={styles.serviceItem}
                 data-index={String(index + 1).padStart(2, '0')}
@@ -156,7 +175,7 @@ export default function HomePage() {
                 </span>
                 <span className={styles.serviceCount}>{count.toLocaleString('ar-EG')} نتيجة</span>
                 <h3>{activity.name}</h3>
-                <span className={styles.serviceArrow}>استكشف القسم <ActionIcon name="arrow" /></span>
+                <span className={styles.serviceArrow}>شوف الموجود <ActionIcon name="arrow" /></span>
               </Link>
             );
           })}
@@ -166,7 +185,7 @@ export default function HomePage() {
       <section className={styles.discoveryBand}>
         <div className={`shell ${styles.discoveryGrid}`}>
           <article className={styles.placesPanel}>
-            <header><span>ابدأ من مكانك</span><h2>قرى نقادة ونجوعها</h2><p>اختر القرية لتجد خدماتها وملفها المحلي في صفحة واحدة.</p></header>
+            <header><span>ابدأ من مكانك</span><h2>قرى نقادة ونجوعها</h2><p>اختار بلدك، تلاقي خدماتها ومعلوماتها قدامك في صفحة واحدة.</p></header>
             <div className={styles.placeList}>
               {featuredLocalityGuides.map((item, index) => (
                 <Link prefetch={false} key={item.slug} href={`/villages/${item.slug}`}>
@@ -180,7 +199,7 @@ export default function HomePage() {
           </article>
 
           <article className={styles.knowledgePanel}>
-            <header><span>موسوعة نقادة</span><h2>اعرف المكان من مصادره</h2><p>مواد منظمة عن الجغرافيا والأعلام والتراث، مع إسناد واضح لكل مادة.</p></header>
+            <header><span>موسوعة نقادة</span><h2>اعرف بلدك زين</h2><p>أماكن وناس وتراث من بلدنا، وكل معلومة معاها مصدرها. عشان الحكاية تبقى على بيّنة.</p></header>
             <div className={styles.knowledgeTopics}>
               <Link prefetch={false} href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString('ar-EG')}</strong><small>موضعًا</small></Link>
               <Link prefetch={false} href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString('ar-EG')}</strong><small>شخصية</small></Link>
@@ -195,7 +214,7 @@ export default function HomePage() {
       {leadArticle ? (
         <section className={`shell ${styles.section} ${styles.stories}`}>
           <header className={styles.sectionHead}>
-            <div><span>من داخل المكان</span><h2>حكايات تستحق أن تُقرأ</h2><p>مقالات محلية مصوّرة عن الحياة والذاكرة والناس في نقادة.</p></div>
+            <div><span>من داخل المكان</span><h2>حكاوي بلدنا تحلّي القعدة</h2><p>هات كوباية الشاي، واقرأ عن ناس نقادة وبلادها وحكاياتها.</p></div>
             <Link prefetch={false} href="/blog">كل الحكايات <ActionIcon name="arrow" /></Link>
           </header>
           <div className={styles.storyGrid}>
@@ -241,12 +260,12 @@ export default function HomePage() {
       </section>
 
       <section className={`shell ${styles.community}`}>
-        <div><span>دليل يبنيه أهله</span><h2>وجدت معلومة ناقصة أو قديمة؟</h2><p>أرسل التصحيح مع مصدره، وسنراجعه قبل النشر.</p></div>
+        <div><span>دليل يبنيه أهله</span><h2>لقيت معلومة ناقصة؟ قول لنا.</h2><p>عينك معانا. ابعت التصحيح ومصدره، وإحنا نراجعه قبل ما ينزل.</p></div>
         <Link prefetch={false} href="/contribute"><ActionIcon name="add" /> أضف أو صحّح بيانات</Link>
       </section>
 
       <section className={`shell ${styles.faq}`}>
-        <header className={styles.sectionHead}><div><span>قبل أن تبدأ</span><h2>أسئلة قصيرة وإجابات واضحة</h2></div></header>
+        <header className={styles.sectionHead}><div><span>لو لسه بتسأل</span><h2>سؤالك عندنا وجوابه معاه</h2></div></header>
         <div>{faq.map((item) => <details key={item.question}><summary>{item.question}<ActionIcon name="chevron" /></summary><p>{item.answer}</p></details>)}</div>
       </section>
 

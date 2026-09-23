@@ -81,7 +81,7 @@ export function AccountButton() {
     >
       <span className="account-trigger__icon" aria-hidden="true">
         {user ? (
-          <MemberAvatar name={user.displayName} src={user.avatarUrl} frame={reputation?.frameCode || 'gray'} size={36} compact header />
+          <MemberAvatar name={user.displayName} src={user.avatarUrl} frame={reputation?.frameCode || 'gray'} size={38} compact header />
         ) : <UserIcon />}
       </span>
       <span>{ready && user ? user.displayName.split(' ')[0] : 'دخول'}</span>

@@ -8,13 +8,14 @@ import { GlobalSearch } from './global-search';
 import { HeaderNotifications } from './header-notifications';
 import footerStyles from './site-footer.module.css';
 import headerStyles from './site-header.module.css';
+import brandStyles from './brand-mark.module.css';
 
 const footerRoutes = [
   { href: '/directory', index: '01', title: 'دليل الخدمات', description: 'ابحث داخل الأنشطة والخدمات المحلية' },
-  { href: '/villages', index: '02', title: 'القرى والنجوع', description: 'افتح صفحة قريتك ومحتواها المحلي' },
+  { href: '/villages', index: '02', title: 'القرى والنجوع', description: 'شوف بلدك والخدمات اللي فيها' },
   { href: '/news', index: '03', title: 'أخبار نقادة وقنا', description: 'آخر الأخبار مع رابط المصدر الأصلي' },
   { href: '/knowledge', index: '04', title: 'موسوعة نقادة', description: 'أماكن وأعلام وتراث موثّق' },
-  { href: '/blog', index: '05', title: 'حكايات نقادة', description: 'قصص وصور من ذاكرة المكان' },
+  { href: '/blog', index: '05', title: 'حكايات نقادة', description: 'حكاوي وصور من بلدنا وناسها' },
 ];
 
 const footerUtilities = [
@@ -29,7 +30,7 @@ const footerUtilities = [
 export function BrandMark({ compact = false, priority = false }: { compact?: boolean; priority?: boolean }) {
   const size = compact ? 30 : 42;
   return (
-    <span className={`brand-mark${compact ? ' brand-mark--compact' : ''}`} aria-hidden="true">
+    <span className={`brand-mark ${brandStyles.mark}${compact ? ` ${brandStyles.compact}` : ''}`} aria-hidden="true">
       <Image src="/icon.svg" width={size} height={size} alt="" loading={priority ? 'eager' : 'lazy'} />
     </span>
   );
@@ -42,7 +43,7 @@ export function SiteHeader() {
         <Link prefetch={false} href="/" className={headerStyles.brand} aria-label="دليل نقادة — الرئيسية">
           <span className={headerStyles.emblem}><BrandMark priority /></span>
           <span className={headerStyles.brandCopy}>
-            <small><i aria-hidden="true" /> المرجع المحلي</small>
+            <small><i aria-hidden="true" /> من أهل البلد</small>
             <strong>دليل نقادة</strong>
           </span>
           <span className={headerStyles.scope}>قنا</span>
@@ -72,9 +73,9 @@ export function Footer() {
           <div className={footerStyles.identity}>
             <span className={footerStyles.emblem}><BrandMark /></span>
             <div className={footerStyles.identityCopy}>
-              <span className={footerStyles.kicker}>من أهل المكان، لأهل المكان</span>
+              <span className={footerStyles.kicker}>من أهل البلد، لأهل البلد</span>
               <h2 id="site-footer-title">دليل نقادة.</h2>
-              <p>نقادة بخدماتها وقراها وحكاياتها. دليل محلي مستقل يجمع المعلومة، ويحفظ حكاية المكان، ويكبر بمشاركة أهله.</p>
+              <p>بلدنا بخدماتها وقراها وحكاويها. نجمع لك المعلومة ونراجعها، والدليل يكبر بينا كلنا. لو عندك معلومة تنفع أهل البلد، ما تبخلش بيها.</p>
             </div>
           </div>
           <div className={footerStyles.actions}>
@@ -86,8 +87,8 @@ export function Footer() {
         <div className={footerStyles.content}>
           <nav className={footerStyles.routesPanel} aria-labelledby="footer-routes-title">
             <div className={footerStyles.sectionHeading}>
-              <div><span>ابدأ من هنا</span><h2 id="footer-routes-title">مسارات سريعة</h2></div>
-              <small>اختصر طريقك داخل الدليل</small>
+              <div><span>ابدأ من هنا</span><h2 id="footer-routes-title">اختار مشوارك</h2></div>
+              <small>من أهنه للي محتاجه</small>
             </div>
             <div className={footerStyles.routes}>
               {footerRoutes.map((route) => (
