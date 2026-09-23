@@ -1,6 +1,6 @@
 .footer { position:relative; background:#0d3027; color:#c6d6ca; }
 .accent { height:3px; background:linear-gradient(90deg,#0d3027,#b18b45 45%,#e3c985 55%,#0d3027); }
-.shell { padding-block:44px 22px; }
+.shell { padding-block:44px 92px; }
 .masthead { display:flex; align-items:center; justify-content:space-between; gap:32px; padding-bottom:32px; border-bottom:1px solid #ffffff1c; }
 .identity { display:flex; align-items:start; gap:18px; max-width:650px; min-width:0; }
 .emblem { flex-shrink:0; display:grid; place-items:center; width:56px; height:56px; padding:4px; border:1px solid #c6a76c66; border-radius:14px; background:#ffffff08; }
