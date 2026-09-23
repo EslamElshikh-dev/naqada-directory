@@ -107,8 +107,11 @@ export default async function EditorialPostPage({ params }: Props) {
         image: allImages.map((image) => ({
           '@type': 'ImageObject',
           url: imageUrl(image.asset),
+          contentUrl: imageUrl(image.asset),
           width: image.width,
           height: image.height,
+          name: image.alt,
+          description: image.alt,
           caption: image.caption,
         })),
         about: { '@type': 'Place', name: post.locality, containedInPlace: { '@type': 'AdministrativeArea', name: 'مركز نقادة، قنا، مصر' } },
