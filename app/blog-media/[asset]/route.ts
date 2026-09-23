@@ -37,6 +37,16 @@ const assets: Record<string, string> = {
   'awsat-vs-bahri-qamula-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/ad9cc770-f2f8-44a7-97c6-c1a0b62661f8.png',
   'awsat-qamula-education-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/b537478b-814e-4455-8976-6ec931b6a901.png',
   'qamula-spelling-search-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c74ca699-45d9-4817-82ec-cde9849341e2.png',
+  'naqada-local-search-guide-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/1f9abcc0-3bef-4e0d-bff4-305850620ea9.png',
+  'naqada-villages-names-addresses-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/7cefe11e-96b1-4c2a-b0f4-9c6b94a522a7.png',
+  'naqada-crafts-digital-identity-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/8d53d60c-2fee-434e-8097-984bd12c3c23.png',
+  'naqada-services-city-villages-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/a923ada7-95f8-4134-b0ec-f1f78e61a41d.png',
+  'bashlaw-awsat-qamula-address-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c63c3a44-43b0-4620-b245-a809616fd774.png',
+  'bashlaw-1273-records-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c59eca8c-97eb-4e3d-97bb-7137cc54f6ef.png',
+  'bashlaw-search-online-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/45d77b0f-ff0b-4919-bb0c-8f4a4541ed47.png',
+  'awsat-vs-bahri-qamula-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/5058d2a9-312d-4a76-b24b-0b7dfcb7bf2d.png',
+  'awsat-qamula-education-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/0bc7866a-6bfd-4da4-81de-f8f8351102c6.png',
+  'qamula-spelling-search-v2.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/33e6a3c3-601b-429c-8ebf-bdf3157dc15f.png',
 };
 
 export const revalidate = 604800;
