@@ -90,8 +90,8 @@ test('Google profile photos use the shared avatar component with constrained del
   assert.ok(accountButton.includes('<MemberAvatar'));
   assert.ok(accountButton.includes('src={user.avatarUrl}'));
   assert.ok(memberAvatar.includes("import Image from 'next/image'"));
-  assert.ok(memberAvatar.includes('Boolean(src && !failed)'));
-  assert.ok(memberAvatar.includes('onError={() => setFailed(true)}'));
+  assert.ok(memberAvatar.includes('Boolean(src && src !== failedSrc)'));
+  assert.ok(memberAvatar.includes('onError={() => setFailedSrc(src || null)}'));
   assert.ok(memberDashboard.includes('profile.avatarUrl || user.avatarUrl'));
 });
 

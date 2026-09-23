@@ -1,15 +1,21 @@
-.header { position:sticky; z-index:190; top:0; background:#fffefbf5; border-bottom:1px solid #dce5d8; }
-.inner { position:relative; min-height:82px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:22px; }
+.header { position:sticky; z-index:190; top:0; background:linear-gradient(110deg,#fffefa,#f5f8f1); border-bottom:1px solid #dce5d8; box-shadow:0 3px 18px #163c2a06; }
+.inner { position:relative; min-height:82px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:18px; }
 .brand { min-width:0; display:flex; align-items:center; gap:11px; color:#173f31; }
-.emblem { display:grid; place-items:center; width:48px; height:48px; border:1px solid #e4dac0; border-radius:13px; background:#f4efe1; flex-shrink:0; }
+.emblem { --brand-size:46px; display:grid; place-items:center; width:46px; height:46px; border:0; border-radius:24%; background:transparent; flex-shrink:0; box-shadow:0 4px 12px #42251717; transition:transform .22s ease; }
+.brand:hover .emblem { transform:translateY(-2px) rotate(-3deg); }
+.brand:focus-visible,.actions a:focus-visible,.actions button:focus-visible { outline:3px solid #b88639; outline-offset:4px; }
+.inner::after { content:""; position:absolute; bottom:-1px; inset-inline-start:0; width:112px; height:2px; background:linear-gradient(90deg,transparent,#c39a4a); }
 .brandCopy { display:grid; gap:2px; }
 .brandCopy small { color:#8e753f; font-size:.75rem; line-height:1.5; }
-.brandCopy small i { display:none; }
+.brandCopy small i { display:inline-block; width:12px; height:1px; background:#b89146; vertical-align:middle; margin-inline-end:4px; }
 .brandCopy strong { color:#173f31; font-size:1.125rem; line-height:1.6; white-space:nowrap; }
 .scope { display:none; }
 .actions { display:flex; align-items:center; gap:7px; }
-.actions :global(.global-search__trigger),.actions :global(.account-trigger) { min-height:42px; width:42px; min-width:42px; height:42px; padding:0; border:1px solid #e1e7dc; border-radius:9px; background:white; color:#325a42; box-shadow:none; }
+.actions :global(.global-search__trigger),.actions :global(.account-trigger) { min-height:44px; width:44px; min-width:44px; height:44px; padding:0; border:1px solid #e1e7dc; border-radius:9px; background:white; color:#325a42; box-shadow:none; }
 .actions :global(.global-search__trigger span),.actions :global(.account-trigger > span:last-child) { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.actions :global(.account-trigger.is-member) { border-radius:50%; background:transparent; border-color:transparent; box-shadow:none; }
+.actions :global(.account-trigger__icon) { width:38px; height:38px; flex:0 0 38px; display:grid; place-items:center; background:transparent; border:0; box-shadow:none; }
+.actions :global(.account-trigger.is-member .account-trigger__icon) { background:transparent; box-shadow:none; }
 .emergency { display:flex; align-items:center; gap:7px; min-height:42px; padding:8px 12px; border-radius:9px; border:1px solid #eadbcd; background:#fcf7ef; color:#884e35; font-size:.8125rem; white-space:nowrap; }
 .emergencyDot { width:6px; height:6px; background:#ba6847; border-radius:50%; }
 .explore { display:none; }
@@ -21,13 +27,15 @@
 }
 @media (max-width:760px) {
  .inner { min-height:68px; width:calc(100% - 28px); gap:7px; }
- .emblem { width:42px; height:42px; border-radius:11px; }
+ .emblem { --brand-size:40px; width:40px; height:40px; }
  .brand { gap:8px; }
  .brandCopy strong { font-size:1rem; }
  .brandCopy small,.emergency { display:none; }
  .actions { gap:5px; }
  .actions > :nth-child(2) { display:none; }
- .actions :global(.global-search__trigger),.actions :global(.account-trigger) { min-width:40px; width:40px; height:44px; min-height:44px; }
+ .actions :global(.global-search__trigger),.actions :global(.account-trigger) { min-width:44px; width:44px; height:44px; min-height:44px; }
 }
-@media (max-width:360px) { .inner { width:calc(100% - 20px); gap:5px; } .brandCopy strong { font-size:.875rem; } .brand { gap:5px; } .emblem { width:35px; height:40px; } .actions { gap:3px; } }
+@media (max-width:360px) { .inner { width:calc(100% - 20px); gap:5px; } .brandCopy strong { font-size:.875rem; } .brand { gap:5px; } .emblem { --brand-size:34px; width:34px; height:34px; } .actions { gap:3px; } }
 @media print { .header { display:none; } }
+
+@media (prefers-reduced-motion:reduce) { .emblem { transition:none; } }

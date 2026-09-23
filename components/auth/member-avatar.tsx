@@ -17,9 +17,9 @@ type Props = {
 };
 
 export function MemberAvatar({ name, src, frame = 'gray', size = 72, badge, compact = false, header = false, priority = false }: Props) {
-  const [failed, setFailed] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const initial = name.trim().charAt(0) || 'ع';
-  const showImage = Boolean(src && !failed);
+  const showImage = Boolean(src && src !== failedSrc);
   const style = { '--avatar-size': `${size}px` } as CSSProperties;
 
   return (
@@ -32,9 +32,9 @@ export function MemberAvatar({ name, src, frame = 'gray', size = 72, badge, comp
               alt=""
               fill
               sizes={`${size}px`}
-              priority={priority}
+              loading={priority ? 'eager' : 'lazy'}
               referrerPolicy="no-referrer"
-              onError={() => setFailed(true)}
+              onError={() => setFailedSrc(src || null)}
             />
           ) : <b>{initial}</b>}
         </span>
