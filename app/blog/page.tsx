@@ -33,7 +33,7 @@ export default function BlogPage() {
   const displayPosts = [...allEditorialPosts].sort(
     (a, b) => Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt)
   );
-  const totalPosts = displayPosts.length;
+  const totalPosts = allEditorialPosts.length;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -56,7 +56,7 @@ export default function BlogPage() {
           url: siteConfig.url,
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
-        blogPost: displayPosts.map((post) => ({
+        blogPost: allEditorialPosts.map((post) => ({
           '@type': 'BlogPosting',
           headline: post.title,
           description: post.description,
