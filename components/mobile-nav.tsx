@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './mobile-nav.module.css';
+import { isNavigationActive } from '@/lib/navigation';
 
 type NavIconName = 'home' | 'search' | 'places' | 'knowledge';
 
@@ -34,9 +35,9 @@ export function MobileNav() {
   return (
     <nav className={styles.nav} aria-label="التنقل على الجوال">
       {items.map((item) => {
-        const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+        const active = isNavigationActive(pathname, item.href);
         return (
-          <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined}>
+          <Link key={item.href} href={item.href} prefetch={false} aria-current={active ? 'page' : undefined}>
             <NavIcon name={item.icon} />
             <span className={styles.label}>{item.label}</span>
           </Link>

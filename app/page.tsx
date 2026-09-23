@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ActionIcon } from '@/components/action-icon';
 import { CategoryVisual } from '@/components/category-visual';
 import { HomeSmartSearch } from '@/components/home-smart-search';
-import { SiteReviews } from '@/components/site-reviews';
+import { DeferredSiteReviews as SiteReviews } from '@/components/deferred-site-reviews';
 import { BrandMark } from '@/components/site-shell';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { businesses, localities, meta, officialLocalities } from '@/lib/data';
@@ -87,15 +87,15 @@ export default function HomePage() {
               <span className={styles.liveBadge}><i /> دليل محلي متجدد باستمرار</span>
               <span className={styles.location}>مركز نقادة · محافظة قنا</span>
             </div>
-            <span className={styles.heroEyebrow}>الموسوعة المحلية لمركز نقادة وقراه</span>
-            <h1>دليل نقادة المحلي… <em>خدمتك وقريتك</em> في بحث واحد.</h1>
-            <p>ابحث عن الأطباء والصيدليات والمدارس والمحلات والخدمات داخل مركز نقادة، وافتح دليل قريتك أو حكايات المكان من نقطة واحدة واضحة وسريعة.</p>
+            <span className={styles.heroEyebrow}>دليل نقادة · من أهل المكان، لأهل المكان</span>
+            <h1>كل دروب نقادة،<br /><em>تبدأ من هنا.</em></h1>
+            <p>خدمة قريبة، قرية تعرفها، وحكاية تستحق أن تُروى.<br />ابحث في دليل نقادة واكتشف ما حولك.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <nav className={styles.quickLinks} aria-label="وصول سريع">
               <span>وصول سريع</span>
-              {featuredActivities.slice(0, 4).map((activity) => <Link key={activity.slug} href={`/activities/${activity.slug}`}>{activity.searchLabel}</Link>)}
-              <Link href="/villages">القرى</Link>
-              <Link href="/knowledge">الموسوعة</Link>
+              {featuredActivities.slice(0, 4).map((activity) => <Link prefetch={false} key={activity.slug} href={`/activities/${activity.slug}`}>{activity.searchLabel}</Link>)}
+              <Link prefetch={false} href="/villages">القرى</Link>
+              <Link prefetch={false} href="/knowledge">الموسوعة</Link>
             </nav>
             <div className={styles.trust} aria-label="إحصاءات الدليل">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>خدمة ونشاط</small></span>
@@ -106,11 +106,12 @@ export default function HomePage() {
 
           <aside className={styles.placeCard} aria-label="مشهد تعبيري من مركز نقادة">
             <Image
-              src="/blog-media/bashlaw-today-hero.jpg"
+              src="/images/naqada-home.jpg"
               alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"
               fill
-              priority
-              sizes="(max-width: 900px) 100vw, 420px"
+              loading="eager"
+              fetchPriority="high"
+              sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 40vw, 480px"
             />
             <span className={styles.placeShade} aria-hidden="true" />
             <div className={styles.placeTop}>
@@ -119,13 +120,13 @@ export default function HomePage() {
             </div>
             <div className={styles.placeCaption}>
               <span>مركز نقادة · محافظة قنا</span>
-              <strong>الأرض والقرى والخدمات في دليل واحد</strong>
-              <Link href="/villages">استكشف قرى نقادة <b aria-hidden="true">←</b></Link>
+              <strong>بلادنا، بتفاصيلها.</strong>
+              <Link prefetch={false} href="/villages">استكشف قرى نقادة <b aria-hidden="true">←</b></Link>
             </div>
           </aside>
         </div>
 
-        <Link className={styles.heroScroll} href="#home-services">
+        <Link prefetch={false} className={styles.heroScroll} href="#home-services">
           <span>ابدأ الاستكشاف</span>
           <ActionIcon name="chevron" />
         </Link>
@@ -133,8 +134,8 @@ export default function HomePage() {
 
       <section className={`shell ${styles.section}`} id="home-services">
         <header className={styles.sectionHead}>
-          <div><span>أقسام الدليل</span><h2>ابدأ بنوع الخدمة التي تحتاج إليها</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة، داخل أقسام مصوّرة ومرتبة للوصول بأقل عدد من الخطوات.</p></div>
-          <Link href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
+          <div><span>قريب منك</span><h2>ما الذي تبحث عنه اليوم؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختر قسمك وابدأ.</p></div>
+          <Link prefetch={false} href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
         </header>
         <div className={styles.serviceGrid}>
           {featuredActivities.map((activity, index) => {
@@ -149,13 +150,12 @@ export default function HomePage() {
                 data-tone={serviceToneByCategory[activity.visualCategory] || 'local'}
               >
                 <span className={styles.serviceMedia}>
-                  <Image src={media.imageUrl} alt={media.imageAlt} fill sizes="(max-width: 720px) 112px, 33vw" />
+                  <Image src={media.imageUrl} alt={media.imageAlt} fill sizes="(max-width: 540px) calc((100vw - 52px) / 2), (max-width: 1000px) 30vw, 190px" />
                   <i aria-hidden="true" />
                   <CategoryVisual category={activity.visualCategory} size="sm" />
                 </span>
                 <span className={styles.serviceCount}>{count.toLocaleString('ar-EG')} نتيجة</span>
                 <h3>{activity.name}</h3>
-                <p>{activity.description}</p>
                 <span className={styles.serviceArrow}>استكشف القسم <ActionIcon name="arrow" /></span>
               </Link>
             );
@@ -169,25 +169,25 @@ export default function HomePage() {
             <header><span>ابدأ من مكانك</span><h2>قرى نقادة ونجوعها</h2><p>اختر القرية لتجد خدماتها وملفها المحلي في صفحة واحدة.</p></header>
             <div className={styles.placeList}>
               {featuredLocalityGuides.map((item, index) => (
-                <Link key={item.slug} href={`/villages/${item.slug}`}>
+                <Link prefetch={false} key={item.slug} href={`/villages/${item.slug}`}>
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <div><strong>دليل {item.name}</strong><small>{item.type}</small></div>
                   <b>{item.businessCount.toLocaleString('ar-EG')}</b>
                 </Link>
               ))}
             </div>
-            <Link href="/villages" className={styles.panelLink}>عرض خريطة الأماكن <ActionIcon name="arrow" /></Link>
+            <Link prefetch={false} href="/villages" className={styles.panelLink}>كل القرى والنجوع <ActionIcon name="arrow" /></Link>
           </article>
 
           <article className={styles.knowledgePanel}>
             <header><span>موسوعة نقادة</span><h2>اعرف المكان من مصادره</h2><p>مواد منظمة عن الجغرافيا والأعلام والتراث، مع إسناد واضح لكل مادة.</p></header>
             <div className={styles.knowledgeTopics}>
-              <Link href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString('ar-EG')}</strong><small>موضعًا</small></Link>
-              <Link href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString('ar-EG')}</strong><small>شخصية</small></Link>
-              <Link href="/knowledge/heritage"><span>التراث</span><strong>{knowledgeHeritage.length.toLocaleString('ar-EG')}</strong><small>موضوعًا</small></Link>
+              <Link prefetch={false} href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString('ar-EG')}</strong><small>موضعًا</small></Link>
+              <Link prefetch={false} href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString('ar-EG')}</strong><small>شخصية</small></Link>
+              <Link prefetch={false} href="/knowledge/heritage"><span>التراث</span><strong>{knowledgeHeritage.length.toLocaleString('ar-EG')}</strong><small>موضوعًا</small></Link>
             </div>
             <div className={styles.attribution}><b>أد</b><p>بمساهمة <strong>{primaryKnowledgeContributor.name}</strong><small>{primaryKnowledgeContributor.role}</small></p></div>
-            <Link href="/knowledge" className={styles.panelLink}>تصفّح الموسوعة <ActionIcon name="arrow" /></Link>
+            <Link prefetch={false} href="/knowledge" className={styles.panelLink}>تصفّح الموسوعة <ActionIcon name="arrow" /></Link>
           </article>
         </div>
       </section>
@@ -196,16 +196,16 @@ export default function HomePage() {
         <section className={`shell ${styles.section} ${styles.stories}`}>
           <header className={styles.sectionHead}>
             <div><span>من داخل المكان</span><h2>حكايات تستحق أن تُقرأ</h2><p>مقالات محلية مصوّرة عن الحياة والذاكرة والناس في نقادة.</p></div>
-            <Link href="/blog">كل الحكايات <ActionIcon name="arrow" /></Link>
+            <Link prefetch={false} href="/blog">كل الحكايات <ActionIcon name="arrow" /></Link>
           </header>
           <div className={styles.storyGrid}>
-            <Link href={`/blog/${leadArticle.slug}`} className={styles.leadStory}>
+            <Link prefetch={false} href={`/blog/${leadArticle.slug}`} className={styles.leadStory}>
               <Image src={`/blog-media/${encodeURIComponent(leadArticle.hero.asset)}`} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
               <div><span>{leadArticle.category} · {leadArticle.locality}</span><h3>{leadArticle.title}</h3><p>{leadArticle.description}</p><b>اقرأ الحكاية <ActionIcon name="arrow" /></b></div>
             </Link>
             <div className={styles.storyList}>
               {featuredArticles.slice(1).map((article, index) => (
-                <Link key={article.slug} href={`/blog/${article.slug}`}>
+                <Link prefetch={false} key={article.slug} href={`/blog/${article.slug}`}>
                   <span className={styles.storyThumb}>
                     <Image
                       src={`/blog-media/${encodeURIComponent(article.hero.asset)}`}
@@ -227,10 +227,10 @@ export default function HomePage() {
 
       <section className={styles.updateBand}>
         <div className={`shell ${styles.updates}`}>
-          <header><span>الدليل يتجدد</span><h2>معلومات راجعناها مؤخرًا</h2><Link href="/updates">سجل التحديثات <ActionIcon name="arrow" /></Link></header>
+          <header><span>الدليل يتجدد</span><h2>معلومات راجعناها مؤخرًا</h2><Link prefetch={false} href="/updates">سجل التحديثات <ActionIcon name="arrow" /></Link></header>
           <div>
             {recentlyReviewed.map((item) => (
-              <Link key={item.id} href={`/listing/${item.slug}`}>
+              <Link prefetch={false} key={item.id} href={`/listing/${item.slug}`}>
                 <span><strong>{item.name}</strong><small>{item.category} · {item.locality}</small></span>
                 <time dateTime={item.checked || undefined}>{item.checked}</time>
                 <ActionIcon name="arrow" />
@@ -242,7 +242,7 @@ export default function HomePage() {
 
       <section className={`shell ${styles.community}`}>
         <div><span>دليل يبنيه أهله</span><h2>وجدت معلومة ناقصة أو قديمة؟</h2><p>أرسل التصحيح مع مصدره، وسنراجعه قبل النشر.</p></div>
-        <Link href="/contribute"><ActionIcon name="add" /> أضف أو صحّح بيانات</Link>
+        <Link prefetch={false} href="/contribute"><ActionIcon name="add" /> أضف أو صحّح بيانات</Link>
       </section>
 
       <section className={`shell ${styles.faq}`}>
@@ -250,10 +250,7 @@ export default function HomePage() {
         <div>{faq.map((item) => <details key={item.question}><summary>{item.question}<ActionIcon name="chevron" /></summary><p>{item.answer}</p></details>)}</div>
       </section>
 
-      <details className={styles.reviewReveal}>
-        <summary><span><small>مساحة المجتمع</small><strong>شاركنا رأيك في الدليل</strong></span><b>فتح التقييمات</b></summary>
-        <SiteReviews />
-      </details>
+      <SiteReviews />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />

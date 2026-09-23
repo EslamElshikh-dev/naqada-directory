@@ -23,18 +23,25 @@ export function UpdatesTicker() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch('/api/news', { signal: controller.signal })
+    const loadNews = () => {
+      fetch('/api/news', { signal: controller.signal })
       .then((response) => response.ok ? response.json() : Promise.reject(new Error('News unavailable')))
       .then((payload: { items?: TickerItem[] }) => {
         if (Array.isArray(payload.items) && payload.items.length) setLiveItems(payload.items);
       })
       .catch(() => undefined);
-    return () => controller.abort();
+    };
+    // Let the visible page and its image finish first; abort on navigation/unmount.
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => { timer = setTimeout(loadNews, 1800); };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
+    return () => { window.removeEventListener('load', schedule); clearTimeout(timer); controller.abort(); };
   }, []);
 
   return (
     <section className={styles.root} data-paused={paused} dir="rtl" aria-label="آخر أخبار وتحديثات دليل نقادة">
-      <Link href="/news" className={styles.heading}>
+      <Link prefetch={false} href="/news" className={styles.heading}>
         <i aria-hidden="true" />
         <span><small>نبض نقادة</small><strong>الأخبار الآن</strong></span>
       </Link>
@@ -43,7 +50,7 @@ export function UpdatesTicker() {
         <div className={styles.track}>
           <div className={styles.group}>
             {tickerItems.map((item) => (
-              <Link className={styles.item} href={item.href} key={`${item.tag}-${item.href}-${item.text}`}>
+              <Link prefetch={false} className={styles.item} href={item.href} key={`${item.tag}-${item.href}-${item.text}`}>
                 <span>{item.tag}</span>
                 <strong>{item.text}</strong>
                 <b aria-hidden="true">←</b>

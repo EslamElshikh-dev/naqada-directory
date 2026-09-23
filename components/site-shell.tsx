@@ -30,7 +30,7 @@ export function BrandMark({ compact = false, priority = false }: { compact?: boo
   const size = compact ? 30 : 42;
   return (
     <span className={`brand-mark${compact ? ' brand-mark--compact' : ''}`} aria-hidden="true">
-      <Image src="/icon.svg" width={size} height={size} alt="" priority={priority} />
+      <Image src="/icon.svg" width={size} height={size} alt="" loading={priority ? 'eager' : 'lazy'} />
     </span>
   );
 }
@@ -39,7 +39,7 @@ export function SiteHeader() {
   return (
     <header className={headerStyles.header}>
       <div className={`shell ${headerStyles.inner}`}>
-        <Link href="/" className={headerStyles.brand} aria-label="دليل نقادة — الرئيسية">
+        <Link prefetch={false} href="/" className={headerStyles.brand} aria-label="دليل نقادة — الرئيسية">
           <span className={headerStyles.emblem}><BrandMark priority /></span>
           <span className={headerStyles.brandCopy}>
             <small><i aria-hidden="true" /> المرجع المحلي</small>
@@ -52,11 +52,11 @@ export function SiteHeader() {
           <GlobalSearch />
           <HeaderNotifications />
           <AccountButton />
-          <Link href="/emergency" className={headerStyles.emergency} aria-label="أرقام الطوارئ والخدمات المهمة">
+          <Link prefetch={false} href="/emergency" className={headerStyles.emergency} aria-label="أرقام الطوارئ والخدمات المهمة">
             <span className={headerStyles.emergencyDot} aria-hidden="true" />
             <span>أرقام مهمة</span>
           </Link>
-          <Link href="/directory" className={headerStyles.explore}><span>استكشف الدليل</span><ActionIcon name="arrow" /></Link>
+          <Link prefetch={false} href="/directory" className={headerStyles.explore}><span>استكشف الدليل</span><ActionIcon name="arrow" /></Link>
         </div>
       </div>
     </header>
@@ -72,14 +72,14 @@ export function Footer() {
           <div className={footerStyles.identity}>
             <span className={footerStyles.emblem}><BrandMark /></span>
             <div className={footerStyles.identityCopy}>
-              <span className={footerStyles.kicker}>مرجعك المحلي داخل مركز نقادة</span>
-              <h2 id="site-footer-title">كل نقادة… في مساحة واحدة واضحة.</h2>
-              <p>دليل خدمات وموسوعة مكانية تجمع الأنشطة والقرى والحكايات، وتساعدك على الوصول للمعلومة الصحيحة بأقل عدد من الخطوات.</p>
+              <span className={footerStyles.kicker}>من أهل المكان، لأهل المكان</span>
+              <h2 id="site-footer-title">دليل نقادة.</h2>
+              <p>نقادة بخدماتها وقراها وحكاياتها. دليل محلي مستقل يجمع المعلومة، ويحفظ حكاية المكان، ويكبر بمشاركة أهله.</p>
             </div>
           </div>
           <div className={footerStyles.actions}>
-            <Link href="/directory" className={footerStyles.primaryAction}><span>استكشف الخدمات</span><ActionIcon name="arrow" /></Link>
-            <Link href="/contribute" className={footerStyles.secondaryAction}><ActionIcon name="add" /><span>أضف أو صحّح معلومة</span></Link>
+            <Link prefetch={false} href="/directory" className={footerStyles.primaryAction}><span>استكشف الخدمات</span><ActionIcon name="arrow" /></Link>
+            <Link prefetch={false} href="/contribute" className={footerStyles.secondaryAction}><ActionIcon name="add" /><span>أضف أو صحّح معلومة</span></Link>
           </div>
         </section>
 
@@ -91,7 +91,7 @@ export function Footer() {
             </div>
             <div className={footerStyles.routes}>
               {footerRoutes.map((route) => (
-                <Link href={route.href} className={footerStyles.route} key={route.href}>
+                <Link prefetch={false} href={route.href} className={footerStyles.route} key={route.href}>
                   <span className={footerStyles.routeIndex}>{route.index}</span>
                   <span className={footerStyles.routeCopy}><strong>{route.title}</strong><small>{route.description}</small></span>
                   <ActionIcon name="arrow" />
@@ -115,19 +115,19 @@ export function Footer() {
             <section className={footerStyles.localCard} aria-labelledby="footer-scope-title">
               <span className={footerStyles.localIcon} aria-hidden="true">✓</span>
               <div><strong id="footer-scope-title">محتوى محلي بنطاق واضح</strong><p>التغطية مخصصة لمركز نقادة وقراه ونجوعه بمحافظة قنا، مع مراجعة البيانات وتحديثها باستمرار.</p></div>
-              <Link href="/emergency">أرقام مهمة <ActionIcon name="arrow" /></Link>
+              <Link prefetch={false} href="/emergency">أرقام مهمة <ActionIcon name="arrow" /></Link>
             </section>
 
             <nav className={footerStyles.utilityLinks} aria-label="روابط مساعدة">
-              {footerUtilities.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
+              {footerUtilities.map((item) => <Link prefetch={false} href={item.href} key={item.href}>{item.label}</Link>)}
             </nav>
           </aside>
         </div>
 
         <div className={footerStyles.bottom}>
           <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
-          <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link href="/privacy">الخصوصية</Link><Link href="/about">عن الدليل</Link></div>
-          <Link href="/about/developer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">←</span></Link>
+          <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link prefetch={false} href="/privacy">الخصوصية</Link><Link prefetch={false} href="/about">عن الدليل</Link></div>
+          <Link prefetch={false} href="/about/developer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">←</span></Link>
         </div>
       </div>
     </footer>

@@ -213,7 +213,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           aria-autocomplete={canSearch ? 'list' : undefined}
         />
         {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
-        <button type="submit"><span>ابحث في الدليل</span><b aria-hidden="true">←</b></button>
+        <button type="submit"><span>ابحث</span><b aria-hidden="true">←</b></button>
       </form>
 
       {!compact ? <nav className={styles.shortcutRail} aria-label="اختصارات مباشرة من الصفحة الرئيسية">
