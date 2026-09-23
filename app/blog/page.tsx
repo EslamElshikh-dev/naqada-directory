@@ -17,9 +17,23 @@ function editorialImage(asset: string) {
   return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
 }
 
+function formatArticleDate(date: string) {
+  const [year, month, day] = date.split('-').map(Number);
+  if (!year || !month || !day) return date;
+  return new Intl.DateTimeFormat('ar-EG', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, day, 12)));
+}
+
 export default function BlogPage() {
   const blogUrl = `${siteConfig.url}/blog/`;
-  const totalPosts = allEditorialPosts.length;
+  const displayPosts = [...allEditorialPosts].sort(
+    (a, b) => Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt)
+  );
+  const totalPosts = displayPosts.length;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -30,7 +44,7 @@ export default function BlogPage() {
         description: 'حكايات ومقالات محلية مصورة عن تاريخ وناس ومعالم مركز نقادة بمحافظة قنا.',
         url: blogUrl,
         inLanguage: 'ar-EG',
-        image: allEditorialPosts[0] ? editorialImage(allEditorialPosts[0].hero.asset) : siteConfig.socialImage,
+        image: displayPosts[0] ? editorialImage(displayPosts[0].hero.asset) : siteConfig.socialImage,
         author: {
           '@type': 'Person',
           name: villageArticleAuthor.name,
@@ -42,7 +56,7 @@ export default function BlogPage() {
           url: siteConfig.url,
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
-        blogPost: allEditorialPosts.map((post) => ({
+        blogPost: displayPosts.map((post) => ({
           '@type': 'BlogPosting',
           headline: post.title,
           description: post.description,
@@ -89,7 +103,7 @@ export default function BlogPage() {
       </section>
 
       <section className={`shell ${styles.archive}`}>
-        {allEditorialPosts.length > 0 && (
+        {displayPosts.length > 0 && (
           <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>
               <div>
@@ -99,7 +113,7 @@ export default function BlogPage() {
               </div>
             </div>
             <div className={editorialStyles.editorialGrid}>
-              {allEditorialPosts.map((post) => (
+              {displayPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <Image
                     src={`/blog-media/${encodeURIComponent(post.hero.asset)}`}
@@ -111,7 +125,7 @@ export default function BlogPage() {
                   <div className={editorialStyles.editorialCardBody}>
                     <div className={styles.cardTop}>
                       <span>{post.locality}</span>
-                      <time dateTime={post.modifiedAt}>٥ سبتمبر ٢٠٢٦</time>
+                      <time dateTime={post.modifiedAt}>{formatArticleDate(post.modifiedAt)}</time>
                     </div>
                     <h2>{post.title}</h2>
                     <p>{post.description}</p>
