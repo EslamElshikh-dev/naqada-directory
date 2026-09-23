@@ -27,6 +27,16 @@ const assets: Record<string, string> = {
   'hariqa-zawayda-network.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/4443d10f-e088-4760-b628-b1eb6fa38cec.jpg',
   'hariqa-community-services.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/d39aca80-ec6f-471b-9618-f933f8c712c0.jpg',
   'hariqa-mosque-community.jpg': 'https://cdn.creativeclaw.co/u/34cb5082/images/7918c38f-e35c-4d57-aa91-1397d161e3e2.jpg',
+  'naqada-local-search-guide-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/8dad41c8-ae1f-47cf-9b1a-dc02f45bf86c.png',
+  'naqada-villages-names-addresses-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c8abf2e8-715c-4cf0-9223-f367fcd65fef.png',
+  'naqada-crafts-digital-identity-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/7f250d58-e8dd-48ea-b8ed-ab51f2c1858e.png',
+  'naqada-services-city-villages-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/ebf72984-e71d-49a4-8472-d15344e1d61a.png',
+  'bashlaw-awsat-qamula-address-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/affd45eb-0744-4646-9fd0-5dc570223c51.png',
+  'bashlaw-1273-records-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c58ac596-23e7-4f0e-b9dc-82c070f41540.png',
+  'bashlaw-search-online-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/17758a52-f34f-4f73-a56a-2b46654ea373.png',
+  'awsat-vs-bahri-qamula-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/ad9cc770-f2f8-44a7-97c6-c1a0b62661f8.png',
+  'awsat-qamula-education-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/b537478b-814e-4455-8976-6ec931b6a901.png',
+  'qamula-spelling-search-2026.png': 'https://cdn.creativeclaw.co/u/34cb5082/images/c74ca699-45d9-4817-82ec-cde9849341e2.png',
 };
 
 export const revalidate = 604800;
