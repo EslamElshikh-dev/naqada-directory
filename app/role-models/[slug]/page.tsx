@@ -99,7 +99,7 @@ export default async function RoleModelArticle({ params }: Props) {
               <span className={styles.eyebrow}>نماذج مشرفة في نقادة · {person.locality}</span>
               <h1>{person.name}</h1>
               <p>{person.shortTitle}</p>
-              <div className={styles.heroTags}><span>تعليم</span><span>تطوع</span><span>تكنولوجيا</span></div>
+              <div className={styles.heroTags}>{person.heroTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
             </div>
             <div className={styles.articlePortrait}>
               {person.photos[0]
@@ -134,7 +134,7 @@ export default async function RoleModelArticle({ params }: Props) {
           <section className={styles.sourceNote} aria-labelledby="source-title">
             <span>الشفافية في الحكاية</span>
             <h2 id="source-title">المصدر وما نعرفه</h2>
-            <p>هذا المقال تحرير محلي مبني على منشور «نماذج مشرفة في قنا» الذي قدّمته لنا. لم نتحقق بشكل مستقل من جميع الشهادات أو الألقاب؛ لذلك نُنسب التفاصيل إلى مصدرها. إذا كان لديك تصحيح موثق، يسعدنا مراجعته.</p>
+            <p>{person.sourceDisclosure}</p>
             <a href={person.sourceUrl} target="_blank" rel="noopener noreferrer external">{person.sourceLabel} <span aria-hidden="true">↗</span></a>
           </section>
           <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
