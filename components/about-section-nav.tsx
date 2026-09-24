@@ -5,7 +5,7 @@ type AboutSection = 'directory' | 'developer';
 
 const items = [
   { key: 'directory', href: '/about', label: 'عن الدليل', meta: 'المشروع' },
-  { key: 'developer', href: '/about/developer', label: 'عن المطوّر', meta: 'إسلام الشيخ' },
+  { key: 'developer', href: '/developer', label: 'عن المطوّر', meta: 'إسلام الشيخ' },
 ] as const;
 
 export function AboutSectionNav({ current }: { current: AboutSection }) {

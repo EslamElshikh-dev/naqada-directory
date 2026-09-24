@@ -13,12 +13,11 @@ import {
 import styles from '@/app/knowledge/developer/developer.module.css';
 
 const themeClassNames: Record<DeveloperProjectTheme, string> = {
+  usayrat: styles.projectUsayrat,
   naqada: styles.projectNaqada,
   tawod: styles.projectTawod,
   sama: styles.projectSama,
   bowdy: styles.projectBowdy,
-  portfolio: styles.projectPortfolio,
-  ahmadi: styles.projectAhmadi,
 };
 
 export function DeveloperWorkShowcase() {
@@ -32,10 +31,10 @@ export function DeveloperWorkShowcase() {
       <div className={`shell ${styles.workInner}`}>
         <header className={styles.workHeader}>
           <div>
-            <p className={styles.kicker}>SELECTED WORK / أعمال مختارة</p>
-            <h2 id="selected-work-title">مشروعات تحمل<br /><em>بصمة مختلفة.</em></h2>
+            <p className={styles.kicker}>من العسيرات لنقادة... وأبعد</p>
+            <h2 id="selected-work-title">خمس حكايات،<br /><em>وكل واحدة لها ناسها.</em></h2>
           </div>
-          <p>لقطات من منتجات رقمية تمزج الهوية، الأداء، وسهولة الوصول—مع اهتمام بالتفاصيل الصغيرة التي تصنع الانطباع الكبير.</p>
+          <p>بدأت بالأقرب لقلبي: دليل العسيرات. وبعده دليل نقادة ومشروعات في المقاولات والصحة والتقنية. افتح أي مشروع وشوفه بنفسك.</p>
         </header>
 
         <div className={styles.workToolbar} aria-label="تصفية الأعمال المختارة">
