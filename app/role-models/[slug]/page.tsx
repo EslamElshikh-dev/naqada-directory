@@ -18,11 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!person) return { robots: { index: false, follow: true } };
   const url = absoluteUrl('/role-models/' + person.slug);
   const hero = person.photos[0];
-  const socialImage = hero ? absoluteUrl(hero.src) : siteConfig.socialImage;
+  const socialImage = hero ? new URL(hero.src, siteConfig.url).toString() : siteConfig.socialImage;
   return {
     title: person.name + ' | نماذج مشرفة في نقادة',
     description: person.description,
-    keywords: [person.name, 'آية رفاعي', 'نماذج مشرفة في نقادة', 'الأوسط قمولا بشلاو', 'مركز نقادة'],
+    keywords: [person.name, person.name.split(' ').slice(0, 2).join(' '), 'نماذج مشرفة في نقادة', person.locality, 'مركز نقادة'],
     alternates: { canonical: '/role-models/' + person.slug },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
     openGraph: {
@@ -61,7 +61,7 @@ export default async function RoleModelArticle({ params }: Props) {
         about: { '@id': url + '#person' },
         ...(person.photos.length ? { image: person.photos.map((photo) => ({
           '@type': 'ImageObject',
-          url: absoluteUrl(photo.src),
+          url: new URL(photo.src, siteConfig.url).toString(),
           width: photo.width,
           height: photo.height,
           caption: photo.caption,
@@ -103,7 +103,7 @@ export default async function RoleModelArticle({ params }: Props) {
             <div className={styles.articlePortrait}>
               {person.photos[0]
                 ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 850px) calc(100vw - 40px), 420px" priority />
-                : <div className={styles.portraitArtwork} aria-hidden="true"><span>آ</span><small>من نقادة… ولها حكاية</small></div>}
+                : <div className={styles.portraitArtwork} aria-hidden="true"><span>{person.name.slice(0, 1)}</span><small>من نقادة… وحكايتهم تستاهل</small></div>}
             </div>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default async function RoleModelArticle({ params }: Props) {
             {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>)}
           {person.photos.length > 1 && <section className={styles.gallery} aria-labelledby="gallery-title">
-            <div className={styles.sectionHeading}><div><span>من القصة</span><h2 id="gallery-title">صور من مشاركة آية</h2></div></div>
+            <div className={styles.sectionHeading}><div><span>من القصة</span><h2 id="gallery-title">صور من حكاية {person.name}</h2></div></div>
             <div className={styles.galleryGrid}>{person.photos.slice(1).map((photo) => <figure key={photo.src}>
               <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 700px) calc(100vw - 40px), 380px" />
               <figcaption>{photo.caption}</figcaption>
@@ -136,7 +136,7 @@ export default async function RoleModelArticle({ params }: Props) {
             <p>هذا المقال تحرير محلي مبني على منشور «نماذج مشرفة في قنا» الذي قدّمته لنا. لم نتحقق بشكل مستقل من جميع الشهادات أو الألقاب؛ لذلك نُنسب التفاصيل إلى مصدرها. إذا كان لديك تصحيح موثق، يسعدنا مراجعته.</p>
             <a href={person.sourceUrl} target="_blank" rel="noopener noreferrer external">{person.sourceLabel} <span aria-hidden="true">↗</span></a>
           </section>
-          <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link><Link href="/contribute">أضف معلومة أو تصحيح <span aria-hidden="true">←</span></Link></div>
+          <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
         </div>
         <aside className={styles.articleSide} aria-label="معلومات عن المقال">
           <div className={styles.sideCard}><small>الاسم</small><strong>{person.name}</strong><small>من</small><b>{person.locality}</b></div>

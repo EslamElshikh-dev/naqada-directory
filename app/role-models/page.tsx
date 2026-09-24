@@ -62,7 +62,7 @@ export default function RoleModelsPage() {
             <span className={styles.cardVisual}>
               {person.photos[0]
                 ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 720px) 100vw, 390px" />
-                : <span className={styles.monogram} aria-hidden="true">آ</span>}
+                : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
               <span className={styles.cardLabel}>نموذج من نقادة</span>
             </span>
             <span className={styles.cardBody}>
@@ -75,8 +75,7 @@ export default function RoleModelsPage() {
         </article>)}
       </div>
       <aside className={styles.contribute}>
-        <div><span>تعرف حد يستحق نحكي عنه؟</span><h2>الخير في بلدنا كثير، والحكايات لسه ما خلصتش.</h2><p>ابعت لنا اسم الشخص ومعلومات يمكن مراجعتها ومصدر الصور، ونراجع القصة قبل نشرها.</p></div>
-        <Link href="/contribute">شاركنا الحكاية <span aria-hidden="true">←</span></Link>
+        <div><span>لسه الحكايات كتير</span><h2>الخير في بلدنا كثير، والحكايات لسه ما خلصتش.</h2><p>كل قصة تُراجع ويُذكر مصدرها، وتُضاف إلى القسم في صفحة مستقلة باسم صاحبها.</p></div>
       </aside>
     </section>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(collection) }} />
