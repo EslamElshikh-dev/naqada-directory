@@ -6,6 +6,7 @@ export function isNavigationActive(pathname: string, href: string): boolean {
     '/directory': ['/directory', '/activities', '/category', '/listing', '/search'],
     '/villages': ['/villages', '/coverage'],
     '/knowledge': ['/knowledge', '/heritage', '/people', '/landmarks', '/contributors'],
+    '/role-models': ['/role-models'],
   };
   return (roots[href] || [href]).some((root) => path === root || path.startsWith(`${root}/`));
 }

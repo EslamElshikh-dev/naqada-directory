@@ -14,6 +14,7 @@ const items: { href: string; label: string; description: string; icon: Navigatio
   { href: '/news', label: 'الأخبار', description: 'اعرف إيه الجديد في البلد', icon: 'news' },
   { href: '/knowledge', label: 'الموسوعة', description: 'اعرف بلدك زين', icon: 'knowledge' },
   { href: '/blog', label: 'الحكايات', description: 'حكاوي بلدنا وناسها', icon: 'stories' },
+  { href: '/role-models', label: 'نماذج مشرفة', description: 'ناس من بلدنا ترفع الراس', icon: 'people' },
 ];
 
 export function HeaderNav() {

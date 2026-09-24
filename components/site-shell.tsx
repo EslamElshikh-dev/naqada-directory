@@ -16,6 +16,7 @@ const footerRoutes = [
   { href: '/news', index: '03', title: 'أخبار نقادة وقنا', description: 'آخر الأخبار مع رابط المصدر الأصلي' },
   { href: '/knowledge', index: '04', title: 'موسوعة نقادة', description: 'أماكن وأعلام وتراث موثّق' },
   { href: '/blog', index: '05', title: 'حكايات نقادة', description: 'حكاوي وصور من بلدنا وناسها' },
+  { href: '/role-models', index: '06', title: 'نماذج مشرفة', description: 'حكايات ناس من نقادة يستحقوا النور' },
 ];
 
 const footerUtilities = [
