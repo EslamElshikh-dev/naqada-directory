@@ -103,7 +103,7 @@ export default async function RoleModelArticle({ params }: Props) {
             </div>
             <div className={styles.articlePortrait}>
               {person.photos[0]
-                ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 850px) calc(100vw - 40px), 420px" priority />
+                ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 850px) calc(100vw - 40px), 420px" style={person.photos[0].heroPosition ? { objectPosition: person.photos[0].heroPosition } : undefined} priority />
                 : <div className={styles.portraitArtwork} aria-hidden="true"><span>{person.name.slice(0, 1)}</span><small>من نقادة… وحكايتهم تستاهل</small></div>}
             </div>
           </div>
