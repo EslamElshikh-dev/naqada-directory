@@ -16,6 +16,7 @@ import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeCo
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
+import roleStyles from './role-models/role-models.module.css';
 
 export const metadata: Metadata = {
   title: { absolute: siteConfig.name },
@@ -104,6 +105,7 @@ export default function HomePage() {
               {featuredActivities.slice(0, 4).map((activity) => <Link prefetch={false} key={activity.slug} href={`/activities/${activity.slug}`}>{activity.searchLabel}</Link>)}
               <Link prefetch={false} href="/villages">القرى</Link>
               <Link prefetch={false} href="/knowledge">الموسوعة</Link>
+              <Link prefetch={false} href="/role-models">نماذج مشرفة</Link>
             </nav>
             <div className={styles.trust} aria-label="إحصاءات الدليل">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>خدمة ونشاط</small></span>
@@ -209,6 +211,17 @@ export default function HomePage() {
             <Link prefetch={false} href="/knowledge" className={styles.panelLink}>تصفّح الموسوعة <ActionIcon name="arrow" /></Link>
           </article>
         </div>
+      </section>
+
+      <section className={'shell ' + roleStyles.homeFeature} aria-labelledby="home-role-model-title">
+        <div className={roleStyles.homeFeatureCopy}>
+          <span>من أهل نقادة</span>
+          <h2 id="home-role-model-title">ناس من بلدنا تستحق نعرف حكايتها.</h2>
+          <p>ابدأ مع آية رفاعي عبدالشافي من الأوسط قمولا بشلاو؛ حكاية عن الدراسة والتطوع، ومصدرها الأصلي معروض بوضوح.</p>
+          <Link prefetch={false} href="/role-models/aya-refai-abdelshafi">اقرأ قصة آية <span aria-hidden="true">←</span></Link>
+          <Link prefetch={false} href="/role-models" className={roleStyles.homeSecondary}>كل النماذج المشرفة</Link>
+        </div>
+        <div className={roleStyles.homeFeatureVisual} aria-hidden="true"><span>آ</span><small>آية رفاعي عبدالشافي · نقادة</small></div>
       </section>
 
       {leadArticle ? (

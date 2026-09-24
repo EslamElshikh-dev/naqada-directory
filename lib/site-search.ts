@@ -8,6 +8,7 @@ import {
   type SearchRankingFields,
 } from '@/lib/search-ranking';
 import { normalizeArabic } from '@/lib/site';
+import { roleModels } from '@/lib/role-models';
 
 export type SiteSearchKind =
   | 'listing'
@@ -17,7 +18,8 @@ export type SiteSearchKind =
   | 'page'
   | 'knowledge-place'
   | 'knowledge-person'
-  | 'knowledge-heritage';
+  | 'knowledge-heritage'
+  | 'role-model';
 
 export type SiteSearchResult = {
   kind: SiteSearchKind;
@@ -52,6 +54,7 @@ const pages: SearchItem[] = [
   { kind: 'page', title: 'قرى ونجوع نقادة', subtitle: 'استكشف نطاق مركز نقادة حسب المكان', href: '/villages', badge: 'صفحة', fields: { title: 'قرى ونجوع نقادة', auxiliary: 'قرى نجوع أماكن مركز نقادة' } },
   { kind: 'page', title: 'أضف أو صحح نشاطًا', subtitle: 'ساهم في تحديث بيانات الدليل', href: '/contribute', badge: 'مشاركة', fields: { title: 'أضف أو صحح نشاطًا', auxiliary: 'اضافة نشاط تصحيح بيانات مساهمة' } },
   { kind: 'page', title: 'مدونة دليل نقادة', subtitle: 'مقالات وموضوعات محلية', href: '/blog', badge: 'محتوى', fields: { title: 'مدونة دليل نقادة', auxiliary: 'مدونة مقالات اخبار محتوى' } },
+  { kind: 'page', title: 'نماذج مشرفة في نقادة', subtitle: 'حكايات أشخاص من نقادة مع مصدر كل قصة', href: '/role-models', badge: 'نماذج', fields: { title: 'نماذج مشرفة في نقادة', auxiliary: 'شخصيات آية رفاعي عبدالشافي نجاح تطوع' } },
 ];
 
 function indexItem(item: SearchItem): IndexedSearchItem {
@@ -124,6 +127,14 @@ const searchIndex: IndexedSearchItem[] = [
       locality: item.placeTags.join(' '),
       auxiliary: `موسوعة نقادة أعلام شخصيات ${item.professionTags.join(' ')} ${item.placeTags.join(' ')}`,
     },
+  })),
+  ...roleModels.map((person): SearchItem => ({
+    kind: 'role-model',
+    title: person.name,
+    subtitle: person.shortTitle + ' · ' + person.locality,
+    href: '/role-models/' + person.slug,
+    badge: 'نموذج مشرف',
+    fields: { title: person.name, category: 'نماذج مشرفة في نقادة', locality: person.locality, auxiliary: person.description + ' آية رفاعي عبدالشافي آية رفاعي عبد الشافي' },
   })),
   ...knowledgeHeritage.map((item): SearchItem => ({
     kind: 'knowledge-heritage',

@@ -44,7 +44,7 @@ const groups: SearchGroup[] = [
     id: 'knowledge',
     label: 'موسوعة نقادة',
     description: 'أماكن مرجعية وأعلام وموضوعات تراثية بالمصدر والإسناد.',
-    kinds: ['knowledge-place', 'knowledge-person', 'knowledge-heritage'],
+    kinds: ['knowledge-place', 'knowledge-person', 'knowledge-heritage', 'role-model'],
   },
   {
     id: 'pages',
@@ -58,7 +58,7 @@ const scopeOptions: ScopeOption[] = [
   { id: 'all', label: 'كل النتائج', shortLabel: 'الكل' },
   { id: 'directory', label: 'الخدمات والأنشطة', shortLabel: 'الأنشطة', kinds: ['listing', 'category'] },
   { id: 'places', label: 'القرى والمعالم', shortLabel: 'الأماكن', kinds: ['locality', 'landmark'] },
-  { id: 'knowledge', label: 'موسوعة نقادة', shortLabel: 'الموسوعة', kinds: ['knowledge-place', 'knowledge-person', 'knowledge-heritage'] },
+  { id: 'knowledge', label: 'موسوعة نقادة', shortLabel: 'الموسوعة', kinds: ['knowledge-place', 'knowledge-person', 'knowledge-heritage', 'role-model'] },
 ];
 
 function queryValue(value?: string | string[]) {
@@ -79,7 +79,7 @@ function resultGlyph(kind: SiteSearchKind) {
   if (kind === 'listing') return '⌖';
   if (kind === 'category') return '▦';
   if (kind === 'locality' || kind === 'knowledge-place') return '⌂';
-  if (kind === 'knowledge-person') return '◉';
+  if (kind === 'knowledge-person' || kind === 'role-model') return '◉';
   if (kind === 'landmark' || kind === 'knowledge-heritage') return '◇';
   return '↗';
 }
@@ -125,7 +125,7 @@ export default async function SearchPage({ searchParams }: Props) {
     all: allResults.length,
     directory: allResults.filter((item) => item.kind === 'listing' || item.kind === 'category').length,
     places: allResults.filter((item) => item.kind === 'locality' || item.kind === 'landmark').length,
-    knowledge: allResults.filter((item) => item.kind.startsWith('knowledge-')).length,
+    knowledge: allResults.filter((item) => item.kind.startsWith('knowledge-') || item.kind === 'role-model').length,
   };
 
   const activeOption = scopeOptions.find((item) => item.id === activeScope) || scopeOptions[0];

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { siteConfig } from '@/lib/site';
+import { roleModels } from '@/lib/role-models';
 import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
@@ -27,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/activities', lastModified: latestBusinessDate },
     { path: '/news' },
     { path: '/blog', lastModified: latestEditorialDate },
+    { path: '/role-models', lastModified: new Date('2026-09-24T00:00:00.000Z') },
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },
@@ -66,6 +68,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...knowledgePeople.map((item) => ({ url: sitemapUrl(`/knowledge/people/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...knowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...allEditorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),
+    ...roleModels.map((person) => ({ url: sitemapUrl('/role-models/' + encodeURIComponent(person.slug)), lastModified: new Date(person.modifiedAt + 'T00:00:00.000Z') })),
     ...categories.map((item) => ({ url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`), lastModified: latestDate(businesses.filter((business) => business.category === item.name)) })),
     ...indexableActivities.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity)) })),
     ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
