@@ -39,8 +39,8 @@ function sourceLabel(source: string) {
   if (source.includes('whatsapp.')) return 'WhatsApp';
   return source;
 }
-function dateLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' }).format(new Date(`${date}T12:00:00Z`)); }
-function timeLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(date)); }
+function dateLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', timeZone: 'Africa/Cairo' }).format(new Date(`${date}T12:00:00Z`)); }
+function timeLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(date)); }
 function growth(current: number, previous: number) {
   if (!previous) return current ? { label: 'بداية قياس جديدة', tone: 'up' } : { label: 'بانتظار أول زائر', tone: 'flat' };
   const value = ((current - previous) / previous) * 100;
