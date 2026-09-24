@@ -98,11 +98,15 @@ export async function getContributorAccess(accessToken: string, userId: string):
   };
 }
 
-export async function getContributorActivity(accessToken: string, userId: string): Promise<ContributorActivity> {
-  const rows = await restGet<ContributionRow[]>(
-    `directory_contributions?select=id,request_type,name,locality,status,created_at&submitted_by_user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc&limit=500`,
-    accessToken,
-  );
+export async function getContributorActivity(accessToken: string): Promise<ContributorActivity> {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_own_naqada_contributions`, {
+    method: 'POST',
+    headers: restHeaders(accessToken, true),
+    body: '{}',
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error('CONTRIBUTOR_ACTIVITY_FAILED');
+  const rows = await response.json() as ContributionRow[];
   const count = (status: string) => rows.filter((item) => item.status === status).length;
   return {
     total: rows.length,
