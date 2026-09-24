@@ -31,10 +31,10 @@ export function DeveloperWorkShowcase() {
       <div className={`shell ${styles.workInner}`}>
         <header className={styles.workHeader}>
           <div>
-            <p className={styles.kicker}>من العسيرات لنقادة... وأبعد</p>
-            <h2 id="selected-work-title">خمس حكايات،<br /><em>وكل واحدة لها ناسها.</em></h2>
+            <p className={styles.kicker}>٠٤ / أعمال مختارة</p>
+            <h2 id="selected-work-title">من دليل العسيرات،<br /><em>تبدأ جولة المشروعات.</em></h2>
           </div>
-          <p>بدأت بالأقرب لقلبي: دليل العسيرات. وبعده دليل نقادة ومشروعات في المقاولات والصحة والتقنية. افتح أي مشروع وشوفه بنفسك.</p>
+          <p>تبدأ الأعمال المعروضة بدليل وموسوعة العسيرات، لأنه الأقرب في فكرته إلى دليل نقادة. وبعدهما تظهر مشروعات في المقاولات والخدمات الصحية والذكاء الاصطناعي. اختَر المجال الذي يهمك، وافتح المشروع لتشاهده بنفسك.</p>
         </header>
 
         <div className={styles.workToolbar} aria-label="تصفية الأعمال المختارة">
