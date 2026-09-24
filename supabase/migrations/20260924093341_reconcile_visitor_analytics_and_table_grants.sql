@@ -25,7 +25,7 @@ begin
     'generatedAt', v_now,
     'totals', jsonb_build_object(
       'lifetimeVisitors', (select count(*) from public.analytics_visitors),
-      'visitorsToday', (select count(distinct visitor_id) from public.analytics_pageviews where occurred_at >= date_trunc('day', v_now)),
+      'visitorsToday', (select count(distinct visitor_id) from public.analytics_pageviews where occurred_at >= (date_trunc('day', v_now at time zone 'Africa/Cairo') at time zone 'Africa/Cairo')),
       'uniqueVisitors30d', (select count(*) from public.analytics_visitors where last_seen_at >= v_start_30),
       'newVisitors30d', (select count(*) from public.analytics_visitors where first_seen_at >= v_start_30),
       'returningVisitors30d', (select count(*) from public.analytics_visitors where first_seen_at < v_start_30 and last_seen_at >= v_start_30),
@@ -38,10 +38,13 @@ begin
     'dailySeries', (
       select coalesce(jsonb_agg(jsonb_build_object(
         'date', to_char(day_value, 'YYYY-MM-DD'),
-        'visitors', (select count(distinct visitor_id) from public.analytics_pageviews where occurred_at >= day_value and occurred_at < day_value + interval '1 day'),
-        'views', (select count(*) from public.analytics_pageviews where occurred_at >= day_value and occurred_at < day_value + interval '1 day')
+        'visitors', (select count(distinct visitor_id) from public.analytics_pageviews where occurred_at >= (day_value::timestamp at time zone 'Africa/Cairo') and occurred_at < ((day_value + 1)::timestamp at time zone 'Africa/Cairo')),
+        'views', (select count(*) from public.analytics_pageviews where occurred_at >= (day_value::timestamp at time zone 'Africa/Cairo') and occurred_at < ((day_value + 1)::timestamp at time zone 'Africa/Cairo'))
       ) order by day_value), '[]'::jsonb)
-      from generate_series(date_trunc('day', v_now) - interval '13 days', date_trunc('day', v_now), interval '1 day') day_value
+      from (
+        select ((v_now at time zone 'Africa/Cairo')::date - (13 - day_index)) as day_value
+        from generate_series(0, 13) as day_series(day_index)
+      ) cairo_days
     ),
     'topPages', (
       select coalesce(jsonb_agg(jsonb_build_object('path', ranked.path, 'views', ranked.views, 'visitors', ranked.visitors) order by ranked.views desc), '[]'::jsonb)
