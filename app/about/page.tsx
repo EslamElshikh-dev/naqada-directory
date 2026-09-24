@@ -176,7 +176,7 @@ export default function AboutPage() {
       <section className={styles.closing}>
         <div className={`shell ${styles.closingInner}`}>
           <div><p>الدليل يكبر بالمعلومة الصحيحة</p><h2>تعرف نشاطًا ناقصًا<br />أو معلومة تحتاج تصحيحًا؟</h2></div>
-          <div className={styles.closingActions}><Link href="/contribute">أرسل المعلومة <span aria-hidden="true">←</span></Link><Link href="/about/developer">تعرّف إلى المطوّر</Link></div>
+          <div className={styles.closingActions}><Link href="/contribute">أرسل المعلومة <span aria-hidden="true">←</span></Link><Link href="/developer">تعرّف إلى المطوّر</Link></div>
         </div>
       </section>
 

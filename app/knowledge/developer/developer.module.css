@@ -416,7 +416,7 @@
 
 .workSection {
   position: relative;
-  scroll-margin-top: 110px;
+  scroll-margin-top: 165px;
   padding-block: 112px 128px;
   overflow: hidden;
   background: var(--forest-deep);
@@ -505,6 +505,7 @@
 .projectVisualCopy b { max-width: 360px; color: #fff; font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1.03; letter-spacing: -.035em; text-shadow: 0 4px 25px rgba(0, 0, 0, .38); }
 .projectVisualCopy i { align-self: end; margin-bottom: 3px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .24); border-radius: 999px; background: rgba(7, 31, 25, .32); color: #fff; font-size: .64rem; font-style: normal; white-space: nowrap; backdrop-filter: blur(10px); transition: background .2s ease, border-color .2s ease; }
 .projectCard:hover .projectVisualCopy i { border-color: var(--project-accent); background: rgba(7, 31, 25, .7); }
+.projectUsayrat { --project-accent: #f0d88d; }
 .projectNaqada { --project-accent: #f0d88d; }
 .projectTawod { --project-accent: #f1ae73; }
 .projectSama { --project-accent: #8ed7ec; }
