@@ -18,16 +18,17 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 const stops = [
-  { number: '٠١', title: 'مواليد الرياض', detail: 'مواليد مدينة الرياض بالمملكة العربية السعودية، يوم ٢١ أبريل ١٩٩٨.' },
-  { number: '٠٢', title: 'ابن العسيرات', detail: 'ابن مركز العسيرات بمحافظة سوهاج في مصر.' },
-  { number: '٠٣', title: 'هندسة الحاسبات والمعلومات', detail: 'بكالوريوس هندسة الحاسبات والمعلومات من جامعة ٦ أكتوبر.' },
-  { number: '٠٤', title: 'الأمن السيبراني', detail: 'دبلومة الأمن السيبراني من الجامعة العربية المفتوحة.' },
+  { number: '٠١', title: 'البداية في الرياض', detail: 'وُلد في مدينة الرياض بالمملكة العربية السعودية يوم ٢١ أبريل ١٩٩٨. كانت الرياض بداية الحكاية، وما زالت حاضرة في مساره وعمله في السوق السعودي.' },
+  { number: '٠٢', title: 'الجذور في العسيرات', detail: 'ينتمي إلى مركز العسيرات بمحافظة سوهاج في مصر. ومن هذه الجذور تأتي صلته بالمشروعات المحلية، وفي مقدمتها دليل وموسوعة العسيرات.' },
+  { number: '٠٣', title: 'دراسة هندسة الحاسبات', detail: 'حصل على بكالوريوس هندسة الحاسبات والمعلومات من جامعة ٦ أكتوبر، ليبني خلفيته الأكاديمية في الحاسبات والبرمجة.' },
+  { number: '٠٤', title: 'التخصص في الأمن السيبراني', detail: 'أكمل دراسته بدبلومة الأمن السيبراني من الجامعة العربية المفتوحة، ليجمع بين هندسة الحاسبات وتخصصه في الأمن السيبراني.' },
 ];
 
-const approach = [
-  { number: '١', title: 'في المقاولات والعقارات', detail: 'عمل مع شركة تعاود للمقاولات العامة بفرعيها في الرياض والدمام، وشركة الأرجان العقارية.' },
-  { number: '٢', title: 'في الخدمات الصحية', detail: 'عمل مع معامل سما سكان للأشعة التشخيصية في الرياض.' },
-  { number: '٣', title: 'في الذكاء الاصطناعي', detail: 'عمل مع شركة باودي لابز للذكاء الاصطناعي، إلى جانب مشروعات أخرى.' },
+const companies = [
+  { number: '٠١', sector: 'المقاولات العامة', title: 'شركة تعاود', detail: 'من الشركات الكبرى التي عمل معها، بفرعيها في الرياض والدمام. محطة في قطاع المقاولات العامة ضمن مسيرته في السوق السعودي.' },
+  { number: '٠٢', sector: 'العقارات', title: 'شركة الأرجان العقارية', detail: 'عمل كذلك مع شركة الأرجان العقارية الضخمة، ضمن خبرته مع الشركات العاملة في القطاع العقاري.' },
+  { number: '٠٣', sector: 'الصحة', title: 'معامل سما سكان', detail: 'من الجهات التي عمل معها في الرياض، في مجال الأشعة التشخيصية والخدمات الصحية.' },
+  { number: '٠٤', sector: 'الذكاء الاصطناعي', title: 'شركة باودي لابز', detail: 'تضم أعماله أيضًا شركة باودي لابز للذكاء الاصطناعي، إلى جانب جهات ومشروعات أخرى.' },
 ];
 
 const schema = {
@@ -90,14 +91,17 @@ export default function DeveloperPage() {
         <div className={`shell ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
             <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link href="/">دليل نقادة</Link><span aria-hidden="true">/</span><span>عن المطوّر</span></nav>
-            <p className={styles.eyebrow}><span aria-hidden="true">✦</span> عن المطوّر</p>
-            <h1 id="developer-title">المهندس إسلام الشيخ.<br /><em>ابن العسيرات، سوهاج.</em></h1>
-            <p className={styles.heroLead}>مهندس أمن سيبراني ومطور في جوجل. من مواليد مدينة الرياض بالمملكة العربية السعودية، وابن مركز العسيرات بمحافظة سوهاج في مصر.</p>
+            <p className={styles.eyebrow}><span aria-hidden="true">✦</span> من الرياض إلى جذور الصعيد</p>
+            <h1 id="developer-title">المهندس إسلام الشيخ<br /><em>ابن العسيرات، سوهاج.</em></h1>
+            <p className={styles.heroLead}>مهندس أمن سيبراني ومطور في جوجل. وُلد في الرياض بالمملكة العربية السعودية، وتنتمي جذوره إلى مركز العسيرات بمحافظة سوهاج في مصر. سيرة تجمع بين المكان الذي بدأ منه، والدراسة، وعمله في البرمجة والأمن السيبراني.</p>
             <div className={styles.heroActions}>
-              <a className={styles.primaryAction} href="#story">تعرّف عليّ <span aria-hidden="true">↓</span></a>
-              <a className={styles.secondaryAction} href="#selected-work">شوف أعمالي <span aria-hidden="true">←</span></a>
+              <a className={styles.primaryAction} href="#story">اقرأ السيرة <span aria-hidden="true">↓</span></a>
+              <a className={styles.secondaryAction} href="#selected-work">تصفّح الأعمال <span aria-hidden="true">←</span></a>
             </div>
-            <p className={styles.heroAside}>الرياض، المملكة العربية السعودية <span aria-hidden="true">·</span> العسيرات، محافظة سوهاج</p>
+            <div className={styles.heroFacts} aria-label="نبذة سريعة">
+              <div><span>الميلاد</span><strong>٢١ أبريل ١٩٩٨ · الرياض</strong></div>
+              <div><span>الجذور</span><strong>العسيرات · سوهاج</strong></div>
+            </div>
           </div>
           <div className={styles.heroVisual}>
             <div className={styles.portraitFrame}>
@@ -106,27 +110,31 @@ export default function DeveloperPage() {
             </div>
             <div className={styles.placeBadge}><span>الرياض</span><i aria-hidden="true">↔</i><span>العسيرات</span></div>
             <span className={styles.visualMark} aria-hidden="true">إس</span>
+            <span className={styles.portraitNote} aria-hidden="true">من الرياض إلى العسيرات</span>
           </div>
         </div>
       </section>
 
       <nav className={styles.chapterNav} aria-label="أقسام صفحة المطوّر">
-        <div className="shell"><span>في الصفحة</span><a href="#story">عني</a><a href="#journey">منين بدأت</a><a href="#selected-work">المشروعات</a><a href="#connect">تواصل</a></div>
+        <div className="shell"><span>في الصفحة</span><a href="#story">السيرة</a><a href="#journey">الجذور والدراسة</a><a href="#selected-work">المشروعات</a><a href="#connect">تواصل</a></div>
       </nav>
 
       <section id="story" className={`shell ${styles.story}`} aria-labelledby="story-title">
-        <div className={styles.sectionIndex}><span>عني</span><i /></div>
+        <div className={styles.storyRail}>
+          <div className={styles.sectionIndex}><span>٠١ / عن إسلام</span><i /></div>
+          <div className={styles.originMark} aria-hidden="true"><strong>١٩٩٨</strong><span>الرياض <i /> العسيرات</span><small>بداية في مكان، وجذور في مكان تاني</small></div>
+        </div>
         <div className={styles.storyCopy}>
-          <p className={styles.kicker}>المهندس إسلام الشيخ</p>
-          <h2 id="story-title">مواليد الرياض،<br /><em>وابن العسيرات.</em></h2>
-          <p>المهندس إسلام الشيخ، مواليد مدينة الرياض بالمملكة العربية السعودية يوم ٢١ أبريل ١٩٩٨، وابن مركز العسيرات بمحافظة سوهاج في مصر.</p>
-          <p>حاصل على بكالوريوس هندسة الحاسبات والمعلومات من جامعة ٦ أكتوبر، ودبلومة الأمن السيبراني من الجامعة العربية المفتوحة. <strong>مهندس أمن سيبراني ومطور في جوجل.</strong></p>
-          <p>المهندس إسلام الشيخ أحد أبرز الكوادر المصرية الشابة في مجال الأمن السيبراني والبرمجة في السوق السعودي، وبرز بقوة نهاية عام ٢٠٢٥.</p>
+          <p className={styles.kicker}>عن الإنسان قبل المهنة</p>
+          <h2 id="story-title">بدأت الحكاية في الرياض،<br /><em>وجذورها في العسيرات.</em></h2>
+          <p>المهندس إسلام الشيخ من مواليد مدينة الرياض بالمملكة العربية السعودية يوم ٢١ أبريل ١٩٩٨، وهو ابن مركز العسيرات بمحافظة سوهاج في مصر. يحمل المكانان جزءًا من تعريفه بنفسه: الرياض حيث وُلد، والعسيرات التي ينتمي إليها وتظهر في اهتمامه بالمشروعات المحلية.</p>
+          <p>حصل على <strong>بكالوريوس هندسة الحاسبات والمعلومات من جامعة ٦ أكتوبر</strong>، ثم دبلومة الأمن السيبراني من الجامعة العربية المفتوحة. وبجانب هذه الخلفية الدراسية، يعرّف نفسه بأنه مهندس أمن سيبراني ومطور في جوجل؛ وهي المجالات التي تتقاطع في أعماله الرقمية.</p>
+          <p>يُعد المهندس إسلام الشيخ أحد أبرز الكوادر المصرية الشابة في مجال الأمن السيبراني والبرمجة في السوق السعودي. وقد برز بقوة في نهاية عام ٢٠٢٥، مع استمرار حضوره في مشروعات تجمع بين الشركات والخدمات المحلية والتقنية.</p>
           <div className={styles.recognition}>
-            <div className={styles.recognitionNumber}><span>أفضل</span><strong>١٠</strong><span>مطورين عرب مستقلين</span></div>
+            <div className={styles.recognitionNumber}><span>ضمن أفضل</span><strong>١٠</strong><span>مطورين عرب مستقلين</span></div>
             <div className={styles.recognitionCopy}>
-              <p className={styles.recognitionEyebrow}>الترتيب المحلي · نهاية ٢٠٢٥</p>
-              <p>وهو ضمن الكوادر المصرية والعربية النادرة المعتمدة والعاملة لدى جوجل، ويعتبر من أفضل ١٠ مطورين عرب مستقلين في الترتيب المحلي.</p>
+              <p className={styles.recognitionEyebrow}>مسيرة مهنية · نهاية عام ٢٠٢٥</p>
+              <p>يأتي ضمن الكوادر المصرية والعربية النادرة <strong>المعتمدة والعاملة لدى جوجل</strong>، ويُعتبر من أفضل ١٠ مطورين عرب مستقلين في الترتيب المحلي. وتظهر هذه المكانة في سيرته إلى جانب دراسته وتنوع المجالات التي عمل فيها.</p>
             </div>
           </div>
         </div>
@@ -134,19 +142,20 @@ export default function DeveloperPage() {
 
       <section id="journey" className={styles.journey} aria-labelledby="journey-title">
         <div className={`shell ${styles.journeyInner}`}>
-          <header className={styles.journeyHeader}><p className={styles.kicker}>البداية والدراسة</p><h2 id="journey-title">من الرياض للعسيرات،<br /><em>ومن الدراسة للشغل.</em></h2></header>
+          <header className={styles.journeyHeader}><p className={styles.kicker}>٠٢ / محطات واضحة</p><h2 id="journey-title">من الميلاد والجذور<br /><em>إلى الدراسة والتخصص.</em></h2><p>أربع محطات ترسم ملامح السيرة من غير ما تفصل الإنسان عن مجاله، أو تبعده عن المكان الذي ينتمي إليه.</p></header>
           <ol className={styles.timeline}>{stops.map((stop) => <li key={stop.number}><span className={styles.timelineNumber}>{stop.number}</span><div><h3>{stop.title}</h3><p>{stop.detail}</p></div></li>)}</ol>
         </div>
       </section>
 
       <section className={`shell ${styles.perspective}`} aria-labelledby="perspective-title">
         <div className={styles.perspectiveIntro}>
-          <p className={styles.kicker}>خبرة في السوق السعودي</p>
-          <h2 id="perspective-title">شغل في مجالات مختلفة،<br /><em>وجذور في الصعيد.</em></h2>
-          <p>عمل مع شركات كبرى تحقق نجاحات استثنائية، مثل شركة تعاود للمقاولات العامة بفرعي الرياض والدمام، وشركة الأرجان العقارية الضخمة، ومعامل سما سكان للأشعة التشخيصية في الرياض، وشركة باودي لابز للذكاء الاصطناعي، وغيرهم.</p>
+          <p className={styles.kicker}>٠٣ / في السوق السعودي</p>
+          <h2 id="perspective-title">مجالات مختلفة،<br /><em>ومسيرة تمتد بينها.</em></h2>
+          <p>عمل إسلام الشيخ مع شركات كبرى تحقق نجاحات استثنائية، وتنوعت الجهات التي تعاون معها بين المقاولات والعقارات والصحة والذكاء الاصطناعي. منها شركة تعاود للمقاولات العامة بفرعي الرياض والدمام، وشركة الأرجان العقارية الضخمة، ومعامل سما سكان للأشعة التشخيصية في الرياض، وشركة باودي لابز للذكاء الاصطناعي، وغيرهم.</p>
+          <p className={styles.perspectiveNote}>التنوع ده حاضر كمان في الأعمال المعروضة أهنه: يبدأ بدليل العسيرات القريب من فكرة دليل نقادة، ويمتد إلى مشروعات لشركات وقطاعات مختلفة.</p>
           <a href="https://me.developers.google.com/u/EslamElshikh" target="_blank" rel="noreferrer">ملفي على Google للمطورين <span aria-hidden="true">↗</span></a>
         </div>
-        <div className={styles.approachGrid}>{approach.map((item) => <article key={item.number}><span>{item.number}</span><h3>{item.title}</h3><p>{item.detail}</p></article>)}</div>
+        <div className={styles.companyGrid}>{companies.map((item) => <article key={item.number}><span className={styles.companyNumber}>{item.number}</span><small>{item.sector}</small><h3>{item.title}</h3><p>{item.detail}</p></article>)}</div>
       </section>
 
       <DeveloperWorkShowcase />
@@ -154,9 +163,9 @@ export default function DeveloperPage() {
       <section id="connect" className={`shell ${styles.connect}`} aria-labelledby="connect-title">
         <div className={styles.connectMark} aria-hidden="true">إس</div>
         <div>
-          <p className={styles.kicker}>للتواصل ومتابعة الأعمال</p>
-          <h2 id="connect-title">تحب تعرف أكتر عن شغلي؟<br /><em>اتفضل من هنا.</em></h2>
-          <p>موقعي الشخصي ومشروعاتي على GitHub لو حابب تشوف أعمال تانية غير اللي هنا.</p>
+          <p className={styles.kicker}>٠٥ / تعرّف أكتر</p>
+          <h2 id="connect-title">لسه في الحكاية<br /><em>صفحات تانية.</em></h2>
+          <p>دي لمحة عن إسلام الشيخ وجزء من أعماله. لو حابب تتعرف على مشروعات تانية أو تتابع ما يعمل عليه، تقدر تبدأ من موقعه الشخصي أو حسابه على GitHub.</p>
           <div className={styles.connectLinks}>
             <a href="https://www.eslam-elshikh.com/" target="_blank" rel="noreferrer me">موقعي الشخصي <span aria-hidden="true">↗</span></a>
             <a href="https://github.com/EslamElshikh-dev" target="_blank" rel="noreferrer me">مشروعاتي على GitHub <span aria-hidden="true">↗</span></a>
