@@ -5,6 +5,7 @@ export type RoleModelPhoto = {
   alt: string;
   caption: string;
   cardPosition?: string;
+  heroPosition?: string;
 };
 
 export type RoleModel = {
@@ -139,19 +140,20 @@ export const roleModels: RoleModel[] = [
     interests: ['تعليم الأطفال', 'الحساب الذهني', 'الخط العربي', 'تنمية المهارات', 'التطوع'],
     photos: [
       {
-        src: '/images/role-models/wafaa-hamdy-hamed/award.jpg',
-        width: 1080,
-        height: 1440,
-        alt: 'درع باسم وفاء حمدي حامد عن دورة إعداد مدربة حساب ذهني',
-        caption: 'درع يحمل اسم وفاء حمدي حامد بمناسبة اجتياز دورة إعداد مدربة حساب ذهني؛ الصورة مقدمة مع القصة.',
-        cardPosition: 'center 72%',
-      },
-      {
         src: '/images/role-models/wafaa-hamdy-hamed/classroom.jpg',
         width: 1008,
         height: 1792,
         alt: 'وفاء حمدي حامد مع مجموعة أطفال داخل فصل دراسي',
         caption: 'مشاركة تعليمية داخل فصل مع الأطفال؛ الصورة مقدمة مع القصة.',
+        cardPosition: 'center 47%',
+        heroPosition: 'center 45%',
+      },
+      {
+        src: '/images/role-models/wafaa-hamdy-hamed/award.jpg',
+        width: 1080,
+        height: 1440,
+        alt: 'درع باسم وفاء حمدي حامد عن دورة إعداد مدربة حساب ذهني',
+        caption: 'درع يحمل اسم وفاء حمدي حامد بمناسبة اجتياز دورة إعداد مدربة حساب ذهني؛ الصورة مقدمة مع القصة.',
       },
       {
         src: '/images/role-models/wafaa-hamdy-hamed/event.jpg',
