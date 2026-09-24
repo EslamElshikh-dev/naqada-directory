@@ -140,4 +140,31 @@ $$;
 revoke all on function public.get_naqada_visitor_analytics() from public, anon;
 grant execute on function public.get_naqada_visitor_analytics() to authenticated;
 
+-- The review privacy migration removed direct authenticated SELECT from the
+-- contributions table. Return only the caller's safe, non-contact fields.
+create or replace function public.get_own_naqada_contributions()
+returns table (
+  id uuid,
+  request_type text,
+  name text,
+  locality text,
+  status text,
+  created_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select c.id, c.request_type, c.name, c.locality, c.status, c.created_at
+  from public.directory_contributions c
+  where c.submitted_by_user_id = (select auth.uid())
+    and (select auth.uid()) is not null
+  order by c.created_at desc
+  limit 5000;
+$function$;
+
+revoke all on function public.get_own_naqada_contributions() from public, anon, authenticated, service_role;
+grant execute on function public.get_own_naqada_contributions() to authenticated;
+
 notify pgrst, 'reload schema';
