@@ -47,7 +47,7 @@ export function resolveMemberReputation(input: {
   const statuses = input.statuses || [];
   const contributionCount = statuses.filter((status) => status !== 'rejected').length;
   const acceptedCount = statuses.filter((status) => status === 'approved' || status === 'published').length;
-  const pendingCount = statuses.filter((status) => status === 'pending' || status === 'reviewing').length;
+  const pendingCount = statuses.filter((status) => status === 'pending' || status === 'reviewing' || status === 'needs_info').length;
   const memberDays = daysSince(input.createdAt);
 
   if (input.role) {
