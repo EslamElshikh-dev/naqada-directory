@@ -61,7 +61,7 @@ export default function RoleModelsPage() {
           <Link href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
             <span className={styles.cardVisual}>
               {person.photos[0]
-                ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 720px) 100vw, 390px" />
+                ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 720px) 100vw, 390px" style={person.photos[0].cardPosition ? { objectPosition: person.photos[0].cardPosition } : undefined} />
                 : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
               <span className={styles.cardLabel}>نموذج من نقادة</span>
             </span>

@@ -4,6 +4,7 @@ export type RoleModelPhoto = {
   height: number;
   alt: string;
   caption: string;
+  cardPosition?: string;
 };
 
 export type RoleModel = {
@@ -143,6 +144,7 @@ export const roleModels: RoleModel[] = [
         height: 1440,
         alt: 'درع باسم وفاء حمدي حامد عن دورة إعداد مدربة حساب ذهني',
         caption: 'درع يحمل اسم وفاء حمدي حامد بمناسبة اجتياز دورة إعداد مدربة حساب ذهني؛ الصورة مقدمة مع القصة.',
+        cardPosition: 'center 72%',
       },
       {
         src: '/images/role-models/wafaa-hamdy-hamed/classroom.jpg',
