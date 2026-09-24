@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const person = getRoleModel(slug);
   if (!person) return { robots: { index: false, follow: true } };
   const url = absoluteUrl('/role-models/' + person.slug);
-  const hero = person.photos[0];
-  const socialImage = hero ? new URL(hero.src, siteConfig.url).toString() : siteConfig.socialImage;
+  const socialPhoto = person.photos[person.socialPhotoIndex ?? 0];
+  const socialImage = socialPhoto ? new URL(socialPhoto.src, siteConfig.url).toString() : siteConfig.socialImage;
   return {
     title: person.name + ' | نماذج مشرفة في نقادة',
     description: person.description,
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: siteConfig.shortName,
       publishedTime: person.publishedAt,
       modifiedTime: person.modifiedAt,
-      images: [{ url: socialImage, ...(hero ? { width: hero.width, height: hero.height } : {}), alt: hero?.alt || 'دليل نقادة' }],
+      images: [{ url: socialImage, ...(socialPhoto ? { width: socialPhoto.width, height: socialPhoto.height } : {}), alt: socialPhoto?.alt || 'دليل نقادة' }],
     },
     twitter: { card: 'summary_large_image', title: person.name + ' | نماذج مشرفة في نقادة', description: person.description, images: [socialImage] },
   };
@@ -126,7 +126,7 @@ export default async function RoleModelArticle({ params }: Props) {
           </section>)}
           {person.photos.length > 1 && <section className={styles.gallery} aria-labelledby="gallery-title">
             <div className={styles.sectionHeading}><div><span>من القصة</span><h2 id="gallery-title">صور من حكاية {person.name}</h2></div></div>
-            <div className={styles.galleryGrid}>{person.photos.slice(1).map((photo) => <figure key={photo.src}>
+            <div className={styles.galleryGrid + (person.photos.length === 2 ? ' ' + styles.galleryGridSingle : '')}>{person.photos.slice(1).map((photo) => <figure key={photo.src}>
               <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 700px) calc(100vw - 40px), 380px" />
               <figcaption>{photo.caption}</figcaption>
             </figure>)}</div>
