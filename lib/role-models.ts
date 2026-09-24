@@ -26,6 +26,7 @@ export type RoleModel = {
   highlights: string[];
   interests: string[];
   photos: RoleModelPhoto[];
+  cardPhotoIndex?: number;
   socialPhotoIndex?: number;
 };
 
@@ -200,6 +201,7 @@ export const roleModels: RoleModel[] = [
     ],
     highlights: ['المركز الأول في بطولة الاحتراف SFT بحسب النص', 'حزام SFT ظاهر في إحدى الصور المرسلة', 'شكر للكابتن سعيد عبد الحميد على دعمه'],
     interests: ['الرياضة', 'المنافسات', 'SFT', 'التدريب'],
+    cardPhotoIndex: 1,
     socialPhotoIndex: 1,
     photos: [
       {

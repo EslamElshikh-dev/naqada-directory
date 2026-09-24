@@ -57,22 +57,24 @@ export default function RoleModelsPage() {
         <small>القسم بيكبر بقصص أهل نقادة</small>
       </div>
       <div className={styles.cards}>
-        {roleModels.map((person) => <article className={styles.card} key={person.slug}>
-          <Link href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
-            <span className={styles.cardVisual}>
-              {person.photos[0]
-                ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 720px) 100vw, 390px" style={person.photos[0].cardPosition ? { objectPosition: person.photos[0].cardPosition } : undefined} />
-                : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
-              <span className={styles.cardLabel}>نموذج من نقادة</span>
-            </span>
-            <span className={styles.cardBody}>
-              <small>{person.locality}</small>
-              <strong>{person.name}</strong>
-              <span>{person.shortTitle}</span>
-              <b>اقرأ الحكاية <i aria-hidden="true">←</i></b>
-            </span>
-          </Link>
-        </article>)}
+        {roleModels.map((person) => {
+          const photo = person.photos[person.cardPhotoIndex ?? 0];
+          return <article className={styles.card} key={person.slug}>
+            <Link href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
+              <span className={styles.cardVisual}>
+                {photo
+                  ? <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 720px) 100vw, 390px" style={photo.cardPosition ? { objectPosition: photo.cardPosition } : undefined} />
+                  : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
+                <span className={styles.cardLabel}>نموذج من نقادة</span>
+              </span>
+              <span className={styles.cardBody}>
+                <small>{person.locality}</small>
+                <strong>{person.name}</strong>
+                <span>{person.shortTitle}</span>
+                <b>اقرأ الحكاية <i aria-hidden="true">←</i></b>
+              </span>
+            </Link>
+          </article>})}
       </div>
       <aside className={styles.contribute}>
         <div><span>لسه الحكايات كتير</span><h2>الخير في بلدنا كثير، والحكايات لسه ما خلصتش.</h2><p>كل قصة تُراجع ويُذكر مصدرها، وتُضاف إلى القسم في صفحة مستقلة باسم صاحبها.</p></div>
