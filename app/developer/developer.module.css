@@ -198,7 +198,9 @@
   .heroFacts > div + div { margin-top: 14px; padding: 0; border: 0; }
   .storyRail { gap: 12px; }
   .originMark { max-width: 155px; }
-  .recognitionNumber span:last-child { max-width: 115px; }
+  .recognitionNumber { gap: 6px; padding-inline: 16px; }
+  .recognitionNumber span { font-size: .7rem; }
+  .recognitionNumber span:last-child { max-width: 100px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .heroCopy, .heroVisual { animation: none; }
