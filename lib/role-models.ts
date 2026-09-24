@@ -9,6 +9,7 @@ export type RoleModelPhoto = {
 export type RoleModel = {
   slug: string;
   name: string;
+  alternateNames?: string[];
   locality: string;
   shortTitle: string;
   description: string;
@@ -31,6 +32,7 @@ export const roleModels: RoleModel[] = [
   {
     slug: 'aya-refai-abdelshafi',
     name: 'آية رفاعي عبدالشافي',
+    alternateNames: ['آية رفاعي عبد الشافي'],
     locality: 'الأوسط قمولا بشلاو · مركز نقادة',
     shortTitle: 'طالبة من نقادة تجمع بين الدراسة والتطوع والتكنولوجيا',
     description: 'تعرف على آية رفاعي عبدالشافي من الأوسط قمولا بشلاو بمركز نقادة، ومسيرتها الدراسية ومشاركاتها الطلابية والتطوعية كما وردت في منشور نماذج مشرفة في قنا.',
@@ -66,7 +68,29 @@ export const roleModels: RoleModel[] = [
     ],
     highlights: ['الدراسة في المكتبات وتكنولوجيا المعلومات', 'نشاط طلابي في جامعتي قنا والفيوم بحسب المصدر', 'مشاركات تطوعية وتدريبات تقنية'],
     interests: ['تكنولوجيا المعلومات', 'الذكاء الاصطناعي', 'التصميم', 'التعلم الإلكتروني', 'العمل التطوعي'],
-    photos: [],
+    photos: [
+      {
+        src: '/images/role-models/aya-refai-abdelshafi/campus.jpg',
+        width: 1536,
+        height: 2048,
+        alt: 'آية رفاعي عبدالشافي في الحرم الجامعي مرتدية وشاح المشاركة في ملتقى طلابي',
+        caption: 'آية رفاعي عبدالشافي خلال مشاركتها في ملتقى طلابي؛ الصورة من المنشور الأصلي.',
+      },
+      {
+        src: '/images/role-models/aya-refai-abdelshafi/award.jpg',
+        width: 1366,
+        height: 2048,
+        alt: 'آية رفاعي عبدالشافي تحمل درعًا وشهادة من الملتقى القمي الثاني عشر بجامعة الفيوم',
+        caption: 'صورة الدرع والشهادة المنشورة مع القصة؛ يشير الدرع إلى الملتقى القمي الثاني عشر بجامعة الفيوم، مايو ٢٠٢٦.',
+      },
+      {
+        src: '/images/role-models/aya-refai-abdelshafi/speaking.jpg',
+        width: 690,
+        height: 1059,
+        alt: 'آية رفاعي عبدالشافي تتحدث عبر الميكروفون خلال فعالية طلابية',
+        caption: 'آية خلال مشاركة طلابية؛ الصورة من المنشور الأصلي.',
+      },
+    ],
   },
 ];
 

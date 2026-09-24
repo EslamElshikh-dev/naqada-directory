@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: person.name + ' | نماذج مشرفة في نقادة',
     description: person.description,
-    keywords: [person.name, person.name.split(' ').slice(0, 2).join(' '), 'نماذج مشرفة في نقادة', person.locality, 'مركز نقادة'],
+    keywords: [person.name, ...(person.alternateNames || []), 'نماذج مشرفة في نقادة', person.locality, 'مركز نقادة'],
     alternates: { canonical: '/role-models/' + person.slug },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
     openGraph: {
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: siteConfig.shortName,
       publishedTime: person.publishedAt,
       modifiedTime: person.modifiedAt,
-      images: [{ url: socialImage, alt: hero?.alt || 'دليل نقادة' }],
+      images: [{ url: socialImage, ...(hero ? { width: hero.width, height: hero.height } : {}), alt: hero?.alt || 'دليل نقادة' }],
     },
     twitter: { card: 'summary_large_image', title: person.name + ' | نماذج مشرفة في نقادة', description: person.description, images: [socialImage] },
   };
@@ -73,6 +73,7 @@ export default async function RoleModelArticle({ params }: Props) {
         '@type': 'Person',
         '@id': url + '#person',
         name: person.name,
+        alternateName: person.alternateNames,
         description: person.shortTitle,
         homeLocation: { '@type': 'Place', name: person.locality },
         subjectOf: { '@id': url + '#article' },

@@ -221,7 +221,10 @@ export default function HomePage() {
           <Link prefetch={false} href="/role-models/aya-refai-abdelshafi">اقرأ قصة آية <span aria-hidden="true">←</span></Link>
           <Link prefetch={false} href="/role-models" className={roleStyles.homeSecondary}>كل النماذج المشرفة</Link>
         </div>
-        <div className={roleStyles.homeFeatureVisual} aria-hidden="true"><span>آ</span><small>آية رفاعي عبدالشافي · نقادة</small></div>
+        <div className={roleStyles.homeFeatureVisual}>
+          <Image src="/images/role-models/aya-refai-abdelshafi/campus.jpg" alt="آية رفاعي عبدالشافي خلال مشاركتها في ملتقى طلابي" width={1536} height={2048} sizes="(max-width: 700px) calc(100vw - 32px), 32vw" />
+          <small>آية رفاعي عبدالشافي · نقادة</small>
+        </div>
       </section>
 
       {leadArticle ? (
