@@ -101,7 +101,7 @@
 .routeCardDescription { display: block; margin-top: 9px; color: #6b7b70; font-size: .72rem; line-height: 1.8; }
 .routeCardArrow { display: grid; place-items: center; align-self: flex-end; width: 30px; height: 30px; margin-top: auto; border-radius: 50%; background: #e9f1e8; color: #226344; font-size: .92rem; transition: transform .25s ease, background .25s ease; }
 .routeCard:hover .routeCardArrow { transform: translate(-3px, 3px); background: #d8e9db; }
-.story, .journey, .perspective, .connect { scroll-margin-top: 52px; }
+.story, .journey, .perspective, .connect { scroll-margin-top: 0; }
 .story { display: grid; grid-template-columns: minmax(205px, .43fr) minmax(0, 1.57fr); gap: clamp(38px, 6vw, 100px); padding-block: 96px 137px; }
 .storyRail { display: flex; flex-direction: column; align-items: flex-start; gap: 65px; }
 .sectionIndex { display: flex; align-items: flex-start; gap: 13px; padding-top: 8px; color: #a48446; font-size: .75rem; font-weight: 850; white-space: nowrap; }
@@ -131,7 +131,7 @@
 .recognitionCopy p:last-child { margin: 0; color: #35594c; font-size: .95rem; line-height: 2; }
 .recognitionCopy strong { color: #174936; }
 .journey { background: #f0ecdf; }
-.journeyInner { display: grid; grid-template-columns: .75fr 1.25fr; gap: clamp(50px, 8vw, 115px); padding-block: 118px 132px; }
+.journeyInner { display: grid; grid-template-columns: .75fr 1.25fr; gap: clamp(50px, 8vw, 115px); padding-block: 90px 132px; }
 .journeyHeader { position: sticky; top: 172px; align-self: start; }
 .journey h2 { margin-bottom: 21px; font-size: clamp(2.2rem, 3.8vw, 4rem); }
 .journeyHeader > p:last-child { max-width: 330px; margin: 0; color: #617368; font-size: .9rem; line-height: 2; }
@@ -144,7 +144,7 @@
 .timelineNumber { z-index: 1; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid #d4b674; border-radius: 50%; background: #f7eacb; color: #826128; font: 850 .82rem Arial, sans-serif; }
 .timeline h3 { margin: 0 0 7px; font-size: 1.28rem; }
 .timeline p { max-width: 640px; margin: 0; color: #576a60; font-size: .86rem; line-height: 1.97; }
-.perspective { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(40px, 7vw, 105px); padding-block: 125px 140px; }
+.perspective { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(40px, 7vw, 105px); padding-block: 90px 140px; }
 .perspective h2 { font-size: clamp(2.2rem, 3.8vw, 4.1rem); }
 .perspectiveIntro > p:not(.kicker) { color: #5a7065; font-size: .95rem; line-height: 2.04; }
 .perspectiveIntro > .perspectiveNote { margin-top: 20px; padding-inline-start: 17px; border-inline-start: 2px solid #d2b26b; color: #456455; }
@@ -158,7 +158,7 @@
 .companyGrid small { margin-top: 22px; color: #a17837; font-size: .7rem; font-weight: 850; }
 .companyGrid h3 { margin: 6px 0 12px; font-size: clamp(1.15rem, 1.8vw, 1.45rem); line-height: 1.35; }
 .companyGrid p { margin: 0; color: #63776c; font-size: .83rem; line-height: 1.88; }
-.connect { display: grid; grid-template-columns: 160px 1fr; gap: clamp(40px, 6vw, 100px); align-items: center; padding-block: 105px 120px; }
+.connect { display: grid; grid-template-columns: 160px 1fr; gap: clamp(40px, 6vw, 100px); align-items: center; padding-block: 80px 120px; }
 .connectMark { display: grid; place-items: center; width: 150px; aspect-ratio: 1; border-radius: 50%; background: #133f32; box-shadow: inset 0 0 0 9px #133f32, inset 0 0 0 10px #d9be77, 0 20px 50px #0d3b2f2b; color: #f5d98b; font-size: 2.8rem; font-weight: 850; }
 .connect h2 { margin-bottom: 18px; }
 .connect p:not(.kicker) { color: #5b7064; line-height: 1.9; }
@@ -210,7 +210,7 @@
   .routeCard { flex: 0 0 min(72vw, 258px); min-height: 219px; scroll-snap-align: start; }
   .routeCard:nth-child(3)::after { display: block; }
   .routeCard:last-child::after { display: none; }
-  .story, .journey, .perspective, .connect { scroll-margin-top: 70px; }
+  .story, .journey, .perspective, .connect { scroll-margin-top: 0; }
   .story, .perspective { padding-block: 84px 94px; }
   .storyRail { align-items: stretch; }
   .originMark { max-width: 170px; gap: 8px; padding: 16px; }
