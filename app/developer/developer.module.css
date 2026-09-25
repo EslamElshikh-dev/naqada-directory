@@ -210,7 +210,8 @@
   .routeCard { flex: 0 0 min(72vw, 258px); min-height: 219px; scroll-snap-align: start; }
   .routeCard:nth-child(3)::after { display: block; }
   .routeCard:last-child::after { display: none; }
-  .story, .journey, .perspective, .connect { scroll-margin-top: 0; }
+  /* Override the site's generic mobile section anchor offset on this page. */
+  .story, .journey, .perspective, .connect { scroll-margin-top: 0 !important; }
   .story, .perspective { padding-block: 84px 94px; }
   .storyRail { align-items: stretch; }
   .originMark { max-width: 170px; gap: 8px; padding: 16px; }
