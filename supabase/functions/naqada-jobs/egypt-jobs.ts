@@ -1,4 +1,6 @@
-const FEED_URL = 'https://www.egyptyjobs.com/feeds/posts/default?alt=rss&q=%D9%82%D9%86%D8%A7&max-results=8';
+import { findLuxorPlace } from './places.ts';
+
+const FEED_URLS = ['قنا', 'الأقصر'].map((place) => `https://www.egyptyjobs.com/feeds/posts/default?alt=rss&q=${encodeURIComponent(place)}&max-results=8`);
 const FRESH_MS = 14 * 86_400_000;
 const MONTHS: Record<string, number> = { يناير: 0, فبراير: 1, مارس: 2, أبريل: 3, ابريل: 3, مايو: 4, يونيو: 5, يوليو: 6, أغسطس: 7, اغسطس: 7, سبتمبر: 8, أكتوبر: 9, اكتوبر: 9, نوفمبر: 10, ديسمبر: 11 };
 
@@ -45,20 +47,25 @@ export function readEgyptJobsFeed(xml: string, now = Date.now()) {
     const posted = new Date(field(item, 'pubDate'));
     const age = now - posted.getTime();
     if (!/^https:\/\/www\.egyptyjobs\.com\/202[0-9]\/\d{2}\/[a-zA-Z0-9_-]+\.html$/.test(url) || !Number.isFinite(age) || age < -86_400_000 || age > FRESH_MS) return [];
-    // Require a specific Qena workplace; a countrywide roundup mentioning Qena isn't one job.
+    // Require an identified local workplace; countrywide roundups aren't jobs in the governorate.
     const description = clean(field(item, 'description'), 12_000);
     const opening = description.slice(0, 500);
-    if (!/(وظيف|وظائ|فرص عمل|مطلوب|التوظيف)/.test(title) || !/(قنا|نقادة)/.test(`${title} ${opening}`)) return [];
+    if (!/(وظيف|وظائ|فرص عمل|مطلوب|التوظيف)/.test(title) || !/(قنا|نقادة|الأقصر|الاقصر|إسنا|اسنا|أرمنت|ارمنت)/.test(`${title} ${opening}`)) return [];
     if (/(وظائف الجهاز الإداري للدولة|الوظائف الحكومية التي|وظائف بكل المحافظات|نشرة التوظيف|وزير العمل يعلن عن)/.test(title)) return [];
     if (/(الضبعة|العين السخنة|بالمملكة العربية السعودية)/.test(`${title} ${opening}`)) return [];
-    if (!/(فرع قنا|بمحافظة قنا|في محافظة قنا|بمدينة قنا|في مدينة قنا|بقنا|بنقادة|في نقادة|جميع مراكز المحافظة)/.test(`${title} ${opening}`)) return [];
+    const context = `${title} ${opening}`;
+    const qena = /(فرع قنا|بمحافظة قنا|في محافظة قنا|بمدينة قنا|في مدينة قنا|بقنا|بنقادة|في نقادة)/.test(context);
+    const luxor = /(فرع الأقصر|فرع الاقصر|بمحافظة الأقصر|بمحافظة الاقصر|في محافظة الأقصر|في محافظة الاقصر|بمدينة الأقصر|في مدينة الأقصر|بالأقصر|بالاقصر|في الأقصر|في الاقصر|بإسنا|في إسنا|بأرمنت|في أرمنت)/.test(context);
+    if ((qena && luxor) || (!qena && !luxor && !/(جميع مراكز المحافظة)/.test(context))) return [];
+    const governorate = luxor ? 'الأقصر' : qena || /(جميع مراكز المحافظة)/.test(context) && /قنا/.test(context) ? 'قنا' : null;
+    if (!governorate) return [];
     const closing = deadline(description);
     if (closing !== null && closing < now) return [];
     const expires = Math.min(posted.getTime() + FRESH_MS, closing ?? Number.POSITIVE_INFINITY);
-    const locality = /(?:بنقادة|في نقادة)/.test(`${title} ${opening}`) ? 'مدينة نقادة' : 'محافظة قنا';
+    const locality = governorate === 'الأقصر' ? findLuxorPlace(title, opening) || 'محافظة الأقصر' : /(?:بنقادة|في نقادة)/.test(context) ? 'مدينة نقادة' : 'محافظة قنا';
     const organization = /الجهاز المركزي للتعبئة العامة والإحصاء/.test(opening) ? 'الجهاز المركزي للتعبئة العامة والإحصاء' : 'الجهة المُعلنة في المصدر';
     return [{ kind: 'offer', origin: 'external', status: 'published', title,
-      organization, locality, field: 'وظائف محافظة قنا',
+      organization, locality, governorate, field: `وظائف محافظة ${governorate}`,
       description: hidesContact(opening.slice(0, 750)), contact_kind: 'link', contact_value: url,
       contact_consent: false, source_name: 'إعلانات الوظائف الحكومية', source_url: url,
       source_published_at: posted.toISOString(), published_at: posted.toISOString(), expires_at: new Date(expires).toISOString() }];
@@ -66,10 +73,13 @@ export function readEgyptJobsFeed(xml: string, now = Date.now()) {
 }
 
 export async function scanEgyptJobs() {
-  try {
-    const response = await fetch(FEED_URL, { signal: AbortSignal.timeout(6500) });
-    if (!response.ok) return { ok: false, jobs: [] };
-    const xml = (await response.text()).slice(0, 500_000);
-    return xml.includes('<rss') ? { ok: true, jobs: readEgyptJobsFeed(xml) } : { ok: false, jobs: [] };
-  } catch { return { ok: false, jobs: [] }; }
+  const scans = await Promise.all(FEED_URLS.map(async (url) => {
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(6500) });
+      if (!response.ok) return { ok: false, jobs: [] };
+      const xml = (await response.text()).slice(0, 500_000);
+      return xml.includes('<rss') ? { ok: true, jobs: readEgyptJobsFeed(xml) } : { ok: false, jobs: [] };
+    } catch { return { ok: false, jobs: [] }; }
+  }));
+  return { ok: scans.some((scan) => scan.ok), jobs: scans.flatMap((scan) => scan.jobs) };
 }

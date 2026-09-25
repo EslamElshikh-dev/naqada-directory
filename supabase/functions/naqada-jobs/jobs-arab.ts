@@ -1,4 +1,9 @@
-const LISTING_URL = 'https://www.jobs-arab.com/eg/job-location/%D9%82%D9%86%D8%A7/';
+import { canonicalLuxorLocality } from './places.ts';
+
+const LISTING_URLS = [
+  'https://www.jobs-arab.com/eg/job-location/%D9%82%D9%86%D8%A7/',
+  'https://www.jobs-arab.com/eg/job-location/%D8%A7%D9%84%D8%A7%D9%82%D8%B5%D8%B1/',
+];
 const POST_URL = /^https:\/\/www\.jobs-arab\.com\/eg\/jobs\/\d+\/$/;
 const FRESH_MS = 14 * 86_400_000;
 
@@ -46,13 +51,14 @@ export function readJobsArabPosting(html: string, url: string, now = Date.now())
   const address = location?.address;
   const region = clean(address?.addressRegion, 120);
   const place = clean(address?.addressLocality, 120);
-  if (!/قنا/.test(region) || !place || /القناطر/.test(place)) return null;
-  const title = clean(post.title, 140).replace(/^وظائف قنا\s*-\s*/, '');
+  const governorate = /الأقصر|الاقصر/.test(region) ? 'الأقصر' : /قنا/.test(region) ? 'قنا' : null;
+  if (!governorate || !place || /القناطر/.test(place)) return null;
+  const title = clean(post.title, 140).replace(/^وظائف (?:قنا|الأقصر|الاقصر)\s*-\s*/, '');
   if (title.length < 3) return null;
   const company = clean(post.hiringOrganization?.name, 120) || 'جهة التوظيف في المصدر';
   const details = withoutContacts(clean(post.description, 750));
   return { kind: 'offer', origin: 'external', status: 'published', title, organization: company,
-    locality: place, field: 'وظائف محافظة قنا',
+    locality: governorate === 'الأقصر' ? canonicalLuxorLocality(place) : place === 'نقادة' ? 'مدينة نقادة' : place, governorate, field: `وظائف محافظة ${governorate}`,
     description: details.length >= 20 ? details : `فرصة عمل في ${place} منشورة على وظائف العرب. افتح الإعلان الأصلي للشروط وطريقة التقديم.`,
     contact_kind: 'link', contact_value: url, contact_consent: false,
     source_name: 'وظائف العرب', source_url: url, source_published_at: publishedAt.toISOString(), published_at: publishedAt.toISOString(),
@@ -60,16 +66,19 @@ export function readJobsArabPosting(html: string, url: string, now = Date.now())
 }
 
 export async function scanJobsArab() {
-  try {
-    const page = await fetch(LISTING_URL, { signal: AbortSignal.timeout(6500) });
-    if (!page.ok) return { ok: false, jobs: [] };
-    const links = jobsArabLinks((await page.text()).slice(0, 250_000));
-    const jobs = await Promise.all(links.map(async (link) => {
+  const scans = await Promise.all(LISTING_URLS.map(async (listing) => {
+    try {
+      const page = await fetch(listing, { signal: AbortSignal.timeout(6500) });
+      if (!page.ok) return { ok: false, jobs: [] };
+      const links = jobsArabLinks((await page.text()).slice(0, 250_000));
+      const jobs = await Promise.all(links.map(async (link) => {
       try {
         const response = await fetch(link, { signal: AbortSignal.timeout(6500) });
         return response.ok ? readJobsArabPosting((await response.text()).slice(0, 210_000), link) : null;
       } catch { return null; }
-    }));
-    return { ok: true, jobs: jobs.filter((job): job is NonNullable<typeof job> => job !== null) };
-  } catch { return { ok: false, jobs: [] }; }
+      }));
+      return { ok: true, jobs: jobs.filter((job): job is NonNullable<typeof job> => job !== null) };
+    } catch { return { ok: false, jobs: [] }; }
+  }));
+  return { ok: scans.some((scan) => scan.ok), jobs: scans.flatMap((scan) => scan.jobs) };
 }
