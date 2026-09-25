@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { emptyVisitorAnalytics, getVisitorAnalytics, isDirectoryAdmin } from '@/lib/auth/admin';
+import { getVisitorAnalytics, isDirectoryAdmin } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
 import { buildGrowthPriorities } from '@/lib/growth-priority';
 import styles from './growth.module.css';
@@ -21,7 +21,10 @@ export default async function GrowthPriorityPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
 
-  const analytics = await getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics);
+  const analytics = await getVisitorAnalytics(session.accessToken).catch(() => null);
+  if (!analytics) {
+    return <main id="main-content" className="admin-page"><div className="shell admin-shell"><section className="admin-empty admin-empty--large" role="alert"><h1>بيانات النمو غير متاحة مؤقتًا</h1><p>تعذّر جلب القياس الآن؛ أعد المحاولة قبل اتخاذ قرار من هذه اللوحة.</p><Link href="/admin/growth">أعد المحاولة</Link></section></div></main>;
+  }
   const { items, summary } = buildGrowthPriorities(analytics.missedSearches);
 
   return (

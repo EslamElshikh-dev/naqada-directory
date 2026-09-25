@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { businesses, categories, localities, meta } from '@/lib/data';
-import { emptyVisitorAnalytics, getAdminStats, getVisitorAnalytics, isDirectoryAdmin, type VisitorAnalytics } from '@/lib/auth/admin';
+import { getAdminStats, getVisitorAnalytics, isDirectoryAdmin, type VisitorAnalytics } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
 
 export const metadata: Metadata = { title: 'لوحة إدارة الدليل', robots: { index: false, follow: false } };
@@ -30,13 +30,17 @@ function pathLabel(path: string) {
 }
 function sourceLabel(source: string) {
   if (source === 'direct') return 'دخول مباشر أو رابط محفوظ';
+  if (source === 'google_search') return 'بحث Google';
+  if (source === 'bing_search') return 'بحث Bing';
+  if (source === 'facebook') return 'Facebook';
+  if (source === 'whatsapp') return 'WhatsApp';
   if (source.includes('google.')) return 'بحث Google';
   if (source.includes('facebook.') || source.includes('fb.')) return 'Facebook';
   if (source.includes('whatsapp.')) return 'WhatsApp';
   return source;
 }
-function dateLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' }).format(new Date(`${date}T12:00:00Z`)); }
-function timeLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(date)); }
+function dateLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', timeZone: 'Africa/Cairo' }).format(new Date(`${date}T12:00:00Z`)); }
+function timeLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(date)); }
 function growth(current: number, previous: number) {
   if (!previous) return current ? { label: 'بداية قياس جديدة', tone: 'up' } : { label: 'بانتظار أول زائر', tone: 'flat' };
   const value = ((current - previous) / previous) * 100;
@@ -74,10 +78,15 @@ function buildSuggestions(analytics: VisitorAnalytics, pending: number) {
 export default async function AdminPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
-  const [stats, analytics] = await Promise.all([
-    getAdminStats(session.accessToken).catch(() => ({ members: 0, siteReviews: 0, siteRating: 0, listingRatings: 0, pendingContributions: 0, events30d: 0 })),
-    getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics),
+  const [statsResult, analyticsResult] = await Promise.allSettled([
+    getAdminStats(session.accessToken),
+    getVisitorAnalytics(session.accessToken),
   ]);
+  if (statsResult.status !== 'fulfilled' || analyticsResult.status !== 'fulfilled') {
+    return <main id="main-content" className="admin-page"><div className="shell admin-shell"><section className="admin-empty admin-empty--large" role="alert"><h1>الإحصاءات غير متاحة مؤقتًا</h1><p>تعذّر قراءة بيانات لوحة التحكم الآن. لن نعرض أرقامًا صفرية حتى لا تبدو البيانات الناقصة كأنها نتيجة فعلية.</p><Link href="/admin">أعد المحاولة</Link></section></div></main>;
+  }
+  const stats = statsResult.value;
+  const analytics = analyticsResult.value;
   const totals = analytics.totals;
   const reviewed = businesses.filter((item) => item.checked).length;
   const completion = Math.round((reviewed / Math.max(1, businesses.length)) * 100);
@@ -91,14 +100,14 @@ export default async function AdminPage() {
 
   return (
     <main id="main-content" className="admin-page admin-page--premium">
-      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز القرار والتشغيل</span><h1>لوحة إدارة <em>دليل نقادة</em></h1><p>متابعة الزوار الحقيقيين ونمو الأعضاء وسلوك الاستخدام وجودة البيانات في واجهة واحدة واضحة.</p><nav aria-label="أقسام لوحة الإدارة"><a href="#audience">الجمهور</a><a href="#content">المحتوى</a><a href="#members">الزوار المسجلون</a><a href="#recommendations">مقترحات التحسين</a><a href="#operations">التشغيل</a></nav></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>آخر 30 يومًا</small>مباشر</b><b><small>تعريف الزائر</small>آمن</b><b><small>حالة البيانات</small>محدّثة</b></div></aside></div></section>
+      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز القرار والتشغيل</span><h1>لوحة إدارة <em>دليل نقادة</em></h1><p>متابعة الزيارات المقاسة ونمو الأعضاء وسلوك الاستخدام وجودة البيانات في واجهة واحدة واضحة.</p><nav aria-label="أقسام لوحة الإدارة"><a href="#audience">الجمهور</a><a href="#content">المحتوى</a><a href="#members">الزوار المسجلون</a><a href="#recommendations">مقترحات التحسين</a><a href="#operations">التشغيل</a></nav></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>آخر 30 يومًا</small>مباشر</b><b><small>تعريف الزائر</small>آمن</b><b><small>حالة البيانات</small>محدّثة</b></div></aside></div></section>
 
       <div className="shell admin-shell admin-shell--premium">
         <nav className="admin-section-nav" aria-label="اختصارات لوحة التحكم"><a href="#audience"><b>01</b>الجمهور</a><a href="#content"><b>02</b>الصفحات والمصادر</a><a href="#members"><b>03</b>الأعضاء الزائرون</a><a href="#recommendations"><b>04</b>التحسين</a><a href="#operations"><b>05</b>التشغيل</a></nav>
 
-        <section className="admin-section admin-audience" id="audience"><header><div><span>آخر 30 يومًا</span><h2>الجمهور الحقيقي للدليل</h2><p>كل متصفح يُحسب مرة واحدة كزائر فريد، بينما مشاهدة الصفحات تُحسب بشكل مستقل.</p></div><div className={`admin-growth is-${visitorGrowth.tone}`}><small>مقارنة بالفترة السابقة</small><strong>{visitorGrowth.label}</strong></div></header>
+        <section className="admin-section admin-audience" id="audience"><header><div><span>آخر 30 يومًا</span><h2>جمهور الدليل المقاس</h2><p>يُحسب معرّف المتصفح مرة واحدة في الفترة، وتُحسب مشاهدة كل صفحة على حدة. قد يغيّر حذف ملفات الارتباط أو حجب التتبع هذا التقدير.</p></div><div className={`admin-growth is-${visitorGrowth.tone}`}><small>مقارنة بالفترة السابقة</small><strong>{visitorGrowth.label}</strong></div></header>
           <div className="admin-primary-metrics"><article><i><MetricIcon name="people" /></i><span>الزوار الفريدون</span><strong>{format(totals.uniqueVisitors30d)}</strong><small>{format(totals.visitorsToday)} زائرًا اليوم</small></article><article><i><MetricIcon name="spark" /></i><span>زوار جدد</span><strong>{format(totals.newVisitors30d)}</strong><small>أول زيارة من هذا المتصفح</small></article><article><i><MetricIcon name="eye" /></i><span>مشاهدات الصفحات</span><strong>{format(totals.pageViews30d)}</strong><small>{pagesPerVisitor.toLocaleString('ar-EG', { maximumFractionDigits: 1 })} صفحة لكل زائر</small></article><article><i><MetricIcon name="member" /></i><span>زوار بأسماء معروفة</span><strong>{format(totals.identifiedVisitors30d)}</strong><small>أعضاء دخلوا بحساباتهم فقط</small></article></div>
-          <div className="admin-trend-card"><header><div><span>آخر 14 يومًا</span><h3>اتجاه الزوار والمشاهدات</h3></div><dl><div><dt>العائدون</dt><dd>{format(totals.returningVisitors30d)}</dd></div><div><dt>معدل العودة</dt><dd>{percentage(returnRate)}</dd></div><div><dt>إجمالي الزوار المسجلين</dt><dd>{format(totals.lifetimeVisitors)}</dd></div></dl></header><div className="admin-trend" aria-label="رسم الزيارات اليومية">{analytics.dailySeries.length ? analytics.dailySeries.map((item) => <div key={item.date} title={`${dateLabel(item.date)}: ${format(item.visitors)} زائر و${format(item.views)} مشاهدة`}><span className="admin-trend__bar" style={{ '--bar-height': `${Math.max(item.views ? 8 : 2, (item.views / chartMax) * 100)}%` } as CSSProperties}><i style={{ '--visitor-height': `${Math.max(item.visitors ? 15 : 3, (item.visitors / Math.max(1, item.views)) * 100)}%` } as CSSProperties} /></span><small>{dateLabel(item.date)}</small></div>) : <div className="admin-chart-empty">تبدأ الأعمدة بالظهور مع أول زيارة منشورة.</div>}</div><footer><span><i className="is-views" />المشاهدات</span><span><i className="is-visitors" />الزوار الفريدون</span></footer></div>
+          <div className="admin-trend-card"><header><div><span>آخر 14 يومًا</span><h3>اتجاه الزوار والمشاهدات</h3></div><dl><div><dt>زاروا قبل الفترة</dt><dd>{format(totals.returningVisitors30d)}</dd></div><div><dt>نسبة من زاروا قبل الفترة</dt><dd>{percentage(returnRate)}</dd></div><div><dt>معرّفات الزوار المحفوظة</dt><dd>{format(totals.lifetimeVisitors)}</dd></div></dl></header><div className="admin-trend" aria-label="رسم الزيارات اليومية">{analytics.dailySeries.length ? analytics.dailySeries.map((item) => <div key={item.date} title={`${dateLabel(item.date)}: ${format(item.visitors)} زائر و${format(item.views)} مشاهدة`}><span className="admin-trend__bar" style={{ '--bar-height': `${Math.max(item.views ? 8 : 2, (item.views / chartMax) * 100)}%` } as CSSProperties}><i style={{ '--visitor-height': `${Math.max(item.visitors ? 15 : 3, (item.visitors / Math.max(1, item.views)) * 100)}%` } as CSSProperties} /></span><small>{dateLabel(item.date)}</small></div>) : <div className="admin-chart-empty">تبدأ الأعمدة بالظهور مع أول زيارة منشورة.</div>}</div><footer><span><i className="is-views" />المشاهدات</span><span><i className="is-visitors" />الزوار الفريدون</span></footer></div>
         </section>
 
         <section className="admin-section" id="content"><header><div><span>فهم الاهتمام</span><h2>الصفحات والمصادر والأجهزة</h2><p>تعرف أين يذهب الجمهور، ومن أين وصل، وكيف تصفح الدليل.</p></div></header><div className="admin-insight-grid"><article className="admin-ranked-card admin-ranked-card--wide"><header><span>ترتيب المحتوى</span><h3>أكثر الصفحات زيارة</h3></header><RankList type="pages" max={pageMax} items={analytics.topPages.map((item) => ({ label: pathLabel(item.path), value: item.views, detail: `${format(item.visitors)} زائرًا فريدًا` }))} /></article><article className="admin-ranked-card"><header><span>الاكتساب</span><h3>مصادر الوصول</h3></header><RankList type="sources" max={sourceMax} items={analytics.sources.map((item) => ({ label: sourceLabel(item.source), value: item.visitors, detail: 'زائرًا فريدًا' }))} /></article><article className="admin-ranked-card"><header><span>تجربة الأجهزة</span><h3>طريقة التصفح</h3></header><div className="admin-device-list">{analytics.devices.length ? analytics.devices.map((item) => { const share = totals.uniqueVisitors30d ? item.visitors / totals.uniqueVisitors30d * 100 : 0; return <div key={item.device}><span>{item.device === 'mobile' ? 'هاتف جوال' : item.device === 'tablet' ? 'جهاز لوحي' : 'كمبيوتر'}</span><strong>{percentage(share)}</strong><i><span style={{ width: `${share}%` }} /></i><small>{format(item.visitors)} زائرًا</small></div>; }) : <div className="admin-empty">بانتظار بيانات الأجهزة.</div>}</div></article></div></section>

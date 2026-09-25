@@ -40,12 +40,18 @@ const requestLabels: Record<string, string> = {
 export default async function ContributorDashboard() {
   const session = await resolveSession(false);
   if (!session) redirect('/account/login?next=/contributor');
-  const access = await getContributorAccess(session.accessToken, session.user.id).catch(() => null);
+  const access = await getContributorAccess(session.accessToken, session.user.id).catch(() => undefined);
+  if (access === undefined) {
+    return <main id="main-content" className={styles.page}><div className="shell" style={{ padding: '48px 0' }}><section className={styles.section} role="alert"><h1>تعذّر التحقق من صلاحيات المساهم</h1><p>لم نتمكن من قراءة الصلاحيات الآن. أعد المحاولة قبل اعتبار الحساب غير مربوط.</p><Link href="/contributor">أعد المحاولة ←</Link></section></div></main>;
+  }
   if (!access) {
     return <main id="main-content" className={styles.page}><div className="shell" style={{ padding: '48px 0' }}><section className={styles.section}><span>منطقة المساهمين</span><h1>الحساب غير مربوط بصلاحية مساهم</h1><p>هذا الحساب عضو عادي في دليل نقادة حاليًا.</p><Link href="/account">العودة إلى حسابي ←</Link></section></div></main>;
   }
 
-  const activity = await getContributorActivity(session.accessToken, session.user.id).catch(() => ({ total: 0, pending: 0, reviewing: 0, approved: 0, published: 0, rejected: 0, recent: [] }));
+  const activity = await getContributorActivity(session.accessToken).catch(() => null);
+  if (!activity) {
+    return <main id="main-content" className={styles.page}><div className="shell" style={{ padding: '48px 0' }}><section className={styles.section} role="alert"><h1>مساهماتك غير متاحة مؤقتًا</h1><p>تعذّر قراءة حالة المساهمات الآن. أعد المحاولة حتى لا تُعرض أرقام غير صحيحة.</p><Link href="/contributor">أعد المحاولة ←</Link></section></div></main>;
+  }
   const knowledgeTotal = knowledgePlaces.length + knowledgePeople.length + knowledgeHeritage.length + knowledgeReferences.length + fieldInformants.length;
 
   const actions = [

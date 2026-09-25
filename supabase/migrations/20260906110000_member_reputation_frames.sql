@@ -23,6 +23,9 @@ create table if not exists public.directory_member_roles (
 
 alter table public.directory_member_roles enable row level security;
 
+-- The table is private; avoid legacy automatic grants on a fresh database.
+revoke all on table public.directory_member_roles from public, anon, authenticated;
+
 drop policy if exists "members can read own directory role" on public.directory_member_roles;
 create policy "members can read own directory role"
   on public.directory_member_roles

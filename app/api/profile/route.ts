@@ -50,12 +50,12 @@ async function readRole(accessToken: string, id: string): Promise<MemberRoleOver
   return row ? { roleCode: row.role_code, roleLabel: row.role_label, frameCode: row.frame_code } : null;
 }
 
-async function readContributionStatuses(accessToken: string, id: string) {
+async function readContributionStatuses(accessToken: string) {
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/directory_contributions?submitted_by_user_id=eq.${encodeURIComponent(id)}&select=status&limit=5000`,
-    { headers: restHeaders(accessToken), cache: 'no-store' },
+    `${SUPABASE_URL}/rest/v1/rpc/get_own_naqada_contributions`,
+    { method: 'POST', headers: restHeaders(accessToken, true), body: '{}', cache: 'no-store' },
   );
-  if (!response.ok) return [];
+  if (!response.ok) throw new Error('CONTRIBUTION_STATUS_READ_FAILED');
   const rows = await response.json() as ContributionRow[];
   return rows.map((item) => item.status);
 }
@@ -64,7 +64,7 @@ async function serialize(profile: ProfileRow | null, session: NonNullable<Awaite
   const createdAt = profile?.created_at || session.user.createdAt;
   const [role, statuses] = await Promise.all([
     readRole(session.accessToken, session.user.id),
-    readContributionStatuses(session.accessToken, session.user.id),
+    readContributionStatuses(session.accessToken),
   ]);
   return {
     fullName: profile?.full_name || session.user.displayName,
