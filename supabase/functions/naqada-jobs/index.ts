@@ -2,6 +2,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { LOCAL_PLACES, findLocalPlace } from './places.ts';
 import { readFacebookSearch } from './facebook-search.ts';
 import { scanJobsArab } from './jobs-arab.ts';
+import { scanEgyptJobs } from './egypt-jobs.ts';
+import { scanEgyptJobBank } from './egypt-job-bank.ts';
 
 const PROD_ORIGIN = 'https://naqada-directory.vercel.app';
 const PUBLIC_KEY = 'sb_publishable_QsT7jYGw7sWx0v6Vbg2Vjw_-uFV8wMk';
@@ -159,6 +161,8 @@ Deno.serve(async (req: Request) => {
       ...PUBLIC_FACEBOOK_SEARCHES.map((feed) => scanRss(feed, true)),
       ...PUBLIC_SOCIAL_FEEDS.map(scanSocial),
       scanJobsArab(),
+      scanEgyptJobs(),
+      scanEgyptJobBank(),
     ]);
     const successfulFeeds = scans.filter((scan) => scan.ok).length;
     const jobs = [...new Map(scans.flatMap((scan) => scan.jobs).map((job) => [job.source_url, job])).values()];
