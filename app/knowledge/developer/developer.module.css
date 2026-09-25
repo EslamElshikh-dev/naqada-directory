@@ -416,7 +416,7 @@
 
 .workSection {
   position: relative;
-  scroll-margin-top: 165px;
+  scroll-margin-top: 52px;
   padding-block: 112px 128px;
   overflow: hidden;
   background: var(--forest-deep);
@@ -719,7 +719,7 @@
   .expertiseGrid { grid-template-columns: 1fr; }
   .expertiseGrid article { min-height: 285px; padding: 24px; }
   .expertiseGrid h3 { margin-top: 38px; }
-  .workSection { padding-block: 80px 90px; }
+  .workSection { scroll-margin-top: 70px; padding-block: 80px 90px; }
   .nextChapter { margin-top: 47px; padding: 18px; }
   .workToolbar { gap: 12px; margin-top: -4px; padding: 8px; }
   .workFilters { width: 100%; overflow-x: auto; padding-bottom: 3px; scrollbar-width: none; }

@@ -85,7 +85,7 @@
 .chapterNavLinks a:hover, .chapterNavLinks a:focus-visible { border-color: #e1d2ab; background: #f3eddd; }
 .chapterNavLinks a[aria-current='location'] { border-color: #c4d4c0; background: #e7f0e8; color: #134b36; }
 .chapterNavLinks a[aria-current='location'] small { color: #18714c; }
-.routeMap { position: relative; padding-block: 91px 99px; }
+.routeMap { position: relative; padding-block: 91px 45px; }
 .routeMapHeading { display: grid; grid-template-columns: 1fr minmax(260px, .8fr); gap: 32px; align-items: end; margin-bottom: 37px; }
 .routeMapHeading h2 { margin: 0; font-size: clamp(2.1rem, 3.8vw, 4rem); line-height: 1.3; letter-spacing: -.04em; }
 .routeMapHeading h2 em { color: #b18232; font-style: normal; }
@@ -101,8 +101,8 @@
 .routeCardDescription { display: block; margin-top: 9px; color: #6b7b70; font-size: .72rem; line-height: 1.8; }
 .routeCardArrow { display: grid; place-items: center; align-self: flex-end; width: 30px; height: 30px; margin-top: auto; border-radius: 50%; background: #e9f1e8; color: #226344; font-size: .92rem; transition: transform .25s ease, background .25s ease; }
 .routeCard:hover .routeCardArrow { transform: translate(-3px, 3px); background: #d8e9db; }
-.story, .journey, .perspective, .connect { scroll-margin-top: 165px; }
-.story { display: grid; grid-template-columns: minmax(205px, .43fr) minmax(0, 1.57fr); gap: clamp(38px, 6vw, 100px); padding-block: 125px 137px; }
+.story, .journey, .perspective, .connect { scroll-margin-top: 52px; }
+.story { display: grid; grid-template-columns: minmax(205px, .43fr) minmax(0, 1.57fr); gap: clamp(38px, 6vw, 100px); padding-block: 96px 137px; }
 .storyRail { display: flex; flex-direction: column; align-items: flex-start; gap: 65px; }
 .sectionIndex { display: flex; align-items: flex-start; gap: 13px; padding-top: 8px; color: #a48446; font-size: .75rem; font-weight: 850; white-space: nowrap; }
 .sectionIndex i { width: 50px; height: 1px; margin-top: 11px; background: #c6b48c; }
@@ -150,7 +150,7 @@
 .perspectiveIntro > .perspectiveNote { margin-top: 20px; padding-inline-start: 17px; border-inline-start: 2px solid #d2b26b; color: #456455; }
 .perspectiveIntro > a:not(.sectionTrail) { display: inline-flex; gap: 14px; align-items: center; margin-top: 13px; padding-bottom: 7px; border-bottom: 1px solid #ab8744; color: #195841; text-decoration: none; font-size: .79rem; font-weight: 850; }
 .perspectiveIntro > .sectionTrail { margin-top: 31px; }
-.companyGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.companyGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-self: start; }
 .companyGrid article { position: relative; display: flex; flex-direction: column; min-height: 250px; padding: clamp(23px, 2.5vw, 32px); border: 1px solid #d9ded3; border-radius: 21px; background: linear-gradient(145deg, #fffefa, #f8f6ee); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .companyGrid article:nth-child(2), .companyGrid article:nth-child(3) { background: linear-gradient(145deg, #f4f4e9, #fffdf7); }
 .companyGrid article:hover { transform: translateY(-5px); border-color: #d4b779; box-shadow: 0 20px 42px #163c2a17; }
@@ -203,13 +203,14 @@
   .chapterNavLinks { justify-content: flex-start; gap: 4px; overflow-x: auto; scrollbar-width: none; }
   .chapterNavLinks::-webkit-scrollbar { display: none; }
   .chapterNavLinks a { flex: 0 0 auto; min-height: 38px; padding-inline: 10px; font-size: .72rem; }
-  .routeMap { padding-block: 74px 80px; }
+  .routeMap { padding-block: 74px 40px; }
   .routeMapHeading { margin-bottom: 23px; }
   .routeMapHeading > p { font-size: .87rem; }
   .routeCards { display: flex; gap: 10px; width: calc(100% + 20px); margin-inline-end: -20px; padding: 1px 20px 18px 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: #c4ac78 transparent; }
   .routeCard { flex: 0 0 min(72vw, 258px); min-height: 219px; scroll-snap-align: start; }
   .routeCard:nth-child(3)::after { display: block; }
   .routeCard:last-child::after { display: none; }
+  .story, .journey, .perspective, .connect { scroll-margin-top: 70px; }
   .story, .perspective { padding-block: 84px 94px; }
   .storyRail { align-items: stretch; }
   .originMark { max-width: 170px; gap: 8px; padding: 16px; }
