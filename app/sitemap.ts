@@ -29,7 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/news' },
     { path: '/jobs' },
     { path: '/blog', lastModified: latestEditorialDate },
-    { path: '/role-models', lastModified: new Date('2026-09-24T00:00:00.000Z') },
+    { path: '/role-models', lastModified: new Date(Math.max(...roleModels.map((person) => Date.parse(person.modifiedAt)))) },
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },

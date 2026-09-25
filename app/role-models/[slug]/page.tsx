@@ -75,6 +75,8 @@ export default async function RoleModelArticle({ params }: Props) {
         name: person.name,
         alternateName: person.alternateNames,
         description: person.shortTitle,
+        url,
+        ...(person.photos[0] ? { image: new URL(person.photos[0].src, siteConfig.url).toString() } : {}),
         homeLocation: { '@type': 'Place', name: person.locality },
         subjectOf: { '@id': url + '#article' },
       },
@@ -89,30 +91,38 @@ export default async function RoleModelArticle({ params }: Props) {
     ],
   };
 
-  return <main id="main-content" className={styles.page}>
+  return <main id="main-content" className={styles.page + (person.slug === 'aya-refai-abdelshafi' ? ' ' + styles.ayaProfile : '')}>
     <article>
       <header className={styles.articleHero}>
         <div className={'shell ' + styles.articleHeroInner}>
-          <nav className={styles.breadcrumbs} aria-label="مسار المقال"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><Link href="/role-models">نماذج مشرفة</Link><span aria-hidden="true">/</span><span>{person.name}</span></nav>
+          <nav className={styles.breadcrumbs} aria-label="مسار المقال"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><Link href="/role-models">نماذج مشرفة</Link><span aria-hidden="true">/</span><span aria-current="page">{person.name}</span></nav>
           <div className={styles.articleHeroGrid}>
             <div>
               <span className={styles.eyebrow}>نماذج مشرفة في نقادة · {person.locality}</span>
               <h1>{person.name}</h1>
               <p>{person.shortTitle}</p>
               <div className={styles.heroTags}>{person.heroTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+              <div className={styles.heroActions}><a href="#story">ابدأ الحكاية <span aria-hidden="true">↙</span></a><a href="#gallery">شوف الصور <span aria-hidden="true">↙</span></a></div>
             </div>
             <div className={styles.articlePortrait}>
               {person.photos[0]
                 ? <Image src={person.photos[0].src} alt={person.photos[0].alt} width={person.photos[0].width} height={person.photos[0].height} sizes="(max-width: 850px) calc(100vw - 40px), 420px" style={person.photos[0].heroPosition ? { objectPosition: person.photos[0].heroPosition } : undefined} priority />
                 : <div className={styles.portraitArtwork} aria-hidden="true"><span>{person.name.slice(0, 1)}</span><small>من نقادة… وحكايتهم تستاهل</small></div>}
+              <span className={styles.portraitCaption}>{person.name}<small>{person.locality}</small></span>
             </div>
           </div>
         </div>
       </header>
 
+      <nav className={'shell ' + styles.storyTrail} aria-label="محطات الحكاية">
+        <a href="#story"><span>بداية</span><strong>الحكاية</strong></a>
+        {person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}><span>{String(index + 1).padStart(2, '0')}</span><strong>{section.heading}</strong></a>)}
+        {person.photos.length > 1 && <a href="#gallery"><span>صور</span><strong>من الرحلة</strong></a>}
+      </nav>
+
       <div className={'shell ' + styles.articleLayout}>
         <div className={styles.articleBody}>
-          <div className={styles.articleLead}>
+          <div className={styles.articleLead} id="story">
             <span>الحكاية</span>
             {person.introduction.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </div>
@@ -120,18 +130,19 @@ export default async function RoleModelArticle({ params }: Props) {
             {person.highlights.map((highlight, index) => <div key={highlight}><small>{String(index + 1).padStart(2, '0')}</small><strong>{highlight}</strong></div>)}
           </div>
           {person.sections.map((section, index) => <section className={styles.articleSection} key={section.heading} id={'chapter-' + (index + 1)}>
-            <span>فصل {String(index + 1).padStart(2, '0')}</span>
+            <span>المحطة {String(index + 1).padStart(2, '0')}</span>
             <h2>{section.heading}</h2>
             {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>)}
-          {person.photos.length > 1 && <section className={styles.gallery} aria-labelledby="gallery-title">
+          {person.photos.length > 1 && <section className={styles.gallery} id="gallery" aria-labelledby="gallery-title">
             <div className={styles.sectionHeading}><div><span>من القصة</span><h2 id="gallery-title">صور من حكاية {person.name}</h2></div></div>
-            <div className={styles.galleryGrid + (person.photos.length === 2 ? ' ' + styles.galleryGridSingle : '')}>{person.photos.slice(1).map((photo) => <figure key={photo.src}>
-              <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 700px) calc(100vw - 40px), 380px" />
+            <div className={styles.galleryGrid + (person.photos.length === 2 ? ' ' + styles.galleryGridSingle : '')}>{person.photos.slice(1).map((photo, index) => <figure key={photo.src} className={index === person.photos.length - 2 && person.photos.length > 4 ? styles.galleryFeature : undefined}>
+              <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 700px) calc(100vw - 40px), (max-width: 1100px) 45vw, 380px" />
+              <span className={styles.galleryNumber} aria-hidden="true">{String(index + 1).padStart(2, '0')} / {String(person.photos.length - 1).padStart(2, '0')}</span>
               <figcaption>{photo.caption}</figcaption>
             </figure>)}</div>
           </section>}
-          <section className={styles.sourceNote} aria-labelledby="source-title">
+          <section className={styles.sourceNote} id="source" aria-labelledby="source-title">
             <span>الشفافية في الحكاية</span>
             <h2 id="source-title">المصدر وما نعرفه</h2>
             <p>{person.sourceDisclosure}</p>
@@ -141,7 +152,7 @@ export default async function RoleModelArticle({ params }: Props) {
         </div>
         <aside className={styles.articleSide} aria-label="معلومات عن المقال">
           <div className={styles.sideCard}><small>الاسم</small><strong>{person.name}</strong><small>من</small><b>{person.locality}</b></div>
-          <nav className={styles.sideCard} aria-label="أقسام المقال"><strong>في الحكاية</strong>{person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}>{section.heading}</a>)}</nav>
+          <nav className={styles.sideCard} aria-label="أقسام المقال"><strong>محطات الحكاية</strong><a href="#story">بداية الحكاية</a>{person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}>{section.heading}</a>)}{person.photos.length > 1 && <a href="#gallery">الصور</a>}<a href="#source">المصدر والتصحيحات</a></nav>
           <div className={styles.sideCard}><strong>اهتمامات مذكورة</strong><div className={styles.interestList}>{person.interests.map((interest) => <span key={interest}>{interest}</span>)}</div></div>
         </aside>
       </div>

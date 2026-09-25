@@ -103,3 +103,67 @@
 .homeFeatureVisual img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; }
 .homeFeatureVisual small { position:absolute; z-index:1; bottom:18px; padding:7px 10px; border-radius:7px; background:#133728aa; }
 @media(max-width:700px) { .homeFeature { grid-template-columns:1fr; margin-block:20px 35px; } .homeFeatureCopy { padding:24px; } .homeFeatureVisual { min-height:280px; } }
+
+/* A guided, image-led story for Aya. Shared navigation remains useful to every profile. */
+.articlePortrait { position:relative; }
+.portraitCaption { position:absolute; inset-inline:18px; bottom:17px; display:grid; gap:3px; padding:12px 16px; border:1px solid #ffffff75; border-radius:14px; background:#103d33dd; color:#fff; font-size:.92rem; font-weight:850; line-height:1.6; backdrop-filter:blur(12px); }
+.portraitCaption small { color:#e8dcc2; font-size:.8rem; font-weight:500; }
+.heroActions { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+.heroActions a { display:inline-flex; align-items:center; justify-content:space-between; gap:20px; min-height:46px; padding:10px 17px; border:1px solid #e6c88e; border-radius:999px; background:#e6c88e; color:#153b32; text-decoration:none; font-size:.89rem; font-weight:850; transition:transform .22s ease,background-color .22s ease; }
+.heroActions a + a { background:#ffffff0a; color:#f6e7c9; border-color:#f6e7c981; }
+.heroActions a:hover { transform:translateY(-3px); background:#f6deb1; color:#143a30; }
+.storyTrail { position:relative; z-index:2; display:flex; align-items:stretch; gap:6px; overflow-x:auto; margin-top:-22px; padding:9px; border:1px solid #e8e0ce; border-radius:18px; background:#fffdf7; box-shadow:0 17px 34px #1a3b3020; scrollbar-width:thin; scroll-snap-type:x proximity; }
+.storyTrail a { position:relative; flex:1 0 155px; min-width:0; display:flex; flex-direction:column; gap:5px; padding:11px 12px; border-radius:12px; color:#23483b; text-decoration:none; scroll-snap-align:start; transition:background-color .2s ease,transform .2s ease; }
+.storyTrail a + a::before { content:""; position:absolute; inset-inline-start:-5px; top:28px; width:8px; height:1px; background:#bc935d; }
+.storyTrail a:hover,.storyTrail a:focus-visible { background:#f3ead7; transform:translateY(-2px); }
+.storyTrail a span { color:#95653d; font-size:.77rem; font-weight:850; }
+.storyTrail a strong { font-size:.85rem; font-weight:800; line-height:1.65; }
+.gallery figure { position:relative; }
+.galleryNumber { position:absolute; inset-inline-start:14px; top:14px; padding:6px 11px; border-radius:999px; background:#153f34e8; color:#fff8e7; font-size:.74rem; font-weight:800; direction:ltr; }
+
+.ayaProfile { background:#fbfaf5; }
+.ayaProfile .articleHero { background:radial-gradient(circle at 10% 8%,#466b56 0,transparent 30%),radial-gradient(circle at 78% 100%,#773d4b48 0,transparent 38%),linear-gradient(130deg,#103d33,#092b27 78%); }
+.ayaProfile .articleHero::after { content:""; position:absolute; inset-inline-end:-120px; top:18%; width:min(48vw,600px); aspect-ratio:1; border:1px solid #eac88a29; border-radius:50%; box-shadow:0 0 0 55px #eac88a09,0 0 0 110px #eac88a06; pointer-events:none; }
+.ayaProfile .articleHeroInner { padding-block:34px 70px; }
+.ayaProfile .articleHero .breadcrumbs { margin-bottom:36px; }
+.ayaProfile .articleHeroGrid { grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:clamp(35px,6vw,94px); }
+.ayaProfile .articleHero h1 { font-size:clamp(2.8rem,5.4vw,5.25rem); line-height:1.32; text-wrap:balance; }
+.ayaProfile .articleHeroGrid > div:first-child > p { max-width:630px; color:#f0eadb; font-size:clamp(1.02rem,1.65vw,1.24rem); line-height:1.95; }
+.ayaProfile .heroTags span { border-color:#eac88a70; background:#f7ecdd0b; }
+.ayaProfile .articlePortrait { height:520px; max-height:none; min-height:0; border-radius:30px 150px 30px 30px; border:6px solid #fcf0d7; box-shadow:20px 24px 0 #eac88a27,0 30px 55px #041c1780; }
+.ayaProfile .articlePortrait img { height:100%; max-height:none; }
+.ayaProfile .articleLayout { padding-block:75px 115px; }
+.ayaProfile .articleLead { scroll-margin-top:125px; padding:25px clamp(22px,4vw,40px); border:1px solid #e8e1d3; border-inline-start:4px solid #ad754c; border-radius:20px; background:#fff; box-shadow:0 10px 30px #173b2b0a; }
+.ayaProfile .articleLead > span { font-size:.86rem; }
+.ayaProfile .articleLead p { font-size:1.07rem; line-height:2.16; }
+.ayaProfile .highlights { margin:25px 0 70px; }
+.ayaProfile .highlights div { position:relative; overflow:hidden; min-height:128px; padding:21px; background:#eff3e8; border-color:#dce7d5; }
+.ayaProfile .highlights div:nth-child(2) { background:#f9f0df; border-color:#ebddc4; }
+.ayaProfile .highlights div:nth-child(3) { background:#f6eced; border-color:#e9d9dd; }
+.ayaProfile .highlights small { font-size:.85rem; font-weight:850; }
+.ayaProfile .highlights strong { font-size:.97rem; line-height:1.85; }
+.ayaProfile .articleSection { position:relative; margin-top:0; padding-block:0 45px; padding-inline-start:28px; border-inline-start:2px solid #d7c8a8; }
+.ayaProfile .articleSection::before { content:""; position:absolute; inset-inline-start:-7px; top:10px; width:12px; height:12px; border:2px solid #fffdf8; border-radius:50%; background:#ae7950; box-shadow:0 0 0 3px #e9d7b8; }
+.ayaProfile .articleSection:target { border-color:#a85c62; }
+.ayaProfile .articleSection:target::before { background:#a85c62; }
+.ayaProfile .articleSection > span { color:#a36c41; }
+.ayaProfile .articleSection h2 { max-width:720px; margin:9px 0 20px; color:#143e32; font-size:clamp(1.55rem,2.5vw,2.1rem); line-height:1.55; }
+.ayaProfile .articleSection p { max-width:72ch; color:#3a5044; line-height:2.13; }
+.ayaProfile .gallery { margin-top:15px; scroll-margin-top:120px; }
+.ayaProfile .galleryGrid { gap:17px; }
+.ayaProfile .gallery figure { display:flex; flex-direction:column; border-radius:20px; border-color:#e4dfd2; background:#fff; box-shadow:0 10px 25px #183f2b0d; transition:transform .28s ease,box-shadow .28s ease; }
+.ayaProfile .gallery figure:hover { transform:translateY(-4px); box-shadow:0 16px 30px #183f2b1e; }
+.ayaProfile .gallery img { width:100%; height:350px; max-height:none; object-fit:contain; background:#eceee6; }
+.ayaProfile .gallery figcaption { flex:1; padding:17px 19px 20px; color:#435d4c; font-size:.88rem; line-height:1.85; }
+.ayaProfile .gallery .galleryFeature { grid-column:span 2; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.75fr); align-items:center; background:#f0f3eb; }
+.ayaProfile .galleryFeature img { height:540px; background:#f0f3eb; }
+.ayaProfile .galleryFeature figcaption { display:flex; align-items:center; padding:clamp(22px,4vw,48px); color:#264536; font-size:1.02rem; line-height:2; }
+.ayaProfile .sourceNote { scroll-margin-top:120px; background:#f5eee3; }
+.ayaProfile .articleSide { position:sticky; top:110px; align-self:start; }
+.ayaProfile .sideCard { border-color:#e3e4d6; }
+.ayaProfile .sideCard a:hover { color:#9e643e; text-decoration:none; }
+
+@media(max-width:980px) { .ayaProfile .articleHeroGrid { grid-template-columns:minmax(0,1fr) minmax(280px,.7fr); gap:24px; } .ayaProfile .articlePortrait { height:460px; } .ayaProfile .articleSide { position:static; } }
+@media(max-width:700px) { .ayaProfile .articleHeroInner { padding-block:24px 55px; } .ayaProfile .articleHero .breadcrumbs { margin-bottom:28px; } .ayaProfile .articleHeroGrid { grid-template-columns:1fr; gap:26px; } .ayaProfile .articleHero h1 { font-size:clamp(2.45rem,10vw,3.3rem); margin-block:12px; } .ayaProfile .articlePortrait { width:min(100%,430px); height:410px; margin-inline:auto; border-radius:26px 115px 26px 26px; } .ayaProfile .articleLayout { padding-block:45px 75px; } .ayaProfile .articleLead { padding:22px; } .ayaProfile .articleSection { padding-inline-start:24px; } .ayaProfile .galleryGrid { grid-template-columns:1fr; } .ayaProfile .gallery .galleryFeature { grid-column:auto; display:flex; } .ayaProfile .galleryFeature img { height:auto; max-height:500px; } .ayaProfile .galleryFeature figcaption { padding:17px 19px 20px; } .storyTrail { border-radius:14px; } .storyTrail a { flex-basis:180px; } }
+@media(prefers-reduced-motion:no-preference) { .ayaProfile .articleHeroGrid > div:first-child { animation:ayaArrival .65s ease-out both; } .ayaProfile .articlePortrait { animation:ayaArrival .75s .08s ease-out both; } @keyframes ayaArrival { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } } }
+@media(prefers-reduced-motion:reduce) { .heroActions a,.storyTrail a,.ayaProfile .gallery figure { transition:none; } }
