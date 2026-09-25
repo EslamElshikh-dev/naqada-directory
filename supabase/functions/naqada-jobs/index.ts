@@ -1,9 +1,11 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { LOCAL_PLACES, findLocalPlace } from './places.ts';
+import { LOCAL_PLACES, LUXOR_PLACES, findJobPlace } from './places.ts';
 import { readFacebookSearch } from './facebook-search.ts';
 import { scanJobsArab } from './jobs-arab.ts';
 import { scanEgyptJobs } from './egypt-jobs.ts';
 import { scanEgyptJobBank } from './egypt-job-bank.ts';
+import { scanForasnaLuxor } from './forasna-luxor.ts';
+import { readPublicTelegram } from './telegram.ts';
 
 const PROD_ORIGIN = 'https://naqada-directory.vercel.app';
 const PUBLIC_KEY = 'sb_publishable_QsT7jYGw7sWx0v6Vbg2Vjw_-uFV8wMk';
@@ -12,15 +14,22 @@ const FEEDS = [
   { name: 'أخبار Google · قرى نقادة', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('مطلوب نقادة OR بشلاو OR قمولا when:14d') + '&hl=ar&gl=EG&ceid=EG:ar' },
   { name: 'أخبار Bing', url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('وظائف نقادة قنا') + '&format=rss&setlang=ar-eg&cc=eg' },
   { name: 'أخبار Bing · قرى نقادة', url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('مطلوب نقادة بشلاو قمولا طوخ دنفيق') + '&format=rss&setlang=ar-eg&cc=eg' },
+  { name: 'أخبار Google · الأقصر', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('وظائف الأقصر إسنا أرمنت when:14d') + '&hl=ar&gl=EG&ceid=EG:ar' },
+  { name: 'أخبار Google · قرى الأقصر', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('مطلوب الأقصر OR إسنا OR أرمنت OR القرنة OR الطود when:14d') + '&hl=ar&gl=EG&ceid=EG:ar' },
+  { name: 'أخبار Bing · الأقصر وقراها', url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('وظائف الأقصر إسنا أرمنت القرنة الزينية الطود البياضية') + '&format=rss&setlang=ar-eg&cc=eg' },
 ];
 // Only publicly indexed Facebook posts with their own post URL and recent RSS date qualify.
 const PUBLIC_FACEBOOK_SEARCHES = [
   { name: 'جروبات نقادة العامة', query: 'site:facebook.com/groups/ نقادة مطلوب وظيفة' },
   { name: 'صفحات نقادة العامة', query: 'site:facebook.com نقادة مطلوب عامل شغل' },
   { name: 'جروبات قرى نقادة العامة', query: 'site:facebook.com/groups/ بشلاو قمولا دنفيق وظائف مطلوب' },
+  { name: 'جروبات الأقصر العامة', query: 'site:facebook.com/groups/ الأقصر مطلوب وظيفة' },
+  { name: 'صفحات الأقصر العامة', query: 'site:facebook.com الأقصر إسنا مطلوب عامل شغل' },
+  { name: 'جروبات قرى الأقصر العامة', query: 'site:facebook.com/groups/ إسنا أرمنت القرنة وظائف مطلوب' },
 ].map(({ name, query }) => ({ name, url: `https://www.bing.com/search?q=${encodeURIComponent(query)}&format=rss&setlang=ar-eg&cc=eg` }));
 const PUBLIC_SOCIAL_FEEDS = [
   { name: 'وظائف صعيد مصر · تيليجرام', url: 'https://t.me/s/QenaLuxorJobs' },
+  { name: 'وظائف الأقصر · تيليجرام', url: 'https://t.me/s/LuxorJobsTele' },
 ];
 
 function allowedOrigin(origin: string | null) {
@@ -82,36 +91,14 @@ function readFeed(xml: string, feedName: string) {
     const combined = norm(`${title} ${snippet}`);
     if (!/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|فرصه عمل|شاغر|انضم)/.test(combined)) return [];
     if (/(دوره تدريبيه|منحه دراسيه|وظائف بكل المحافظات|نتائج التقديم|نتيجه مسابقه)/.test(combined)) return [];
-    const place = findLocalPlace(title, snippet);
-    if (!place || (place !== 'نقادة' && !/(نقاده|قنا)/.test(combined) && !/(بشلاو|قمولا|دنفيق)/.test(norm(place)))) return [];
+    const place = findJobPlace(title, snippet);
+    if (!place) return [];
     const source = plain(xmlField(item, 'source'), 120) || feedName;
     const description = snippet.length >= 20 ? snippet : `فرصة عمل منشورة من ${source}. افتح المصدر للتأكد من الشروط وطريقة التقديم واستمرار الإعلان.`;
     return [{ kind: 'offer', origin: 'external', status: 'published', title,
-      organization: source, locality: place === 'نقادة' ? 'مدينة نقادة' : place, field: 'وظائف محلية', description,
+      organization: source, locality: place.locality, governorate: place.governorate, field: 'وظائف محلية', description,
       contact_kind: 'link', contact_value: url, contact_consent: false,
       source_name: source, source_url: url, source_published_at: publishedAt.toISOString(),
-      published_at: publishedAt.toISOString(), expires_at: new Date(publishedAt.getTime() + 14 * 86_400_000).toISOString() }];
-  });
-}
-
-function readPublicTelegram(html: string, name: string) {
-  const now = Date.now();
-  return [...html.matchAll(/<div class="tgme_widget_message_wrap[^\"]*"[^>]*>([\s\S]*?)(?=<div class="tgme_widget_message_wrap|$)/gi)].slice(-45).flatMap((match) => {
-    const block = match[1];
-    const post = /data-post="(QenaLuxorJobs\/\d+)"/.exec(block)?.[1];
-    const publishedAt = new Date(/<time[^>]+datetime="([^"]+)"/.exec(block)?.[1] || '');
-    const age = now - publishedAt.getTime();
-    const content = /<div class="tgme_widget_message_text[^\"]*"[^>]*>([\s\S]*?)<\/div>/.exec(block)?.[1] || '';
-    const message = plain(decodeXml(content.replace(/<br\s*\/?\s*>/gi, ' · ')), 1200);
-    const normalized = norm(message);
-    const place = findLocalPlace(message);
-    if (!post || !place || !/(نقاده|قنا)/.test(normalized) || !/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|شاغر)/.test(normalized) || !Number.isFinite(age) || age < -86_400_000 || age > 14 * 86_400_000) return [];
-    const headline = message.split(/[.!؟·\n]/).map((part) => part.trim()).find((part) => /(مطلوب|وظيف|فرص عمل|تعيين)/.test(norm(part))) || 'فرصة عمل في نقادة';
-    const sourceUrl = `https://t.me/${post}`;
-    return [{ kind: 'offer', origin: 'external', status: 'published', title: headline.slice(0, 140), organization: name,
-      locality: place === 'نقادة' ? 'مدينة نقادة' : place, field: 'وظائف محلية',
-      description: message.slice(0, 1200), contact_kind: 'link', contact_value: sourceUrl, contact_consent: false,
-      source_name: name, source_url: sourceUrl, source_published_at: publishedAt.toISOString(),
       published_at: publishedAt.toISOString(), expires_at: new Date(publishedAt.getTime() + 14 * 86_400_000).toISOString() }];
   });
 }
@@ -153,7 +140,7 @@ Deno.serve(async (req: Request) => {
         if (!reply.ok) return { ok: false, jobs: [] };
         const html = await reply.text();
         if (!html.includes('tgme_widget_message')) return { ok: false, jobs: [] };
-        return { ok: true, jobs: readPublicTelegram(html.slice(0, 550_000), page.name) };
+        return { ok: true, jobs: readPublicTelegram(html.slice(0, 550_000), page.name, new URL(page.url).pathname.split('/').pop()!) };
       } catch { return { ok: false, jobs: [] }; }
     };
     const scans = await Promise.all([
@@ -163,6 +150,7 @@ Deno.serve(async (req: Request) => {
       scanJobsArab(),
       scanEgyptJobs(),
       scanEgyptJobBank(),
+      scanForasnaLuxor(),
     ]);
     const successfulFeeds = scans.filter((scan) => scan.ok).length;
     const jobs = [...new Map(scans.flatMap((scan) => scan.jobs).map((job) => [job.source_url, job])).values()];
@@ -191,7 +179,10 @@ Deno.serve(async (req: Request) => {
   const kind = body.kind === 'seeker' ? 'seeker' : body.kind === 'offer' ? 'offer' : null;
   const title = plain(body.title, 140);
   const organization = plain(body.organization, 120);
-  const locality = plain(body.locality, 120);
+  const chosenLocality = plain(body.locality, 120);
+  const otherLocality = plain(body.otherLocality, 80);
+  const customLuxorPlace = chosenLocality === 'other-luxor' && otherLocality.length >= 3 && /^[\u0621-\u064a\s\-]{3,80}$/.test(otherLocality);
+  const locality = customLuxorPlace ? otherLocality : chosenLocality;
   const field = plain(body.field, 100);
   const description = plain(body.description, 2000);
   const experience = plain(body.experience, 600);
@@ -199,11 +190,13 @@ Deno.serve(async (req: Request) => {
   const contactKind = ['phone', 'whatsapp', 'email', 'link'].includes(body.contactKind) ? body.contactKind : null;
   const contact = plain(body.contactValue, 1000);
   const consent = body.contactConsent === true;
-  const hasPlace = (LOCAL_PLACES as readonly string[]).includes(locality);
+  const inNaqada = (LOCAL_PLACES as readonly string[]).includes(locality);
+  const inLuxor = (LUXOR_PLACES as readonly string[]).includes(locality) || customLuxorPlace;
+  const hasPlace = inNaqada || inLuxor;
   if (!kind || title.length < 3 || description.length < 20 || !hasPlace || field.length < 2 || !contactKind || (kind === 'seeker' && !consent)) return response(400, { ok: false, error: 'invalid_fields' }, origin);
   if (kind === 'offer' && organization.length < 2) return response(400, { ok: false, error: 'organization_required' }, origin);
   if (contactKind === 'link' && !safeLink(contact) || contactKind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) || ['phone', 'whatsapp'].includes(contactKind) && contact.replace(/\D/g, '').length < 10) return response(400, { ok: false, error: 'invalid_contact' }, origin);
-  const { data, error } = await db.from('naqada_jobs').insert({ kind, origin: 'community', title, organization: organization || null, locality, field, description, experience: experience || null, work_type: workType, contact_kind: contactKind, contact_value: contact, contact_consent: consent }).select('id').single();
+  const { data, error } = await db.from('naqada_jobs').insert({ kind, origin: 'community', title, organization: organization || null, locality, governorate: inLuxor ? 'الأقصر' : 'قنا', field, description, experience: experience || null, work_type: workType, contact_kind: contactKind, contact_value: contact, contact_consent: consent }).select('id').single();
   if (error) return response(503, { ok: false, error: 'save_failed' }, origin);
   return response(201, { ok: true, id: data.id, review: 'pending' }, origin);
 });

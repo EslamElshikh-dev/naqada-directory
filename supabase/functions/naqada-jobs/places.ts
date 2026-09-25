@@ -98,3 +98,63 @@ export function findLocalPlace(headline: string, details = '') {
   return rankedPlaces.find((place) => head.includes(normalized(place)))
     || rankedPlaces.find((place) => body.includes(normalized(place)));
 }
+
+// Centres and villages of Luxor governorate. The villages below are listed by
+// the governorate; village matches require a Luxor context in the announcement.
+export const LUXOR_PLACES = [
+  'مدينة الأقصر', 'الكرنك', 'العوامية', 'الأقصر الجديدة', 'مدينة طيبة',
+  'مدينة إسنا', 'الحلة', 'زرنيخ', 'الكلابية', 'الدير', 'الحميدات', 'الهنادي',
+  'الشغب', 'الدبابية', 'المعلا', 'كيمان المطاعنة', 'طفنيس', 'الغريرة',
+  'أصفون', 'المطاعنة', 'توماس وعافية', 'النمسا', 'القرايا', 'المساوية',
+  'كومير', 'العضايمة', 'جزيرة راجح', 'النجوع بحري', 'النجوع قبلي',
+  'مدينة أرمنت', 'أرمنت الحيط', 'أرمنت الوابورات', 'الرزيقات قبلي',
+  'الرزيقات بحري', 'المحاميد بحري', 'الرياينة',
+  'مدينة القرنة', 'الغربي قامولا', 'القبلي قامولا', 'البعيرات',
+  'الأقالتة', 'الضبعية', 'الملاحة', 'الشيخ عامر',
+  'مدينة الزينية', 'الزينية بحري', 'الصعايدة', 'العشي',
+  'المدامود قبلي', 'المدامود بحري',
+  'مدينة الطود', 'العديسات قبلي', 'العديسات بحري', 'الطود غرب',
+  'منشية النوبة', 'المريس',
+  'مدينة البياضية', 'البغدادي', 'الحبيل', 'الروافعة الغربية',
+] as const;
+
+const luxorCentres = ['إسنا', 'أرمنت', 'القرنة', 'الزينية', 'الطود', 'البياضية', 'طيبة'];
+const rankedLuxor = [...LUXOR_PLACES, ...luxorCentres].sort((a, b) => b.length - a.length);
+
+export function canonicalLuxorLocality(place: string) {
+  const value = normalized(place.trim());
+  if (value === 'الاقصر' || value === 'مدينه الاقصر') return 'مدينة الأقصر';
+  if (value === 'محافظه الاقصر') return 'محافظة الأقصر';
+  const known = rankedLuxor.find((item) => normalized(item) === value);
+  return known ? luxorCentres.includes(known) ? `مدينة ${known}` : known : place;
+}
+
+export function findLuxorPlace(headline: string, details = '') {
+  const head = normalized(headline).replace(/https?:\/\/\S+/g, ' ');
+  const body = normalized(details).replace(/https?:\/\/\S+/g, ' ');
+  const context = `${head} ${body}`;
+  // Common village names can occur elsewhere, so only match them when the
+  // post itself names Luxor or one of its distinctive centres.
+  const hasContext = /(الاقصر|\bluxor\b|اسنا|ارمنت|القرنه|الزينيه|الطود|البياضيه|مدينه طيبه|الكرنك|العديسات|المدامود|البعيرات|اصفون|كيمان المطاعنه)/i.test(context);
+  if (!hasContext) return null;
+  const place = rankedLuxor.find((item) => head.includes(normalized(item)))
+    || rankedLuxor.find((item) => body.includes(normalized(item)));
+  if (place) return luxorCentres.includes(place) ? `مدينة ${place}` : place;
+  return 'محافظة الأقصر';
+}
+
+export function findJobPlace(headline: string, details = ''): { locality: string; governorate: 'قنا' | 'الأقصر' } | null {
+  const head = normalized(headline);
+  const body = normalized(details);
+  // A centre named in the heading is stronger evidence than a generic region
+  // mentioned in the snippet. Mixed-region roundups without a specific place
+  // are skipped, since their work location cannot be established.
+  const luxor = findLuxorPlace(headline, details);
+  const qena = findLocalPlace(headline, details);
+  const mentionsQena = /(قنا|نقاده)/.test(`${head} ${body}`);
+  if (luxor && (!mentionsQena || (!qena && /(اسنا|ارمنت|القرنه|الزينيه|الطود|البياضيه)/.test(head)))) return { locality: luxor, governorate: 'الأقصر' };
+  if (qena && (qena === 'نقادة' || mentionsQena || /(بشلاو|قمولا|دنفيق)/.test(normalized(qena)))) {
+    return { locality: qena === 'نقادة' ? 'مدينة نقادة' : qena, governorate: 'قنا' };
+  }
+  return null;
+}

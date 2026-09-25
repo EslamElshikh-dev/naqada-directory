@@ -1,4 +1,4 @@
-import { findLocalPlace } from './places.ts';
+import { findJobPlace } from './places.ts';
 
 function clean(value: string) {
   return value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
@@ -54,13 +54,13 @@ export function readFacebookSearch(xml: string, now = Date.now()) {
     const combined = norm(`${sourceTitle} ${sourceDescription}`);
     if (!/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|فرصه عمل|شاغر|انضم)/.test(combined)
       || /(ابحث عن (عمل|وظيفه)|بدور على شغل|دوره تدريبيه|وظائف بكل المحافظات|نتائج التقديم)/.test(combined)) return [];
-    const locality = findLocalPlace(sourceTitle, sourceDescription);
-    if (!locality || (locality !== 'نقادة' && !/(نقاده|قنا)/.test(combined) && !/(بشلاو|قمولا|دنفيق)/.test(norm(locality)))) return [];
+    const place = findJobPlace(sourceTitle, sourceDescription);
+    if (!place) return [];
     const title = omitContacts(sourceTitle) || 'فرصة عمل في نقادة';
     const description = omitContacts(sourceDescription).slice(0, 240);
     const sourceName = url.includes('/groups/') ? 'منشور عام في جروب فيسبوك' : 'منشور عام في صفحة فيسبوك';
     return [{ kind: 'offer', origin: 'external', status: 'published', title,
-      organization: sourceName, locality: locality === 'نقادة' ? 'مدينة نقادة' : locality,
+      organization: sourceName, locality: place.locality, governorate: place.governorate,
       field: 'وظائف محلية', description: description.length >= 20 ? description : `فرصة عمل منشورة على فيسبوك. افتح المنشور الأصلي للتأكد من المكان والشروط واستمرار التقديم.`,
       contact_kind: 'link', contact_value: url, contact_consent: false, source_name: sourceName, source_url: url,
       source_published_at: date.toISOString(), published_at: date.toISOString(), expires_at: new Date(date.getTime() + 14 * 86_400_000).toISOString() }];
