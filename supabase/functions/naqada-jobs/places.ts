@@ -88,3 +88,13 @@ export const LOCAL_PLACES = [
   "حاجر دنفيق",
   "نجع الجنيدي"
 ] as const;
+
+const rankedPlaces = [...LOCAL_PLACES].sort((a, b) => b.length - a.length);
+const normalized = (value: string) => value.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[\u064b-\u065f\u0670]/g, '');
+
+export function findLocalPlace(headline: string, details = '') {
+  const head = normalized(headline);
+  const body = normalized(details);
+  return rankedPlaces.find((place) => head.includes(normalized(place)))
+    || rankedPlaces.find((place) => body.includes(normalized(place)));
+}
