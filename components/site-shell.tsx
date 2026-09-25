@@ -90,7 +90,7 @@ export function Footer() {
           <nav className={footerStyles.routesPanel} aria-labelledby="footer-routes-title">
             <div className={footerStyles.sectionHeading}>
               <div><span>ابدأ من هنا</span><h2 id="footer-routes-title">اختار مشوارك</h2></div>
-              <small>من أهنه للي محتاجه</small>
+              <small>من هنا للي محتاجه</small>
             </div>
             <div className={footerStyles.routes}>
               {footerRoutes.map((route) => (

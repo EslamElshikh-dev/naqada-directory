@@ -6,6 +6,7 @@ import type { JobFeedState, LocalJob } from '@/lib/jobs';
 import styles from './jobs.module.css';
 
 type Mode = 'offer' | 'seeker';
+type BoardView = Mode | 'regional';
 type Contact = LocalJob['contact_kind'];
 
 const workTypes: Record<NonNullable<LocalJob['work_type']>, string> = {
@@ -103,8 +104,8 @@ function PublishForm({ mode, localities }: { mode: Mode; localities: string[] })
   </div>;
 }
 
-export function JobsBoard({ jobs, offers, seekers, state, available, localities }: { jobs: LocalJob[]; offers: number; seekers: number; state: JobFeedState | null; available: boolean; localities: string[] }) {
-  const [view, setView] = useState<Mode>('offer');
+export function JobsBoard({ jobs, offers, regionalOffers, seekers, state, available, localities }: { jobs: LocalJob[]; offers: number; regionalOffers: number; seekers: number; state: JobFeedState | null; available: boolean; localities: string[] }) {
+  const [view, setView] = useState<BoardView>(offers === 0 && regionalOffers > 0 ? 'regional' : 'offer');
   const [publishMode, setPublishMode] = useState<Mode>('offer');
   const [query, setQuery] = useState('');
   const [place, setPlace] = useState('');
@@ -113,7 +114,7 @@ export function JobsBoard({ jobs, offers, seekers, state, available, localities 
     const syncHash = () => {
       const target = jobs.find((job) => window.location.hash === `#job-${job.id}`);
       if (!target) return;
-      setView(target.kind);
+      setView(target.kind === 'offer' && !localities.includes(target.locality) ? 'regional' : target.kind);
       setQuery('');
       setPlace('');
       scrollFrame = requestAnimationFrame(() => document.getElementById(`job-${target.id}`)?.scrollIntoView({ block: 'center' }));
@@ -121,23 +122,25 @@ export function JobsBoard({ jobs, offers, seekers, state, available, localities 
     const frame = requestAnimationFrame(syncHash);
     window.addEventListener('hashchange', syncHash);
     return () => { cancelAnimationFrame(frame); cancelAnimationFrame(scrollFrame); window.removeEventListener('hashchange', syncHash); };
-  }, [jobs]);
+  }, [jobs, localities]);
+  const regionalPlaces = useMemo(() => [...new Set(jobs.filter((job) => job.kind === 'offer' && !localities.includes(job.locality)).map((job) => job.locality))].sort((a, b) => a.localeCompare(b, 'ar')), [jobs, localities]);
   const filtered = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase('ar');
-    return jobs.filter((job) => job.kind === view && (!place || job.locality === place) && (!normalized || `${job.title} ${job.organization || ''} ${job.field} ${job.description} ${job.locality}`.toLocaleLowerCase('ar').includes(normalized)));
-  }, [jobs, view, query, place]);
+    return jobs.filter((job) => (view === 'regional' ? job.kind === 'offer' && !localities.includes(job.locality) : job.kind === view && (view !== 'offer' || localities.includes(job.locality))) && (!place || job.locality === place) && (!normalized || `${job.title} ${job.organization || ''} ${job.field} ${job.description} ${job.locality}`.toLocaleLowerCase('ar').includes(normalized)));
+  }, [jobs, view, query, place, localities]);
 
   return <>
     <section id="opportunities" className={`shell ${styles.board}`}>
-      <header className={styles.sectionHead}><div><span>من نقادة لكل قرية فيها</span><h2>فرص وخبرات من عندنا.</h2><p>الإعلان يوصلك بصاحبه، ومع كل فرصة خارجية هتلاقي رابط المصدر عشان تراجع تفاصيلها.</p></div><aside><strong>{offers.toLocaleString('ar-EG')}</strong><small>فرصة شغل</small><i /><strong>{seekers.toLocaleString('ar-EG')}</strong><small>باحث عن عمل</small></aside></header>
+      <header className={styles.sectionHead}><div><span>نقادة أولًا، وقنا حوالينا</span><h2>فرص وخبرات تستاهل تشوفها.</h2><p>فرص نقادة في مكانها، وفرص المحافظة في قسم منفصل. كل إعلان خارجي معاه رابطه عشان تراجع التفاصيل وتتقدم.</p></div><aside><strong>{offers.toLocaleString('ar-EG')}</strong><small>في نقادة</small><i /><strong>{regionalOffers.toLocaleString('ar-EG')}</strong><small>في قنا</small><i /><strong>{seekers.toLocaleString('ar-EG')}</strong><small>باحث عن عمل</small></aside></header>
       <div className={styles.boardFrame}>
-        <div className={styles.boardTabs} role="tablist" aria-label="نوع الإعلانات"><button type="button" role="tab" aria-selected={view === 'offer'} onClick={() => setView('offer')}>فرص الشغل <span>{offers.toLocaleString('ar-EG')}</span></button><button type="button" role="tab" aria-selected={view === 'seeker'} onClick={() => setView('seeker')}>ناس بتدور على شغل <span>{seekers.toLocaleString('ar-EG')}</span></button></div>
-        <div className={styles.filters}><label><span>دور بالاسم أو المجال</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="مثال: مدرس، محاسب، كهربائي…" /></label><label><span>في أي قرية؟</span><select value={place} onChange={(event) => setPlace(event.target.value)}><option value="">كل نقادة وقراها</option>{localities.map((name) => <option key={name} value={name}>{name}</option>)}</select></label></div>
-        <div className={styles.resultLine}><span>ظاهر دلوقت <b>{filtered.length.toLocaleString('ar-EG')}</b> {view === 'offer' ? 'فرصة' : 'ملف خبرة'}</span><span>{state?.last_checked_at ? `آخر فحص للمصادر: ${dateLabel(state.last_checked_at)}` : 'بنجهّز رصد المصادر العامة'}</span></div>
+        <div className={styles.boardTabs} role="tablist" aria-label="نوع الإعلانات"><button type="button" role="tab" aria-selected={view === 'offer'} onClick={() => { setView('offer'); setPlace(''); }}>فرص نقادة <span>{offers.toLocaleString('ar-EG')}</span></button><button type="button" role="tab" aria-selected={view === 'regional'} onClick={() => { setView('regional'); setPlace(''); }}>فرص محافظة قنا <span>{regionalOffers.toLocaleString('ar-EG')}</span></button><button type="button" role="tab" aria-selected={view === 'seeker'} onClick={() => { setView('seeker'); setPlace(''); }}>باحثون عن شغل <span>{seekers.toLocaleString('ar-EG')}</span></button></div>
+        {view === 'regional' ? <p className={styles.regionalNote}>الوظائف دي في محافظة قنا خارج مركز نقادة. راجع مكان الشغل في كل إعلان قبل ما تتقدم.</p> : null}
+        <div className={styles.filters}><label><span>دور بالاسم أو المجال</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="مثال: مدرس، محاسب، كهربائي…" /></label><label><span>{view === 'regional' ? 'مكان الشغل' : 'في أي قرية؟'}</span><select value={place} onChange={(event) => setPlace(event.target.value)}><option value="">{view === 'regional' ? 'كل مناطق قنا المعروضة' : 'كل نقادة وقراها'}</option>{(view === 'regional' ? regionalPlaces : localities).map((name) => <option key={name} value={name}>{name}</option>)}</select></label></div>
+        <div className={styles.resultLine}><span>ظاهر دلوقت <b>{filtered.length.toLocaleString('ar-EG')}</b> {view === 'seeker' ? 'ملف خبرة' : 'فرصة'}</span><span>{state?.last_checked_at ? `آخر فحص للمصادر: ${dateLabel(state.last_checked_at)}` : 'بنجهّز رصد المصادر العامة'}</span></div>
         {!available ? <p className={styles.unavailable} role="status">الإعلانات مش متاحة للعرض دلوقت. جرب تفتح الصفحة بعد شوية.</p> : null}
-        {filtered.length ? <div className={styles.cardGrid}>{filtered.map((job) => <JobCard key={job.id} job={job} />)}</div> : available ? <div className={styles.empty}><span aria-hidden="true">✳</span><h3>{query || place ? 'ملقيناش إعلان يطابق بحثك دلوقت.' : view === 'offer' ? 'أول فرصة في بلدنا لسه جاية.' : 'لسه محدش عرض خبرته أهنه.'}</h3><p>{query || place ? 'جرب مجال تاني أو اختار كل القرى.' : 'القسم بيتحدث من المصادر العامة، وإعلانات أهل البلد بتظهر بعد المراجعة. لو تعرف فرصة، افتح لها الباب.'}</p><a href="#participate">{view === 'offer' ? 'انشر وظيفة من عندك' : 'اعرض خبرتك'} ←</a></div> : null}
+        {filtered.length ? <div className={styles.cardGrid}>{filtered.map((job) => <JobCard key={job.id} job={job} />)}</div> : available ? <div className={styles.empty}><span aria-hidden="true">✳</span><h3>{query || place ? 'ملقيناش إعلان يطابق بحثك دلوقت.' : view === 'offer' ? 'أول فرصة في بلدنا لسه جاية.' : view === 'regional' ? 'مفيش فرص حديثة في قنا دلوقت.' : 'لسه محدش عرض خبرته هنا.'}</h3><p>{query || place ? 'جرّب مجال تاني أو اختار كل المناطق.' : 'القسم بيتحدث من المصادر العامة، وإعلانات أهل البلد بتظهر بعد المراجعة. لو تعرف فرصة، افتح لها الباب.'}</p><a href="#participate">{view === 'seeker' ? 'اعرض خبرتك' : 'انشر وظيفة من عندك'} ←</a></div> : null}
       </div>
-      <p className={styles.sourceNote}>نفتش كل ٣٠ دقيقة في الأخبار ومنشورات الصفحات والجروبات العامة المفهرسة، ونختار الروابط الفردية ذات التاريخ القريب. تاريخ الرصد ما يضمنش إن التقديم لسه مفتوح؛ راجع المنشور الأصلي قبل ما تتواصل. وتقدر كمان <a href="https://www.facebook.com/search/posts/?q=%D9%85%D8%B7%D9%84%D9%88%D8%A8%20%D9%86%D9%82%D8%A7%D8%AF%D8%A9" target="_blank" rel="noopener noreferrer external">تفتش بنفسك في منشورات نقادة على فيسبوك ↗</a>.</p>
+      <p className={styles.sourceNote}>نفتش كل ٣٠ دقيقة في الأخبار ومواقع الوظائف وصفحات وجروبات فيسبوك العامة المفهرسة. فرص قنا خارج نقادة مميّزة بمكانها، وبكل فرصة خارجية رابط الإعلان الأصلي؛ راجعه للتأكد إن التقديم لسه مفتوح. وتقدر كمان <a href="https://www.facebook.com/search/posts/?q=%D9%85%D8%B7%D9%84%D9%88%D8%A8%20%D9%86%D9%82%D8%A7%D8%AF%D8%A9" target="_blank" rel="noopener noreferrer external">تفتش بنفسك في منشورات نقادة على فيسبوك ↗</a>.</p>
     </section>
     <section id="participate" className={styles.participate}><div className={`shell ${styles.participateGrid}`}><div className={styles.participateCopy}><span>شارك في فتح باب رزق</span><h2>عندك شغل؟<br /><em>أو بتدور على شغل؟</em></h2><p>الفرصة ممكن تبدأ بكلمتين واضحين. اكتب بياناتك، وسيب لأهل بلدك طريقة يوصلوا لك بعد المراجعة.</p><div className={styles.step}><b>١</b><div><strong>اكتب المعلومات المهمة</strong><small>المجال، المكان، والخبرة أو شروط الشغل.</small></div></div><div className={styles.step}><b>٢</b><div><strong>بنراجع الإعلان</strong><small>عشان اللي ظاهر للناس يكون واضحًا ومحليًا.</small></div></div><div className={styles.step}><b>٣</b><div><strong>الناس تقدر توصلك</strong><small>من البطاقة في الصفحة ومن شريط أخبار الموقع.</small></div></div></div><div className={styles.publishBox}><div className={styles.publishTabs}><button type="button" aria-pressed={publishMode === 'offer'} onClick={() => setPublishMode('offer')}>عندي وظيفة</button><button type="button" aria-pressed={publishMode === 'seeker'} onClick={() => setPublishMode('seeker')}>بدور على وظيفة</button></div><PublishForm key={publishMode} mode={publishMode} localities={localities} /></div></div></section>
   </>;
