@@ -1,4 +1,4 @@
-// Generated from data/localities.json and lib/data.ts supplementalLocalities.
+// Generated from data/localities.json, lib/data.ts supplementalLocalities, and data/businesses-*.json.
 export const LOCAL_PLACES = [
   "نقادة",
   "مركز نقادة",
@@ -78,5 +78,13 @@ export const LOCAL_PLACES = [
   "عزبة علي عبيد",
   "عزبة طايل",
   "عزبة عبدالكريم",
-  "جزيرة جبر"
+  "جزيرة جبر",
+  "الظهير الصحراوي",
+  "كوم بلال",
+  "أسمنت",
+  "المنشية",
+  "الشيخ حسين",
+  "قرقطان",
+  "حاجر دنفيق",
+  "نجع الجنيدي"
 ] as const;
