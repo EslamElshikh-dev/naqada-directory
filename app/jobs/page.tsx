@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { localities } from '@/lib/data';
 import { getJobs } from '@/lib/jobs';
@@ -35,7 +36,7 @@ export default async function JobsPage() {
             <p>لو بتدور على فرصة في نقادة أو قرية من قراها، تعالى شوف المعروض. ولو عندك شغل للناس، انشر التفاصيل وخلي الطريق بينكم أقصر.</p>
             <div className={styles.heroActions}><a href="#opportunities" className={styles.primary}>دوّر على فرصة <span aria-hidden="true">↙</span></a><a href="#participate" className={styles.secondary}>اعرض وظيفة أو خبرتك <span aria-hidden="true">←</span></a></div>
           </div>
-          <div className={styles.heroVisual} aria-hidden="true"><span className={styles.orbitOne} /><span className={styles.orbitTwo} /><span className={styles.centerMark}>ن</span><span className={styles.floatOne}>فرصة قريبة</span><span className={styles.floatTwo}>من أهل البلد</span><span className={styles.floatThree}>خطوتك الجاية</span></div>
+          <div className={styles.heroVisual} aria-hidden="true"><span className={styles.orbitOne} /><span className={styles.orbitTwo} /><Image src="/images/jobs/job-seekers-duo.webp" width={840} height={840} alt="" className={styles.heroArtwork} sizes="(max-width: 760px) 220px, (max-width: 950px) 270px, 370px" priority /><span className={styles.floatOne}>فرصة قريبة</span><span className={styles.floatTwo}>من أهل البلد</span><span className={styles.floatThree}>خطوتك الجاية</span></div>
         </div>
       </div>
     </section>

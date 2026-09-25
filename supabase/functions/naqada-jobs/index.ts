@@ -1,12 +1,21 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { LOCAL_PLACES } from './places.ts';
+import { LOCAL_PLACES, findLocalPlace } from './places.ts';
+import { readFacebookSearch } from './facebook-search.ts';
 
 const PROD_ORIGIN = 'https://naqada-directory.vercel.app';
 const PUBLIC_KEY = 'sb_publishable_QsT7jYGw7sWx0v6Vbg2Vjw_-uFV8wMk';
 const FEEDS = [
   { name: 'أخبار Google', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('وظائف نقادة قنا when:14d') + '&hl=ar&gl=EG&ceid=EG:ar' },
+  { name: 'أخبار Google · قرى نقادة', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('مطلوب نقادة OR بشلاو OR قمولا when:14d') + '&hl=ar&gl=EG&ceid=EG:ar' },
   { name: 'أخبار Bing', url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('وظائف نقادة قنا') + '&format=rss&setlang=ar-eg&cc=eg' },
+  { name: 'أخبار Bing · قرى نقادة', url: 'https://www.bing.com/news/search?q=' + encodeURIComponent('مطلوب نقادة بشلاو قمولا طوخ دنفيق') + '&format=rss&setlang=ar-eg&cc=eg' },
 ];
+// Only publicly indexed Facebook posts with their own post URL and recent RSS date qualify.
+const PUBLIC_FACEBOOK_SEARCHES = [
+  { name: 'جروبات نقادة العامة', query: 'site:facebook.com/groups/ نقادة مطلوب وظيفة' },
+  { name: 'صفحات نقادة العامة', query: 'site:facebook.com نقادة مطلوب عامل شغل' },
+  { name: 'جروبات قرى نقادة العامة', query: 'site:facebook.com/groups/ بشلاو قمولا دنفيق وظائف مطلوب' },
+].map(({ name, query }) => ({ name, url: `https://www.bing.com/search?q=${encodeURIComponent(query)}&format=rss&setlang=ar-eg&cc=eg` }));
 const PUBLIC_SOCIAL_FEEDS = [
   { name: 'وظائف صعيد مصر · تيليجرام', url: 'https://t.me/s/QenaLuxorJobs' },
 ];
@@ -70,8 +79,8 @@ function readFeed(xml: string, feedName: string) {
     const combined = norm(`${title} ${snippet}`);
     if (!/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|فرصه عمل|شاغر|انضم)/.test(combined)) return [];
     if (/(دوره تدريبيه|منحه دراسيه|وظائف بكل المحافظات|نتائج التقديم|نتيجه مسابقه)/.test(combined)) return [];
-    const place = [...LOCAL_PLACES].sort((a, b) => b.length - a.length).find((locality) => combined.includes(norm(locality)));
-    if (!place || (place !== 'نقادة' && !/(نقاده|قنا)/.test(combined))) return [];
+    const place = findLocalPlace(title, snippet);
+    if (!place || (place !== 'نقادة' && !/(نقاده|قنا)/.test(combined) && !/(بشلاو|قمولا|دنفيق)/.test(norm(place)))) return [];
     const source = plain(xmlField(item, 'source'), 120) || feedName;
     const description = snippet.length >= 20 ? snippet : `فرصة عمل منشورة من ${source}. افتح المصدر للتأكد من الشروط وطريقة التقديم واستمرار الإعلان.`;
     return [{ kind: 'offer', origin: 'external', status: 'published', title,
@@ -92,7 +101,7 @@ function readPublicTelegram(html: string, name: string) {
     const content = /<div class="tgme_widget_message_text[^\"]*"[^>]*>([\s\S]*?)<\/div>/.exec(block)?.[1] || '';
     const message = plain(decodeXml(content.replace(/<br\s*\/?\s*>/gi, ' · ')), 1200);
     const normalized = norm(message);
-    const place = [...LOCAL_PLACES].sort((a, b) => b.length - a.length).find((locality) => normalized.includes(norm(locality)));
+    const place = findLocalPlace(message);
     if (!post || !place || !/(نقاده|قنا)/.test(normalized) || !/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|شاغر)/.test(normalized) || !Number.isFinite(age) || age < -86_400_000 || age > 14 * 86_400_000) return [];
     const headline = message.split(/[.!؟·\n]/).map((part) => part.trim()).find((part) => /(مطلوب|وظيف|فرص عمل|تعيين)/.test(norm(part))) || 'فرصة عمل في نقادة';
     const sourceUrl = `https://t.me/${post}`;
@@ -126,34 +135,35 @@ Deno.serve(async (req: Request) => {
     const { data: claimed, error: claimError } = await db.rpc('claim_naqada_job_refresh');
     if (claimError) return response(503, { ok: false, error: 'lock_unavailable' }, origin);
     if (!claimed) return response(200, { ok: true, skipped: true }, origin);
-    let successfulFeeds = 0;
-    let added = 0;
-    for (const feed of FEEDS) {
+    const scanRss = async (feed: { name: string; url: string }, facebook = false) => {
       try {
-        const reply = await fetch(feed.url, { signal: AbortSignal.timeout(8500), headers: { 'User-Agent': 'NaqadaDirectory/1.0 (+https://naqada-directory.vercel.app/jobs)' } });
-        if (!reply.ok) continue;
+        const reply = await fetch(feed.url, { signal: AbortSignal.timeout(5500), headers: { 'User-Agent': 'NaqadaDirectory/1.0 (+https://naqada-directory.vercel.app/jobs)' } });
+        if (!reply.ok) return { ok: false, jobs: [] };
         const xml = await reply.text();
-        if (!xml.includes('<rss') && !xml.includes('<item')) continue;
-        successfulFeeds++;
-        for (const job of readFeed(xml.slice(0, 350_000), feed.name)) {
-          const { error } = await db.from('naqada_jobs').upsert(job, { onConflict: 'source_url', ignoreDuplicates: true });
-          if (!error) added++;
-        }
-      } catch { /* A source can fail independently; other sources still run. */ }
-    }
-    for (const page of PUBLIC_SOCIAL_FEEDS) {
+        if (!xml.includes('<rss') && !xml.includes('<item')) return { ok: false, jobs: [] };
+        return { ok: true, jobs: facebook ? readFacebookSearch(xml.slice(0, 350_000)) : readFeed(xml.slice(0, 350_000), feed.name) };
+      } catch { return { ok: false, jobs: [] }; }
+    };
+    const scanSocial = async (page: { name: string; url: string }) => {
       try {
-        const reply = await fetch(page.url, { signal: AbortSignal.timeout(8500) });
-        if (!reply.ok) continue;
+        const reply = await fetch(page.url, { signal: AbortSignal.timeout(5500) });
+        if (!reply.ok) return { ok: false, jobs: [] };
         const html = await reply.text();
-        if (!html.includes('tgme_widget_message')) continue;
-        successfulFeeds++;
-        for (const job of readPublicTelegram(html.slice(0, 550_000), page.name)) {
-          const { error } = await db.from('naqada_jobs').upsert(job, { onConflict: 'source_url', ignoreDuplicates: true });
-          if (!error) added++;
-        }
-      } catch { /* Social channels may be unavailable for some scheduled scans. */ }
-    }
+        if (!html.includes('tgme_widget_message')) return { ok: false, jobs: [] };
+        return { ok: true, jobs: readPublicTelegram(html.slice(0, 550_000), page.name) };
+      } catch { return { ok: false, jobs: [] }; }
+    };
+    const scans = await Promise.all([
+      ...FEEDS.map((feed) => scanRss(feed)),
+      ...PUBLIC_FACEBOOK_SEARCHES.map((feed) => scanRss(feed, true)),
+      ...PUBLIC_SOCIAL_FEEDS.map(scanSocial),
+    ]);
+    const successfulFeeds = scans.filter((scan) => scan.ok).length;
+    const jobs = [...new Map(scans.flatMap((scan) => scan.jobs).map((job) => [job.source_url, job])).values()];
+    const { data: stored, error: insertError } = jobs.length
+      ? await db.from('naqada_jobs').upsert(jobs, { onConflict: 'source_url', ignoreDuplicates: true }).select('id')
+      : { data: [], error: null };
+    const added = insertError ? 0 : (stored?.length || 0);
     await db.from('naqada_job_feed_state').update({ last_checked_at: new Date().toISOString(), successful_feeds: successfulFeeds, latest_added: added }).eq('id', 1);
     return response(200, { ok: true, successfulFeeds, processed: added }, origin);
   }
