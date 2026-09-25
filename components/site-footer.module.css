@@ -204,30 +204,46 @@
   .metrics { grid-column: 1 / -1; }
 }
 @media (max-width: 620px) {
-  .shell { padding-top: 28px; }
-  .masthead { gap: 21px; padding: 23px 20px; border-radius: 21px; }
-  .identity { gap: 12px; }
-  .emblem { width: 47px; height: 47px; border-radius: 15px; }
+  .shell { width: min(calc(100% - 28px), 460px); padding-top: 30px; padding-bottom: calc(102px + env(safe-area-inset-bottom)); }
+  .masthead { justify-items: center; gap: 20px; padding: 25px 18px; border-radius: 21px; text-align: center; }
+  .identity { flex-direction: column; align-items: center; gap: 12px; }
+  .emblem { width: 52px; height: 52px; border-radius: 16px; }
   .identityCopy h2 { font-size: 1.375rem; }
-  .identityCopy p { font-size: .875rem; }
-  .actions { grid-template-columns: 1fr; }
-  .content { margin-block: 33px 31px; }
-  .sectionHeading { align-items: start; }
+  .identityCopy p { max-width: 36ch; margin-inline: auto; font-size: .875rem; }
+  .actions { grid-template-columns: 1fr; width: min(100%, 340px); gap: 9px; }
+  .actions a { justify-content: center; min-height: 50px; }
+  .content { gap: 33px; margin-block: 35px 32px; }
+  .sectionHeading { flex-direction: column; align-items: center; gap: 7px; margin-bottom: 17px; text-align: center; }
+  .sectionHeading::after { content: ''; width: 30px; height: 2px; border-radius: 99px; background: #d5b477; }
   .sectionHeading > small { display: none; }
-  .routes { grid-template-columns: 1fr; gap: 8px; }
+  .routes { grid-template-columns: 1fr; gap: 9px; }
   .route, .route:last-child { grid-column: auto; }
-  .route { min-height: 75px; padding: 10px 13px; }
-  .side { grid-template-columns: 1fr; }
-  .metrics { grid-column: auto; }
-  .bottom { align-items: stretch; flex-direction: column; gap: 15px; padding-top: 20px; }
-  .signature { align-self: start; }
+  .route { display: flex; flex-direction: column; justify-content: center; gap: 5px; min-height: 102px; padding: 13px 16px; text-align: center; }
+  .routeIndex { width: 30px; height: 30px; }
+  .routeCopy { justify-items: center; gap: 2px; }
+  .route svg { display: none; }
+  .side { grid-template-columns: 1fr; gap: 14px; }
+  .metrics { grid-column: auto; padding: 20px 16px; }
+  .stats { gap: 7px; }
+  .stats > span { justify-items: center; min-height: 90px; padding-inline: 5px; text-align: center; }
+  .localCard { grid-template-columns: 1fr; justify-items: center; gap: 10px; padding: 22px 18px; text-align: center; }
+  .localCard a { grid-column: 1; justify-self: center; margin-top: 2px; }
+  .utilities { padding: 20px 16px; text-align: center; }
+  .utilityLinks a { justify-content: center; min-height: 50px; padding-inline: 7px; text-align: center; }
+  .utilityLinks svg { display: none; }
+  .bottom { align-items: center; flex-direction: column; gap: 14px; padding-top: 21px; text-align: center; }
+  .bottomInfo { justify-items: center; gap: 5px; }
+  .location, .legal { justify-content: center; }
+  .legal { gap: 0 18px; }
+  .legal > span { flex-basis: 100%; }
+  .signature { align-self: center; justify-content: center; flex-wrap: wrap; max-width: 100%; text-align: center; }
 }
 @media (max-width: 380px) {
-  .stats > span { padding-inline: 8px; }
+  .stats > span { padding-inline: 3px; }
   .stats b { font-size: 1.25rem; }
-  .stats small { font-size: .6875rem; }
+  .stats small { font-size: .75rem; }
   .utilities, .metrics, .localCard { padding-inline: 15px; }
-  .utilityLinks a { padding-inline: 8px; font-size: .75rem; }
+  .utilityLinks a { padding-inline: 5px; font-size: .8125rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .footer a, .route svg, .utilityLinks svg { transition: none !important; }
