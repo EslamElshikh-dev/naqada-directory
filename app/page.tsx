@@ -106,6 +106,7 @@ export default function HomePage() {
               <Link prefetch={false} href="/villages">القرى</Link>
               <Link prefetch={false} href="/knowledge">الموسوعة</Link>
               <Link prefetch={false} href="/role-models">نماذج مشرفة</Link>
+              <Link prefetch={false} href="/jobs">وظائف نقادة</Link>
             </nav>
             <div className={styles.trust} aria-label="إحصاءات الدليل">
               <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>خدمة ونشاط</small></span>

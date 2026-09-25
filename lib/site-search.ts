@@ -48,6 +48,7 @@ type VocabularyEntry = {
 };
 
 const pages: SearchItem[] = [
+  { kind: 'page', title: 'وظائف نقادة وقراها', subtitle: 'فرص عمل قريبة وباحثون عن وظيفة', href: '/jobs', badge: 'وظائف', fields: { title: 'وظائف نقادة', auxiliary: 'شغل فرص عمل مطلوب توظيف وظيفة باحث عن عمل قنا' } },
   { kind: 'page', title: 'دليل الخدمات والأنشطة', subtitle: 'كل الأنشطة المنشورة في مركز نقادة', href: '/directory', badge: 'صفحة', fields: { title: 'دليل الخدمات والأنشطة', auxiliary: 'دليل خدمات أنشطة بحث' } },
   { kind: 'page', title: 'موسوعة نقادة', subtitle: 'المكان والناس والتراث بالمصدر والإسناد', href: '/knowledge', badge: 'موسوعة', fields: { title: 'موسوعة نقادة', auxiliary: 'معرفة تاريخ تراث أعلام شخصيات أماكن مراجع' } },
   { kind: 'page', title: 'معالم نقادة', subtitle: 'المعالم السياحية والتراثية بالصور', href: '/landmarks', badge: 'صفحة', fields: { title: 'معالم نقادة', auxiliary: 'معالم سياحة آثار صور' } },

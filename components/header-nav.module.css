@@ -7,7 +7,7 @@
 .nav a[aria-current="page"] svg { color:#e9cb86; }
 .nav a:hover svg { transform:translateY(-2px); }
 .nav a:focus-visible,.menu summary:focus-visible,.panel a:focus-visible { outline:3px solid #b88639; outline-offset:3px; }
-@media (min-width:1121px) and (max-width:1400px) { .nav a { padding-inline:9px; gap:5px; font-size:.8125rem; } .nav svg { width:15px; height:15px; } }
+@media (min-width:1121px) and (max-width:1400px) { .nav a { padding-inline:6px; gap:4px; font-size:.75rem; } .nav svg { width:14px; height:14px; } }
 .menu { display:none; }
 @media (max-width:1120px) {
  .nav { display:none; }
