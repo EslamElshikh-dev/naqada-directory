@@ -12,6 +12,7 @@ const routes = [
   ['knowledge', '/knowledge'],
   ['about', '/about'],
   ['developer', '/developer'],
+  ['jobs', '/jobs'],
   ['knowledge-place', '/knowledge/places/%D9%85%D8%AF%D9%8A%D9%86%D8%A9-%D9%86%D9%82%D8%A7%D8%AF%D8%A9'],
   ['blog', '/blog'],
   ['blog-article', '/blog/bashlaw-today-quran-youth-education'],

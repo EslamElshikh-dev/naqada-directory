@@ -23,7 +23,8 @@ test('the external-news experience exposes all public entry points', () => {
   ]) assert.ok(existsSync(new URL(`../${path}`, import.meta.url)), path);
 
   assert.ok(sitemap.includes("{ path: '/news'"));
-  assert.ok(ticker.includes("fetch('/api/news'"));
+  assert.ok(ticker.includes("'/api/jobs', '/api/news'"));
+  assert.ok(ticker.includes('fetch(url,'));
   assert.ok(ticker.includes('href="/news"'));
   assert.match(tickerCss, /--ticker-duration: 86s/);
   assert.match(tickerCss, /\.group[^}]*direction: rtl/s);

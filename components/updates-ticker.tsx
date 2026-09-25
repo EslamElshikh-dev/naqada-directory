@@ -7,6 +7,7 @@ import styles from './updates-ticker.module.css';
 type TickerItem = { href: string; tag: string; text: string };
 
 const fallbackUpdates: TickerItem[] = [
+  { href: '/jobs', tag: 'فرص البلد', text: 'عندك وظيفة أو بتدور على شغل؟ باب الرزق من أهنه' },
   { href: '/news', tag: 'الأخبار', text: 'تابع أخبار نقادة وقنا من مصادرها الصحفية والرسمية' },
   { href: '/updates', tag: 'تحديث', text: 'مراجعة أحدث بيانات الأنشطة والخدمات داخل دليل نقادة' },
   { href: '/directory', tag: 'تصميم', text: 'تطوير بطاقات الدليل وتجربة التصفح على الجوال والكمبيوتر' },
@@ -23,20 +24,25 @@ export function UpdatesTicker() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const loadNews = () => {
-      fetch('/api/news', { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : Promise.reject(new Error('News unavailable')))
-      .then((payload: { items?: TickerItem[] }) => {
-        if (Array.isArray(payload.items) && payload.items.length) setLiveItems(payload.items);
-      })
-      .catch(() => undefined);
+    const loadUpdates = async () => {
+      const results = await Promise.allSettled(['/api/jobs', '/api/news'].map(async (url) => {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error('Feed unavailable');
+        return response.json() as Promise<{ items?: TickerItem[] }>;
+      }));
+      if (controller.signal.aborted) return;
+      const [jobResult, newsResult] = results;
+      const jobItems = jobResult.status === 'fulfilled' && Array.isArray(jobResult.value.items) ? jobResult.value.items.slice(0, 4) : [];
+      const newsItems = newsResult.status === 'fulfilled' && Array.isArray(newsResult.value.items) ? newsResult.value.items.slice(0, 6) : [];
+      setLiveItems([...jobItems, ...newsItems, ...(!jobItems.length ? [fallbackUpdates[0]] : [])]);
     };
     // Let the visible page and its image finish first; abort on navigation/unmount.
     let timer: ReturnType<typeof setTimeout>;
-    const schedule = () => { timer = setTimeout(loadNews, 1800); };
+    const schedule = () => { timer = setTimeout(loadUpdates, 1800); };
     if (document.readyState === 'complete') schedule();
     else window.addEventListener('load', schedule, { once: true });
-    return () => { window.removeEventListener('load', schedule); clearTimeout(timer); controller.abort(); };
+    const interval = setInterval(loadUpdates, 30 * 60 * 1000);
+    return () => { window.removeEventListener('load', schedule); clearTimeout(timer); clearInterval(interval); controller.abort(); };
   }, []);
 
   return (
