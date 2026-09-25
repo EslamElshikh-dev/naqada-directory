@@ -21,12 +21,12 @@ export type LocalJob = {
 
 export type JobFeedState = { last_checked_at: string | null; successful_feeds: number; latest_added: number };
 
-export async function getJobs(): Promise<{ jobs: LocalJob[]; state: JobFeedState | null; available: boolean }> {
+export async function getJobs(signal?: AbortSignal): Promise<{ jobs: LocalJob[]; state: JobFeedState | null; available: boolean }> {
   const headers = restHeaders();
   try {
     const [jobsResponse, stateResponse] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/naqada_jobs?select=id,kind,origin,title,organization,locality,field,description,experience,work_type,contact_kind,contact_value,source_name,source_url,published_at,expires_at&order=published_at.desc&limit=100`, { headers, cache: 'no-store' }),
-      fetch(`${SUPABASE_URL}/rest/v1/naqada_job_feed_state?select=last_checked_at,successful_feeds,latest_added&id=eq.1&limit=1`, { headers, cache: 'no-store' }),
+      fetch(`${SUPABASE_URL}/rest/v1/naqada_jobs?select=id,kind,origin,title,organization,locality,field,description,experience,work_type,contact_kind,contact_value,source_name,source_url,published_at,expires_at&order=published_at.desc&limit=100`, { headers, cache: 'no-store', signal }),
+      fetch(`${SUPABASE_URL}/rest/v1/naqada_job_feed_state?select=last_checked_at,successful_feeds,latest_added&id=eq.1&limit=1`, { headers, cache: 'no-store', signal }),
     ]);
     if (!jobsResponse.ok) throw new Error('JOB_BOARD_UNAVAILABLE');
     const jobs = await jobsResponse.json() as LocalJob[];

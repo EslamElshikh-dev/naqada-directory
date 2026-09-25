@@ -18,6 +18,8 @@ export function VisitorTracker() {
 
   useEffect(() => {
     if (!pathname || pathname.startsWith('/admin')) return;
+    // Browser-based QA, crawlers and synthetic probes are not audience visits.
+    if (navigator.webdriver || /headlesschrome|playwright|puppeteer|lighthouse|googlebot|bingbot|crawler|spider/i.test(navigator.userAgent)) return;
 
     let sent = false;
     const sendVisit = () => {

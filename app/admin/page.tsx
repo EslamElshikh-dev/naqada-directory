@@ -4,8 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { businesses, categories, localities, meta } from '@/lib/data';
-import { emptyVisitorAnalytics, getAdminStats, getVisitorAnalytics, isDirectoryAdmin, type VisitorAnalytics } from '@/lib/auth/admin';
+import { emptyDiscoveryInsights, emptyVisitorAnalytics, getAdminStats, getDiscoveryInsights, getVisitorAnalytics, isDirectoryAdmin, type DiscoveryInsights, type VisitorAnalytics } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
+import { DiscoveryPanel } from './discovery-panel';
 
 export const metadata: Metadata = { title: 'لوحة إدارة الدليل', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
@@ -20,13 +21,16 @@ const eventLabels: Record<string, string> = {
 function format(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
 function percentage(value: number) { return `${value.toLocaleString('ar-EG', { maximumFractionDigits: 1 })}%`; }
 function pathLabel(path: string) {
+  const normalizedPath = path.length > 1 ? path.replace(/\/+$/, '') : path;
   const labels: Record<string, string> = {
-    '/': 'الرئيسية', '/directory': 'دليل الخدمات', '/villages': 'القرى والنجوع', '/landmarks': 'معالم نقادة', '/blog': 'المدونة', '/contribute': 'إضافة أو تصحيح نشاط', '/account': 'لوحة العضو',
+    '/': 'الرئيسية', '/directory': 'دليل الخدمات', '/villages': 'القرى والنجوع', '/landmarks': 'معالم نقادة', '/blog': 'المدونة', '/contribute': 'إضافة أو تصحيح نشاط', '/account': 'لوحة العضو', '/knowledge': 'موسوعة نقادة', '/jobs': 'وظائف نقادة', '/role-models': 'نماذج مشرفة', '/updates': 'آخر التحديثات', '/search': 'البحث الموحد',
   };
-  if (labels[path]) return labels[path];
-  if (path.startsWith('/listing/')) return `نشاط: ${decodeURIComponent(path.split('/')[2] || '').replace(/-/g, ' ')}`;
-  if (path.startsWith('/villages/')) return `صفحة مكان: ${decodeURIComponent(path.split('/')[2] || '').replace(/-/g, ' ')}`;
-  return decodeURIComponent(path).replaceAll('/', ' / ').trim() || 'الرئيسية';
+  if (labels[normalizedPath]) return labels[normalizedPath];
+  try {
+    if (normalizedPath.startsWith('/listing/')) return `نشاط: ${decodeURIComponent(normalizedPath.split('/')[2] || '').replace(/-/g, ' ')}`;
+    if (normalizedPath.startsWith('/villages/')) return `صفحة مكان: ${decodeURIComponent(normalizedPath.split('/')[2] || '').replace(/-/g, ' ')}`;
+    return decodeURIComponent(normalizedPath).replaceAll('/', ' / ').trim() || 'الرئيسية';
+  } catch { return path; }
 }
 function sourceLabel(source: string) {
   if (source === 'direct') return 'دخول مباشر أو رابط محفوظ';
@@ -57,15 +61,19 @@ function RankList({ items, max, type }: { items: Array<{ label: string; value: n
   return <div className="admin-rank-list">{items.length ? items.map((item, index) => <div className="admin-rank-row" key={`${type}-${item.label}`}><div><span>{(index + 1).toLocaleString('ar-EG')}</span><p><strong>{item.label}</strong><small>{item.detail}</small></p><b>{format(item.value)}</b></div><i><span style={{ width: `${Math.max(7, (item.value / Math.max(1, max)) * 100)}%` }} /></i></div>) : <div className="admin-empty">ستظهر البيانات هنا بعد بدء الزيارات.</div>}</div>;
 }
 
-function buildSuggestions(analytics: VisitorAnalytics, pending: number) {
+function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsights, pending: number) {
   const { totals } = analytics;
   const result: Array<{ title: string; text: string; priority: string }> = [];
   if (!totals.lifetimeVisitors) result.push({ title: 'بدأ نظام القياس الآن', text: 'اترك النظام يجمع بيانات فعلية لعدة أيام، ثم قارن الجدد بالعائدين وأعلى الصفحات.', priority: 'بدء' });
+  const missedRate = discovery.searchSummary.total ? discovery.searchSummary.missed / discovery.searchSummary.total : 0;
+  if (discovery.searchSummary.total >= 10 && missedRate >= .15) result.push({ title: 'بحث بلا نتيجة متكرر', text: `${percentage(missedRate * 100)} من البحث المكتمل خلال ٣٠ يومًا لم يجد نتيجة. ابدأ بأكثر العبارات تكرارًا، وصنّف الفجوات حسب القرية والخدمة قبل جمع البيانات.`, priority: 'عاجل' });
   const pagesPerVisitor = totals.uniqueVisitors30d ? totals.pageViews30d / totals.uniqueVisitors30d : 0;
   if (pagesPerVisitor > 0 && pagesPerVisitor < 1.5) result.push({ title: 'قوِّ الانتقال بين الصفحات', text: 'متوسط الصفحات لكل زائر منخفض؛ أضف روابط أنشطة مشابهة ومسارات تالية أوضح داخل صفحة النشاط.', priority: 'تجربة' });
+  const leadingPage = discovery.topPages[0];
+  if (leadingPage && leadingPage.views >= 20 && leadingPage.views / Math.max(1, totals.pageViews30d) > .35) result.push({ title: 'استفد من الصفحة الأكثر زيارة', text: `صفحة «${pathLabel(leadingPage.path)}» تجذب نسبة كبيرة من المشاهدات. راجع روابطها الداخلية ووسائل التواصل بها وأضف مسارات مفيدة نحو صفحات مرتبطة.`, priority: 'محتوى' });
   const newShare = totals.uniqueVisitors30d ? totals.newVisitors30d / totals.uniqueVisitors30d : 0;
   if (newShare > .75 && totals.uniqueVisitors30d >= 5) result.push({ title: 'حوّل الجدد إلى زوار عائدين', text: 'نسبة الجدد مرتفعة. أبرز آخر التحديثات والمفضلة ودعوة إنشاء الحساب في نهاية الصفحات الأعلى زيارة.', priority: 'نمو' });
-  if (analytics.missedSearches.length) result.push({ title: 'أغلق فجوات البحث', text: `ابدأ بإضافة أو تحسين نتيجة «${analytics.missedSearches[0].query}» لأنها تتكرر دون نتيجة.`, priority: 'بيانات' });
+  if (discovery.missedSearches.length) result.push({ title: 'أغلق فجوات البحث', text: `ابدأ بمراجعة طلب «${discovery.missedSearches[0].query}»؛ تكرر ${format(discovery.missedSearches[0].count)} مرات دون نتيجة. تحقّق من توفر الخدمة قبل نشر سجل جديد.`, priority: 'بيانات' });
   if (pending) result.push({ title: 'راجع المساهمات المفتوحة', text: `يوجد ${format(pending)} طلبًا ينتظر المراجعة؛ معالجته تحسن حداثة الدليل وثقة المستخدم.`, priority: 'تشغيل' });
   if (!result.length) result.push({ title: 'حافظ على جودة الصفحات الأعلى', text: 'راجع بيانات الاتصال والخرائط في الصفحات الأكثر زيارة أسبوعيًا، وراقب أي تراجع في الزوار العائدين.', priority: 'جودة' });
   return result.slice(0, 4);
@@ -74,10 +82,13 @@ function buildSuggestions(analytics: VisitorAnalytics, pending: number) {
 export default async function AdminPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
-  const [stats, analytics] = await Promise.all([
+  const [stats, analyticsResult, discoveryResult] = await Promise.all([
     getAdminStats(session.accessToken).catch(() => ({ members: 0, siteReviews: 0, siteRating: 0, listingRatings: 0, pendingContributions: 0, events30d: 0 })),
-    getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics),
+    getVisitorAnalytics(session.accessToken).catch(() => null),
+    getDiscoveryInsights(session.accessToken).catch(() => null),
   ]);
+  const analytics = analyticsResult || emptyVisitorAnalytics;
+  const discovery = discoveryResult || emptyDiscoveryInsights;
   const totals = analytics.totals;
   const reviewed = businesses.filter((item) => item.checked).length;
   const completion = Math.round((reviewed / Math.max(1, businesses.length)) * 100);
@@ -87,19 +98,22 @@ export default async function AdminPage() {
   const chartMax = Math.max(1, ...analytics.dailySeries.map((item) => item.views));
   const pageMax = Math.max(1, ...analytics.topPages.map((item) => item.views));
   const sourceMax = Math.max(1, ...analytics.sources.map((item) => item.visitors));
-  const suggestions = buildSuggestions(analytics, stats.pendingContributions);
+  const suggestions = buildSuggestions(analytics, discovery, stats.pendingContributions);
 
   return (
     <main id="main-content" className="admin-page admin-page--premium">
-      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز القرار والتشغيل</span><h1>لوحة إدارة <em>دليل نقادة</em></h1><p>متابعة الزوار الحقيقيين ونمو الأعضاء وسلوك الاستخدام وجودة البيانات في واجهة واحدة واضحة.</p><nav aria-label="أقسام لوحة الإدارة"><a href="#audience">الجمهور</a><a href="#content">المحتوى</a><a href="#members">الزوار المسجلون</a><a href="#recommendations">مقترحات التحسين</a><a href="#operations">التشغيل</a></nav></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>آخر 30 يومًا</small>مباشر</b><b><small>تعريف الزائر</small>آمن</b><b><small>حالة البيانات</small>محدّثة</b></div></aside></div></section>
+      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز القرار والتشغيل</span><h1>لوحة إدارة <em>دليل نقادة</em></h1><p>متابعة الزيارات المسجلة ونمو الأعضاء وسلوك الاستخدام وجودة البيانات في واجهة واحدة واضحة.</p><nav aria-label="أقسام لوحة الإدارة"><a href="#audience">الجمهور</a><a href="#discovery">القياس اليومي</a><a href="#content">المحتوى</a><a href="#members">الزوار المسجلون</a><a href="#recommendations">مقترحات التحسين</a><a href="#operations">التشغيل</a></nav></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>آخر 30 يومًا</small>مباشر</b><b><small>تعريف الزائر</small>آمن</b><b><small>حالة البيانات</small>{analyticsResult && discoveryResult ? 'محدّثة' : 'تحتاج مراجعة'}</b></div></aside></div></section>
 
       <div className="shell admin-shell admin-shell--premium">
-        <nav className="admin-section-nav" aria-label="اختصارات لوحة التحكم"><a href="#audience"><b>01</b>الجمهور</a><a href="#content"><b>02</b>الصفحات والمصادر</a><a href="#members"><b>03</b>الأعضاء الزائرون</a><a href="#recommendations"><b>04</b>التحسين</a><a href="#operations"><b>05</b>التشغيل</a></nav>
+        <nav className="admin-section-nav" aria-label="اختصارات لوحة التحكم"><a href="#audience"><b>01</b>الجمهور</a><a href="#discovery"><b>02</b>القياس اليومي</a><a href="#content"><b>03</b>الصفحات والمصادر</a><a href="#members"><b>04</b>الأعضاء الزائرون</a><a href="#recommendations"><b>05</b>التحسين</a><a href="#operations"><b>06</b>التشغيل</a></nav>
+        {!analyticsResult || !discoveryResult ? <div role="status" className="admin-data-warning">تعذّر تحميل {analyticsResult ? 'تفاصيل القياس اليومي' : 'بيانات الزيارات'} الآن. الأرقام الغائبة ليست صفرًا مؤكدًا؛ حدّث الصفحة بعد قليل.</div> : null}
 
-        <section className="admin-section admin-audience" id="audience"><header><div><span>آخر 30 يومًا</span><h2>الجمهور الحقيقي للدليل</h2><p>كل متصفح يُحسب مرة واحدة كزائر فريد، بينما مشاهدة الصفحات تُحسب بشكل مستقل.</p></div><div className={`admin-growth is-${visitorGrowth.tone}`}><small>مقارنة بالفترة السابقة</small><strong>{visitorGrowth.label}</strong></div></header>
+        <section className="admin-section admin-audience" id="audience"><header><div><span>آخر 30 يومًا</span><h2>الزيارات المسجلة للدليل</h2><p>كل متصفح يُحسب مرة واحدة كزائر فريد، بينما مشاهدة الصفحات تُحسب بشكل مستقل. الأرقام السابقة قد تشمل فحوصات آلية للموقع.</p></div><div className={`admin-growth is-${visitorGrowth.tone}`}><small>مقارنة بالفترة السابقة</small><strong>{visitorGrowth.label}</strong></div></header>
           <div className="admin-primary-metrics"><article><i><MetricIcon name="people" /></i><span>الزوار الفريدون</span><strong>{format(totals.uniqueVisitors30d)}</strong><small>{format(totals.visitorsToday)} زائرًا اليوم</small></article><article><i><MetricIcon name="spark" /></i><span>زوار جدد</span><strong>{format(totals.newVisitors30d)}</strong><small>أول زيارة من هذا المتصفح</small></article><article><i><MetricIcon name="eye" /></i><span>مشاهدات الصفحات</span><strong>{format(totals.pageViews30d)}</strong><small>{pagesPerVisitor.toLocaleString('ar-EG', { maximumFractionDigits: 1 })} صفحة لكل زائر</small></article><article><i><MetricIcon name="member" /></i><span>زوار بأسماء معروفة</span><strong>{format(totals.identifiedVisitors30d)}</strong><small>أعضاء دخلوا بحساباتهم فقط</small></article></div>
           <div className="admin-trend-card"><header><div><span>آخر 14 يومًا</span><h3>اتجاه الزوار والمشاهدات</h3></div><dl><div><dt>العائدون</dt><dd>{format(totals.returningVisitors30d)}</dd></div><div><dt>معدل العودة</dt><dd>{percentage(returnRate)}</dd></div><div><dt>إجمالي الزوار المسجلين</dt><dd>{format(totals.lifetimeVisitors)}</dd></div></dl></header><div className="admin-trend" aria-label="رسم الزيارات اليومية">{analytics.dailySeries.length ? analytics.dailySeries.map((item) => <div key={item.date} title={`${dateLabel(item.date)}: ${format(item.visitors)} زائر و${format(item.views)} مشاهدة`}><span className="admin-trend__bar" style={{ '--bar-height': `${Math.max(item.views ? 8 : 2, (item.views / chartMax) * 100)}%` } as CSSProperties}><i style={{ '--visitor-height': `${Math.max(item.visitors ? 15 : 3, (item.visitors / Math.max(1, item.views)) * 100)}%` } as CSSProperties} /></span><small>{dateLabel(item.date)}</small></div>) : <div className="admin-chart-empty">تبدأ الأعمدة بالظهور مع أول زيارة منشورة.</div>}</div><footer><span><i className="is-views" />المشاهدات</span><span><i className="is-visitors" />الزوار الفريدون</span></footer></div>
         </section>
+
+        <DiscoveryPanel insights={discovery} available={Boolean(discoveryResult)} pathLabel={pathLabel} />
 
         <section className="admin-section" id="content"><header><div><span>فهم الاهتمام</span><h2>الصفحات والمصادر والأجهزة</h2><p>تعرف أين يذهب الجمهور، ومن أين وصل، وكيف تصفح الدليل.</p></div></header><div className="admin-insight-grid"><article className="admin-ranked-card admin-ranked-card--wide"><header><span>ترتيب المحتوى</span><h3>أكثر الصفحات زيارة</h3></header><RankList type="pages" max={pageMax} items={analytics.topPages.map((item) => ({ label: pathLabel(item.path), value: item.views, detail: `${format(item.visitors)} زائرًا فريدًا` }))} /></article><article className="admin-ranked-card"><header><span>الاكتساب</span><h3>مصادر الوصول</h3></header><RankList type="sources" max={sourceMax} items={analytics.sources.map((item) => ({ label: sourceLabel(item.source), value: item.visitors, detail: 'زائرًا فريدًا' }))} /></article><article className="admin-ranked-card"><header><span>تجربة الأجهزة</span><h3>طريقة التصفح</h3></header><div className="admin-device-list">{analytics.devices.length ? analytics.devices.map((item) => { const share = totals.uniqueVisitors30d ? item.visitors / totals.uniqueVisitors30d * 100 : 0; return <div key={item.device}><span>{item.device === 'mobile' ? 'هاتف جوال' : item.device === 'tablet' ? 'جهاز لوحي' : 'كمبيوتر'}</span><strong>{percentage(share)}</strong><i><span style={{ width: `${share}%` }} /></i><small>{format(item.visitors)} زائرًا</small></div>; }) : <div className="admin-empty">بانتظار بيانات الأجهزة.</div>}</div></article></div></section>
 
@@ -107,7 +121,7 @@ export default async function AdminPage() {
 
         <section className="admin-section" id="recommendations"><header><div><span>قرارات قابلة للتنفيذ</span><h2>مقترحات التحسين</h2><p>تتغير هذه الأولويات تلقائيًا حسب سلوك الزوار وجودة البيانات.</p></div></header><div className="admin-recommendations">{suggestions.map((item, index) => <article key={item.title}><span>{item.priority}</span><b>{String(index + 1).padStart(2, '0')}</b><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
 
-        <section className="admin-section" id="operations"><header><div><span>نبض التشغيل</span><h2>الأعضاء والتفاعل وجودة الدليل</h2></div><small>{analytics.generatedAt ? `آخر تجميع ${timeLabel(analytics.generatedAt)}` : 'بدأ التجميع الآن'}</small></header><div className="admin-stats admin-stats--expanded"><article><span>الأنشطة المنشورة</span><strong>{format(meta.businessCount)}</strong><small>داخل {format(categories.length)} قسمًا</small></article><article><span>إجمالي الأعضاء</span><strong>{format(stats.members)}</strong><small>{format(totals.members7d)} جدد خلال 7 أيام</small></article><article><span>تقييم الموقع</span><strong>{stats.siteReviews ? `${stats.siteRating}/5` : '—'}</strong><small>{format(stats.siteReviews)} تقييمات</small></article><article><span>تقييمات الأنشطة</span><strong>{format(stats.listingRatings)}</strong><small>تقييمات محفوظة</small></article><article><span>طلبات المراجعة</span><strong>{format(stats.pendingContributions)}</strong><small>قيد المتابعة</small></article><article><span>تفاعل 30 يومًا</span><strong>{format(stats.events30d)}</strong><small>بحث واتصال وخرائط</small></article></div><div className="admin-operations-grid"><div className="quality-score"><div style={{ '--quality-score': `${completion}%` } as CSSProperties}><strong>{completion}%</strong><span>مراجعة السجلات</span></div><dl><div><dt>السجلات المراجعة</dt><dd>{format(reviewed)}</dd></div><div><dt>المواضع الجغرافية</dt><dd>{format(localities.length)}</dd></div><div><dt>الأقسام النشطة</dt><dd>{format(categories.length)}</dd></div></dl></div><div className="admin-actions"><Link href="/contribute"><span>طلبات الإضافة والتصحيح</span><b>فتح المساهمات ←</b></Link><Link href="/updates"><span>تحديثات البيانات</span><b>مراجعة آخر السجلات ←</b></Link><Link href="/directory"><span>فحص الدليل العام</span><b>استعراض الأنشطة ←</b></Link><Link href="/account"><span>حساب المدير</span><b>العودة للملف الشخصي ←</b></Link></div></div>{analytics.events.length || analytics.missedSearches.length ? <div className="admin-activity-grid"><article className="admin-ranked-card"><header><span>الأحداث</span><h3>أكثر التفاعلات</h3></header><RankList type="events" max={Math.max(1, ...analytics.events.map((item) => item.count))} items={analytics.events.map((item) => ({ label: eventLabels[item.event] || item.event, value: item.count, detail: 'خلال 30 يومًا' }))} /></article><article className="admin-ranked-card"><header><span>فجوات المحتوى</span><h3>بحث بلا نتائج</h3></header><RankList type="queries" max={Math.max(1, ...analytics.missedSearches.map((item) => item.count))} items={analytics.missedSearches.map((item) => ({ label: item.query, value: item.count, detail: 'مرات دون نتيجة' }))} /></article></div> : null}</section>
+        <section className="admin-section" id="operations"><header><div><span>نبض التشغيل</span><h2>الأعضاء والتفاعل وجودة الدليل</h2></div><small>{analytics.generatedAt ? `آخر تجميع ${timeLabel(analytics.generatedAt)}` : 'بدأ التجميع الآن'}</small></header><div className="admin-stats admin-stats--expanded"><article><span>الأنشطة المنشورة</span><strong>{format(meta.businessCount)}</strong><small>داخل {format(categories.length)} قسمًا</small></article><article><span>إجمالي الأعضاء</span><strong>{format(stats.members)}</strong><small>{format(totals.members7d)} جدد خلال 7 أيام</small></article><article><span>تقييم الموقع</span><strong>{stats.siteReviews ? `${stats.siteRating}/5` : '—'}</strong><small>{format(stats.siteReviews)} تقييمات</small></article><article><span>تقييمات الأنشطة</span><strong>{format(stats.listingRatings)}</strong><small>تقييمات محفوظة</small></article><article><span>طلبات المراجعة</span><strong>{format(stats.pendingContributions)}</strong><small>قيد المتابعة</small></article><article><span>تفاعل 30 يومًا</span><strong>{format(stats.events30d)}</strong><small>بحث واتصال وخرائط</small></article></div><div className="admin-operations-grid"><div className="quality-score"><div style={{ '--quality-score': `${completion}%` } as CSSProperties}><strong>{completion}%</strong><span>مراجعة السجلات</span></div><dl><div><dt>السجلات المراجعة</dt><dd>{format(reviewed)}</dd></div><div><dt>المواضع الجغرافية</dt><dd>{format(localities.length)}</dd></div><div><dt>الأقسام النشطة</dt><dd>{format(categories.length)}</dd></div></dl></div><div className="admin-actions"><Link href="/contribute"><span>طلبات الإضافة والتصحيح</span><b>فتح المساهمات ←</b></Link><Link href="/updates"><span>تحديثات البيانات</span><b>مراجعة آخر السجلات ←</b></Link><Link href="/directory"><span>فحص الدليل العام</span><b>استعراض الأنشطة ←</b></Link><Link href="/account"><span>حساب المدير</span><b>العودة للملف الشخصي ←</b></Link></div></div>{analytics.events.length || discovery.missedSearches.length ? <div className="admin-activity-grid"><article className="admin-ranked-card"><header><span>الأحداث</span><h3>أكثر التفاعلات</h3></header><RankList type="events" max={Math.max(1, ...analytics.events.map((item) => item.count))} items={analytics.events.map((item) => ({ label: eventLabels[item.event] || item.event, value: item.count, detail: 'خلال 30 يومًا' }))} /></article><article className="admin-ranked-card"><header><span>فجوات المحتوى</span><h3>بحث بلا نتائج</h3></header><RankList type="queries" max={Math.max(1, ...discovery.missedSearches.map((item) => item.count))} items={discovery.missedSearches.map((item) => ({ label: item.query, value: item.count, detail: 'مرات دون نتيجة' }))} /></article></div> : null}</section>
       </div>
     </main>
   );

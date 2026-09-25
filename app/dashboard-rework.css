@@ -103,7 +103,8 @@
 .admin-page--premium { background: radial-gradient(circle at 6% 14%, rgba(52,122,128,.07), transparent 30rem), linear-gradient(#fbf6f0, #fffaf5); }
 .admin-hero { padding-block: clamp(45px, 6vw, 75px) 86px; }
 .admin-shell--premium { position: relative; gap: 22px; margin-top: -48px; }
-.admin-section-nav { position: sticky; z-index: 70; inset-block-start: 91px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 6px; border: 1px solid rgba(93,49,34,.1); border-radius: 20px; background: rgba(255,252,247,.93); box-shadow: 0 18px 48px rgba(55,28,20,.13), inset 0 1px #fff; backdrop-filter: blur(18px); }
+.admin-section-nav { position: sticky; z-index: 70; inset-block-start: 91px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 6px; border: 1px solid rgba(93,49,34,.1); border-radius: 20px; background: rgba(255,252,247,.93); box-shadow: 0 18px 48px rgba(55,28,20,.13), inset 0 1px #fff; backdrop-filter: blur(18px); }
+.admin-data-warning { padding: 14px 18px; border: 1px solid #d6ae65; border-radius: 14px; background: #fff5db; color: #624624; font-size: 13px; line-height: 1.7; }
 .admin-section-nav a { min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 45px; padding: 7px; border-radius: 14px; color: #655248; font-size: 9px; font-weight: 900; text-align: center; transition: color .2s ease, background .2s ease, transform .2s ease; }
 .admin-section-nav a:first-child { background: linear-gradient(145deg, #3c716e, #254e4d); color: #fff; box-shadow: 0 9px 20px rgba(37,78,77,.2); }
 .admin-section-nav b { color: #c59371; font-size: 8px; }.admin-section-nav a:first-child b { color: #cfe8e3; }

@@ -171,6 +171,7 @@ export async function submitListingRating(listingSlug: string, score: number) {
 export function privacySafeSearchTerm(value: string) {
   const trimmed = value.trim();
   if (!trimmed) return '';
+  if (trimmed.includes('\uFFFD')) return '';
   if (/\S+@\S+\.\S+/.test(trimmed)) return '';
   if (/(?:\+?\d[\d\s().-]{6,}\d)/.test(trimmed)) return '';
   return trimmed.replace(/\s+/g, ' ').slice(0, 70);

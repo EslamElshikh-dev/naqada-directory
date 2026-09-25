@@ -6,8 +6,8 @@ import type { SanadReply } from '@/lib/sanad';
 import styles from './sanad-assistant.module.css';
 
 type Message = { role: 'user' | 'assistant'; text: string; reply?: SanadReply };
-const prompts = ['أبحث عن خدمة', 'القرى والنجوع', 'معالم نقادة', 'إزاي أضيف نشاط؟'];
-const welcome: Message = { role: 'assistant', text: 'يا مرحب بيك! أنا سند، مساعدك في دليل نقادة. قولّي بتدور على إيه وفي أي قرية، وأنا أسندك.' };
+const prompts = ['أبحث عن خدمة', 'وظائف نقادة', 'نماذج مشرفة', 'إزاي أضيف نشاط؟'];
+const welcome: Message = { role: 'assistant', text: 'يا مرحب بيك! أنا سند، مساعدك في دليل نقادة. خدمة، قرية، شغل أو حكاية حد من بلدنا؟ قولّي بس، وأنا أسندك بالمعلومة المتاحة.' };
 function Icon({ close = false }: { close?: boolean }) { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{close ? <path d="m6 6 12 12M6 18 18 6" /> : <path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3" />}</svg>; }
 export function SanadAssistant() {
   const [open, setOpen] = useState(false);

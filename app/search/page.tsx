@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SearchJourneyPanel } from '@/components/search-journey';
+import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
@@ -142,6 +143,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <main id="main-content" className="page-main">
+      {canSearch ? <SearchAnalytics query={query} count={allResults.length} scope={activeScope} /> : null}
       <section className={styles.hero}>
         <div className={`shell ${styles.heroGrid}`}>
           <div>
