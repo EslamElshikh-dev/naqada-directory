@@ -96,3 +96,33 @@ export async function getVisitorAnalytics(accessToken: string): Promise<VisitorA
   if (!response.ok) throw new Error('VISITOR_ANALYTICS_FAILED');
   return response.json() as Promise<VisitorAnalytics>;
 }
+
+export type DiscoveryInsights = {
+  generatedAt: string;
+  timezone: 'Africa/Cairo';
+  dailySeries: Array<{ date: string; visitors: number; newVisitors: number; views: number }>;
+  topPages: Array<{ path: string; views: number; visitors: number }>;
+  searchSummary: { total: number; missed: number };
+  missedSearches: Array<{ query: string; count: number; category: string | null; locality: string | null; lastSeenAt: string }>;
+};
+
+export const emptyDiscoveryInsights: DiscoveryInsights = {
+  generatedAt: '', timezone: 'Africa/Cairo', dailySeries: [], topPages: [],
+  searchSummary: { total: 0, missed: 0 }, missedSearches: [],
+};
+
+export async function getDiscoveryInsights(accessToken: string): Promise<DiscoveryInsights> {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_naqada_discovery_insights`, {
+    method: 'POST',
+    headers: restHeaders(accessToken, true),
+    body: '{}',
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error('DISCOVERY_INSIGHTS_FAILED');
+  const report = await response.json() as DiscoveryInsights;
+  return {
+    ...report,
+    // Keep raw event totals intact, but don't propose unreadable legacy queries as content ideas.
+    missedSearches: report.missedSearches.filter((item) => item.query && !item.query.includes('\uFFFD')),
+  };
+}

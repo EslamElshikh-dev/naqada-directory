@@ -53,9 +53,10 @@
 .panel {
   position: absolute;
   width: min(380px, calc(100vw - 24px));
+  max-height: calc(100dvh - 110px);
   inset-inline-end: 0;
   inset-block-start: calc(100% + 13px);
-  overflow: hidden;
+  overflow-y: auto;
   border: 1px solid rgba(24, 65, 50, .12);
   border-radius: 27px 27px 10px 27px;
   background: rgba(255, 253, 248, .98);
@@ -107,6 +108,14 @@
 .head > button { position: relative; z-index: 1; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 50%; background: rgba(255,255,255,.07); color: #fff; font: 500 1.35rem/1 sans-serif; }
 
 .list { display: grid; gap: 2px; padding: 8px; }
+.empty { margin: 5px; padding: 14px; border-radius: 12px; background: #f3f5ed; color: #506d60; font-size: .75rem; line-height: 1.8; }
+
+.welcome { position: fixed; z-index: 235; inset-block-start: 94px; inset-inline-end: 22px; width: min(370px, calc(100vw - 24px)); display: grid; grid-template-columns: 32px minmax(0, 1fr) 30px; align-items: center; gap: 10px; padding: 15px; border: 1px solid #c6d7c7; border-radius: 18px; background: #fafff9; color: #244b39; box-shadow: 0 15px 45px rgba(9, 46, 32, .22); animation: notificationsArrive .24s ease-out both; }
+.welcome > span { font-size: 24px; color: #bd8840; }
+.welcome div { min-width: 0; display: grid; gap: 2px; }
+.welcome small { color: #7a744f; font-size: .7rem; font-weight: 800; }
+.welcome strong { font-size: .82rem; line-height: 1.8; }
+.welcome button { width: 30px; height: 30px; border: 0; border-radius: 50%; background: #ecf3ea; color: #3b634b; font-size: 20px; cursor: pointer; }
 
 .item {
   --notice-accent: #3c9278;
@@ -171,6 +180,7 @@
   .copy strong { font-size: .875rem; }
   .copy p { font-size: .75rem; }
   .footer { position: sticky; bottom: 0; }
+  .welcome { inset-block-start: 114px; inset-inline: 12px auto; }
 }
 
 @media (max-width: 390px) {
@@ -186,7 +196,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .trigger, .item, .arrow, .panel, .unread { animation: none !important; transition: none !important; }
+  .trigger, .item, .arrow, .panel, .unread, .welcome { animation: none !important; transition: none !important; }
 }
 
 @keyframes notificationsArrive {

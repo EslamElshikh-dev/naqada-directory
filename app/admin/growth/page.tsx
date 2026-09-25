@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { emptyVisitorAnalytics, getVisitorAnalytics, isDirectoryAdmin } from '@/lib/auth/admin';
+import { emptyVisitorAnalytics, getDiscoveryInsights, getVisitorAnalytics, isDirectoryAdmin } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
 import { buildGrowthPriorities } from '@/lib/growth-priority';
 import styles from './growth.module.css';
@@ -21,8 +21,11 @@ export default async function GrowthPriorityPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
 
-  const analytics = await getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics);
-  const { items, summary } = buildGrowthPriorities(analytics.missedSearches);
+  const [discovery, analytics] = await Promise.all([
+    getDiscoveryInsights(session.accessToken).catch(() => null),
+    getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics),
+  ]);
+  const { items, summary } = buildGrowthPriorities(discovery?.missedSearches || analytics.missedSearches.filter((item) => !item.query.includes('\uFFFD')));
 
   return (
     <main id="main-content" className="admin-page admin-page--premium">

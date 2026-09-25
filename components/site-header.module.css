@@ -32,7 +32,6 @@
  .brandCopy strong { font-size:1rem; }
  .brandCopy small,.emergency { display:none; }
  .actions { gap:5px; }
- .actions > :nth-child(2) { display:none; }
  .actions :global(.global-search__trigger),.actions :global(.account-trigger) { min-width:44px; width:44px; height:44px; min-height:44px; }
 }
 @media (max-width:360px) { .inner { width:calc(100% - 20px); gap:5px; } .brandCopy strong { font-size:.875rem; } .brand { gap:5px; } .emblem { --brand-size:34px; width:34px; height:34px; } .actions { gap:3px; } }

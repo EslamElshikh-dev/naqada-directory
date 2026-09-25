@@ -37,12 +37,16 @@ async function recordVisit(visitorId: string, path: string, referrerHost: string
 
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'طلب غير مسموح.' }, { status: 403 });
+  const userAgent = request.headers.get('user-agent') || '';
+  if (/headlesschrome|playwright|puppeteer|lighthouse|googlebot|bingbot|crawler|spider|curl\/|python-requests|uptimerobot/i.test(userAgent)) {
+    return new NextResponse(null, { status: 204, headers: { 'Cache-Control': 'private, no-store' } });
+  }
   const body = await request.json().catch(() => ({}));
   const storedId = request.cookies.get(VISITOR_COOKIE)?.value || '';
   const visitorId = UUID_PATTERN.test(storedId) ? storedId : randomUUID();
   const path = cleanPath(body?.path);
   const referrerHost = cleanHost(body?.referrerHost);
-  const device = deviceClass(request.headers.get('user-agent') || '');
+  const device = deviceClass(userAgent);
   const token = request.cookies.get(AUTH_ACCESS_COOKIE)?.value;
 
   let result = await recordVisit(visitorId, path, referrerHost, device, token).catch(() => null);
