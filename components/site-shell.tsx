@@ -76,21 +76,21 @@ export function Footer() {
             <span className={footerStyles.emblem}><BrandMark /></span>
             <div className={footerStyles.identityCopy}>
               <span className={footerStyles.kicker}>من أهل البلد، لأهل البلد</span>
-              <h2 id="site-footer-title">دليل نقادة.</h2>
-              <p>بلدنا بخدماتها وقراها وحكاويها. نجمع لك المعلومة ونراجعها، والدليل يكبر بينا كلنا. لو عندك معلومة تنفع أهل البلد، ما تبخلش بيها.</p>
+              <h2 id="site-footer-title">دليل نقادة</h2>
+              <p>خدمات بلدنا وقراها وحكاوي ناسها في مكان واحد. بندوّر على المعلومة ونراجعها، والدليل يكبر بمشاركة أهل البلد.</p>
             </div>
           </div>
           <div className={footerStyles.actions}>
-            <Link prefetch={false} href="/directory" className={footerStyles.primaryAction}><span>استكشف الخدمات</span><ActionIcon name="arrow" /></Link>
-            <Link prefetch={false} href="/contribute" className={footerStyles.secondaryAction}><ActionIcon name="add" /><span>أضف أو صحّح معلومة</span></Link>
+            <Link prefetch={false} href="/directory" className={footerStyles.primaryAction}><span>دوّر على خدمة</span><ActionIcon name="arrow" /></Link>
+            <Link prefetch={false} href="/contribute" className={footerStyles.secondaryAction}><ActionIcon name="add" /><span>عندك إضافة أو تصحيح؟</span></Link>
           </div>
         </section>
 
         <div className={footerStyles.content}>
           <nav className={footerStyles.routesPanel} aria-labelledby="footer-routes-title">
             <div className={footerStyles.sectionHeading}>
-              <div><span>ابدأ من هنا</span><h2 id="footer-routes-title">اختار مشوارك</h2></div>
-              <small>من هنا للي محتاجه</small>
+              <div><span>الطريق من هنا</span><h2 id="footer-routes-title">تدوّر على إيه؟</h2></div>
+              <small>كل باب يوصّلك لحاجة من بلدنا</small>
             </div>
             <div className={footerStyles.routes}>
               {footerRoutes.map((route) => (
@@ -106,7 +106,7 @@ export function Footer() {
           <aside className={footerStyles.side} aria-label="معلومات دليل نقادة">
             <section className={footerStyles.metrics} aria-labelledby="footer-metrics-title">
               <div className={footerStyles.sectionHeading}>
-                <div><span>تغطية محلية متجددة</span><h2 id="footer-metrics-title">الدليل في أرقام</h2></div>
+                <div><span>من أرض نقادة</span><h2 id="footer-metrics-title">بلدنا في الدليل</h2></div>
               </div>
               <div className={footerStyles.stats}>
                 <span><b>{meta.businessCount.toLocaleString('ar-EG')}</b><small>خدمة ونشاط</small></span>
@@ -116,20 +116,25 @@ export function Footer() {
             </section>
 
             <section className={footerStyles.localCard} aria-labelledby="footer-scope-title">
-              <span className={footerStyles.localIcon} aria-hidden="true">✓</span>
-              <div><strong id="footer-scope-title">محتوى محلي بنطاق واضح</strong><p>التغطية مخصصة لمركز نقادة وقراه ونجوعه بمحافظة قنا، مع مراجعة البيانات وتحديثها باستمرار.</p></div>
+              <span className={footerStyles.localIcon} aria-hidden="true"><ActionIcon name="map" /></span>
+              <div><strong id="footer-scope-title">نقادة وقراها ونجوعها</strong><p>الدليل مخصص لمركز نقادة في محافظة قنا، وبنراجع بياناته ونحدّثها على قد ما نقدر.</p></div>
               <Link prefetch={false} href="/emergency">أرقام مهمة <ActionIcon name="arrow" /></Link>
             </section>
 
-            <nav className={footerStyles.utilityLinks} aria-label="روابط مساعدة">
-              {footerUtilities.map((item) => <Link prefetch={false} href={item.href} key={item.href}>{item.label}</Link>)}
-            </nav>
+            <div className={footerStyles.utilities}>
+              <h2 id="footer-utilities-title">روابط تهمك</h2>
+              <nav className={footerStyles.utilityLinks} aria-labelledby="footer-utilities-title">
+                {footerUtilities.map((item) => <Link prefetch={false} href={item.href} key={item.href}>{item.label}<ActionIcon name="arrow" /></Link>)}
+              </nav>
+            </div>
           </aside>
         </div>
 
         <div className={footerStyles.bottom}>
-          <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
-          <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link prefetch={false} href="/privacy">الخصوصية</Link><Link prefetch={false} href="/about">عن الدليل</Link></div>
+          <div className={footerStyles.bottomInfo}>
+            <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
+            <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link prefetch={false} href="/privacy">الخصوصية</Link><Link prefetch={false} href="/about">عن الدليل</Link></div>
+          </div>
           <Link prefetch={false} href="/developer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">←</span></Link>
         </div>
       </div>
