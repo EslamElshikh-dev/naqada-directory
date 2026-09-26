@@ -8,6 +8,7 @@ import {
   sameOrigin,
   signIn,
 } from '@/lib/auth/supabase-rest';
+import { assertMemberAllowed } from '@/lib/auth/moderator';
 
 export const runtime = 'nodejs';
 
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     const password = String(body?.password || '');
     if (!email || !password) return NextResponse.json({ error: 'أدخل البريد وكلمة المرور.' }, { status: 400 });
     const session = await signIn(email, password);
+    await assertMemberAllowed(session.access_token);
     const response = NextResponse.json({ user: mapMember(session.user) });
     response.cookies.set(AUTH_ACCESS_COOKIE, session.access_token, {
       ...authCookieBase,

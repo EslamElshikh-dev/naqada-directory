@@ -6,10 +6,12 @@ import { ListingCard } from '@/components/listing-card';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() {
   return activityLandings.map((activity) => ({ slug: activity.slug }));
@@ -36,7 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const activity = getActivityBySlug(slug);
   if (!activity) return {};
-  const count = getBusinessesForActivity(activity).length;
+  const catalog = await getPublicBusinessCatalog();
+  const count = getBusinessesForActivity(activity, catalog.businesses).length;
   return buildPageMetadata({
     title: `${activity.name} | الأسماء والعناوين في دليل نقادة`,
     description: `${activity.description} تصفح ${count.toLocaleString('ar-EG')} اسمًا منشورًا، وابحث حسب القرية أو النجع داخل مركز نقادة بمحافظة قنا.`,
@@ -50,7 +53,8 @@ export default async function ActivityPage({ params }: Props) {
   const { slug } = await params;
   const activity = getActivityBySlug(slug);
   if (!activity) notFound();
-  const scoped = getBusinessesForActivity(activity);
+  const catalog = await getPublicBusinessCatalog();
+  const scoped = getBusinessesForActivity(activity, catalog.businesses);
   const localityCounts = new Map<string, number>();
   for (const item of scoped) {
     const name = canonicalLocalityName(item.locality);

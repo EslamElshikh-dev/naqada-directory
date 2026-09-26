@@ -1,0 +1,6 @@
+.section { margin: 0 0 46px; padding: 26px; border: 1px solid #e3decf; border-radius: 21px; background: #fffdf7; direction: rtl; }
+.section > div:first-child span { color: #a47e30; font-weight: 850; font-size: 14px; }.section h2 { color: #214d3d; font-size: clamp(23px, 3vw, 32px); margin: 4px 0 19px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }.grid a { color: #214333; display: block; border: 1px solid #e2e8dd; background: #fff; padding: 22px; border-radius: 15px; text-decoration: none; transition: border-color .2s, transform .2s; }
+.grid a:hover { border-color: #caa451; transform: translateY(-2px); }.grid small { color: #a47e30; font-size: 13px; font-weight: 700; }.grid h3 { margin: 10px 0 6px; font-size: 21px; line-height: 1.5; }.grid p { color: #576b5b; line-height: 1.8; font-size: 15px; }.grid b { color: #226345; font-size: 14px; }
+@media (max-width: 620px) { .section { padding: 17px; } }
+@media (prefers-reduced-motion: reduce) { .grid a { transition: none; } }

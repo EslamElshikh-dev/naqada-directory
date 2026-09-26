@@ -70,6 +70,7 @@ function StoryMeta({ item }: { item: ExternalNewsItem }) {
 }
 
 function SourceButton({ item, compact = false }: { item: ExternalNewsItem; compact?: boolean }) {
+  if (item.isOriginal) return <Link className={compact ? styles.sourceButtonCompact : styles.sourceButton} href={item.url}>اقرأ الخبر <b aria-hidden="true">←</b></Link>;
   return (
     <a
       className={compact ? styles.sourceButtonCompact : styles.sourceButton}
@@ -97,7 +98,7 @@ function NewsCard({ item }: { item: ExternalNewsItem }) {
         <h2><Link href={`/news/${item.id}`}>{item.title}</Link></h2>
         {item.description ? <p>{item.description}</p> : <p className={styles.descriptionFallback}>ملخص الخبر غير متاح من المصدر؛ افتح الرابط للاطلاع على التفاصيل الكاملة.</p>}
         <div className={styles.cardFooter}>
-          <span>نشر خارجي · الحقوق للمصدر</span>
+          <span>{item.isOriginal ? 'خبر من فريق الدليل' : 'نشر خارجي · الحقوق للمصدر'}</span>
           <SourceButton item={item} compact />
         </div>
       </div>
@@ -135,7 +136,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             '@type': 'ListItem',
             position: index + 1,
             name: item.title,
-            url: item.url,
+            url: item.isOriginal ? `${siteConfig.url}${item.url}` : item.url,
           })),
         },
       },
@@ -157,7 +158,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link><span>/</span><span>أخبار نقادة وقنا</span></nav>
             <span className={styles.kicker}><i aria-hidden="true" /> غرفة أخبار محلية متجددة</span>
             <h1>الخبر المحلي… <em>من مصدره.</em></h1>
-            <p>متابعة منظمة لأخبار نقادة ومحافظة قنا من المصادر الصحفية والرسمية. نعرض العنوان والصورة والملخص القصير، ونترك التفاصيل الكاملة للناشر الأصلي.</p>
+            <p>متابعة منظمة لأخبار نقادة ومحافظة قنا من المصادر الصحفية والرسمية، ومعها الأخبار المحلية التي يكتبها فريق الدليل.</p>
             <div className={styles.heroStats}>
               <span><b>{feed.items.length.toLocaleString('ar-EG')}</b><small>خبرًا متاحًا الآن</small></span>
               <span><b>{sourceCount.toLocaleString('ar-EG')}</b><small>مصادر ظاهرة</small></span>
@@ -179,7 +180,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       <div className={`shell ${styles.newsroom}`}>
         <section className={styles.trustBar} aria-label="سياسة عرض الأخبار">
           <span className={styles.trustIcon} aria-hidden="true">✓</span>
-          <div><strong>المصدر ظاهر قبل التفاصيل</strong><p>لا ننسخ النص الكامل ولا ننسب الخبر لدليل نقادة؛ الصورة والملخص والحقوق للناشر الموضح على كل بطاقة.</p></div>
+          <div><strong>المصدر ظاهر قبل التفاصيل</strong><p>الأخبار الخارجية تحتفظ باسم ناشرها ورابطه، وما يكتبه فريق دليل نقادة يظهر باسمه بوضوح.</p></div>
           <a href="#news-sources">راجع المصادر <span aria-hidden="true">↓</span></a>
         </section>
 
@@ -211,7 +212,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                   <StoryMeta item={featured} />
                   <h2><Link href={`/news/${featured.id}`}>{featured.title}</Link></h2>
                   {featured.description ? <p>{featured.description}</p> : <p className={styles.descriptionFallback}>يفتح الرابط التالي التفاصيل الكاملة كما نشرها المصدر.</p>}
-                  <div className={styles.leadFooter}><SourceButton item={featured} /><span>يفتح في موقع {featured.source}</span></div>
+                  <div className={styles.leadFooter}><SourceButton item={featured} /><span>{featured.isOriginal ? 'خبر محلي من الدليل' : `يفتح في موقع ${featured.source}`}</span></div>
                 </div>
               </article>
             </section>

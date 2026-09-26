@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
-import { businesses, canonicalLocalityName, categories, localities } from '@/lib/data';
+import { canonicalLocalityName, categories, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { getPublicCurated } from '@/lib/auth/moderator';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { siteConfig } from '@/lib/site';
 import { roleModels } from '@/lib/role-models';
@@ -21,9 +23,16 @@ function latestDate(items: Array<{ checked: string | null }>) {
 function sitemapUrl(path = '') { return path ? `${siteConfig.url}${path}/` : `${siteConfig.url}/`; }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const ownerListings = await getPublishedOwnerListings();
+  const [catalog, curatedArticles, curatedNews, ownerListings] = await Promise.all([
+    getPublicBusinessCatalog(), getPublicCurated('article'), getPublicCurated('news'), getPublishedOwnerListings(),
+  ]);
+  const businesses = catalog.businesses;
+  const hiddenArticles = new Set(curatedArticles.filter((row) => row.status === 'hidden').map((row) => row.slug));
+  const editorialPosts = allEditorialPosts.filter((post) => !hiddenArticles.has(post.slug));
+  const newArticles = curatedArticles.filter((row) => row.origin === 'original' && row.status === 'published');
+  const newNews = curatedNews.filter((row) => row.origin === 'original' && row.status === 'published');
   const latestBusinessDate = latestDate(businesses);
-  const latestEditorialDate = allEditorialPosts.length ? new Date(Math.max(...allEditorialPosts.map((post) => Date.parse(post.modifiedAt)))) : fallbackDate;
+  const latestEditorialDate = editorialPosts.length ? new Date(Math.max(...editorialPosts.map((post) => Date.parse(post.modifiedAt)), ...newArticles.map((post) => Date.parse(post.updatedAt)))) : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
     { path: '', lastModified: latestBusinessDate },
     { path: '/directory', lastModified: latestBusinessDate },
@@ -71,13 +80,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...indexableKnowledgePlaces.map((item) => ({ url: sitemapUrl(`/knowledge/places/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...knowledgePeople.map((item) => ({ url: sitemapUrl(`/knowledge/people/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...knowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
-    ...allEditorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),
+    ...editorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),
+    ...newArticles.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),
+    ...newNews.map((post) => ({ url: sitemapUrl(`/news/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),
     ...roleModels.map((person) => ({ url: sitemapUrl('/role-models/' + encodeURIComponent(person.slug)), lastModified: new Date(person.modifiedAt + 'T00:00:00.000Z') })),
     ...categories.map((item) => ({ url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`), lastModified: latestDate(businesses.filter((business) => business.category === item.name)) })),
     ...indexableActivities.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity)) })),
     ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
     ...localCategoryPages.map((item) => ({ url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`), lastModified: item.lastModified })),
-    ...businesses.map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
+    ...businesses.filter((item) => !item.id.startsWith('owner:')).map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
     ...ownerListings.map((item) => ({ url: sitemapUrl(`/activity/${item.id}`), lastModified: new Date(item.updated_at) })),
   ];
 }

@@ -9,6 +9,7 @@ import {
   refreshSession,
   type MemberUser,
 } from '@/lib/auth/supabase-rest';
+import { memberAllowed } from '@/lib/auth/moderator';
 
 export type ResolvedSession = {
   accessToken: string;
@@ -22,7 +23,9 @@ export async function resolveSession(allowRefresh = true): Promise<ResolvedSessi
   const refreshToken = store.get(AUTH_REFRESH_COOKIE)?.value;
   if (accessToken) {
     try {
-      return { accessToken, user: mapMember(await getUser(accessToken)) };
+      const user = await getUser(accessToken);
+      if (!(await memberAllowed(accessToken))) return null;
+      return { accessToken, user: mapMember(user) };
     } catch {
       // Continue to refresh when the caller can persist rotated cookies.
     }
@@ -30,6 +33,7 @@ export async function resolveSession(allowRefresh = true): Promise<ResolvedSessi
   if (!allowRefresh || !refreshToken) return null;
   try {
     const fresh = await refreshSession(refreshToken);
+    if (!(await memberAllowed(fresh.access_token))) return null;
     return {
       accessToken: fresh.access_token,
       user: mapMember(fresh.user),

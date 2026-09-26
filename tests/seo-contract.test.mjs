@@ -84,7 +84,7 @@ test('sitemap remains focused on canonical content collections and listings', ()
   assert.ok(sitemap.includes('getBusinessesForActivity(activity).length >= 2'));
   assert.ok(sitemap.includes('...indexableLocalities.map'));
   assert.ok(sitemap.includes('item.count >= 3'));
-  assert.ok(sitemap.includes('...businesses.map'));
+  assert.ok(sitemap.includes("...businesses.filter((item) => !item.id.startsWith('owner:')).map"));
   assert.ok(sitemap.includes('...indexableKnowledgePlaces.map'));
 });
 
@@ -180,8 +180,9 @@ test('village pages explicitly own directory and locality search intent', () => 
 });
 
 test('blog schema contains editorial posts only and routes directory intent to villages', () => {
-  assert.ok(blog.includes('const totalPosts = allEditorialPosts.length;'));
-  assert.ok(blog.includes('blogPost: allEditorialPosts.map'));
+  assert.ok(blog.includes('const totalPosts = displayPosts.length + originalPosts.length;'));
+  assert.ok(blog.includes('blogPost: [...displayPosts.map'));
+  assert.ok(blog.includes('...originalPosts.map'));
   assert.ok(!blog.includes('...villageArticles.map'));
   assert.ok(blog.includes('عبارة «دليل + اسم القرية» مملوكة لصفحة القرية نفسها'));
   assert.ok(blog.includes('دليل بشلاو'));

@@ -2,10 +2,14 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { getPublicCurated } from '@/lib/auth/moderator';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './blog.module.css';
 import editorialStyles from './editorial.module.css';
+import curatedStyles from './curated-posts.module.css';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'مدونة دليل نقادة | حكايات ومقالات مصورة من نقادة',
@@ -28,12 +32,24 @@ function formatArticleDate(date: string) {
   }).format(new Date(Date.UTC(year, month - 1, day, 12)));
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
   const blogUrl = `${siteConfig.url}/blog/`;
-  const displayPosts = [...allEditorialPosts].sort(
+  const curated = await getPublicCurated('article');
+  const revisions = new Map(curated.filter((row) => row.origin === 'static').map((row) => [row.slug, row]));
+  const originalPosts = curated.filter((row) => row.origin === 'original' && row.status === 'published');
+  const displayPosts = allEditorialPosts.filter((post) => revisions.get(post.slug)?.status !== 'hidden')
+    .map((post) => {
+      const revision = revisions.get(post.slug);
+      return revision?.status === 'published'
+        ? { ...post, title: revision.payload.title || post.title,
+            description: revision.payload.summary || post.description,
+            excerpt: revision.payload.summary || post.excerpt,
+            modifiedAt: revision.updatedAt.slice(0, 10) }
+        : post;
+    }).sort(
     (a, b) => Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt)
   );
-  const totalPosts = allEditorialPosts.length;
+  const totalPosts = displayPosts.length + originalPosts.length;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -56,7 +72,7 @@ export default function BlogPage() {
           url: siteConfig.url,
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
-        blogPost: allEditorialPosts.map((post) => ({
+        blogPost: [...displayPosts.map((post) => ({
           '@type': 'BlogPosting',
           headline: post.title,
           description: post.description,
@@ -75,7 +91,12 @@ export default function BlogPage() {
             logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
           },
           url: `${siteConfig.url}/blog/${post.slug}/`,
-        })),
+        })), ...originalPosts.map((post) => ({
+          '@type': 'BlogPosting', headline: post.payload.title, description: post.payload.summary,
+          datePublished: post.updatedAt, dateModified: post.updatedAt,
+          author: { '@type': 'Organization', name: 'فريق دليل نقادة' },
+          url: `${siteConfig.url}/blog/${post.slug}/`,
+        }))],
       },
       {
         '@type': 'BreadcrumbList',
@@ -103,6 +124,7 @@ export default function BlogPage() {
       </section>
 
       <section className={`shell ${styles.archive}`}>
+        {originalPosts.length ? <section className={curatedStyles.section} aria-labelledby="editorial-original-title"><div><span>بقلم فريق الدليل</span><h2 id="editorial-original-title">مقالات محلية جديدة</h2></div><div className={curatedStyles.grid}>{originalPosts.map((post) => <Link href={`/blog/${post.slug}`} key={post.slug}><small>{post.payload.category || 'من نقادة'} · {post.payload.locality || 'مركز نقادة'}</small><h3>{post.payload.title}</h3><p>{post.payload.summary}</p><b>اقرأ المقال ←</b></Link>)}</div></section> : null}
         {displayPosts.length > 0 && (
           <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>

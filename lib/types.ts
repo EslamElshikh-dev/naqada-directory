@@ -20,6 +20,7 @@ export type Business = {
   notes: string | null;
   description?: string | null;
   seoKeywords?: string[] | null;
+  ownerPhotoPaths?: string[];
 };
 
 export type DirectoryItem = Pick<Business,

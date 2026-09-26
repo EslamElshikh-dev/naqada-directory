@@ -8,6 +8,7 @@ import {
   mapMember,
   sameOrigin,
 } from '@/lib/auth/supabase-rest';
+import { assertMemberAllowed } from '@/lib/auth/moderator';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
     }
 
     const user = await getUser(accessToken);
+    await assertMemberAllowed(accessToken);
     const response = NextResponse.json({ user: mapMember(user) });
     response.cookies.set(AUTH_ACCESS_COOKIE, accessToken, {
       ...authCookieBase,

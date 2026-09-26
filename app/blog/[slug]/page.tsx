@@ -3,12 +3,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { allEditorialPosts, getAllEditorialPost } from '@/lib/editorial-posts-all';
+import { getPublicCurated } from '@/lib/auth/moderator';
+import { CuratedArticle } from './curated-article';
 import { localities } from '@/lib/data';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './post.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() {
   return allEditorialPosts.map((post) => ({ slug: post.slug }));
@@ -39,13 +42,29 @@ function formatArticleDate(date: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getAllEditorialPost(slug);
+  const revision = (await getPublicCurated('article')).find((item) => item.slug === slug);
+  if (revision?.status === 'hidden') return { robots: { index: false, follow: false } };
+  if (revision?.origin === 'original' && revision.status === 'published') {
+    return {
+      title: revision.payload.title, description: revision.payload.summary,
+      alternates: { canonical: `/blog/${slug}` },
+      openGraph: { type: 'article', title: revision.payload.title,
+        description: revision.payload.summary, publishedTime: revision.updatedAt },
+    };
+  }
+  const original = getAllEditorialPost(slug);
+  const post = original && revision?.status === 'published'
+    ? { ...original, title: revision.payload.title || original.title,
+        description: revision.payload.summary || original.description,
+        excerpt: revision.payload.summary || original.excerpt,
+        modifiedAt: revision.updatedAt.slice(0, 10) }
+    : original;
   if (!post) return {};
   const url = `${siteConfig.url}/blog/${post.slug}`;
   const hero = imageUrl(post.hero.asset);
 
   return {
-    title: metadataTitle(post.seoTitle),
+    title: revision?.status === 'published' ? post.title : metadataTitle(post.seoTitle),
     description: post.description,
     keywords: post.keywords,
     alternates: { canonical: `/blog/${post.slug}` },
@@ -83,7 +102,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EditorialPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getAllEditorialPost(slug);
+  const revision = (await getPublicCurated('article')).find((item) => item.slug === slug);
+  if (revision?.status === 'hidden') notFound();
+  if (revision?.status === 'published' && (revision.origin === 'original' || revision.payload.body?.trim())) {
+    return <CuratedArticle slug={slug} title={revision.payload.title} summary={revision.payload.summary} body={revision.payload.body} updatedAt={revision.updatedAt} />;
+  }
+  const original = getAllEditorialPost(slug);
+  const post = original && revision?.status === 'published'
+    ? { ...original, title: revision.payload.title || original.title,
+        description: revision.payload.summary || original.description,
+        excerpt: revision.payload.summary || original.excerpt,
+        modifiedAt: revision.updatedAt.slice(0, 10) }
+    : original;
   if (!post) notFound();
 
   const canonicalUrl = `${siteConfig.url}/blog/${post.slug}`;

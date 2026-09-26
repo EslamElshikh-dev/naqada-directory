@@ -31,16 +31,16 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   return {
     title: item.title,
     description: item.description || `معاينة خبر منشور لدى ${item.source} مع رابط مباشر إلى المصدر الأصلي.`,
-    alternates: { canonical: item.url },
+    alternates: { canonical: item.isOriginal ? `/news/${item.id}` : item.url },
     robots: {
-      index: false,
+      index: Boolean(item.isOriginal),
       follow: true,
-      googleBot: { index: false, follow: true, 'max-image-preview': 'large' },
+      googleBot: { index: Boolean(item.isOriginal), follow: true, 'max-image-preview': 'large' },
     },
     openGraph: {
       type: 'article',
       locale: siteConfig.locale,
-      url: item.url,
+      url: item.isOriginal ? `${siteConfig.url}/news/${item.id}` : item.url,
       title: item.title,
       description: item.description,
       siteName: item.source,
@@ -76,7 +76,7 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
         description: item.description,
         url: previewUrl,
         inLanguage: 'ar-EG',
-        isBasedOn: item.url,
+        isBasedOn: item.isOriginal ? undefined : item.url,
         primaryImageOfPage: item.imageUrl ? {
           '@type': 'ImageObject',
           url: item.imageUrl,
@@ -114,18 +114,19 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
 
         <div className={`shell ${styles.layout}`}>
           <div className={styles.mainColumn}>
-            <figure className={styles.figure}>
+            {!item.isOriginal ? <figure className={styles.figure}>
               <NewsImage src={item.imageUrl} alt={item.imageAlt} priority sizes="(max-width: 900px) calc(100vw - 28px), 790px" />
               <figcaption>صورة الخبر كما قدمها المصدر · الحقوق لـ {item.source}</figcaption>
-            </figure>
+            </figure> : null}
 
             <section className={styles.summary} aria-labelledby="story-summary-title">
-              <span>ملخص المصدر</span>
-              <h2 id="story-summary-title">الخبر في سطور</h2>
+              <span>{item.isOriginal ? 'من فريق دليل نقادة' : 'ملخص المصدر'}</span>
+              <h2 id="story-summary-title">{item.isOriginal ? 'تفاصيل الخبر' : 'الخبر في سطور'}</h2>
               <p>{item.description || 'لم يرسل المصدر ملخصًا لهذا الخبر. يمكنك فتح الرابط الأصلي لقراءة التفاصيل الكاملة.'}</p>
+              {item.isOriginal ? item.editorialBody?.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
             </section>
 
-            <section className={styles.continueCard} aria-label="متابعة الخبر من المصدر">
+            {!item.isOriginal ? <section className={styles.continueCard} aria-label="متابعة الخبر من المصدر">
               <span className={styles.continueIcon} aria-hidden="true">↗</span>
               <div>
                 <small>التفاصيل الكاملة لدى الناشر</small>
@@ -133,15 +134,15 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
                 <p>سينقلك الزر إلى صفحة الخبر الأصلية، حيث النص الكامل والصور أو التحديثات اللاحقة.</p>
               </div>
               <a href={item.url} target="_blank" rel="noopener noreferrer external">فتح الخبر الأصلي <b aria-hidden="true">↗</b></a>
-            </section>
+            </section> : null}
 
-            <section className={styles.editorialNote} aria-labelledby="editorial-note-title">
+            {!item.isOriginal ? <section className={styles.editorialNote} aria-labelledby="editorial-note-title">
               <h2 id="editorial-note-title">لماذا لا نعرض النص كاملًا؟</h2>
               <p>دليل نقادة يجمع الوصول إلى الخبر ولا يعيد نشر عمل الصحف. نحافظ على اسم المصدر وحقوق الصورة ونرسل القارئ إلى الناشر للاستفادة من التغطية الأصلية كاملة.</p>
-            </section>
+            </section> : null}
           </div>
 
-          <aside className={styles.side}>
+          {!item.isOriginal ? <aside className={styles.side}>
             <section className={styles.sourceCard}>
               <span>بطاقة المصدر</span>
               <strong>{item.source}</strong>
@@ -152,7 +153,7 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
               <span><i aria-hidden="true" /> رابط موثّق</span>
               <p>الرابط يستخدم اتصالًا آمنًا ويقود إلى نطاق الناشر المعروف.</p>
             </section>
-          </aside>
+          </aside> : null}
         </div>
       </article>
 
@@ -185,4 +186,3 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
     </main>
   );
 }
-

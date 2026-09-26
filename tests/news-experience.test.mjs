@@ -38,7 +38,7 @@ test('news sources are fetched concurrently and cached at the server boundary', 
   assert.ok(newsLibrary.includes('Promise.allSettled(NEWS_FEEDS.map(fetchFeed))'));
   assert.ok(newsLibrary.includes('next: { revalidate }'));
   assert.ok(newsLibrary.includes('FEED_REVALIDATE_SECONDS = 15 * 60'));
-  assert.ok(newsApi.includes("'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800'"));
+  assert.ok(newsApi.includes("'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60'"));
 });
 
 test('external article and image URLs are constrained to known secure publishers', () => {
@@ -55,16 +55,16 @@ test('external article and image URLs are constrained to known secure publishers
 
 test('news previews preserve attribution and send readers to the original publisher', () => {
   assert.ok(newsPage.includes('الصورة: {item.source}'));
-  assert.ok(newsPage.includes('لا ننسخ النص الكامل'));
+  assert.ok(newsPage.includes('الأخبار الخارجية تحتفظ باسم ناشرها ورابطه'));
   assert.ok(newsPage.includes('اقرأ من المصدر'));
   assert.ok(storyPage.includes('فتح الخبر الأصلي'));
   assert.ok(storyPage.includes('الحقوق لـ {item.source}'));
-  assert.ok(storyPage.includes('isBasedOn: item.url'));
+  assert.ok(storyPage.includes('isBasedOn: item.isOriginal ? undefined : item.url'));
 });
 
 test('temporary story previews defer indexing authority to the original article', () => {
-  assert.ok(storyPage.includes('alternates: { canonical: item.url }'));
-  assert.ok(storyPage.includes('index: false'));
+  assert.ok(storyPage.includes('alternates: { canonical: item.isOriginal ? `/news/${item.id}` : item.url }'));
+  assert.ok(storyPage.includes('index: Boolean(item.isOriginal)'));
   assert.ok(storyPage.includes("'@type': 'WebPage'"));
   assert.ok(!storyPage.includes("'@type': 'NewsArticle'"));
 });

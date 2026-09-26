@@ -5,11 +5,13 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
-import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { businesses, canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() {
   const counts = new Map<string, { slug: string; category: string; count: number }>();
@@ -29,7 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locality = getLocalityBySlug(slug);
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) return {};
-  const count = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name).length;
+  const { businesses: currentBusinesses } = await getPublicBusinessCatalog();
+  const count = currentBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name).length;
   if (count < MIN_LOCAL_CATEGORY_RESULTS) return { robots: { index: false, follow: true } };
   const description = `دليل ${category.shortLabel} في ${locality.name} بمركز نقادة: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`;
   return buildPageMetadata({
@@ -47,6 +50,7 @@ export default async function LocalCategoryPage({ params }: Props) {
   const category = getCategoryBySlug(categorySlug);
   if (!locality || !category) notFound();
 
+  const { businesses, directoryBusinesses } = await getPublicBusinessCatalog();
   const scoped = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
   if (scoped.length < MIN_LOCAL_CATEGORY_RESULTS) notFound();
   const scopedDirectory = directoryBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name);
@@ -63,11 +67,11 @@ export default async function LocalCategoryPage({ params }: Props) {
         mainEntity: {
           '@type': 'ItemList',
           numberOfItems: scoped.length,
-          itemListElement: scoped.map((item, index) => ({
+          itemListElement: scopedDirectory.map((item, index) => ({
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
+            url: `${siteConfig.url}${item.detailHref || `/listing/${encodeURIComponent(item.slug)}`}`,
           })),
         },
       },

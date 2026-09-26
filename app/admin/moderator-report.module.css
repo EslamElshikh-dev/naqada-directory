@@ -1,0 +1,13 @@
+.report { margin-top: 30px; padding: 26px; border: 1px solid #d8cbab; border-radius: 22px; background: linear-gradient(135deg, #fffdf7, #f8f2df); }
+.report header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; }
+.report header span { color: #876a2b; font-weight: 800; font-size: 13px; }.report h2 { font-size: 25px; margin: 4px 0; color: #234c3e; }
+.report header p { margin: 0; color: #5d6c60; font-size: 14px; line-height: 1.7; }.report header a { color: #fff; background: #2a5844; text-decoration: none; padding: 10px 14px; border-radius: 11px; font-size: 14px; font-weight: 800; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin: 19px 0; }
+.summary article { display: grid; gap: 5px; background: #fff; border: 1px solid #e8ddc4; border-radius: 14px; padding: 18px; }
+.summary span { color: #716e59; font-size: 13px; font-weight: 700; }.summary strong { color: #254d3e; font-size: 21px; line-height: 1.5; overflow-wrap: anywhere; }.summary small { color: #967b3b; font-size: 13px; }
+.details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.details > div { border: 1px solid #e8dec7; border-radius: 14px; background: #fff; padding: 16px; }
+.details h3 { font-size: 17px; margin: 0 0 13px; color: #244b3e; }.details ul { list-style: none; padding: 0; margin: 0; }
+.details li { padding: 10px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #efebe2; font-size: 14px; color: #334c3e; }
+.details li b { color: #927131; }.details li small { color: #718274; font-size: 12px; white-space: nowrap; }
+.empty { color: #748075; font-size: 14px; line-height: 1.7; }
+@media (max-width: 740px) { .report { padding: 18px; }.summary { grid-template-columns: 1fr; }.details { grid-template-columns: 1fr; } }

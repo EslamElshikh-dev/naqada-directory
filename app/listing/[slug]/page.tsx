@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { BusinessMedia } from '@/components/business-media';
@@ -7,11 +8,13 @@ import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { getBusinessMedia } from '@/lib/business-media';
-import { businesses, canonicalLocalityName, getBusinessBySlug, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
-import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
+import { businesses, canonicalLocalityName, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
+import { getEffectiveBusiness } from '@/lib/curated-content';
+import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
+export const dynamic = 'force-dynamic';
 
 function resolveSeoKeywordSearch(keyword: string) {
   const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);
@@ -32,16 +35,18 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const listing = getBusinessBySlug(slug);
+  const listing = await getEffectiveBusiness(slug);
   if (!listing) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } };
   const media = getBusinessMedia(listing.id);
+  const ownerPhoto = listing.ownerPhotoPaths?.[0];
   const locality = canonicalLocalityName(listing.locality);
   const description = truncateMetaDescription(listing.description || businessSummary({ ...listing, locality }));
   return buildPageMetadata({
     title: `${listing.name} في ${locality}`,
     description,
     path: `/listing/${listing.slug}`,
-    socialImage: media ? { url: media.imageUrl, alt: media.imageAlt } : undefined,
+    socialImage: media ? { url: media.imageUrl, alt: media.imageAlt }
+      : ownerPhoto ? { url: `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhoto)}`, alt: `صورة ${listing.name}` } : undefined,
   });
 }
 
@@ -49,9 +54,10 @@ export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
   const canonicalAlias = getCanonicalBusinessSlugAlias(slug);
   if (canonicalAlias) permanentRedirect(`/listing/${encodeURIComponent(canonicalAlias)}`);
-  const listing = getBusinessBySlug(slug);
+  const listing = await getEffectiveBusiness(slug);
   if (!listing) notFound();
   const media = getBusinessMedia(listing.id);
+  const ownerPhotoPaths = listing.ownerPhotoPaths || [];
   const locality = canonicalLocalityName(listing.locality);
   const parentLocality = listing.parentLocality || (listing.locality?.includes('/') ? listing.locality.split('/').slice(1).join('/').trim() : null);
   const phone = cleanPhone(listing.phone);
@@ -68,7 +74,7 @@ export default async function ListingPage({ params }: Props) {
     { label: 'رقم هاتف', available: Boolean(phone) },
     { label: 'ساعات عمل', available: Boolean(listing.hours) },
     { label: 'رابط خريطة', available: Boolean(safeMapsUrl) },
-    { label: 'صورة موثقة', available: Boolean(media) },
+    { label: 'صورة للنشاط', available: Boolean(media || ownerPhotoPaths.length) },
   ];
   const availableSignals = completenessSignals.filter((item) => item.available).length;
   const completenessPercent = Math.round((availableSignals / completenessSignals.length) * 100);
@@ -107,7 +113,7 @@ export default async function ListingPage({ params }: Props) {
         '@id': `${canonicalUrl}#entity`,
         name: listing.name,
         url: canonicalUrl,
-        image: media?.imageUrl || undefined,
+        image: media?.imageUrl || (ownerPhotoPaths[0] ? `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}` : undefined),
         telephone: phone || undefined,
         address: {
           '@type': 'PostalAddress',
@@ -153,7 +159,7 @@ export default async function ListingPage({ params }: Props) {
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
           </div>
           <aside className="detail-hero__summary">
-            <BusinessMedia businessId={listing.id} variant="detail" fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />
+            {ownerPhotoPaths[0] ? <div className={styles.ownerMedia}><Image src={`/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}`} alt={`صورة ${listing.name}`} fill sizes="(max-width: 800px) 95vw, 440px" /></div> : <BusinessMedia businessId={listing.id} variant="detail" fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
             <span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p>
           </aside>
         </div>
@@ -177,6 +183,7 @@ export default async function ListingPage({ params }: Props) {
             <h2 id="listing-description-title">{listing.name}</h2>
             <p>{summary}</p>
           </section>
+          {ownerPhotoPaths.length > 1 ? <section className={styles.ownerGallery} aria-label={`صور ${listing.name}`}>{ownerPhotoPaths.slice(1).map((path, index) => <div key={path}><Image src={`/api/directory/photo?path=${encodeURIComponent(path)}`} alt={`صورة ${index + 2} للنشاط ${listing.name}`} fill sizes="(max-width: 650px) 48vw, 260px" /></div>)}</section> : null}
 
           <section className={styles.trustSection} aria-labelledby="listing-completeness-title">
             <div className={styles.trustHeading}>

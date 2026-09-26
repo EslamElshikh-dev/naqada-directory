@@ -5,8 +5,7 @@ import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
-import { getPublishedOwnerListings } from '@/lib/owner-listings';
-import { searchOwnerListings } from '@/lib/owner-listing-search';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
 
@@ -114,14 +113,11 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const params = await searchParams;
+  const [params, catalog] = await Promise.all([searchParams, getPublicBusinessCatalog()]);
   const query = queryValue(params.q);
   const activeScope = scopeValue(params.scope);
   const canSearch = query.length >= 2;
-  const allResults = canSearch ? [
-    ...searchOwnerListings(query, await getPublishedOwnerListings(), 500),
-    ...searchSite(query, Number.MAX_SAFE_INTEGER),
-  ] : [];
+  const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER, undefined, catalog.businesses) : [];
   const searchContext = canSearch && (activeScope === 'all' || activeScope === 'directory')
     ? buildSearchContext(query)
     : null;

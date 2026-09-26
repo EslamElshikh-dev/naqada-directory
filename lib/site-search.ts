@@ -8,6 +8,7 @@ import {
   type SearchRankingFields,
 } from '@/lib/search-ranking';
 import { normalizeArabic } from '@/lib/site';
+import type { Business } from '@/lib/types';
 import { roleModels } from '@/lib/role-models';
 
 export type SiteSearchKind =
@@ -67,8 +68,8 @@ const searchIndex: IndexedSearchItem[] = [
     kind: 'listing',
     title: item.name,
     subtitle: [item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' · '),
-    href: `/listing/${item.slug}`,
-    badge: 'نشاط',
+    href: item.id.startsWith('owner:') ? `/activity/${item.id.slice(6)}/` : `/listing/${item.slug}`,
+    badge: item.id.startsWith('owner:') ? 'نشاط من صاحبه' : 'نشاط',
     fields: {
       title: item.name,
       category: item.category,
@@ -225,14 +226,27 @@ export function sanitizeSiteSearchQuery(value?: string | null) {
   return (value || '').trim().replace(/\s+/g, ' ').slice(0, 100);
 }
 
-export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[]): SiteSearchResult[] {
+export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[], currentBusinesses?: Business[]): SiteSearchResult[] {
   const query = sanitizeSiteSearchQuery(value);
   if (query.length < 2) return [];
 
   const { normalizedQuery, tokens } = prepareSearchQuery(query);
   const seen = new Set<string>();
   const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
-  const searchableIndex = allowedKinds ? searchIndex.filter((item) => allowedKinds.has(item.kind)) : searchIndex;
+  const activeIndex = currentBusinesses ? [
+    ...searchIndex.filter((item) => item.kind !== 'listing'),
+    ...currentBusinesses.map((item) => indexItem({
+      kind: 'listing' as const, title: item.name,
+      subtitle: [item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' · '),
+      href: item.id.startsWith('owner:') ? `/activity/${item.id.slice(6)}/` : `/listing/${item.slug}`,
+      badge: item.id.startsWith('owner:') ? 'نشاط من صاحبه' : 'نشاط',
+      fields: {
+        title: item.name, category: item.category, subcategory: item.subcategory || '',
+        locality: item.locality || '', address: item.address || '', auxiliary: item.normalizedName || '',
+      },
+    })),
+  ] : searchIndex;
+  const searchableIndex = allowedKinds ? activeIndex.filter((item) => allowedKinds.has(item.kind)) : activeIndex;
   const safeLimit = Math.max(1, Math.min(limit, searchableIndex.length));
 
   return searchableIndex

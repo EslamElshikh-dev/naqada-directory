@@ -174,8 +174,8 @@ export function getActivityBySlug(slug: string) {
   return activityLandings.find((item) => item.slug === normalized);
 }
 
-export function getBusinessesForActivity(activity: ActivityLanding): Business[] {
+export function getBusinessesForActivity(activity: ActivityLanding, currentBusinesses: Business[] = businesses): Business[] {
   const subcategories = new Set(activity.subcategories || []);
   const categories = new Set(activity.categories || []);
-  return businesses.filter((item) => categories.has(item.category) || Boolean(item.subcategory && subcategories.has(item.subcategory)));
+  return currentBusinesses.filter((item) => categories.has(item.category) || Boolean(item.subcategory && subcategories.has(item.subcategory)));
 }

@@ -87,6 +87,7 @@
   inset: -4px;
   border: 1px solid rgb(233 190 68 / 48%);
   box-shadow: 0 0 18px rgb(229 187 67 / 18%);
+  animation: goldBreath 4.6s ease-in-out infinite;
 }
 
 .diamond .ring {
@@ -185,11 +186,17 @@
 }
 .header .ring::before, .header .ring::after { display: none; }
 .header .inner { border: 1px solid #fff; background: #edf3eb; }
+.header.gold .ring { box-shadow: 0 0 0 2px rgb(235 191 82 / 24%), 0 2px 9px rgb(118 83 20 / 18%); animation: goldBreath 4.6s ease-in-out infinite; }
 
 @keyframes diamondShine {
   0%, 20% { background-position: 180% 0; opacity: .1; }
   45% { opacity: .95; }
   70%, 100% { background-position: -60% 0; opacity: .1; }
+}
+
+@keyframes goldBreath {
+  0%, 100% { opacity: .55; box-shadow: 0 0 9px rgb(229 187 67 / 12%); }
+  50% { opacity: 1; box-shadow: 0 0 19px rgb(229 187 67 / 29%); }
 }
 
 @keyframes headerFrameOrbit {
@@ -198,5 +205,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .diamond .ring::after,
+  .gold .ring::after,
+  .header.gold .ring,
   .header .ring::after { animation: none; }
 }

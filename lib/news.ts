@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { normalizeArabic } from './site';
+import { getPublicCurated } from './auth/moderator';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -16,6 +17,8 @@ export type ExternalNewsItem = {
   category: NewsCategory;
   isNaqada: boolean;
   isOfficial: boolean;
+  isOriginal?: boolean;
+  editorialBody?: string;
 };
 
 export type NewsFeedResult = {
@@ -371,13 +374,33 @@ function deduplicate(items: ExternalNewsItem[]) {
 }
 
 async function loadLatestNews(): Promise<NewsFeedResult> {
-  const results = await Promise.allSettled(NEWS_FEEDS.map(fetchFeed));
+  const [results, curated] = await Promise.all([
+    Promise.allSettled(NEWS_FEEDS.map(fetchFeed)),
+    getPublicCurated('news'),
+  ]);
   const successfulFeeds = results.filter((result) => result.status === 'fulfilled').length;
   const merged = deduplicate(results.flatMap((result) => result.status === 'fulfilled' ? result.value : []));
   const enriched = await Promise.all(merged.slice(0, MAX_ITEMS_TO_ENRICH).map(enrichItem));
+  const revisions = new Map(curated.filter((item) => item.origin === 'static').map((item) => [item.slug, item]));
+  const external = [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)]
+    .filter((item) => revisions.get(item.id)?.status !== 'hidden')
+    .map((item) => {
+      const revision = revisions.get(item.id);
+      if (revision?.status !== 'published') return item;
+      return { ...item, title: revision.payload.title || item.title, description: revision.payload.summary || item.description };
+    });
+  const originals: ExternalNewsItem[] = curated.filter((item) => item.origin === 'original' && item.status === 'published')
+    .map((item) => ({
+      id: item.slug, title: item.payload.title, description: item.payload.summary,
+      url: `/news/${item.slug}`, source: 'دليل نقادة', sourceUrl: '/news',
+      publishedAt: item.updatedAt, imageUrl: null, imageAlt: item.payload.title,
+      category: (['محليات','خدمات','تعليم','صحة','مجتمع'].includes(item.payload.category)
+        ? item.payload.category : 'محليات') as NewsCategory,
+      isNaqada: true, isOfficial: false, isOriginal: true, editorialBody: item.payload.body,
+    }));
 
   return {
-    items: [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)].slice(0, 36),
+    items: [...originals, ...external].slice(0, 48),
     checkedAt: new Date().toISOString(),
     successfulFeeds,
     totalFeeds: NEWS_FEEDS.length,

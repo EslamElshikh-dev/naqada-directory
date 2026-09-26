@@ -40,6 +40,7 @@ export function MemberDashboard() {
   const [saving, setSaving] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
 
@@ -57,7 +58,10 @@ export function MemberDashboard() {
         const data = await profileResponse.json() as { profile: Profile };
         if (active) setProfile(data.profile);
       }
-      if (adminResponse.ok && active) setIsAdmin(true);
+      if (adminResponse.ok && active) {
+        const access = await adminResponse.json() as { isAdmin: boolean; isModerator: boolean };
+        if (active) { setIsAdmin(access.isAdmin); setIsModerator(access.isModerator); }
+      }
       if (active) setLoading(false);
     });
     return () => { active = false; };
@@ -114,6 +118,7 @@ export function MemberDashboard() {
       </section>
 
       {isAdmin && <Link href="/admin" className="admin-entry"><span>لوحة الإدارة المعتمدة</span><strong>افتح مركز تشغيل دليل نقادة</strong><b>الإحصاءات والمراجعات والبيانات ←</b></Link>}
+      {isModerator && <Link href="/moderator" className="admin-entry"><span>مشرفة ذهبية ✦</span><strong>افتحي مساحة الإشراف والتحرير</strong><b>الأنشطة والأخبار والمقالات والأعضاء ←</b></Link>}
 
       <div className="member-grid">
         <section className="profile-editor" id="profile">

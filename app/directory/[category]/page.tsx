@@ -5,8 +5,8 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
-import { canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
-import { getPublishedOwnerListings, ownerListingDirectoryItem } from '@/lib/owner-listings';
+import { canonicalLocalityName, categories, getCategoryBySlug, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) return {};
-  const ownerCount = (await getPublishedOwnerListings()).filter((item) => item.category === category.name).length;
-  const description = `${category.description} تصفح ${category.count + ownerCount} نتيجة منشورة داخل مدينة نقادة وقراها.`;
+  const count = (await getPublicBusinessCatalog()).directoryBusinesses.filter((item) => item.category === category.name).length;
+  const description = `${category.description} تصفح ${count} نتيجة منشورة داخل مدينة نقادة وقراها.`;
   return buildPageMetadata({
     title: `${category.shortLabel} في نقادة`,
     description,
@@ -34,9 +34,10 @@ export default async function CategoryPage({ params }: Props) {
   const { category: slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
-  const ownerScoped = (await getPublishedOwnerListings()).filter((item) => item.category === category.name).map(ownerListingDirectoryItem);
-  const scopedDirectory = [...directoryBusinesses.filter((item) => item.category === category.name), ...ownerScoped];
-  const localityCount = new Set(scopedDirectory.map((item) => canonicalLocalityName(item.locality))).size;
+  const { businesses, directoryBusinesses } = await getPublicBusinessCatalog();
+  const scoped = businesses.filter((item) => item.category === category.name);
+  const scopedDirectory = directoryBusinesses.filter((item) => item.category === category.name);
+  const localityCount = new Set(scoped.map((item) => canonicalLocalityName(item.locality))).size;
   const localityCounts = new Map<string, number>();
   for (const item of scopedDirectory) {
     const name = canonicalLocalityName(item.locality);

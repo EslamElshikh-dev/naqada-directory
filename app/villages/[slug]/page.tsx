@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
-import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
+import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { aliasesForPlace, childrenForPlace, knowledgePeopleForLocality, knowledgePlaceForLocality, primaryKnowledgeContributor, sourceById } from '@/lib/knowledge';
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
@@ -11,6 +12,7 @@ import styles from './article.module.css';
 import knowledgeStyles from '../../knowledge/knowledge.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return localities.map((item) => ({ slug: item.slug })); }
 
@@ -44,6 +46,7 @@ export default async function LocalityPage({ params }: Props) {
   if (canonicalAlias) permanentRedirect(`/villages/${encodeURIComponent(canonicalAlias)}`);
   const locality = getLocalityBySlug(slug);
   if (!locality) notFound();
+  const { businesses, directoryBusinesses } = await getPublicBusinessCatalog();
   const article = getVillageArticle(locality.name);
   const scoped = businesses.filter((item) => canonicalLocalityName(item.locality) === locality.name);
   const scopedDirectory = directoryBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name);

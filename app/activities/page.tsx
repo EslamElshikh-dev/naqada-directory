@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CategoryCover } from '@/components/category-cover';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = buildPageMetadata({
@@ -11,8 +12,11 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/activities/',
 });
 
-export default function ActivitiesPage() {
-  const totalBusinesses = new Set(activityLandings.flatMap((activity) => getBusinessesForActivity(activity).map((item) => item.id))).size;
+export const dynamic = 'force-dynamic';
+
+export default async function ActivitiesPage() {
+  const catalog = await getPublicBusinessCatalog();
+  const totalBusinesses = new Set(activityLandings.flatMap((activity) => getBusinessesForActivity(activity, catalog.businesses).map((item) => item.id))).size;
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -63,7 +67,7 @@ export default function ActivitiesPage() {
         </div>
         <div className="category-grid">
           {activityLandings.map((activity, index) => {
-            const items = getBusinessesForActivity(activity);
+            const items = getBusinessesForActivity(activity, catalog.businesses);
             const localityCount = new Set(items.map((item) => canonicalLocalityName(item.locality))).size;
             return (
               <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card">
