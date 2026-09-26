@@ -136,7 +136,7 @@ const searchIndex: IndexedSearchItem[] = [
     subtitle: person.shortTitle + ' · ' + person.locality,
     href: '/role-models/' + person.slug,
     badge: 'نموذج مشرف',
-    fields: { title: person.name, category: 'نماذج مشرفة في نقادة', locality: person.locality, auxiliary: person.description + ' آية رفاعي عبدالشافي آية رفاعي عبد الشافي' },
+    fields: { title: person.name, category: 'نماذج مشرفة في نقادة', locality: person.locality, auxiliary: [person.description, ...(person.alternateNames || [])].join(' ') },
   })),
   ...knowledgeHeritage.map((item): SearchItem => ({
     kind: 'knowledge-heritage',
