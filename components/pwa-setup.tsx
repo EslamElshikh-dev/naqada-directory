@@ -114,7 +114,7 @@ export function InstallAction() {
   return <a href={platform === 'ios' ? '#iphone' : '#android'}>شوف طريقة التثبيت <span aria-hidden="true">↓</span></a>;
 }
 
-type BannerMode = 'prompt' | 'ios' | 'android' | null;
+type BannerMode = 'prompt' | 'ios' | 'android' | 'manual' | null;
 
 export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
   const pathname = usePathname();
@@ -129,9 +129,10 @@ export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
       } catch { /* Keep the banner usable when storage is blocked. */ }
 
       if (suppressed || pathname.replace(/\/+$/, '') === '/install') setMode(null);
-      else if (pendingInstallPrompt && (isAppleMobile() || /Android/.test(navigator.userAgent))) setMode('prompt');
+      else if (pendingInstallPrompt) setMode('prompt');
       else if (isAppleMobile()) setMode('ios');
       else if (/Android/.test(navigator.userAgent)) setMode('android');
+      else if (window.matchMedia('(max-width: 860px)').matches) setMode('manual');
       else setMode(null);
     }
 
@@ -161,13 +162,13 @@ export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
       <Image className={styles.icon} src="/app-icons/icon-192.png" alt="" width={44} height={44} />
       <div className={styles.copy}>
         <strong>خلّي دليل نقادة على موبايلك</strong>
-        <span>{mode === 'ios' ? 'من Safari: مشاركة ← إضافة إلى الشاشة الرئيسية.' : mode === 'android' ? 'من Chrome: القائمة ⋮ ثم تثبيت التطبيق.' : 'ثبّته وافتحه من الشاشة الرئيسية بضغطة واحدة.'}</span>
+        <span>{mode === 'ios' ? 'من Safari: مشاركة ← إضافة إلى الشاشة الرئيسية.' : mode === 'android' ? 'من Chrome: القائمة ⋮ ثم تثبيت التطبيق.' : mode === 'manual' ? 'خطوات التثبيت لأندرويد وآيفون في صفحة واحدة.' : 'ثبّته وافتحه من الشاشة الرئيسية بضغطة واحدة.'}</span>
       </div>
       <button type="button" className={styles.dismiss} aria-label="إغلاق تنبيه تثبيت التطبيق" onClick={() => hide(7)}>×</button>
       <div className={styles.actions}>
         {mode === 'prompt' ?
           <button type="button" className={styles.install} onClick={install}>ثبّت التطبيق</button> :
-          <Link className={styles.install} href={mode === 'ios' ? '/install#iphone' : '/install#android'} onClick={() => hide(1)}>طريقة التثبيت</Link>}
+          <Link className={styles.install} href={mode === 'ios' ? '/install#iphone' : mode === 'android' ? '/install#android' : '/install/'} onClick={() => hide(1)}>طريقة التثبيت</Link>}
         <span>مجاني ومن المتصفح</span>
       </div>
     </aside>
