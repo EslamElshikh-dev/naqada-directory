@@ -53,7 +53,7 @@ const pages: SearchItem[] = [
   { kind: 'page', title: 'موسوعة نقادة', subtitle: 'المكان والناس والتراث بالمصدر والإسناد', href: '/knowledge', badge: 'موسوعة', fields: { title: 'موسوعة نقادة', auxiliary: 'معرفة تاريخ تراث أعلام شخصيات أماكن مراجع' } },
   { kind: 'page', title: 'معالم نقادة', subtitle: 'المعالم السياحية والتراثية بالصور', href: '/landmarks', badge: 'صفحة', fields: { title: 'معالم نقادة', auxiliary: 'معالم سياحة آثار صور' } },
   { kind: 'page', title: 'قرى ونجوع نقادة', subtitle: 'استكشف نطاق مركز نقادة حسب المكان', href: '/villages', badge: 'صفحة', fields: { title: 'قرى ونجوع نقادة', auxiliary: 'قرى نجوع أماكن مركز نقادة' } },
-  { kind: 'page', title: 'أضف أو صحح نشاطًا', subtitle: 'ساهم في تحديث بيانات الدليل', href: '/contribute', badge: 'مشاركة', fields: { title: 'أضف أو صحح نشاطًا', auxiliary: 'اضافة نشاط تصحيح بيانات مساهمة' } },
+  { kind: 'page', title: 'أضف نشاطك باسمك', subtitle: 'سجّل بيانات نشاطك وصوره من حسابك', href: '/contribute', badge: 'مشاركة', fields: { title: 'أضف نشاطك باسمك', auxiliary: 'اضافة نشاط تصحيح بيانات مساهمة' } },
   { kind: 'page', title: 'مدونة دليل نقادة', subtitle: 'مقالات وموضوعات محلية', href: '/blog', badge: 'محتوى', fields: { title: 'مدونة دليل نقادة', auxiliary: 'مدونة مقالات اخبار محتوى' } },
   { kind: 'page', title: 'نماذج مشرفة في نقادة', subtitle: 'حكايات أشخاص من نقادة مع مصدر كل قصة', href: '/role-models', badge: 'نماذج', fields: { title: 'نماذج مشرفة في نقادة', auxiliary: 'شخصيات آية رفاعي عبدالشافي نجاح تطوع' } },
 ];

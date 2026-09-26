@@ -6,8 +6,9 @@ import { roleModels } from '@/lib/role-models';
 import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
+import { getPublishedOwnerListings } from '@/lib/owner-listings';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 const fallbackDate = new Date('2026-09-04T00:00:00.000Z');
 const knowledgeDate = new Date('2026-09-06T00:00:00.000Z');
@@ -19,7 +20,8 @@ function latestDate(items: Array<{ checked: string | null }>) {
 
 function sitemapUrl(path = '') { return path ? `${siteConfig.url}${path}/` : `${siteConfig.url}/`; }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const ownerListings = await getPublishedOwnerListings();
   const latestBusinessDate = latestDate(businesses);
   const latestEditorialDate = allEditorialPosts.length ? new Date(Math.max(...allEditorialPosts.map((post) => Date.parse(post.modifiedAt)))) : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
@@ -76,5 +78,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
     ...localCategoryPages.map((item) => ({ url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`), lastModified: item.lastModified })),
     ...businesses.map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
+    ...ownerListings.map((item) => ({ url: sitemapUrl(`/activity/${item.id}`), lastModified: new Date(item.updated_at) })),
   ];
 }

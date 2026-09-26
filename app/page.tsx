@@ -279,7 +279,7 @@ export default function HomePage() {
 
       <section className={`shell ${styles.community}`}>
         <div><span>دليل يبنيه أهله</span><h2>لقيت معلومة ناقصة؟ قول لنا.</h2><p>عينك معانا. ابعت التصحيح ومصدره، وإحنا نراجعه قبل ما ينزل.</p></div>
-        <Link prefetch={false} href="/contribute"><ActionIcon name="add" /> أضف أو صحّح بيانات</Link>
+        <Link prefetch={false} href="/contribute"><ActionIcon name="add" /> أضف نشاطك</Link>
       </section>
 
       <section className={`shell ${styles.faq}`}>

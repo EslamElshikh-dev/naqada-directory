@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { canonicalLocalityName } from '@/lib/data';
 import type { DirectoryItem } from '@/lib/types';
 import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
@@ -13,7 +14,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const locality = canonicalLocalityName(listing.locality);
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   const mapsUrl = hasMapReference ? listing.mapsUrl : null;
-  const detailHref = `/listing/${listing.slug}/`;
+  const detailHref = listing.detailHref || `/listing/${listing.slug}/`;
   const categoryHref = `/directory/${slugify(listing.category)}`;
   const localityHref = `/villages/${slugify(locality)}`;
   const similarHref = listing.subcategory
@@ -23,7 +24,8 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
       <div className="listing-card__cover">
-        <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />
+        {listing.imageUrl ? <figure className="listing-card__media" style={{ margin: 0, position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' }}><Image src={listing.imageUrl} alt={`صورة ${listing.name} قدّمها صاحب النشاط`} fill sizes="(max-width: 760px) 92vw, (max-width: 1100px) 45vw, 360px" unoptimized style={{ objectFit: 'cover' }} /></figure> :
+          <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
         <Link className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
         <Link className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
           <CategoryVisual category={listing.category} size="sm" />

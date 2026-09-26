@@ -1,0 +1,22 @@
+.page { padding-block: 55px 100px; min-height: 70vh; }
+.page h1 { color: #193e2d; font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+.page > p { color: #546a5b; line-height: 1.85; max-width: 75ch; }
+.list { display: grid; gap: 18px; margin-top: 25px; }
+.list > p { margin: 0; color: #315b40; }
+.list .error { color: #a63a32; }
+.card { padding: clamp(18px, 3vw, 30px); border: 1px solid #dbe4d8; border-radius: 18px; background: #fff; box-shadow: 0 12px 32px rgba(14, 48, 31, .05); }
+.card header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; color: #5d765f; font-size: .85rem; }
+.card h2 { margin: 14px 0 8px; color: #173e30; }
+.card p { white-space: pre-wrap; line-height: 1.8; color: #405b49; }
+.card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.card dl div { padding: 13px; border-radius: 10px; background: #f3f7f0; }
+.card dt { font-size: .8rem; color: #587463; }
+.card dd { margin: 7px 0 0; color: #1c4933; font-weight: 700; overflow-wrap: anywhere; }
+.photos { display: flex; flex-wrap: wrap; gap: 10px; margin: 17px 0; }
+.photos img { width: 150px; height: 110px; object-fit: cover; border-radius: 10px; }
+.actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 20px; }
+.actions button { min-height: 44px; padding: 8px 16px; border: 1px solid #c8d8cb; border-radius: 10px; color: #204b37; background: #f3f8f2; font: inherit; font-weight: 750; cursor: pointer; }
+.actions button:first-child { color: #fff; background: #185640; border-color: #185640; }
+.actions button:disabled { opacity: .55; cursor: wait; }
+.empty { padding: 30px; border: 1px dashed #aec9af; border-radius: 15px; color: #56705b; }
+@media (max-width: 650px) { .card dl { grid-template-columns: 1fr; } .actions button { flex: 1; } }

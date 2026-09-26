@@ -5,11 +5,13 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
-import { businesses, canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
+import { canonicalLocalityName, categories, directoryBusinesses, getCategoryBySlug, localities } from '@/lib/data';
+import { getPublishedOwnerListings, ownerListingDirectoryItem } from '@/lib/owner-listings';
 import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() {
   return categories.map((category) => ({ category: category.slug }));
@@ -19,7 +21,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) return {};
-  const description = `${category.description} تصفح ${category.count} نتيجة منشورة داخل مدينة نقادة وقراها.`;
+  const ownerCount = (await getPublishedOwnerListings()).filter((item) => item.category === category.name).length;
+  const description = `${category.description} تصفح ${category.count + ownerCount} نتيجة منشورة داخل مدينة نقادة وقراها.`;
   return buildPageMetadata({
     title: `${category.shortLabel} في نقادة`,
     description,
@@ -31,11 +34,11 @@ export default async function CategoryPage({ params }: Props) {
   const { category: slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
-  const scoped = businesses.filter((item) => item.category === category.name);
-  const scopedDirectory = directoryBusinesses.filter((item) => item.category === category.name);
-  const localityCount = new Set(scoped.map((item) => canonicalLocalityName(item.locality))).size;
+  const ownerScoped = (await getPublishedOwnerListings()).filter((item) => item.category === category.name).map(ownerListingDirectoryItem);
+  const scopedDirectory = [...directoryBusinesses.filter((item) => item.category === category.name), ...ownerScoped];
+  const localityCount = new Set(scopedDirectory.map((item) => canonicalLocalityName(item.locality))).size;
   const localityCounts = new Map<string, number>();
-  for (const item of scoped) {
+  for (const item of scopedDirectory) {
     const name = canonicalLocalityName(item.locality);
     localityCounts.set(name, (localityCounts.get(name) || 0) + 1);
   }
@@ -60,12 +63,12 @@ export default async function CategoryPage({ params }: Props) {
         description: category.description,
         mainEntity: {
           '@type': 'ItemList',
-          numberOfItems: scoped.length,
-          itemListElement: scoped.slice(0, 20).map((item, index) => ({
+          numberOfItems: scopedDirectory.length,
+          itemListElement: scopedDirectory.slice(0, 20).map((item, index) => ({
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
+            url: `${siteConfig.url}${item.detailHref || `/listing/${encodeURIComponent(item.slug)}`}`,
           })),
         },
       },
@@ -81,7 +84,7 @@ export default async function CategoryPage({ params }: Props) {
   };
   return (
     <main id="main-content" className="page-main">
-      <section className="detail-hero category-hero"><div className="shell category-hero__grid"><div><nav className="breadcrumbs"><Link href="/directory">الدليل</Link><span>/</span><span>{category.shortLabel}</span></nav><span className="eyebrow">قسم محلي متخصص</span><h1>{category.shortLabel} <em>في نقادة</em></h1><p>{category.description}</p><div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span></div></div><CategoryVisual category={category.name} size="lg" /></div></section>
+      <section className="detail-hero category-hero"><div className="shell category-hero__grid"><div><nav className="breadcrumbs"><Link href="/directory">الدليل</Link><span>/</span><span>{category.shortLabel}</span></nav><span className="eyebrow">قسم محلي متخصص</span><h1>{category.shortLabel} <em>في نقادة</em></h1><p>{category.description}</p><div className="hero-inline-stats"><span><b>{scopedDirectory.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span></div></div><CategoryVisual category={category.name} size="lg" /></div></section>
       <section className="shell page-section">
         <ServiceLocalityDiscovery
           title={`${category.shortLabel} حسب القرية والنجع`}

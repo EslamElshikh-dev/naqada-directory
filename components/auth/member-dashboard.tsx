@@ -138,7 +138,7 @@ export function MemberDashboard() {
               <small>{reputation.contributionCount.toLocaleString('ar-EG')} مساهمة محسوبة · {reputation.acceptedCount.toLocaleString('ar-EG')} معتمدة/منشورة · {reputation.pendingCount.toLocaleString('ar-EG')} قيد المراجعة</small>
             </div>
           </section>
-          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link href="/contribute"><b>02</b><span>أضف أو صحح نشاطًا<small>ساهم في تحديث الدليل</small></span><i>←</i></Link><Link href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
+          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link href="/contribute"><b>02</b><span>أضف نشاطك وأنشطتي<small>سجّله باسمك وتابع المراجعة والصور</small></span><i>←</i></Link><Link href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
           <section className="member-security"><span>حماية الحساب</span><strong>{user.emailVerified ? 'البريد مؤكد والحساب نشط' : 'أكمل تأكيد البريد'}</strong><p>جلسة الدخول محفوظة في ملفات ارتباط آمنة ولا تُعرض مفاتيح الإدارة داخل المتصفح.</p></section>
         </aside>
       </div>

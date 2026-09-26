@@ -5,6 +5,8 @@ import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
+import { getPublishedOwnerListings } from '@/lib/owner-listings';
+import { searchOwnerListings } from '@/lib/owner-listing-search';
 import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
 
@@ -116,7 +118,10 @@ export default async function SearchPage({ searchParams }: Props) {
   const query = queryValue(params.q);
   const activeScope = scopeValue(params.scope);
   const canSearch = query.length >= 2;
-  const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER) : [];
+  const allResults = canSearch ? [
+    ...searchOwnerListings(query, await getPublishedOwnerListings(), 500),
+    ...searchSite(query, Number.MAX_SAFE_INTEGER),
+  ] : [];
   const searchContext = canSearch && (activeScope === 'all' || activeScope === 'directory')
     ? buildSearchContext(query)
     : null;

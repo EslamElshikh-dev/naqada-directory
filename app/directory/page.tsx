@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { businesses, categories, directoryBusinesses, localities } from '@/lib/data';
+import { getPublishedOwnerListings, ownerListingDirectoryItem } from '@/lib/owner-listings';
 import Link from 'next/link';
 
 type DirectorySearchParams = Promise<{
@@ -17,12 +18,13 @@ type Props = { searchParams: DirectorySearchParams };
 
 const pageSize = 12;
 const description = 'ابحث وصَفِّ الأنشطة والخدمات المنشورة في مدينة نقادة وقراها ونجوعها بحسب الاسم والتصنيف والمكان.';
+export const dynamic = 'force-dynamic';
 
 function firstValue(value?: string | string[]) {
   return Array.isArray(value) ? value[0] || '' : value || '';
 }
 
-function resolveDirectoryState(params: Awaited<DirectorySearchParams>) {
+function resolveDirectoryState(params: Awaited<DirectorySearchParams>, totalCount = directoryBusinesses.length) {
   const q = firstValue(params.q).trim().slice(0, 100);
   const requestedCategory = firstValue(params.category);
   const requestedLocality = firstValue(params.locality);
@@ -31,13 +33,13 @@ function resolveDirectoryState(params: Awaited<DirectorySearchParams>) {
   const locality = localities.some((item) => item.name === requestedLocality) ? requestedLocality : '';
   const sort = requestedSort === 'rating' || requestedSort === 'name' ? requestedSort : 'recommended';
   const requestedPage = Number.parseInt(firstValue(params.page), 10);
-  const totalPages = Math.max(1, Math.ceil(directoryBusinesses.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const page = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPages) : 1;
   return { q, category, locality, sort, page, totalPages } as const;
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const state = resolveDirectoryState(await searchParams);
+  const state = resolveDirectoryState(await searchParams, directoryBusinesses.length + (await getPublishedOwnerListings()).length);
   const hasFilters = Boolean(state.q || state.category || state.locality || state.sort !== 'recommended');
   const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString('ar-EG')}` : '';
   const pageHref = state.page > 1 ? `/directory/?page=${state.page}` : '/directory/';
@@ -55,15 +57,17 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function DirectoryPage({ searchParams }: Props) {
-  const state = resolveDirectoryState(await searchParams);
+  const ownerBusinesses = (await getPublishedOwnerListings()).map(ownerListingDirectoryItem);
+  const allBusinesses = [...directoryBusinesses, ...ownerBusinesses];
+  const state = resolveDirectoryState(await searchParams, allBusinesses.length);
   const mapped = businesses.filter((item) => item.mapsUrl).length;
-  const phoned = businesses.filter((item) => item.phone).length;
+  const phoned = businesses.filter((item) => item.phone).length + ownerBusinesses.length;
   return (
     <main id="main-content" className="page-main">
       <section className="catalog-hero">
         <div className="shell catalog-hero__grid">
           <div><nav className="breadcrumbs"><span>الرئيسية</span><span>/</span><span>الدليل</span></nav><span className="eyebrow">دليل الخدمات والأنشطة</span><h1>كل خدمات نقادة في <em>بحث واحد</em></h1><p>اكتب اسم المكان أو الخدمة، ثم ضيّق النتائج حسب القرية أو القسم. كل بطاقة تفتح صفحة تفصيلية مستقلة.</p></div>
-          <aside className="catalog-hero__summary"><span className="catalog-hero__mark"><BrandMark /></span><div className="catalog-hero__metrics"><span><b>{businesses.length.toLocaleString('ar-EG')}</b><small>سجلًا منشورًا</small></span><span><b>{categories.length.toLocaleString('ar-EG')}</b><small>قسمًا</small></span><span><b>{mapped.toLocaleString('ar-EG')}</b><small>رابط خريطة</small></span><span><b>{phoned.toLocaleString('ar-EG')}</b><small>رقم اتصال</small></span></div></aside>
+          <aside className="catalog-hero__summary"><span className="catalog-hero__mark"><BrandMark /></span><div className="catalog-hero__metrics"><span><b>{allBusinesses.length.toLocaleString('ar-EG')}</b><small>سجلًا منشورًا</small></span><span><b>{categories.length.toLocaleString('ar-EG')}</b><small>قسمًا</small></span><span><b>{mapped.toLocaleString('ar-EG')}</b><small>رابط خريطة</small></span><span><b>{phoned.toLocaleString('ar-EG')}</b><small>رقم اتصال</small></span></div></aside>
         </div>
       </section>
       <section className="shell directory-activity-cta" aria-label="تصفح أنواع الأنشطة">
@@ -74,7 +78,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
         <Suspense fallback={<div className="loading-state">جارٍ تجهيز الدليل…</div>}>
           <DirectoryExplorer
             key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
-            businesses={directoryBusinesses}
+            businesses={allBusinesses}
             categories={categories}
             localities={localities}
             initialQuery={state.q}

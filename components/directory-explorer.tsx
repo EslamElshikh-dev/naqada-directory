@@ -107,7 +107,7 @@ export function DirectoryExplorer({
       if (sort === 'name') return a.item.name.localeCompare(b.item.name, 'ar');
       if (sort === 'rating') return (b.item.rating || 0) - (a.item.rating || 0) || (b.item.reviews || 0) - (a.item.reviews || 0);
       if (hasQuery && b.rank !== a.rank) return b.rank - a.rank;
-      const mediaPriority = Number(hasBusinessMedia(b.item.id)) - Number(hasBusinessMedia(a.item.id));
+      const mediaPriority = Number(Boolean(b.item.imageUrl) || hasBusinessMedia(b.item.id)) - Number(Boolean(a.item.imageUrl) || hasBusinessMedia(a.item.id));
       if (mediaPriority) return mediaPriority;
       return (b.item.reviews || 0) - (a.item.reviews || 0) || (b.item.rating || 0) - (a.item.rating || 0) || a.item.name.localeCompare(b.item.name, 'ar');
     });

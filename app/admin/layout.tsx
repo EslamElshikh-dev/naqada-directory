@@ -9,6 +9,7 @@ export default function AdminLayout({ children }: Readonly<{ children: React.Rea
         <Link href="/admin"><b>ADMIN</b> لوحة الإدارة</Link>
         <Link href="/admin/growth"><b>V17</b> أولويات النمو</Link>
         <Link href="/admin/jobs"><b>شغل</b> مراجعة الوظائف</Link>
+        <Link href="/admin/activities"><b>نشاط</b> مراجعة الأنشطة</Link>
       </nav>
       {children}
     </>

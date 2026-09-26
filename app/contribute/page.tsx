@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { ContributionBuilder } from '@/components/contribution-builder';
+import { OwnerBusinessForm } from '@/components/owner-business-form';
 import { categories, localities } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'أضف نشاطًا أو صحح بيانات',
-  description: 'ساهم في استكمال دليل نقادة بإضافة نشاط أو اقتراح تصحيح أو الإبلاغ عن نتيجة بحث مفقودة، مع طلب منظم ومصدر داعم.',
+  title: 'أضف نشاطك في دليل نقادة',
+  description: 'سجّل نشاطك في نقادة باسم حسابك، أضف الرقم والمواعيد والعنوان والوصف والصور، وتابع حالته بعد المراجعة.',
   path: '/contribute',
   robots: {
     index: false,
@@ -16,14 +17,18 @@ export const metadata: Metadata = buildPageMetadata({
   },
 });
 
-export default function ContributePage() {
+type Props = { searchParams: Promise<{ type?: string; edit?: string; name?: string; category?: string; locality?: string }> };
+
+export default async function ContributePage({ searchParams }: Props) {
+  const query = await searchParams;
+  const correction = query.type === 'correction' || query.type === 'missing';
   const pageUrl = `${siteConfig.url}/contribute`;
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'أضف نشاطًا أو صحح بيانات — دليل نقادة',
+    name: 'أضف نشاطك في دليل نقادة',
     url: pageUrl,
-    description: 'صفحة المساهمة المجتمعية في استكمال وتصحيح بيانات دليل نقادة.',
+    description: 'إضافة نشاط محلي وربطه بحساب صاحبه، مع إتاحة طلبات التصحيح.',
     isPartOf: { '@id': `${siteConfig.url}#website` },
   };
 
@@ -32,20 +37,26 @@ export default function ContributePage() {
       <section className="about-hero">
         <div className="shell">
           <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span>/</span><span>المساهمة في الدليل</span></nav>
-          <span className="eyebrow">دليل أدق بمشاركة أهل المكان</span>
-          <h1>أضف نشاطًا أو <em>صحح معلومة</em></h1>
-          <p>إذا لم تجد نشاطًا أو لاحظت عنوانًا أو رقمًا أو تصنيفًا يحتاج مراجعة، جهّز طلبًا واضحًا هنا. لا يُنشر أي تعديل تلقائيًا قبل المراجعة.</p>
+          <span className="eyebrow">مكانك معروف عند أهل البلد</span>
+          <h1>{correction ? <>صحّح معلومة <em>في الدليل</em></> : <>أضف نشاطك <em>باسمك</em></>}</h1>
+          <p>{correction ? 'لقيت عنوانًا أو رقمًا يحتاج تعديل؟ ابعت لنا التفاصيل عشان نراجعها.' : 'عندك نشاط في نقادة أو قراها؟ سجّله بحسابك، وحط رقمك ومواعيدك وعنوانك وصور حقيقية من المكان.'}</p>
         </div>
       </section>
       <section className="shell page-section">
-        <Suspense fallback={<div className="loading-state">جارٍ تجهيز نموذج المساهمة…</div>}>
-          <ContributionBuilder categories={categories} localities={localities.filter((item) => item.businessCount > 0 || item.verification)} />
-        </Suspense>
-        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 13, lineHeight: 1.9 }}>
-          بإرسال المساهمة، تُستخدم البيانات للمراجعة وتحسين الدليل وفق <Link href="/privacy" className="text-link">سياسة الخصوصية واستخدام البيانات</Link>. وسيلة التواصل اختيارية ولا تُنشر داخل صفحات الدليل.
+        {correction ? <Suspense fallback={<div className="loading-state">جارٍ تجهيز نموذج التصحيح…</div>}><ContributionBuilder categories={categories} localities={localities.filter((item) => item.businessCount > 0 || item.verification)} /></Suspense> :
+          <OwnerBusinessForm
+            key={query.edit || 'new'}
+            categories={categories} localities={localities}
+            editId={query.edit || ''}
+            initialName={query.name || ''}
+            initialCategory={query.category || ''}
+            initialLocality={query.locality || ''}
+          />}
+        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 14, lineHeight: 1.9 }}>
+          {correction ? <>عايز تضيف نشاطك ويكون باسم حسابك؟ <Link href="/contribute" className="text-link">ابدأ إضافة نشاطك ←</Link></> : <>عندك تصحيح لنشاط منشور؟ <Link href="/contribute?type=correction" className="text-link">ابعت طلب تصحيح ←</Link></>} · التفاصيل في <Link href="/privacy" className="text-link">سياسة الخصوصية</Link>.
         </p>
       </section>
-      <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">سياسة المراجعة</span><h2>المساهمة ليست نشرًا تلقائيًا</h2><p>الطلب يمر بالمراجعة ومقارنة المصدر قبل تعديل السجل. الهدف أن تزيد التغطية من غير التضحية بدقة الدليل.</p><Link href="/about" className="text-link">اقرأ منهج البيانات ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>حدد المعلومة</h3><p>اسم واضح، موضع، وتصنيف أو وصف للخطأ.</p></article><article><b>02</b><h3>أرفق مصدرًا</h3><p>خرائط Google أو موقع رسمي أو مصدر عام مباشر يسرّع المراجعة.</p></article><article><b>03</b><h3>مراجعة قبل النشر</h3><p>لا تُضاف أو تُعدل البيانات تلقائيًا بمجرد إرسال المقترح.</p></article></div></div></section>
+      <section className="section section--muted"><div className="shell methodology"><div><span className="eyebrow eyebrow--dark">سياسة المراجعة</span><h2>النشاط باسم صاحبه، والنشر بعد المراجعة</h2><p>من حسابك تقدر ترجع لبيانات نشاطك وتعدّلها. أي إضافة أو تعديل ينتظر مراجعة الإدارة قبل ما يظهر للعامة.</p><Link href="/about" className="text-link">اقرأ منهج البيانات ←</Link></div><div className="methodology__grid"><article><b>01</b><h3>سجّل بياناتك</h3><p>اسم النشاط ورقم الجوال والمكان والمواعيد والوصف.</p></article><article><b>02</b><h3>أضف صورًا حقيقية</h3><p>صور من المكان أو الخدمة تساعد الناس تتعرف عليه.</p></article><article><b>03</b><h3>تابع نشاطك</h3><p>مملوك لحسابك، وبعد المراجعة تظهر له صفحة في الدليل.</p></article></div></div></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );

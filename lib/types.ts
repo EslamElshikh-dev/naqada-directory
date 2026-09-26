@@ -25,7 +25,7 @@ export type Business = {
 export type DirectoryItem = Pick<Business,
   'id' | 'slug' | 'name' | 'normalizedName' | 'category' | 'subcategory' |
   'locality' | 'parentLocality' | 'address' | 'phone' | 'rating' | 'reviews' | 'mapsUrl' | 'verification'
->;
+> & { detailHref?: string; imageUrl?: string | null };
 
 export type LocalityRecord = {
   name: string;

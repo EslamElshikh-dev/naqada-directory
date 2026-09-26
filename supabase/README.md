@@ -44,6 +44,12 @@ The `directory-intake` Edge Function uses the server-side `service_role` with le
 
 The rate-limit function is `SECURITY DEFINER`, so the Edge Function does not need direct access to the rate-limit table. Do not broaden these grants to work around an application bug.
 
+## Activities owned by members
+
+`directory_owner_listings` is separate from the open suggestion inbox above. A signed-in member creates an activity with their account ID, category, locality, phone, opening hours, address, description, and up to five photos. RLS allows the owner to read and edit their own records and allows anyone to read only published records. A database trigger keeps the owner ID immutable and sends member edits back to pending review; only a directory admin can publish or reject a record through the protected moderation route.
+
+The `directory-owner-photos` bucket is private, with a 4 MiB per-image limit and JPEG/PNG/WebP restrictions. Storage policies allow the owner to upload to their activity folder, the owner and admin to preview pending photos, and the public to see photos linked to published activities only. The site serves these images through `/api/owner-photos/...` with the caller's auth context. The member-facing form and protected admin queue are at `/contribute` and `/admin/activities`. Published records appear in the directory, search, category pages, and sitemap.
+
 ## Private operational views
 
 The `insights` schema is not granted to `anon` or `authenticated` roles. It contains internal views for manual review from trusted Supabase tooling:
