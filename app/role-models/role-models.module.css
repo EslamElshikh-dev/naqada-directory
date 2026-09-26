@@ -93,7 +93,7 @@
 
 .homeFeature { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(220px,.6fr); overflow:hidden; margin-block:38px 44px; border-radius:24px; background:#174534; color:#fff8ed; box-shadow:0 20px 50px #0e3e2726; }
 .homeFeatureCopy { padding:clamp(25px,4vw,50px); align-self:center; }
-.homeFeatureCopy > span { color:#e5c995; font-size:.8rem; font-weight:800; }
+.homeFeatureSlideCopy > span { color:#e5c995; font-size:.8rem; font-weight:800; }
 .homeFeature h2 { margin:12px 0; font-size:clamp(1.5rem,3vw,2.35rem); line-height:1.5; }
 .homeFeature p { max-width:550px; color:#e0ecde; line-height:2; }
 .homeFeatureCopy a { display:inline-flex; margin:12px 0 0 10px; padding:10px 16px; border-radius:10px; background:#e6c58f; color:#204431; text-decoration:none; font-weight:850; }
@@ -101,7 +101,20 @@
 .homeFeatureVisual { position:relative; display:grid; place-items:center; min-height:290px; overflow:hidden; background:radial-gradient(circle at 50% 40%,#749778,transparent 52%),#214b3d; }
 .homeFeatureVisual::after { content:""; position:absolute; inset:45% 0 0; background:linear-gradient(transparent,#102f27b9); pointer-events:none; }
 .homeFeatureVisual img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; }
-.homeFeatureVisual small { position:absolute; z-index:1; bottom:18px; padding:7px 10px; border-radius:7px; background:#133728aa; }
+.homeFeatureVisual small { position:absolute; z-index:1; bottom:18px; inset-inline:14px; width:fit-content; max-width:calc(100% - 28px); padding:7px 10px; border-radius:7px; background:#133728aa; line-height:1.6; }
+.homeFeatureCopy { display:flex; flex-direction:column; justify-content:center; min-width:0; }
+.homeFeatureSlideCopy { flex:1; align-content:center; }
+.homeFeatureSlideCopy h2 { text-wrap:balance; }
+.homeFeatureSlideCopy p { min-height:3.8em; }
+.featureControls { display:flex; align-items:center; gap:19px; margin-top:23px; }
+.featureCount { color:#f2ddba; direction:ltr; font-size:.86rem; font-weight:750; font-variant-numeric:tabular-nums; }
+.featureCount span { padding-inline:5px; color:#ecdbbb8c; }
+.featureButtons { display:flex; align-items:center; gap:8px; }
+.featureButtons button { display:grid; place-items:center; width:40px; height:40px; border:1px solid #f3dfb667; border-radius:50%; background:#ffffff12; color:#fff9eb; cursor:pointer; transition:background-color .2s,border-color .2s,transform .2s; }
+.featureButtons button:hover { background:#f1d7a9; border-color:#f1d7a9; color:#1a4435; transform:translateY(-2px); }
+.featureButtons button:focus-visible { outline:3px solid #f1d7a9; outline-offset:3px; }
+.featureAnnouncement { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+@media(prefers-reduced-motion:no-preference) { .homeFeatureSlideCopy,.homeFeatureVisual { animation:featureReveal .4s ease-out both; } @keyframes featureReveal { from { opacity:.35; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } }
 @media(max-width:700px) { .homeFeature { grid-template-columns:1fr; margin-block:20px 35px; } .homeFeatureCopy { padding:24px; } .homeFeatureVisual { min-height:280px; } }
 
 /* A guided, image-led story for Aya. Shared navigation remains useful to every profile. */
@@ -162,6 +175,18 @@
 .ayaProfile .articleSide { position:sticky; top:110px; align-self:start; }
 .ayaProfile .sideCard { border-color:#e3e4d6; }
 .ayaProfile .sideCard a:hover { color:#9e643e; text-decoration:none; }
+
+/* A quiet memorial treatment within the same editorial profile layout. */
+.memorialProfile { background:#fcfaf5; }
+.memorialProfile .articleHero { background:radial-gradient(circle at 13% 8%,#647c68 0,transparent 34%),linear-gradient(132deg,#173b36,#132f32 78%); }
+.memorialProfile .articleHero::after { border-color:#d5ba8954; box-shadow:0 0 0 55px #f2d49b0b,0 0 0 110px #f2d49b08; }
+.memorialProfile .articlePortrait { border-color:#f2e2bf; box-shadow:20px 24px 0 #c49c5e24,0 30px 55px #071d1b80; }
+.memorialProfile .articleLead { border-inline-start-color:#ab8350; }
+.memorialProfile .highlights div { background:#eef2ea; border-color:#dae3d6; }
+.memorialProfile .highlights div:nth-child(2) { background:#f8f0e3; border-color:#ebdbc3; }
+.memorialProfile .highlights div:nth-child(3) { background:#eef2f1; border-color:#dbe5e1; }
+.memorialProfile .sourceNote { display:grid; justify-items:start; gap:8px; }
+.memorialProfile .sourceNote a { line-height:1.7; }
 
 @media(max-width:980px) { .ayaProfile .articleHeroGrid { grid-template-columns:minmax(0,1fr) minmax(280px,.7fr); gap:24px; } .ayaProfile .articlePortrait { height:460px; } .ayaProfile .articleSide { position:static; } }
 @media(max-width:700px) { .ayaProfile .articleHeroInner { padding-block:24px 55px; } .ayaProfile .articleHero .breadcrumbs { margin-bottom:28px; } .ayaProfile .articleHeroGrid { grid-template-columns:1fr; gap:26px; } .ayaProfile .articleHero h1 { font-size:clamp(2.45rem,10vw,3.3rem); margin-block:12px; } .ayaProfile .articlePortrait { width:min(100%,430px); height:410px; margin-inline:auto; border-radius:26px 115px 26px 26px; } .ayaProfile .articleLayout { padding-block:45px 75px; } .ayaProfile .articleLead { padding:22px; } .ayaProfile .articleSection { padding-inline-start:24px; } .ayaProfile .galleryGrid { grid-template-columns:1fr; } .ayaProfile .gallery .galleryFeature { grid-column:auto; display:flex; } .ayaProfile .galleryFeature img { height:auto; max-height:500px; } .ayaProfile .galleryFeature figcaption { padding:17px 19px 20px; } .storyTrail { border-radius:14px; } .storyTrail a { flex-basis:180px; } }

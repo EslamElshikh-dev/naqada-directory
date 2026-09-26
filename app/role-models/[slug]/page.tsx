@@ -57,7 +57,7 @@ export default async function RoleModelArticle({ params }: Props) {
         dateModified: person.modifiedAt,
         inLanguage: 'ar-EG',
         mainEntityOfPage: url,
-        isBasedOn: person.sourceUrl,
+        isBasedOn: [person.sourceUrl, ...(person.additionalSources || []).map((source) => source.url)],
         about: { '@id': url + '#person' },
         ...(person.photos.length ? { image: person.photos.map((photo) => ({
           '@type': 'ImageObject',
@@ -74,6 +74,7 @@ export default async function RoleModelArticle({ params }: Props) {
         '@id': url + '#person',
         name: person.name,
         alternateName: person.alternateNames,
+        ...(person.diedAt ? { deathDate: person.diedAt } : {}),
         description: person.shortTitle,
         url,
         ...(person.photos[0] ? { image: new URL(person.photos[0].src, siteConfig.url).toString() } : {}),
@@ -91,7 +92,7 @@ export default async function RoleModelArticle({ params }: Props) {
     ],
   };
 
-  return <main id="main-content" className={styles.page + (person.slug === 'aya-refai-abdelshafi' ? ' ' + styles.ayaProfile : '')}>
+  return <main id="main-content" className={styles.page + (['aya-refai-abdelshafi', 'mahmoud-ahmed-abdel-sabour'].includes(person.slug) ? ' ' + styles.ayaProfile : '') + (person.diedAt ? ' ' + styles.memorialProfile : '')}>
     <article>
       <header className={styles.articleHero}>
         <div className={'shell ' + styles.articleHeroInner}>
@@ -147,13 +148,14 @@ export default async function RoleModelArticle({ params }: Props) {
             <h2 id="source-title">المصدر وما نعرفه</h2>
             <p>{person.sourceDisclosure}</p>
             <a href={person.sourceUrl} target="_blank" rel="noopener noreferrer external">{person.sourceLabel} <span aria-hidden="true">↗</span></a>
+            {person.additionalSources?.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer external">{source.label} <span aria-hidden="true">↗</span></a>)}
           </section>
           <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
         </div>
         <aside className={styles.articleSide} aria-label="معلومات عن المقال">
           <div className={styles.sideCard}><small>الاسم</small><strong>{person.name}</strong><small>من</small><b>{person.locality}</b></div>
           <nav className={styles.sideCard} aria-label="أقسام المقال"><strong>محطات الحكاية</strong><a href="#story">بداية الحكاية</a>{person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}>{section.heading}</a>)}{person.photos.length > 1 && <a href="#gallery">الصور</a>}<a href="#source">المصدر والتصحيحات</a></nav>
-          <div className={styles.sideCard}><strong>اهتمامات مذكورة</strong><div className={styles.interestList}>{person.interests.map((interest) => <span key={interest}>{interest}</span>)}</div></div>
+          <div className={styles.sideCard}><strong>{person.interestsLabel || 'اهتمامات مذكورة'}</strong><div className={styles.interestList}>{person.interests.map((interest) => <span key={interest}>{interest}</span>)}</div></div>
         </aside>
       </div>
     </article>

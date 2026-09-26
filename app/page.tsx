@@ -8,15 +8,16 @@ import { CategoryVisual } from '@/components/category-visual';
 import { HomeSmartSearch } from '@/components/home-smart-search';
 import { DeferredSiteReviews as SiteReviews } from '@/components/deferred-site-reviews';
 import { BrandMark } from '@/components/site-shell';
+import { RoleModelFeature } from '@/components/role-model-feature';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { businesses, localities, meta, officialLocalities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { getCategoryMedia } from '@/lib/category-media';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { absoluteUrl, siteConfig } from '@/lib/site';
+import { roleModels } from '@/lib/role-models';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
-import roleStyles from './role-models/role-models.module.css';
 
 export const metadata: Metadata = {
   title: { absolute: siteConfig.name },
@@ -215,19 +216,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={'shell ' + roleStyles.homeFeature} aria-labelledby="home-role-model-title">
-        <div className={roleStyles.homeFeatureCopy}>
-          <span>من أهل نقادة</span>
-          <h2 id="home-role-model-title">ناس من بلدنا تستحق نعرف حكايتها.</h2>
-          <p>ابدأ مع آية رفاعي عبدالشافي من الأوسط قمولا بشلاو؛ حكاية عن الدراسة والتطوع، ومصدرها الأصلي معروض بوضوح.</p>
-          <Link prefetch={false} href="/role-models/aya-refai-abdelshafi">اقرأ قصة آية <span aria-hidden="true">←</span></Link>
-          <Link prefetch={false} href="/role-models" className={roleStyles.homeSecondary}>كل النماذج المشرفة</Link>
-        </div>
-        <div className={roleStyles.homeFeatureVisual}>
-          <Image src="/images/role-models/aya-refai-abdelshafi/campus.jpg" alt="آية رفاعي عبدالشافي خلال مشاركتها في ملتقى طلابي" width={1536} height={2048} sizes="(max-width: 700px) calc(100vw - 32px), 32vw" />
-          <small>آية رفاعي عبدالشافي · نقادة</small>
-        </div>
-      </section>
+      <RoleModelFeature people={roleModels.map((person) => ({
+        slug: person.slug,
+        name: person.name,
+        locality: person.locality,
+        shortTitle: person.shortTitle,
+        photo: person.photos[person.cardPhotoIndex ?? 0],
+      }))} />
 
       {leadArticle ? (
         <section className={`shell ${styles.section} ${styles.stories}`}>
