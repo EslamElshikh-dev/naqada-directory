@@ -13,7 +13,7 @@
 .toplinks { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .toplinks a { color: #285045; text-decoration: none; border: 1px solid #d7ddd2; padding: 9px 14px; border-radius: 12px; background: #fffdf9; font-size: 14px; font-weight: 700; }
 .toplinks a:hover, .toplinks a:focus-visible { border-color: #b69240; }
-.hero { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: center; gap: 48px; min-height: 300px; padding: 46px 55px; border-radius: 30px; position: relative; overflow: hidden; background: radial-gradient(circle at 8% 0, #386b52 0, transparent 42%), linear-gradient(122deg, #163d33, #112d2a); color: #fffaf1; box-shadow: 0 22px 55px #233c2d20; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); align-items: center; gap: 38px; min-height: 245px; padding: 38px 46px; border-radius: 28px; position: relative; overflow: hidden; background: radial-gradient(circle at 8% 0, #386b52 0, transparent 42%), linear-gradient(122deg, #163d33, #112d2a); color: #fffaf1; box-shadow: 0 22px 55px #233c2d20; }
 .hero::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .12; background: repeating-linear-gradient(120deg, transparent 0 82px, #f4d788 83px 84px, transparent 85px 167px); }
 .hero > * { position: relative; z-index: 1; }
 .eyebrow { color: #e3bf61; font-weight: 800; letter-spacing: .02em; font-size: 14px; }
@@ -21,13 +21,13 @@
 .hero h1 em { color: #f0d392; font-style: normal; }
 .hero p { margin: 0; max-width: 630px; line-height: 1.9; color: #e2ebe0; font-size: 16px; }
 .heroLinks { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 24px; }
-.heroLinks a { color: #f7e9c4; font-size: 14px; font-weight: 800; text-decoration: none; }
-.heroLinks a:first-child { padding: 11px 18px; background: #e8c371; color: #1b352f; border-radius: 12px; }
+.heroLinks a, .heroLinks button { color: #f7e9c4; font: inherit; font-size: 14px; font-weight: 800; text-decoration: none; }
+.heroLinks button { padding: 11px 18px; border: 0; background: #e8c371; color: #1b352f; border-radius: 12px; cursor: pointer; }
 .heroIdentity { display: flex; align-items: center; gap: 18px; padding: 22px; border: 1px solid #f4d68b47; border-radius: 23px; background: #ffffff0d; backdrop-filter: blur(12px); position: relative; }
 .heroIdentity div { display: grid; gap: 4px; }.heroIdentity div span { font-size: 13px; color: #e3e8d7; }
 .heroIdentity strong { font-size: 20px; color: #f5d989; }.heroIdentity small { color: #e3e8d7; font-size: 13px; }
 .heroIdentity > i { position: absolute; top: -14px; left: 18px; color: #e7c375; font-size: 26px; font-style: normal; }
-.workspace { margin-top: 28px; border: 1px solid #e7e4d9; background: #fffefa; border-radius: 26px; padding: 28px; box-shadow: 0 14px 50px #263c2d0b; }
+.workspace { margin-top: 28px; border: 1px solid #e7e4d9; background: #fffefa; border-radius: 26px; padding: 28px; box-shadow: 0 14px 50px #263c2d0b; scroll-margin-top: 82px; }
 .workspaceHead, .sectionTitle, .panelHead { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .workspaceHead span, .sectionTitle span, .panelHead span { color: #a37729; font-size: 13px; font-weight: 800; }
 .workspaceHead h2 { margin: 2px 0 0; font-size: 28px; }.workspaceHead p { color: #65716a; margin: 3px 0 0; font-size: 13px; }
@@ -96,7 +96,7 @@
 }
 @media (max-width: 620px) {
   .shell { width: min(100% - 20px, 1240px); }.topbar { padding: 12px 2px; flex-wrap: wrap; }.brand b { font-size: 17px; }.toplinks a { font-size: 12px; padding: 7px 9px; }
-  .hero { padding: 30px 23px; border-radius: 23px; }.hero h1 { font-size: 31px; }.heroIdentity { padding: 15px; gap: 12px; }.heroIdentity strong { font-size: 17px; }
+  .hero { padding: 26px 22px; border-radius: 23px; gap: 20px; min-height: 0; }.hero h1 { font-size: 29px; }.hero p { font-size: 14px; }.heroIdentity { width: 100%; padding: 13px; gap: 14px; }.heroIdentity strong { font-size: 17px; }
   .workspace { padding: 16px 13px; border-radius: 19px; }.workspaceHead h2 { font-size: 23px; }.workspaceHead > button { font-size: 12px; padding: 8px; }
   .tabbar { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; margin-inline: -13px; padding-inline: 13px; }.tabbar button { flex: 0 0 auto; font-size: 13px; padding: 10px; }
   .metrics { gap: 8px; }.metrics article { padding: 14px; min-height: 100px; }.metrics strong { font-size: 29px; }.metrics span { font-size: 13px; }.metrics small { font-size: 12px; }

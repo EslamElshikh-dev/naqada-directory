@@ -11,18 +11,22 @@ function UserIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.7 19.5c.8-3.4 3-5.2 6.3-5.2s5.5 1.8 6.3 5.2"/></svg>;
 }
 
-type ReputationState = {
+type ProfileState = {
   userId: string;
-  value: MemberReputation | null;
+  name: string;
+  avatarUrl: string;
+  reputation: MemberReputation | null;
 };
 
 export function AccountButton() {
   const router = useRouter();
   const [user, setUser] = useState<ClientSessionUser | null>(null);
-  const [reputationState, setReputationState] = useState<ReputationState | null>(null);
+  const [profileState, setProfileState] = useState<ProfileState | null>(null);
   const [ready, setReady] = useState(false);
   const userId = user?.id ?? null;
-  const reputation = reputationState?.userId === userId ? reputationState.value : null;
+  const profile = profileState?.userId === userId ? profileState : null;
+  const displayName = profile?.name || user?.displayName || '';
+  const avatarUrl = profile?.avatarUrl || user?.avatarUrl || '';
 
   const loadSession = useCallback(() => ensureClientSession().finally(() => setReady(true)), []);
 
@@ -31,20 +35,8 @@ export function AccountButton() {
       if (value !== undefined) { setUser(value); setReady(true); }
     });
 
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-    const idleId = typeof idleWindow.requestIdleCallback === 'function'
-      ? idleWindow.requestIdleCallback(loadSession, { timeout: 1600 })
-      : null;
-    const timerId = idleId === null ? window.setTimeout(loadSession, 1200) : null;
-
-    return () => {
-      unsubscribe();
-      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
-      if (timerId !== null) window.clearTimeout(timerId);
-    };
+    void loadSession();
+    return unsubscribe;
   }, [loadSession]);
 
   useEffect(() => {
@@ -55,7 +47,7 @@ export function AccountButton() {
       .then(async (response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!active) return;
-        setReputationState({ userId, value: data?.profile?.reputation || null });
+        setProfileState({ userId, name: data?.profile?.fullName || '', avatarUrl: data?.profile?.avatarUrl || '', reputation: data?.profile?.reputation || null });
       })
       .catch(() => null);
 
@@ -74,17 +66,17 @@ export function AccountButton() {
     <Link
       className={`account-trigger${user ? ' is-member' : ''}`}
       href={user ? '/account' : '/account/login'}
-      aria-label={user ? `حساب ${user.displayName}` : 'تسجيل الدخول أو إنشاء حساب'}
+      aria-label={user ? `حساب ${displayName}` : 'تسجيل الدخول أو إنشاء حساب'}
       onPointerEnter={loadSession}
       onFocus={loadSession}
       onClick={handleClick}
     >
       <span className="account-trigger__icon" aria-hidden="true">
         {user ? (
-          <MemberAvatar name={user.displayName} src={user.avatarUrl} frame={reputation?.frameCode || 'gray'} size={38} compact header />
+          <MemberAvatar name={displayName} src={avatarUrl} frame={profile?.reputation?.frameCode || 'gray'} size={38} compact header priority />
         ) : <UserIcon />}
       </span>
-      <span>{ready && user ? user.displayName.split(' ')[0] : 'دخول'}</span>
+      <span>{ready && user ? displayName.split(' ')[0] : 'دخول'}</span>
     </Link>
   );
 }

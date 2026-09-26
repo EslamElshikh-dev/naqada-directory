@@ -90,7 +90,7 @@ export function MemberDashboard() {
       if (!response.ok || !data.profile) throw new Error(data.error || 'تعذر الحفظ.');
       setProfile(data.profile);
       setUser((current) => current ? { ...current, displayName: data.profile!.fullName } : current);
-      updateClientSessionUser({ displayName: data.profile.fullName });
+      updateClientSessionUser({ displayName: data.profile.fullName, avatarUrl: data.profile.avatarUrl });
       setFeedback('تم حفظ بيانات ملفك الشخصي.');
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'تعذر حفظ البيانات.');

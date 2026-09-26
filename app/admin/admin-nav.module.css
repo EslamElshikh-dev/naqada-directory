@@ -1,44 +1,60 @@
 .bar {
-  width: min(1180px, calc(100% - 40px));
+  width: min(1200px, calc(100% - 40px));
   min-width: 0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: 14px auto;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+  margin: 18px auto;
+  direction: rtl;
 }
 .bar a {
   min-width: 0;
-  display: inline-flex;
+  min-height: 53px;
+  display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 12px;
-  border: 1px solid rgba(72, 45, 35, .12);
-  border-radius: 999px;
-  background: #fffefb;
-  color: #5e3427;
-  font-size: 11px;
-  font-weight: 900;
-  box-shadow: 0 8px 20px rgba(67, 34, 24, .06);
+  gap: 9px;
+  padding: 8px 11px;
+  border: 1px solid #e9dfd2;
+  border-radius: 15px;
+  background: #fffdf8;
+  color: #344e42;
+  text-decoration: none;
+  box-shadow: 0 5px 18px rgba(44, 47, 33, .045);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  transition: border-color .2s, transform .2s, background .2s;
 }
-.bar a:last-child {
-  border-color: rgba(52, 122, 128, .2);
-  background: #eaf4f2;
-  color: #245f61;
-}
+.bar a:first-child { border-color: #c8dcd1; background: #ebf4ef; }
+.bar a:last-child { border-color: #e7d6a6; background: #fffbec; }
+.bar a:hover, .bar a:focus-visible { border-color: #bf9c51; transform: translateY(-2px); }
 .bar b {
-  color: #9a633d;
-  font-size: 9px;
+  width: 29px;
+  height: 29px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #f4efe2;
+  color: #926d29;
+  font-size: 17px;
 }
-.bar a:last-child b { color: #347a80; }
-@media (max-width: 520px) {
+.bar a:first-child b { background: #d9e9df; color: #285d46; }
+.bar a:last-child b { background: #f5e8c2; }
+.bar span { min-width: 0; }
+@media (max-width: 1000px) { .bar { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 620px) {
   .bar {
-    width: min(100% - 24px, 1180px);
-    justify-content: stretch;
+    display: flex;
+    width: calc(100% - 24px);
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 1px 7px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    margin: 12px auto 8px;
   }
-  .bar a {
-    flex: 1 1 0;
-    justify-content: center;
-    padding-inline: 8px;
-    font-size: 10px;
-  }
+  .bar a { flex: 0 0 auto; min-height: 48px; white-space: nowrap; scroll-snap-align: start; padding: 7px 11px; font-size: 12px; }
+  .bar b { width: 27px; height: 27px; font-size: 15px; }
 }
+@media (prefers-reduced-motion: reduce) { .bar a { transition: none; } }

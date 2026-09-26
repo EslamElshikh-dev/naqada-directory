@@ -6,12 +6,12 @@ export default function AdminLayout({ children }: Readonly<{ children: React.Rea
   return (
     <>
       <nav className={styles.bar} aria-label="مساحة إدارة دليل نقادة">
-        <Link href="/admin"><b>ADMIN</b> لوحة الإدارة</Link>
-        <Link href="/admin/growth"><b>V17</b> أولويات النمو</Link>
-        <Link href="/admin/jobs"><b>شغل</b> مراجعة الوظائف</Link>
-        <Link href="/admin/activities"><b>نشاط</b> مراجعة الأنشطة</Link>
-        <Link href="/admin#moderator-performance"><b>✦</b> أداء المشرفة</Link>
-        <Link href="/moderator"><b>تحرير</b> المحتوى والأعضاء</Link>
+        <Link href="/admin"><b aria-hidden="true">◫</b><span>لوحة الإدارة</span></Link>
+        <Link href="/admin/growth"><b aria-hidden="true">↗</b><span>أولويات النمو</span></Link>
+        <Link href="/admin/jobs"><b aria-hidden="true">▣</b><span>مراجعة الوظائف</span></Link>
+        <Link href="/admin/activities"><b aria-hidden="true">▦</b><span>مراجعة الأنشطة</span></Link>
+        <Link href="/admin#moderator-performance"><b aria-hidden="true">✦</b><span>أداء آية</span></Link>
+        <Link href="/moderator"><b aria-hidden="true">✎</b><span>المحتوى والأعضاء</span></Link>
       </nav>
       {children}
     </>

@@ -1,0 +1,50 @@
+.dashboard { min-height: 100vh; }
+.dashboard :global(.admin-hero) { padding-block: 44px 86px; }
+.dashboard :global(.admin-hero .workspace-hero__grid) { gap: 26px; }
+.dashboard :global(.admin-hero .workspace-hero__grid h1) { max-width: 730px; font-size: clamp(29px, 3.9vw, 49px); line-height: 1.3; }
+.dashboard :global(.admin-hero .workspace-hero__grid p) { font-size: 15px; line-height: 1.75; }
+.heroSignals { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 23px; }
+.heroSignals span { min-height: 42px; display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border: 1px solid rgba(248, 223, 177, .2); border-radius: 12px; background: rgba(255, 255, 255, .075); color: #eaded0; font-size: 12px; font-weight: 700; }
+.heroSignals b { color: #f6d184; font-size: 17px; }
+.freshness { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 19px; color: #daccc2; font-size: 12px; }
+.freshness button { min-height: 35px; padding: 6px 11px; border: 1px solid rgba(243, 205, 143, .42); border-radius: 10px; background: rgba(255, 255, 255, .08); color: #f4d18e; font: inherit; font-weight: 800; cursor: pointer; }
+.freshness button:hover { background: rgba(255, 255, 255, .16); }
+.dashboard :global(.admin-section-nav) { scroll-margin-top: 90px; }
+.dashboard :global(.admin-section-nav a) { font-size: 12px; line-height: 1.4; }
+.dashboard :global(.admin-section-nav b) { font-size: 10px; }
+.dashboard :global(.admin-section > header p) { font-size: 13px; }
+.dashboard :global(.admin-primary-metrics article > span) { font-size: 12px; }
+.dashboard :global(.admin-primary-metrics article > small) { font-size: 11px; line-height: 1.55; }
+.dashboard :global(.admin-trend-card > header span), .dashboard :global(.admin-ranked-card > header span) { font-size: 11px; }
+.dashboard :global(.admin-trend-card dt), .dashboard :global(.admin-trend-card > footer), .dashboard :global(.admin-device-list small) { font-size: 10px; }
+.dashboard :global(.admin-trend-card dd), .dashboard :global(.admin-rank-row strong), .dashboard :global(.admin-device-list span) { font-size: 12px; }
+.dashboard :global(.admin-rank-row small), .dashboard :global(.identified-visitors p), .dashboard :global(.identified-visitors small), .dashboard :global(.identified-visitors a) { font-size: 11px; }
+.dashboard :global(.identified-visitors strong), .dashboard :global(.admin-recommendations h3) { font-size: 14px; }
+.dashboard :global(.identified-visitors dt), .dashboard :global(.identified-visitors dd), .dashboard :global(.admin-recommendations p) { font-size: 11px; }
+.dashboard :global(.admin-recommendations article > span), .dashboard :global(.admin-empty), .dashboard :global(.admin-empty--large p) { font-size: 11px; }
+.dashboard :global(.admin-empty--large strong) { font-size: 15px; }
+.dashboard :global(.admin-section) { scroll-margin-top: 145px; }
+@media (max-width: 760px) {
+  .dashboard :global(.admin-hero) { padding-block: 28px 52px !important; }
+  .dashboard :global(.admin-hero .workspace-hero__grid) { gap: 0; }
+  .dashboard :global(.admin-hero .workspace-hero__grid h1) { font-size: clamp(28px, 7vw, 36px); }
+  .dashboard :global(.admin-hero .workspace-hero__grid p) { font-size: 14px; }
+  .heroSignals { gap: 7px; margin-top: 17px; }
+  .heroSignals span { min-height: 36px; padding: 6px 9px; font-size: 11px; }
+  .heroSignals b { font-size: 14px; }
+  .freshness { font-size: 11px; }
+  .dashboard :global(.admin-shell--premium) { margin-top: -25px !important; }
+  .dashboard :global(.admin-section-nav) { inset-block-start: 74px !important; }
+  .dashboard :global(.admin-section-nav a) { min-height: 43px; font-size: 12px; }
+  .dashboard :global(.admin-section-nav b) { font-size: 10px; }
+  .dashboard :global(.admin-section > header p) { font-size: 12px; }
+  .dashboard :global(.admin-primary-metrics article) { min-height: 135px; }
+  .dashboard :global(.admin-primary-metrics article > i) { margin-bottom: 9px; }
+  .dashboard :global(.admin-primary-metrics article > span) { font-size: 12px; }
+  .dashboard :global(.admin-primary-metrics article > small) { font-size: 11px; }
+  .dashboard :global(.admin-section) { scroll-margin-top: 128px; }
+}
+@media (max-width: 390px) {
+  .dashboard :global(.admin-section-nav a) { font-size: 11px; }
+  .heroSignals span { flex: 1 1 auto; }
+}

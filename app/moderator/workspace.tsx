@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { CuratedKind, CuratedRecord, ModeratorDashboard } from '@/lib/auth/moderator';
+import { moderatorActionLabel, moderatorKindLabel } from '@/lib/moderator-labels';
 import { MemberAvatar } from '@/components/auth/member-avatar';
 import { categories, localities } from '@/lib/data';
 import styles from './workspace.module.css';
@@ -29,19 +30,9 @@ const kindLabels: Record<CuratedKind, string> = { business: 'نشاط', news: '�
 function number(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
 function date(value: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(value)); }
 function chartHeight(value: number, maximum: number) { return `${Math.max(value ? 9 : 3, Math.round(value / Math.max(1, maximum) * 100))}%`; }
-function actionLabel(value: string) {
-  const labels: Record<string, string> = {
-    member_suspend: 'تقييد عضو', member_restore: 'إعادة تنشيط عضو', member_remove: 'إزالة عضو',
-    submission_published: 'نشر نشاط أو تقييم', submission_approved: 'اعتماد مساهمة',
-    submission_rejected: 'رفض مساهمة', submission_hidden: 'إخفاء تقييم',
-    submission_reviewing: 'بدء مراجعة', submission_needs_info: 'طلب استكمال بيانات',
-    content_published: 'نشر محتوى', content_hidden: 'إخفاء محتوى', content_draft: 'حفظ مسودة',
-  };
-  return labels[value] || value.replaceAll('_', ' ');
-}
 
-export function ModeratorWorkspace({ initialDashboard, initialContent, name }: {
-  initialDashboard: ModeratorDashboard; initialContent: CuratedRecord[]; name: string;
+export function ModeratorWorkspace({ initialDashboard, initialContent, name, avatarUrl }: {
+  initialDashboard: ModeratorDashboard; initialContent: CuratedRecord[]; name: string; avatarUrl: string | null;
 }) {
   const [dashboard, setDashboard] = useState(initialDashboard);
   const [content, setContent] = useState(initialContent);
@@ -73,8 +64,17 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name }: {
 
   useEffect(() => {
     const timer = window.setInterval(() => { if (!document.hidden) void refresh(); }, 60_000);
-    return () => window.clearInterval(timer);
+    const onVisibility = () => { if (!document.hidden) void refresh(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', onVisibility); };
   }, [refresh]);
+
+  useEffect(() => {
+    const selected = new URLSearchParams(window.location.search).get('tab');
+    if (!tabs.some((item) => item.id === selected)) return;
+    const timer = window.setTimeout(() => setTab(selected as Tab), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!['business', 'news', 'article'].includes(tab)) return;
@@ -134,12 +134,12 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name }: {
   return (
     <>
       <section className={styles.hero}>
-        <div><span className={styles.eyebrow}>✦ · المشرفة الذهبية</span><h1>أهلًا يا {name}، <em>دي مساحة شغلك.</em></h1><p>من هنا تراجعي ما ينتظر النشر، تتابعي الناس والمحتوى، وتشوفي أداء الدليل بأرقام محدثة.</p><div className={styles.heroLinks}><a href="#workspace">ابدئي المراجعة ↓</a><Link href="/directory">شوّفي الدليل ↗</Link></div></div>
-        <aside className={styles.heroIdentity}><MemberAvatar name={name} frame="gold" size={78} /><div><span>صفة الحساب</span><strong>مشرفة ذهبية</strong><small>كل إجراء باسمك وتوقيته</small></div><i>✦</i></aside>
+        <div><span className={styles.eyebrow}>✦ · مساحة آية رفاعي</span><h1>أهلًا يا {name}، <em>كل الدليل قدامك.</em></h1><p>راجعي الطلبات، حرري المحتوى، وتابعي أثر شغلك على الدليل من مكان واحد.</p><div className={styles.heroLinks}><button type="button" onClick={() => { setTab('business'); document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' }); }}>ابدئي المراجعة ←</button><Link href="/directory">عرض الدليل ↗</Link></div></div>
+        <aside className={styles.heroIdentity}><MemberAvatar name={dashboard.viewer?.name || name} src={dashboard.viewer?.avatarUrl || avatarUrl} frame="gold" size={84} priority /><div><span>حساب موثّق</span><strong>مشرفة ذهبية</strong><small>{number(dashboard.metrics.myActions30d)} إجراء مسجّل خلال ٣٠ يومًا</small></div><i>✦</i></aside>
       </section>
 
       <section className={styles.workspace} id="workspace">
-        <header className={styles.workspaceHead}><div><span>مركز التشغيل</span><h2>{tabs.find((item) => item.id === tab)?.label}</h2><p>آخر تحديث {lastUpdated} بتوقيت مصر</p></div><button type="button" onClick={() => void refresh(tab === 'members' ? search : '')} disabled={refreshing}>{refreshing ? 'جارٍ التحديث…' : '↻ تحديث البيانات'}</button></header>
+        <header className={styles.workspaceHead}><div><span>مركز التشغيل · أرقام حية من الدليل</span><h2>{tabs.find((item) => item.id === tab)?.label}</h2><p>آخر تحديث {lastUpdated} بتوقيت مصر · تحديث تلقائي كل دقيقة</p></div><button type="button" onClick={() => void refresh(tab === 'members' ? search : '')} disabled={refreshing}>{refreshing ? 'جارٍ التحديث…' : '↻ تحديث البيانات'}</button></header>
         <nav className={styles.tabbar} aria-label="أقسام مساحة الإشراف">{tabs.map((item) => <button key={item.id} className={tab === item.id ? styles.activeTab : ''} type="button" onClick={() => { setTab(item.id); setSearch(''); setSourceItems([]); setEditor(null); setError(''); }} aria-current={tab === item.id ? 'page' : undefined}><span aria-hidden="true">{item.icon}</span>{item.label}{item.id === 'business' && dashboard.metrics.pendingBusinesses ? <b>{number(dashboard.metrics.pendingBusinesses)}</b> : null}</button>)}</nav>
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         {message ? <p className={styles.success} role="status">{message}</p> : null}
@@ -181,7 +181,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name }: {
           <div className={styles.memberList}>{dashboard.members.length ? dashboard.members.map((member) => { const status = member.status === 'suspended' && member.until && new Date(member.until) <= new Date() ? 'active' : member.status; return <article key={member.id}><div className={styles.memberIcon}>{member.name.charAt(0)}</div><div><strong>{member.name}</strong><small dir="ltr">{member.email}</small><span>انضم {date(member.createdAt)} · {member.role || 'عضو'} · {statusLabels[status] || status}{status === 'suspended' && member.until ? ` حتى ${date(member.until)}` : ''}</span></div><div className={styles.rowActions}>{status !== 'active' ? <button type="button" onClick={() => setMemberAction({ id: member.id, name: member.name, action: 'restore' })}>إعادة التنشيط</button> : <><button type="button" onClick={() => setMemberAction({ id: member.id, name: member.name, action: 'suspend' })}>تقييد مؤقت</button><button type="button" className={styles.danger} onClick={() => setMemberAction({ id: member.id, name: member.name, action: 'remove' })}>إزالة</button></>}</div></article>; }) : <p className={styles.empty}>لم يظهر عضو مطابق. جرّب بريدًا آخر.</p>}</div>
         </div> : null}
 
-        {tab === 'activity' ? <div className={styles.sectionStack}><div className={styles.sectionTitle}><div><span>شفافية الإجراءات</span><h3>أعمالك المسجلة</h3><p>كل تعديل موثق باسم الحساب ووقت التنفيذ. يظهر ملخص عملك أيضًا في لوحة مالك الدليل.</p></div></div><div className={styles.timeline}>{dashboard.activity.length ? dashboard.activity.map((item, index) => <article key={`${item.at}-${index}`}><i>✦</i><div><strong>{actionLabel(item.action)}</strong><small>{item.kind} · {item.target}</small></div><time>{date(item.at)}</time></article>) : <p className={styles.empty}>لسه ما اتسجلش إجراء. أول مراجعة هتظهر هنا.</p>}</div></div> : null}
+        {tab === 'activity' ? <div className={styles.sectionStack}><div className={styles.sectionTitle}><div><span>شفافية الإجراءات</span><h3>أعمالك المسجلة</h3><p>كل تعديل موثق باسم الحساب ووقت التنفيذ. يظهر ملخص عملك أيضًا في لوحة مالك الدليل.</p></div></div><div className={styles.timeline}>{dashboard.activity.length ? dashboard.activity.map((item, index) => <article key={`${item.at}-${index}`}><i>✦</i><div><strong>{moderatorActionLabel(item.action)}</strong><small>{moderatorKindLabel(item.kind)} · {item.target}</small></div><time>{date(item.at)}</time></article>) : <p className={styles.empty}>لسه ما اتسجلش إجراء. أول مراجعة هتظهر هنا.</p>}</div></div> : null}
       </section>
 
       {editor ? <div className={styles.backdrop} onMouseDown={(event) => { if (event.target === event.currentTarget) setEditor(null); }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-label={`تحرير ${kindLabels[editor.kind]}`}><header><div><small>{editor.origin === 'static' ? 'تعديل سجل موجود' : 'محتوى جديد'}</small><h2>تحرير {kindLabels[editor.kind]}</h2></div><button type="button" onClick={() => setEditor(null)} aria-label="إغلاق">×</button></header><form onSubmit={(event: FormEvent) => { event.preventDefault(); void act({ type: 'content', ...editor, status: 'published' }); }}>

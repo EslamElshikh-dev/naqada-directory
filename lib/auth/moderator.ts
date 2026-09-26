@@ -51,6 +51,7 @@ export async function getEditorContent(token: string): Promise<CuratedRecord[]> 
 
 export type ModeratorDashboard = {
   generatedAt: string;
+  viewer: { name: string; avatarUrl: string | null };
   metrics: {
     visitors30d: number; newVisitors30d: number; pageViews30d: number; visitorsToday: number;
     members: number; pendingBusinesses: number; pendingContributions: number;
@@ -83,7 +84,8 @@ export async function getModeratorDashboard(token: string, search = '') {
 }
 
 export type ModeratorOwnerReport = {
-  moderator: { id: string; name: string; email: string; active: boolean; since: string; status: string } | null;
+  generatedAt: string;
+  moderator: { id: string; name: string; avatarUrl: string | null; email: string; active: boolean; since: string; status: string } | null;
   actions30d: number;
   actionsByType: Array<{ action: string; count: number }>;
   recent: Array<{ action: string; kind: string; target: string; at: string; actor: string }>;
@@ -91,6 +93,10 @@ export type ModeratorOwnerReport = {
 
 export async function getModeratorOwnerReport(token: string) {
   return rpc<ModeratorOwnerReport>('get_naqada_moderator_owner_report', token);
+}
+
+export async function getGoldModeratorNotifications(token: string) {
+  return rpc<{ generatedAt: string; items: import('@/lib/notifications').DirectoryNotice[] }>('get_naqada_gold_notifications', token);
 }
 
 export async function callModeratorAction(token: string, name: string, body: Record<string, unknown>) {

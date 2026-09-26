@@ -25,7 +25,7 @@ export default async function ModeratorPage() {
           <Link href="/" className={styles.brand}><span>ن</span><b>دليل نقادة</b><small>مساحة الإشراف</small></Link>
           <div className={styles.toplinks}><Link href="/account">حسابي</Link>{isAdmin ? <Link href="/admin">لوحة المالك</Link> : null}<Link href="/">عرض الموقع ↗</Link></div>
         </header>
-        <ModeratorWorkspace initialDashboard={dashboard} initialContent={content} name={dashboard.members.find((member) => member.id === session.user.id)?.name || session.user.displayName} />
+        <ModeratorWorkspace initialDashboard={dashboard} initialContent={content} name={dashboard.viewer?.name || session.user.displayName} avatarUrl={dashboard.viewer?.avatarUrl || session.user.avatarUrl} />
       </div>
     </main>
   );

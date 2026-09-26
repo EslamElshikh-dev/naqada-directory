@@ -4,6 +4,8 @@
 .report header p { margin: 0; color: #5d6c60; font-size: 14px; line-height: 1.7; }.report header a { color: #fff; background: #2a5844; text-decoration: none; padding: 10px 14px; border-radius: 11px; font-size: 14px; font-weight: 800; }
 .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin: 19px 0; }
 .summary article { display: grid; gap: 5px; background: #fff; border: 1px solid #e8ddc4; border-radius: 14px; padding: 18px; }
+.moderatorIdentity { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.moderatorIdentity > div { display: grid; min-width: 0; gap: 2px; }
 .summary span { color: #716e59; font-size: 13px; font-weight: 700; }.summary strong { color: #254d3e; font-size: 21px; line-height: 1.5; overflow-wrap: anywhere; }.summary small { color: #967b3b; font-size: 13px; }
 .details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.details > div { border: 1px solid #e8dec7; border-radius: 14px; background: #fff; padding: 16px; }
 .details h3 { font-size: 17px; margin: 0 0 13px; color: #244b3e; }.details ul { list-style: none; padding: 0; margin: 0; }

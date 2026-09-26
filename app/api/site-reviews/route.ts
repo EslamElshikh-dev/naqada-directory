@@ -12,6 +12,7 @@ type ReviewRow = {
   body: string;
   author_name: string;
   author_bio: string | null;
+  avatar_url: string | null;
   created_at: string;
   updated_at: string;
   is_own: boolean;
@@ -28,6 +29,7 @@ function mapReview(row: ReviewRow) {
     body: row.body,
     authorName: row.author_name,
     authorBio: row.author_bio || '',
+    avatarUrl: row.avatar_url || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     own: Boolean(row.is_own),
@@ -38,7 +40,7 @@ function mapReview(row: ReviewRow) {
 
 async function readRows(session: ResolvedSession | null) {
   const token = session?.accessToken;
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_site_reviews`, {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_site_reviews_with_avatars`, {
     method: 'POST',
     headers: restHeaders(token, true),
     body: '{}',
