@@ -9,7 +9,7 @@ export const siteConfig = {
   locale: 'ar_EG',
   description: 'دليل نقادة هو الدليل المحلي للخدمات والأنشطة والقرى والنجوع في مركز نقادة بمحافظة قنا، ويضم أطباء وصيدليات ومدارس ومطاعم ومحلات وروابط وصول مباشرة.',
   socialImage: 'https://naqada-directory.vercel.app/images/social/naqada-share-v2.jpg',
-  logoImage: 'https://naqada-directory.vercel.app/pwa-icon-192',
+  logoImage: 'https://naqada-directory.vercel.app/app-icons/icon-192.png',
 };
 
 const defaultIndexRobots: Metadata['robots'] = {

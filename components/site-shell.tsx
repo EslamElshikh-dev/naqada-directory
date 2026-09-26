@@ -27,6 +27,7 @@ const footerUtilities = [
   { href: '/knowledge/references', label: 'مراجع الموسوعة' },
   { href: '/developer', label: 'عن المطوّر' },
   { href: '/account', label: 'حسابي' },
+  { href: '/install', label: 'حمّل تطبيق الدليل' },
 ];
 
 export function BrandMark({ compact = false, priority = false }: { compact?: boolean; priority?: boolean }) {

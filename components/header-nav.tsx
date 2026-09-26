@@ -50,7 +50,7 @@ export function HeaderNav() {
           <nav aria-label="كل أقسام الدليل">
             {items.map((item) => <Link key={item.href} href={item.href} prefetch={false} aria-current={isNavigationActive(pathname, item.href) ? 'page' : undefined} onClick={() => { if (menu.current) menu.current.open = false; }}><span className={styles.menuIcon}><NavigationIcon name={item.icon} /></span><div><strong>{item.label}</strong><small>{item.description}</small></div><b aria-hidden="true">←</b></Link>)}
           </nav>
-          <div className={styles.utilities}><Link href="/emergency" prefetch={false}>أرقام مهمة</Link><Link href="/contribute" prefetch={false}>أضف معلومة</Link><Link href="/about" prefetch={false}>عن الدليل</Link></div>
+          <div className={styles.utilities}><Link href="/emergency" prefetch={false}>أرقام مهمة</Link><Link href="/contribute" prefetch={false}>أضف معلومة</Link><Link href="/install" prefetch={false}>حمّل التطبيق</Link><Link href="/about" prefetch={false}>عن الدليل</Link></div>
         </div>
       </details>
     </>

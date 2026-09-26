@@ -6,6 +6,7 @@ import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';
 import { SanadAssistant } from '@/components/sanad-assistant';
 import { UpdatesTicker } from '@/components/updates-ticker';
+import { PwaSetup } from '@/components/pwa-setup';
 import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
@@ -43,12 +44,13 @@ export const metadata: Metadata = {
   title: { default: siteConfig.name, template: '%s | دليل نقادة' },
   description: siteConfig.description,
   applicationName: siteConfig.shortName,
+  appleWebApp: { capable: true, title: 'دليل نقادة', statusBarStyle: 'default' },
   verification: {
     google: 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY',
   },
   icons: {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/pwa-icon-192', sizes: '192x192', type: 'image/png' }],
+    apple: [{ url: '/app-icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   alternates: { canonical: '/' },
   robots: {
@@ -122,6 +124,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteHeader />
         <UpdatesTicker />
         <VisitorTracker />
+        <PwaSetup />
         {children}
         <Footer />
         <MobileNav />

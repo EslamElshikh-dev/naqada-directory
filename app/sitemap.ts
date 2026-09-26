@@ -46,6 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/coverage', lastModified: latestBusinessDate },
     { path: '/emergency' },
     { path: '/about' },
+    { path: '/install' },
   ];
   const indexableLocalities = localities.filter((item) => item.businessCount > 0 || Boolean(getVillageArticle(item.name)));
   const indexableActivities = activityLandings.filter((activity) => getBusinessesForActivity(activity).length >= 2);
