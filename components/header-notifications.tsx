@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { DirectoryNotice } from '@/lib/notifications';
+import { InstallBanner } from './pwa-setup';
 import styles from './header-notifications.module.css';
 
 const WELCOME_ID = 'welcome-salawat-v1';
@@ -107,6 +108,8 @@ export function HeaderNotifications() {
         <span aria-hidden="true">✦</span><div><small>نورت دليل نقادة</small><strong>{SALAWAT}</strong></div>
         <button type="button" aria-label="إغلاق رسالة الترحيب" onClick={() => setWelcomeVisible(false)}>×</button>
       </div> : null}
+
+      {!open ? <InstallBanner welcomeVisible={welcomeVisible || !loaded} /> : null}
 
       {open ? <section id="header-notifications-panel" className={styles.panel} role="dialog" aria-labelledby="header-notifications-title">
         <header className={styles.head}>

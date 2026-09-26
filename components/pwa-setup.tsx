@@ -1,7 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import styles from './pwa-install-banner.module.css';
 
 type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -10,11 +13,37 @@ type InstallPromptEvent = Event & {
 
 let pendingInstallPrompt: InstallPromptEvent | null = null;
 let wasInstalled = false;
+let bannerDismissedThisSession = false;
 const promptChanged = 'naqada:install-prompt-changed';
+const bannerDismissedKey = 'naqada_pwa_install_dismissed_until';
+const installedKey = 'naqada_pwa_installed';
 
 function isStandalone() {
   return window.matchMedia('(display-mode: standalone)').matches ||
     Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+}
+
+function isAppleMobile() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function dismissBanner(days: number) {
+  bannerDismissedThisSession = true;
+  try { localStorage.setItem(bannerDismissedKey, String(Date.now() + days * 24 * 60 * 60 * 1000)); } catch { /* Session dismissal still works. */ }
+}
+
+async function requestInstall() {
+  const prompt = pendingInstallPrompt;
+  if (!prompt) return;
+  pendingInstallPrompt = null;
+  window.dispatchEvent(new Event(promptChanged));
+  try {
+    await prompt.prompt();
+    await prompt.userChoice;
+  } catch {
+    // The manual steps remain available if the browser does not show its prompt.
+  }
 }
 
 export function PwaSetup() {
@@ -28,6 +57,7 @@ export function PwaSetup() {
     function onInstalled() {
       pendingInstallPrompt = null;
       wasInstalled = true;
+      try { localStorage.setItem(installedKey, '1'); } catch { /* The current session still knows. */ }
       window.dispatchEvent(new Event(promptChanged));
     }
 
@@ -41,6 +71,7 @@ export function PwaSetup() {
 
     window.addEventListener('beforeinstallprompt', onInstallPrompt);
     window.addEventListener('appinstalled', onInstalled);
+    if (isStandalone()) onInstalled();
     if (document.readyState === 'complete') registerWorker();
     else window.addEventListener('load', registerWorker, { once: true });
 
@@ -61,8 +92,7 @@ export function InstallAction() {
     function update() {
       if (isStandalone() || wasInstalled) setPlatform('installed');
       else if (pendingInstallPrompt) setPlatform('prompt');
-      else if (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) setPlatform('ios');
+      else if (isAppleMobile()) setPlatform('ios');
       else setPlatform('manual');
     }
 
@@ -76,21 +106,72 @@ export function InstallAction() {
   }, []);
 
   async function install() {
-    const prompt = pendingInstallPrompt;
-    if (!prompt) return;
-    pendingInstallPrompt = null;
-    window.dispatchEvent(new Event(promptChanged));
-    try {
-      await prompt.prompt();
-      await prompt.userChoice;
-    } catch {
-      // The browser may dismiss the prompt; the manual steps remain available.
-    }
+    await requestInstall();
   }
 
   if (platform === 'installed') return <Link href="/">افتح دليل نقادة <span aria-hidden="true">←</span></Link>;
   if (platform === 'prompt') return <button type="button" onClick={install}>ثبّت التطبيق الآن <span aria-hidden="true">←</span></button>;
   return <a href={platform === 'ios' ? '#iphone' : '#android'}>شوف طريقة التثبيت <span aria-hidden="true">↓</span></a>;
+}
+
+type BannerMode = 'prompt' | 'ios' | 'android' | null;
+
+export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
+  const pathname = usePathname();
+  const [mode, setMode] = useState<BannerMode>(null);
+
+  useEffect(() => {
+    function update() {
+      let suppressed = bannerDismissedThisSession || wasInstalled || isStandalone();
+      try {
+        suppressed ||= localStorage.getItem(installedKey) === '1' ||
+          Number(localStorage.getItem(bannerDismissedKey)) > Date.now();
+      } catch { /* Keep the banner usable when storage is blocked. */ }
+
+      if (suppressed || pathname.replace(/\/+$/, '') === '/install') setMode(null);
+      else if (pendingInstallPrompt && (isAppleMobile() || /Android/.test(navigator.userAgent))) setMode('prompt');
+      else if (isAppleMobile()) setMode('ios');
+      else if (/Android/.test(navigator.userAgent)) setMode('android');
+      else setMode(null);
+    }
+
+    update();
+    window.addEventListener(promptChanged, update);
+    window.addEventListener('appinstalled', update);
+    return () => {
+      window.removeEventListener(promptChanged, update);
+      window.removeEventListener('appinstalled', update);
+    };
+  }, [pathname]);
+
+  function hide(days: number) {
+    dismissBanner(days);
+    setMode(null);
+  }
+
+  function install() {
+    hide(7);
+    void requestInstall();
+  }
+
+  if (!mode) return null;
+
+  return (
+    <aside className={styles.banner} data-welcome={welcomeVisible} aria-label="تثبيت تطبيق دليل نقادة">
+      <Image className={styles.icon} src="/app-icons/icon-192.png" alt="" width={44} height={44} />
+      <div className={styles.copy}>
+        <strong>خلّي دليل نقادة على موبايلك</strong>
+        <span>{mode === 'ios' ? 'من Safari: مشاركة ← إضافة إلى الشاشة الرئيسية.' : mode === 'android' ? 'من Chrome: القائمة ⋮ ثم تثبيت التطبيق.' : 'ثبّته وافتحه من الشاشة الرئيسية بضغطة واحدة.'}</span>
+      </div>
+      <button type="button" className={styles.dismiss} aria-label="إغلاق تنبيه تثبيت التطبيق" onClick={() => hide(7)}>×</button>
+      <div className={styles.actions}>
+        {mode === 'prompt' ?
+          <button type="button" className={styles.install} onClick={install}>ثبّت التطبيق</button> :
+          <Link className={styles.install} href={mode === 'ios' ? '/install#iphone' : '/install#android'} onClick={() => hide(1)}>طريقة التثبيت</Link>}
+        <span>مجاني ومن المتصفح</span>
+      </div>
+    </aside>
+  );
 }
 
 export function CopyInstallLink({ url }: { url: string }) {
