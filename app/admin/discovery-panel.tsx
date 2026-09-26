@@ -63,17 +63,17 @@ export function DiscoveryPanel({ insights, available, pathLabel }: {
             </section>
 
             <section className={styles.block} aria-labelledby="missing-heading">
-              <div className={styles.blockHead}><div><span>ما طلبه أهل البلد</span><h3 id="missing-heading">كلمات اتبحث عنها ومظهرتش</h3></div><Link href="/admin/growth">رتّب فرص الإضافة ←</Link></div>
+              <div className={styles.blockHead}><div><span>ما طلبه أهل البلد</span><h3 id="missing-heading">عبارات لم تجد نتيجة حتى الآن</h3></div><Link href="/admin/growth">رتّب فرص الإضافة ←</Link></div>
               {insights.missedSearches.length ? <ol className={styles.missed}>{insights.missedSearches.map((item, index) => (
                 <li key={`${item.query}-${item.category}-${item.locality}`}>
                   <span className={styles.index}>{count(index + 1)}</span>
                   <div><strong dir="auto">{item.query}</strong><small>{[item.locality, item.category && item.category !== 'all' ? item.category : ''].filter(Boolean).join(' · ') || 'بحث في الدليل'} · آخر مرة {timestamp(item.lastSeenAt)}</small></div>
                   <b>{count(item.count)} مرات</b>
                 </li>
-              ))}</ol> : <p className={styles.empty}>لا توجد عبارات بحث بلا نتائج مسجلة خلال آخر ٣٠ يومًا.</p>}
+              ))}</ol> : <p className={styles.empty}>لا توجد فجوات بحث مفتوحة من العبارات المسجلة خلال آخر ٣٠ يومًا.</p>}
             </section>
           </div>
-          <p className={styles.note}>العداد يعتمد على معرّف محفوظ للمتصفح، لذلك تغيير الجهاز أو حذف بيانات التصفح قد يُحسب زيارة جديدة. البيانات السابقة على تحديث القياس في ٢٥ سبتمبر ٢٠٢٦ قد تضم زيارات فحص آلي؛ بدأ استبعاد المتصفحات الآلية المعروفة من التسجيل الجديد، ولا يمكن تمييز كل زيارة تاريخية بيقين. تظهر هنا عمليات البحث المكتملة، مع استبعاد بيانات الاتصال والعبارات غير المقروءة من قائمة الكلمات المقترحة، بينما يبقى إجمالي الأحداث المسجلة كاملًا.</p>
+          <p className={styles.note}>العداد يعتمد على معرّف محفوظ للمتصفح، لذلك تغيير الجهاز أو حذف بيانات التصفح قد يُحسب زيارة جديدة. البيانات السابقة على تحديث القياس في ٢٥ سبتمبر ٢٠٢٦ قد تضم زيارات فحص آلي؛ بدأ استبعاد المتصفحات الآلية المعروفة من التسجيل الجديد، ولا يمكن تمييز كل زيارة تاريخية بيقين. يبقى إجمالي البحث دون نتائج تاريخيًا، لكن قائمة الفجوات تستبعد العبارة بمجرد ظهور نشاط مطابق حاليًا؛ كما تستبعد البيانات غير المقروءة.</p>
         </>
       )}
     </section>

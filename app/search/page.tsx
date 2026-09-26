@@ -5,6 +5,7 @@ import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
+import { normalizeArabic } from '@/lib/site';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
@@ -139,6 +140,13 @@ export default async function SearchPage({ searchParams }: Props) {
   const recoverySuggestions = canSearch && !scopedResults.length
     ? recoverSiteSearch(query, activeOption.kinds, 4)
     : [];
+  const normalizedQuery = normalizeArabic(query);
+  const relatedHomeware = canSearch && !scopedResults.length
+    && (activeScope === 'all' || activeScope === 'directory')
+    && normalizedQuery.includes('جمله')
+    && /ادوات|منزليه/.test(normalizedQuery)
+    ? searchSite('أدوات منزلية', 8, ['listing'], catalog.businesses)
+    : [];
 
   const hasMore = scopedResults.length > results.length;
 
@@ -254,6 +262,8 @@ export default async function SearchPage({ searchParams }: Props) {
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
             <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أكثر احتمالًا مبنية على بيانات الدليل نفسها؛ اختر الاقتراح الذي يعبّر عن قصدك.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل إلى القسم المناسب يدويًا.'}</p></div>
 
+            {relatedHomeware.length ? <section className={styles.relatedPanel} aria-label="متاجر أدوات منزلية قريبة من العبارة"><h2>متاجر أدوات منزلية قد تفيدك</h2><p>هذه متاجر مرتبطة بالأدوات المنزلية. لم نتحقق من أنها تبيع بالجملة؛ اتصل بالمحل أولًا للتأكد من الكميات والأسعار.</p><div className={styles.resultsGrid}>{relatedHomeware.map((item) => <ResultCard item={item} key={item.href} />)}</div></section> : null}
+
             {recoverySuggestions.length ? (
               <section className={styles.recoveryPanel} aria-label="اقتراحات لاستعادة البحث">
                 <header><span>اقتراحات آمنة</span><strong>هل تقصد أحد هذه الاقتراحات؟</strong><p>لن نطبّق أي اقتراح تلقائيًا؛ افتحه فقط إذا كان هو المقصود.</p></header>
@@ -273,6 +283,7 @@ export default async function SearchPage({ searchParams }: Props) {
               <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link>
               <Link href="/directory">فتح دليل الأنشطة</Link>
               <Link href="/knowledge">فتح موسوعة نقادة</Link>
+              <Link href={`/contribute?type=missing&name=${encodeURIComponent(query)}`} prefetch={false}>تعرف النشاط؟ ابعت تفاصيله</Link>
             </div>
           </div>
         )}

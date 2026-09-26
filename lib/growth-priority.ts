@@ -1,4 +1,6 @@
 import { businesses, canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
+import { searchSite } from '@/lib/site-search';
+import type { Business } from '@/lib/types';
 
 export type MissedSearch = { query: string; count: number };
 
@@ -134,10 +136,10 @@ function band(score: number): GrowthPriority['priority'] {
 }
 
 function contributionHref(name: string, category?: string | null, locality?: string | null) {
-  const params = new URLSearchParams({ type: 'missing', name });
+  const params = new URLSearchParams({ q: name });
   if (category) params.set('category', category);
   if (locality) params.set('locality', locality);
-  return `/contribute?${params.toString()}`;
+  return `/admin/growth/collect?${params.toString()}`;
 }
 
 function buildSearchPriority(item: MissedSearch): GrowthPriority {
@@ -218,9 +220,15 @@ function buildCoveragePriorities(): GrowthPriority[] {
     }));
 }
 
-export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18) {
+export function isSearchGapOpen(query: string, currentBusinesses?: Business[]) {
+  // Historic zero-result events remain in analytics, even after a listing is published.
+  return searchSite(query, 1, ['listing'], currentBusinesses).length === 0;
+}
+
+export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18, currentBusinesses?: Business[]) {
   const searchItems = missedSearches
     .filter((item) => item.query.trim() && item.count > 0)
+    .filter((item) => isSearchGapOpen(item.query, currentBusinesses))
     .map(buildSearchPriority);
 
   const searchPairs = new Set(searchItems
@@ -237,6 +245,7 @@ export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18
     summary: {
       missedSearchTerms: searchItems.length,
       missedSearchVolume: searchItems.reduce((sum, item) => sum + item.demandCount, 0),
+      resolvedTerms: missedSearches.filter((item) => item.query.trim() && item.count > 0 && !isSearchGapOpen(item.query, currentBusinesses)).length,
       demandBacked: items.filter((item) => item.source === 'search').length,
       coverageOnly: items.filter((item) => item.source === 'coverage').length,
       weakLocalities: localityStats.filter((item) => item.count < 3).length,

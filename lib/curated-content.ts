@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { businesses, canonicalLocalityName, parentLocalityName } from '@/lib/data';
 import { getPublicCurated, type CuratedRecord } from '@/lib/auth/moderator';
 import { getPublishedOwnerListings, ownerListingDirectoryItem } from '@/lib/owner-listings';
-import { normalizeArabic } from '@/lib/site';
+import { normalizeArabic, normalizeRouteSlug } from '@/lib/site';
 import type { Business, DirectoryItem } from '@/lib/types';
 
 function text(payload: Record<string, string>, key: string, fallback: string | null = null) {
@@ -80,5 +80,6 @@ export const getPublicBusinessCatalog = cache(async () => {
 
 export const getEffectiveBusiness = cache(async (slug: string) => {
   const catalog = await getPublicBusinessCatalog();
-  return catalog.businesses.find((item) => item.slug === slug) || null;
+  const normalized = normalizeRouteSlug(slug);
+  return catalog.businesses.find((item) => item.slug.toLowerCase() === normalized) || null;
 });

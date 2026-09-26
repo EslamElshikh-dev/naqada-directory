@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { emptyVisitorAnalytics, getDiscoveryInsights, getVisitorAnalytics, isDirectoryAdmin } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
 import { buildGrowthPriorities } from '@/lib/growth-priority';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import styles from './growth.module.css';
 
 export const metadata: Metadata = {
@@ -21,11 +22,12 @@ export default async function GrowthPriorityPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
 
-  const [discovery, analytics] = await Promise.all([
+  const [discovery, analytics, catalog] = await Promise.all([
     getDiscoveryInsights(session.accessToken).catch(() => null),
     getVisitorAnalytics(session.accessToken).catch(() => emptyVisitorAnalytics),
+    getPublicBusinessCatalog().catch(() => null),
   ]);
-  const { items, summary } = buildGrowthPriorities(discovery?.missedSearches || analytics.missedSearches.filter((item) => !item.query.includes('\uFFFD')));
+  const { items, summary } = buildGrowthPriorities(discovery?.missedSearches || analytics.missedSearches.filter((item) => !item.query.includes('\uFFFD')), 18, catalog?.businesses);
 
   return (
     <main id="main-content" className="admin-page admin-page--premium">
@@ -40,9 +42,9 @@ export default async function GrowthPriorityPage() {
         </section>
 
         <section className={styles.metrics} aria-label="ملخص أولويات النمو">
-          <article><span>حجم البحث بلا نتائج</span><strong>{format(summary.missedSearchVolume)}</strong></article>
-          <article><span>عبارات طلب حقيقية</span><strong>{format(summary.missedSearchTerms)}</strong></article>
-          <article><span>فرص مدعومة بالطلب</span><strong>{format(summary.demandBacked)}</strong></article>
+          <article><span>عمليات بحث لفجوات مفتوحة</span><strong>{format(summary.missedSearchVolume)}</strong></article>
+          <article><span>عبارات ما زالت بلا نتيجة</span><strong>{format(summary.missedSearchTerms)}</strong></article>
+          <article><span>عبارات تمّت تغطيتها</span><strong>{format(summary.resolvedTerms)}</strong></article>
           <article><span>مواضع شديدة الضعف</span><strong>{format(summary.weakLocalities)}</strong></article>
         </section>
 
@@ -50,7 +52,7 @@ export default async function GrowthPriorityPage() {
           <div className={styles.toolbar}>
             <div>
               <h2>طابور العمل المقترح</h2>
-              <p>كل نقطة ترتفع بالطلب المتكرر، ونقص الفئة داخل المكان، ثم ضعف إجمالي التغطية المحلية.</p>
+              <p>عدد الطلبات من وقت تسجيل البحث. العبارات التي أصبحت لها نتيجة منشورة تُستبعد من طابور الجمع، وتظل محفوظة في القياس التاريخي.</p>
             </div>
             <nav aria-label="روابط تشغيل أولويات النمو">
               <Link href="/admin">لوحة الإدارة</Link>
@@ -91,7 +93,7 @@ export default async function GrowthPriorityPage() {
                   </ul>
 
                   <div className={styles.actions}>
-                    <Link href={item.actionHref}>جهّز طلب جمع ←</Link>
+                    <Link href={item.actionHref} prefetch={false}>جهّز طلب جمع ←</Link>
                     {item.localityHref ? <Link href={item.localityHref}>افتح الموضع</Link> : null}
                   </div>
                 </article>

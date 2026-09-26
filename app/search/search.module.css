@@ -171,6 +171,17 @@
   font-weight: 800;
 }
 
+.relatedPanel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(43,114,119,.14);
+  border-radius: 17px;
+  background: #f5faf7;
+}
+.relatedPanel h2 { margin: 0; color: #21493c; font-size: 1.08rem; }
+.relatedPanel p { margin: 5px 0 14px; }
+
 .recoveryPanel {
   grid-column: 1 / -1;
   padding: 18px;
