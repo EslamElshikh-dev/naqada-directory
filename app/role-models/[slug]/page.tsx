@@ -18,7 +18,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!person) return { robots: { index: false, follow: true } };
   const url = absoluteUrl('/role-models/' + person.slug);
   const socialPhoto = person.photos[person.socialPhotoIndex ?? 0];
-  const socialImage = socialPhoto ? new URL(socialPhoto.src, siteConfig.url).toString() : siteConfig.socialImage;
+  const isMahmoudMemorial = person.slug === 'mahmoud-ahmed-abdel-sabour';
+  const socialImage = isMahmoudMemorial
+    ? new URL('/images/social/mahmoud-danfiq-share-2026.jpg', siteConfig.url).toString()
+    : socialPhoto ? new URL(socialPhoto.src, siteConfig.url).toString() : siteConfig.socialImage;
+  const socialImageDetails = isMahmoudMemorial
+    ? { width: 1200, height: 630, alt: 'صور الشهيد محمود أحمد عبد الصبور سعد الثلاث مع عبارة شهيد دنفيق _ فخر نقادة' }
+    : { ...(socialPhoto ? { width: socialPhoto.width, height: socialPhoto.height } : {}), alt: socialPhoto?.alt || 'دليل نقادة' };
   return {
     title: person.name + ' | نماذج مشرفة في نقادة',
     description: person.description,
@@ -34,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: siteConfig.shortName,
       publishedTime: person.publishedAt,
       modifiedTime: person.modifiedAt,
-      images: [{ url: socialImage, ...(socialPhoto ? { width: socialPhoto.width, height: socialPhoto.height } : {}), alt: socialPhoto?.alt || 'دليل نقادة' }],
+      images: [{ url: socialImage, type: 'image/jpeg', ...socialImageDetails }],
     },
     twitter: { card: 'summary_large_image', title: person.name + ' | نماذج مشرفة في نقادة', description: person.description, images: [socialImage] },
   };
