@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getPublicCurated } from '@/lib/auth/moderator';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
@@ -18,7 +19,7 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 function editorialImage(asset: string) {
-  return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
+  return `${siteConfig.url}${editorialImagePath(asset)}`;
 }
 
 function formatArticleDate(date: string) {
@@ -138,7 +139,7 @@ export default async function BlogPage() {
               {displayPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <Image
-                    src={`/blog-media/${encodeURIComponent(post.hero.asset)}`}
+                    src={editorialImagePath(post.hero.asset)}
                     width={post.hero.width}
                     height={post.hero.height}
                     alt={post.hero.alt}
