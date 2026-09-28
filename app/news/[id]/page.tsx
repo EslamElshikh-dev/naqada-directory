@@ -124,6 +124,12 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
               <p>{item.description || 'لم يرسل المصدر ملخصًا لهذا الخبر. يمكنك فتح الرابط الأصلي لقراءة التفاصيل الكاملة.'}</p>
               {item.isOriginal ? item.editorialBody?.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
             </section>
+            {!item.isOriginal && item.editorialBody ? <section className={styles.summary} aria-labelledby="story-editorial-title">
+              <span>صياغة أصلية · دليل نقادة</span>
+              <h2 id="story-editorial-title">تفاصيل الخبر بكتابة فريق الدليل</h2>
+              {item.editorialBody.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              <p>المعلومات من {item.source}؛ التغطية الأصلية ورابط تحديثاتها لدى الناشر أدناه.</p>
+            </section> : null}
             <NewsShare title={item.title} url={previewUrl} />
 
             {!item.isOriginal ? <section className={styles.continueCard} aria-label="متابعة الخبر من المصدر">
@@ -138,7 +144,7 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
 
             {!item.isOriginal ? <section className={styles.editorialNote} aria-labelledby="editorial-note-title">
               <h2 id="editorial-note-title">لماذا لا نعرض النص كاملًا؟</h2>
-              <p>دليل نقادة يجمع الوصول إلى الخبر ولا يعيد نشر عمل الصحف. نحافظ على اسم المصدر وحقوق الصورة ونرسل القارئ إلى الناشر للاستفادة من التغطية الأصلية كاملة.</p>
+              <p>ننشر ملخص المصدر، ويمكن لفريق الدليل كتابة تفاصيل موسعة بصياغته الخاصة بعد التحقق. النص الأصلي والصور وتحديثات الناشر متاحة من رابط الخبر أعلاه.</p>
             </section> : null}
           </div>
 

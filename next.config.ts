@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'akhbarelyom.com', pathname: '/**' },
       { protocol: 'https', hostname: 'gate.ahram.org.eg', pathname: '/**' },
       { protocol: 'https', hostname: 'www.cairo24.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.elbalad.news', pathname: '/**' },
+      { protocol: 'https', hostname: 'elbalad.news', pathname: '/**' },
       { protocol: 'https', hostname: 'www.qena.gov.eg', pathname: '/**' },
       { protocol: 'https', hostname: 'qena.gov.eg', pathname: '/**' },
     ],

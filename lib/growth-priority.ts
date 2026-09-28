@@ -2,7 +2,7 @@ import { businesses, canonicalLocalityName, categories, officialLocalities } fro
 import { searchSite } from '@/lib/site-search';
 import type { Business } from '@/lib/types';
 
-export type MissedSearch = { query: string; count: number };
+export type MissedSearch = { query: string; count: number; variants?: string[] };
 
 export type GrowthPriority = {
   id: string;
@@ -36,12 +36,12 @@ const primaryCategoryNames = [
 
 const categoryAliases: Record<string, string[]> = {
   'الطب والصحة': ['اسنان', 'طبيب', 'دكتور', 'صيدليه', 'صيدلية', 'معمل', 'تحاليل', 'اشعه', 'اشعة', 'مستشفى', 'عياده', 'عيادة'],
-  'التجزئة والتسوق': ['سوبر ماركت', 'سوبرماركت', 'بقاله', 'بقالة', 'ملابس', 'احذيه', 'أحذية', 'مفروشات', 'متجر', 'محل'],
+  'التجزئة والتسوق': ['سوبر ماركت', 'سوبرماركت', 'بقاله', 'بقالة', 'ملابس', 'احذيه', 'أحذية', 'مفروشات', 'أدوات منزلية', 'جملة أدوات منزلية', 'متجر', 'محل'],
   'التعليم': ['حضانه', 'حضانة', 'سنتر', 'مدرسه', 'مدرسة', 'دروس', 'تعليم'],
-  'المطاعم والأطعمة': ['مطعم', 'كافيه', 'مقهى', 'مخبز', 'فرن', 'حلواني', 'اكل', 'أكل'],
+  'المطاعم والأطعمة': ['مطعم', 'كافيه', 'مقهى', 'مخبز', 'فرن', 'حلواني', 'حلوانى', 'تسالي', 'تسالى', 'اكل', 'أكل'],
   'البناء والصيانة': ['مقاول', 'سباك', 'كهربائي', 'نجار', 'حداد', 'صيانه', 'صيانة', 'تشطيبات', 'ترميم'],
   'السيارات والنقل': ['مواصلات', 'تاكسي', 'ميكانيكي', 'كهربائي سيارات', 'قطع غيار', 'سيارات', 'موتوسيكلات'],
-  'الإلكترونيات والهواتف': ['موبايل', 'موبايلات', 'تليفون', 'هواتف', 'كمبيوتر', 'الكترونيات', 'إلكترونيات'],
+  'الإلكترونيات والهواتف': ['موبايل', 'موبايلات', 'تليفون', 'تلفونات', 'تليفونات', 'هواتف', 'كمبيوتر', 'الكترونيات', 'إلكترونيات'],
   'الخدمات المهنية': ['محامي', 'محاسب', 'هندسي', 'مهندس', 'ترجمه', 'ترجمة'],
   'الخدمات المالية': ['بنك', 'فوري', 'تمويل', 'صراف', 'صرف'],
   'دور العبادة': ['مسجد', 'جامع', 'كنيسه', 'كنيسة'],
@@ -142,6 +142,28 @@ function contributionHref(name: string, category?: string | null, locality?: str
   return `/admin/growth/collect?${params.toString()}`;
 }
 
+function searchIntent(query: string) {
+  const normalized = normalizeArabic(query).replace(/اماكنجمله/g, 'اماكن جمله');
+  // Keep wholesale separate from ordinary homeware. Existing shops have not
+  // confirmed that they sell wholesale, even though they serve the same trade.
+  if (normalized.includes('جمله') && normalized.includes('ادوات')) return 'جملة أدوات منزلية';
+  return query.trim();
+}
+
+function groupOpenSearches(items: MissedSearch[]) {
+  const grouped = new Map<string, MissedSearch>();
+  for (const item of items) {
+    const query = searchIntent(item.query);
+    const key = normalizeArabic(query);
+    const current = grouped.get(key);
+    if (current) {
+      current.count += item.count;
+      current.variants?.push(item.query);
+    } else grouped.set(key, { query, count: item.count, variants: [item.query] });
+  }
+  return [...grouped.values()];
+}
+
 function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const query = item.query.trim();
   const locality = inferLocality(query);
@@ -155,6 +177,7 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const specificity = locality && category ? 8 : locality || category ? 4 : 0;
   const score = Math.min(100, demand + pairGap + (locality ? localityWeakness(localityCount) : 0) + specificity);
   const signals = [`${item.count.toLocaleString('ar-EG')} بحث دون نتيجة`];
+  if (item.variants && item.variants.length > 1) signals.push(`${item.variants.length.toLocaleString('ar-EG')} صياغات لنفس الطلب: ${item.variants.slice(0, 3).join('، ')}`);
   if (locality) signals.push(`${localityCount.toLocaleString('ar-EG')} سجلًا منشورًا في ${locality.name}`);
   if (category && pairCount !== null) signals.push(`${pairCount.toLocaleString('ar-EG')} من فئة ${category.shortLabel} داخل الموضع`);
   if (!locality && !category) signals.push('نية بحث حقيقية تحتاج تصنيفًا يدويًا قبل الجمع');
@@ -222,14 +245,16 @@ function buildCoveragePriorities(): GrowthPriority[] {
 
 export function isSearchGapOpen(query: string, currentBusinesses?: Business[]) {
   // Historic zero-result events remain in analytics, even after a listing is published.
+  // Families belong to the dedicated registry, rather than the business catalog.
+  if (/^(عائلات|عايلات)\s+نقاده?$/u.test(normalizeArabic(query))) return searchSite(query, 1, ['page']).length === 0;
   return searchSite(query, 1, ['listing'], currentBusinesses).length === 0;
 }
 
 export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18, currentBusinesses?: Business[]) {
-  const searchItems = missedSearches
+  const openSearches = missedSearches
     .filter((item) => item.query.trim() && item.count > 0)
-    .filter((item) => isSearchGapOpen(item.query, currentBusinesses))
-    .map(buildSearchPriority);
+    .filter((item) => isSearchGapOpen(item.query, currentBusinesses));
+  const searchItems = groupOpenSearches(openSearches).map(buildSearchPriority);
 
   const searchPairs = new Set(searchItems
     .filter((item) => item.locality && item.category)
@@ -243,8 +268,9 @@ export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18
   return {
     items,
     summary: {
-      missedSearchTerms: searchItems.length,
+      missedSearchTerms: openSearches.length,
       missedSearchVolume: searchItems.reduce((sum, item) => sum + item.demandCount, 0),
+      openIntents: searchItems.length,
       resolvedTerms: missedSearches.filter((item) => item.query.trim() && item.count > 0 && !isSearchGapOpen(item.query, currentBusinesses)).length,
       demandBacked: items.filter((item) => item.source === 'search').length,
       coverageOnly: items.filter((item) => item.source === 'coverage').length,

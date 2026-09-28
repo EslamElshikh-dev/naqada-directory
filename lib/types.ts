@@ -13,6 +13,8 @@ export type Business = {
   reviews: number | null;
   hours: string | null;
   mapsUrl: string | null;
+  sourceUrl?: string | null;
+  sourceReferences?: { label: string; url: string }[];
   placeId: string | null;
   verification: string | null;
   status: string;

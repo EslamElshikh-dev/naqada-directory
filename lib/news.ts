@@ -56,6 +56,18 @@ const NEWS_FEEDS: FeedDefinition[] = [
     url: 'https://www.bing.com/news/search?q=%D9%82%D9%86%D8%A7&format=rss&setlang=ar-eg&cc=eg',
   },
   {
+    name: 'نقادة في بوابة الأهرام',
+    url: 'https://www.bing.com/news/search?q=%D9%86%D9%82%D8%A7%D8%AF%D8%A9%20site%3Agate.ahram.org.eg&format=rss&setlang=ar-eg&cc=eg',
+  },
+  {
+    name: 'قنا في بوابة أخبار اليوم',
+    url: 'https://www.bing.com/news/search?q=%D9%82%D9%86%D8%A7%20site%3Aakhbarelyom.com&format=rss&setlang=ar-eg&cc=eg',
+  },
+  {
+    name: 'نقادة في صدى البلد',
+    url: 'https://www.bing.com/news/search?q=%D9%86%D9%82%D8%A7%D8%AF%D8%A9%20site%3Aelbalad.news&format=rss&setlang=ar-eg&cc=eg',
+  },
+  {
     name: 'اليوم السابع',
     url: 'https://www.youm7.com/rss/SectionRss?SectionID=296',
   },
@@ -78,6 +90,7 @@ const PUBLISHERS: Record<string, PublisherDefinition> = {
   'akhbarelyom.com': { name: 'بوابة أخبار اليوم', homepage: 'https://akhbarelyom.com/' },
   'masrawy.com': { name: 'مصراوي', homepage: 'https://www.masrawy.com/' },
   'cairo24.com': { name: 'القاهرة 24', homepage: 'https://www.cairo24.com/' },
+  'elbalad.news': { name: 'صدى البلد', homepage: 'https://www.elbalad.news/' },
 };
 
 const TRUSTED_IMAGE_HOSTS = new Set([
@@ -96,6 +109,8 @@ const TRUSTED_IMAGE_HOSTS = new Set([
   'www.elwatannews.com',
   'akhbarelyom.com',
   'www.masrawy.com',
+  'www.elbalad.news',
+  'elbalad.news',
 ]);
 
 export const newsSourceDirectory = [
@@ -105,6 +120,8 @@ export const newsSourceDirectory = [
   { name: 'اليوم السابع', label: 'أخبار المحافظات', href: 'https://www.youm7.com/Section/%D8%A3%D8%AE%D8%A8%D8%A7%D8%B1-%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A7%D8%AA/296/1' },
   { name: 'المصري اليوم', label: 'أخبار مصر', href: 'https://www.almasryalyoum.com/' },
   { name: 'أخبار اليوم', label: 'أخبار قنا', href: 'https://akhbarelyom.com/News/Search/1/1?JournalID=1&query=%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9+%D9%82%D9%86%D8%A7' },
+  { name: 'صدى البلد', label: 'أخبار قنا', href: 'https://www.elbalad.news/' },
+  { name: 'مصراوي', label: 'أخبار المحافظات', href: 'https://www.masrawy.com/news/News_Regions/section/204/' },
 ] as const;
 
 const ITEM_PATTERN = /<item\b[\s\S]*?<\/item>/gi;
@@ -395,7 +412,11 @@ async function loadLiveNews(): Promise<NewsFeedResult> {
     .map((item) => {
       const revision = revisions.get(item.id);
       if (revision?.status !== 'published') return item;
-      return { ...item, title: revision.payload.title || item.title, description: revision.payload.summary || item.description };
+      return {
+        ...item, title: revision.payload.title || item.title,
+        description: revision.payload.summary || item.description,
+        editorialBody: revision.payload.body || undefined,
+      };
     });
   const originals: ExternalNewsItem[] = curated.filter((item) => item.origin === 'original' && item.status === 'published')
     .map((item) => ({
@@ -451,7 +472,11 @@ export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | 
   if (revision?.status === 'hidden') return null;
   const item = archived[0] || (await getLatestNews()).items.find(story => story.id === id);
   if (!item) return null;
-  if (revision?.status === 'published') return { ...item, title: revision.payload.title || item.title, description: revision.payload.summary || item.description };
+  if (revision?.status === 'published') return {
+    ...item, title: revision.payload.title || item.title,
+    description: revision.payload.summary || item.description,
+    editorialBody: revision.payload.body || undefined,
+  };
   return item;
 });
 

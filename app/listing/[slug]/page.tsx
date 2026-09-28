@@ -63,6 +63,8 @@ export default async function ListingPage({ params }: Props) {
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const safeMapsUrl = isSafeExternalUrl(listing.mapsUrl) ? listing.mapsUrl : null;
+  const safeRecordSourceUrl = isSafeExternalUrl(listing.sourceUrl || null) ? listing.sourceUrl : null;
+  const recordReferences = listing.sourceReferences?.filter((source) => isSafeExternalUrl(source.url)) || [];
   const safeMediaSourceUrl = media && isSafeExternalUrl(media.sourceUrl) ? media.sourceUrl : null;
   const related = relatedBusinesses(listing);
   const canonicalUrl = absoluteUrl(`/listing/${encodeURIComponent(listing.slug)}`);
@@ -202,7 +204,7 @@ export default async function ListingPage({ params }: Props) {
             <p className={styles.missingNote}>{missingLabels.length ? `غير منشور حتى الآن: ${missingLabels.join('، ')}. لا يضيف الدليل بيانات غير مؤكدة فقط لرفع نسبة الاكتمال.` : 'العناصر الأساسية الخمسة متاحة في السجل الحالي، مع بقاء ضرورة التحقق من أي تغيّر قبل الزيارة.'}</p>
           </section>
 
-          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p><div className={styles.sourceLinks}>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}{safeMediaSourceUrl && <a href={safeMediaSourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media?.sourceName} ↗</a>}</div></div>
+          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p><div className={styles.sourceLinks}>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}{recordReferences.length ? recordReferences.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>) : safeRecordSourceUrl && <a href={safeRecordSourceUrl} target="_blank" rel="noopener noreferrer">المصدر المنشور للبيانات ↗</a>}{safeMediaSourceUrl && <a href={safeMediaSourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media?.sourceName} ↗</a>}</div></div>
 
           <section className={styles.faqSection} aria-labelledby="listing-faq-title">
             <span className="eyebrow eyebrow--dark">أسئلة مباشرة</span>
