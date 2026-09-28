@@ -19,13 +19,13 @@ async function photoData(url: string | null) {
       || Number(response.headers.get('content-length') || 0) > 5_000_000) return null;
     const bytes = await response.arrayBuffer();
     if (bytes.byteLength > 5_000_000) return null;
-    if (mime === 'image/webp') {
-      // ImageResponse cannot render all WebP variants directly. Convert only the publisher's
-      // original bytes; the preview keeps the original dimensions before compositing.
-      const jpeg = await sharp(Buffer.from(bytes)).jpeg({ quality: 92 }).toBuffer();
-      return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
-    }
-    return `data:${mime};base64,${Buffer.from(bytes).toString('base64')}`;
+    // ImageResponse can misrender WebP and smaller publisher images. Build the photo at the
+    // final card dimensions before compositing, keeping the original photo as the source.
+    const jpeg = await sharp(Buffer.from(bytes))
+      .resize(size.width, size.height, { fit: 'cover', position: 'centre' })
+      .jpeg({ quality: 92 })
+      .toBuffer();
+    return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
   } catch { return null; }
 }
 
