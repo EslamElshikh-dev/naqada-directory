@@ -1,0 +1,24 @@
+.section { scroll-margin-top: 125px; }
+.metrics { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
+.metrics article { display: grid; align-content: center; gap: 5px; min-height: 130px; padding: 17px; border: 1px solid #dce9e0; border-radius: 18px 18px 6px 18px; background: #f7fbf5; }
+.metrics small { color: #557462; font-size: .66rem; font-weight: 800; }
+.metrics strong { color: #153f2c; font-size: 1.65rem; }
+.metrics span { color: #73867b; font-size: .6rem; }
+.columns { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(240px,.7fr); gap: 18px; align-items: start; margin-top: 22px; }
+.list,.frequent { min-width: 0; padding: 22px; border: 1px solid #e2e9e0; border-radius: 21px 21px 7px 21px; background: #fffefa; }
+.list h3,.frequent h3 { color: #173e31; margin: 0 0 18px; font-size: 1.07rem; }
+.list details { border-top: 1px solid #e9eee7; padding: 12px 0; }
+.list summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; cursor: pointer; list-style-position: inside; }
+.list summary span { border-radius: 7px; padding: 4px 7px; background: #e7f2e8; color: #1d6546; font-size: .56rem; font-weight: 850; }
+.list summary strong { flex: 1 1 190px; color: #183e30; font-size: .76rem; line-height: 1.8; overflow-wrap: anywhere; }
+.list time { color: #829186; font-size: .61rem; }
+.list details > div { margin: 12px 4px 2px; padding: 15px; border-radius: 12px; background: #f1f7f0; }
+.list details > div b { color: #1a5a40; font-size: .67rem; }
+.list details > div p { white-space: pre-line; overflow-wrap: anywhere; margin: 8px 0 0; color: #455d4e; line-height: 2; font-size: .72rem; }
+.frequent ol { padding: 0; margin: 0; list-style: none; }
+.frequent li { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid #e9eee7; padding: 11px 0; color: #234e38; font-size: .72rem; overflow-wrap: anywhere; }
+.frequent li b { color: #97652d; }
+.privacy,.empty { color: #78887c; font-size: .68rem; line-height: 2; }
+.privacy { margin-top: 20px; }
+@media(max-width:1000px) { .metrics { grid-template-columns: repeat(3,minmax(0,1fr)); } .columns { grid-template-columns: 1fr; } }
+@media(max-width:620px) { .metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } .metrics article { min-height: 105px; } .list,.frequent { padding: 16px; } }

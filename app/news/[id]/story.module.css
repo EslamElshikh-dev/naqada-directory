@@ -43,6 +43,12 @@
 .summary > span,.sourceCard > span { color: #9a6b32; font-size: .62rem; font-weight: 950; }
 .summary h2 { margin: 5px 0 12px; color: #153b30; font-size: 1.45rem; }
 .summary p { margin: 0; color: #64736c; font-size: .82rem; line-height: 2.15; text-wrap: pretty; }
+.shareCard { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 15px; padding: 17px; border: 1px solid #d5e2d9; border-radius: 18px; background: #edf5ec; }
+.shareCard > div { flex: 1 1 230px; display: grid; gap: 4px; }
+.shareCard strong { color: #153c31; font-size: .78rem; }
+.shareCard span { color: #5b7267; font-size: .62rem; line-height: 1.7; }
+.shareCard button,.shareCard a { cursor: pointer; border: 0; border-radius: 11px; background: #184c39; color: #fff; padding: 10px 13px; font: inherit; font-size: .65rem; font-weight: 800; }
+.shareCard a { background: #e1eee4; color: #174c3b; }
 .continueCard { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 16px; align-items: center; margin-top: 17px; padding: 21px; border-radius: 22px 22px 7px 22px; background: linear-gradient(132deg,#0b3328,#15513e); color: #fff; box-shadow: 0 16px 38px rgba(11,51,40,.13); }
 .continueIcon { width: 49px; height: 49px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.12); border-radius: 16px 16px 5px 16px; background: rgba(255,255,255,.07); color: #f1cf80; font: 800 1.05rem/1 sans-serif; }
 .continueCard small { color: #9fb9af; font-size: .57rem; }
@@ -118,4 +124,3 @@
 
 @media(prefers-reduced-motion:reduce) { .continueCard > a,.relatedCard { transition: none; } }
 @media print { .hero { background: #fff; color: #111; } .hero::after,.continueCard,.side,.related { display: none; } .layout { display: block; } .figure,.summary { box-shadow: none; } }
-

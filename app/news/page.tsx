@@ -160,7 +160,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             <h1>الخبر المحلي… <em>من مصدره.</em></h1>
             <p>متابعة منظمة لأخبار نقادة ومحافظة قنا من المصادر الصحفية والرسمية، ومعها الأخبار المحلية التي يكتبها فريق الدليل.</p>
             <div className={styles.heroStats}>
-              <span><b>{feed.items.length.toLocaleString('ar-EG')}</b><small>خبرًا متاحًا الآن</small></span>
+              <span><b>{feed.items.length.toLocaleString('ar-EG')}</b><small>خبرًا في أحدث الأخبار</small></span>
               <span><b>{sourceCount.toLocaleString('ar-EG')}</b><small>مصادر ظاهرة</small></span>
               <span><b>١٥</b><small>دقيقة بين التحديثات</small></span>
             </div>
@@ -197,6 +197,8 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             ))}
           </div>
         </nav>
+
+        <div className={styles.archiveInvite}><div><strong>بتدور على خبر قديم؟</strong><span>تصفح الأخبار المحفوظة بالصور واسم المصدر ورابطه، حتى بعد خروجها من موجز الأخبار المباشر.</span></div><Link href="/news/archive">استعرض أرشيف الأخبار ←</Link></div>
 
         {featured ? (
           <>

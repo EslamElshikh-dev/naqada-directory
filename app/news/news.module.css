@@ -60,6 +60,11 @@
 .livePanelFoot time { color: #f0d18a; }
 
 .newsroom { position: relative; z-index: 2; margin-top: -30px; padding-bottom: 90px; }
+.archiveInvite { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 18px 21px; border: 1px solid #d7e5d8; border-radius: 20px; background: #eaf3e9; }
+.archiveInvite > div { flex: 1 1 220px; display: grid; gap: 5px; }
+.archiveInvite strong { color: #153d31; font-size: .82rem; }
+.archiveInvite span { color: #607467; font-size: .69rem; line-height: 1.8; }
+.archiveInvite a { color: #175a40; font-size: .72rem; font-weight: 900; }
 .trustBar { min-height: 82px; display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 15px; align-items: center; padding: 16px 19px; border: 1px solid rgba(18,73,55,.12); border-radius: 22px 22px 7px 22px; background: rgba(255,254,250,.98); box-shadow: 0 16px 46px rgba(12,48,38,.1); }
 .trustIcon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px 14px 5px 14px; background: #e5f1eb; color: #166044; font-size: 1rem; font-weight: 950; }
 .trustBar strong { display: block; color: #153c31; font-size: .8rem; }
@@ -219,4 +224,3 @@
   .newsroom { margin-top: 0; }
   .card,.leadStory { break-inside: avoid; box-shadow: none; }
 }
-
