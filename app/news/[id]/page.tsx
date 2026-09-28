@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NewsImage } from '@/components/news-image';
-import { getLatestNews } from '@/lib/news';
+import { getLatestNews, getNewsItem } from '@/lib/news';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
+import { NewsShare } from './news-share';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,8 +25,7 @@ function formatNewsDate(value: string) {
 
 export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
   const { id } = await params;
-  const feed = await getLatestNews();
-  const item = feed.items.find((story) => story.id === id);
+  const item = await getNewsItem(id);
   if (!item) return { robots: { index: false, follow: true } };
 
   return {
@@ -40,26 +40,25 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
     openGraph: {
       type: 'article',
       locale: siteConfig.locale,
-      url: item.isOriginal ? `${siteConfig.url}/news/${item.id}` : item.url,
+      url: `${siteConfig.url}/news/${item.id}/`,
       title: item.title,
       description: item.description,
-      siteName: item.source,
+      siteName: 'دليل نقادة',
       publishedTime: item.publishedAt || undefined,
-      images: item.imageUrl ? [{ url: item.imageUrl, alt: item.imageAlt }] : [siteConfig.socialImage],
+      images: [{ url: `${siteConfig.url}/news/${item.id}/opengraph-image`, width: 1200, height: 630, alt: `${item.title} · ${item.source} · دليل نقادة` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: item.title,
       description: item.description,
-      images: [item.imageUrl || siteConfig.socialImage],
+      images: [`${siteConfig.url}/news/${item.id}/opengraph-image`],
     },
   };
 }
 
 export default async function NewsStoryPage({ params }: StoryPageProps) {
   const { id } = await params;
-  const feed = await getLatestNews();
-  const item = feed.items.find((story) => story.id === id);
+  const [feed, item] = await Promise.all([getLatestNews(), getNewsItem(id)]);
   if (!item) notFound();
 
   const related = feed.items
@@ -121,10 +120,11 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
 
             <section className={styles.summary} aria-labelledby="story-summary-title">
               <span>{item.isOriginal ? 'من فريق دليل نقادة' : 'ملخص المصدر'}</span>
-              <h2 id="story-summary-title">{item.isOriginal ? 'تفاصيل الخبر' : 'الخبر في سطور'}</h2>
+              <h2 id="story-summary-title">{item.isOriginal ? 'تفاصيل الخبر' : 'أبرز التفاصيل المتاحة'}</h2>
               <p>{item.description || 'لم يرسل المصدر ملخصًا لهذا الخبر. يمكنك فتح الرابط الأصلي لقراءة التفاصيل الكاملة.'}</p>
               {item.isOriginal ? item.editorialBody?.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
             </section>
+            <NewsShare title={item.title} url={previewUrl} />
 
             {!item.isOriginal ? <section className={styles.continueCard} aria-label="متابعة الخبر من المصدر">
               <span className={styles.continueIcon} aria-hidden="true">↗</span>

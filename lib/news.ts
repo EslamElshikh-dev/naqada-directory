@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import { normalizeArabic } from './site';
 import { getPublicCurated } from './auth/moderator';
+import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -273,8 +274,11 @@ function parseFeed(xml: string): ExternalNewsItem[] {
     if (!url) continue;
 
     const title = truncate(stripHtml(extractTag(block, 'title')), 170);
-    const rawDescription = extractTag(block, 'description') || extractTag(block, 'content:encoded');
-    const description = truncate(stripHtml(rawDescription), 240);
+    const rawDescription = extractTag(block, 'description');
+    const encodedContent = extractTag(block, 'content:encoded');
+    // Use the richer excerpt when the publisher's RSS provides it. Never reproduce a full article.
+    const description = truncate([stripHtml(rawDescription), stripHtml(encodedContent)]
+      .sort((left, right) => right.length - left.length)[0] || '', 680);
     const match = relevance(`${title} ${description}`);
     if (!title || !match.relevant) continue;
 
@@ -286,7 +290,7 @@ function parseFeed(xml: string): ExternalNewsItem[] {
       || extractAttribute(block, 'media:thumbnail', 'url')
       || extractAttribute(block, 'enclosure', 'url')
       || extractTag(block, 'News:Image');
-    const imageUrl = safeImageUrl(feedImage, url) || imageFromDescription(rawDescription, url);
+    const imageUrl = safeImageUrl(feedImage, url) || imageFromDescription(rawDescription || encodedContent, url);
     const publishedAt = dateToIso(extractTag(block, 'pubDate') || extractTag(block, 'dc:date'));
 
     items.push({
@@ -340,7 +344,7 @@ async function fetchFeed(feed: FeedDefinition) {
 }
 
 async function enrichItem(item: ExternalNewsItem) {
-  if (item.imageUrl && item.description.length >= 80) return item;
+  if (item.imageUrl && item.description.length >= 320) return item;
   try {
     const html = await fetchText(item.url, ARTICLE_REVALIDATE_SECONDS, ARTICLE_TIMEOUT_MS, 'text/html, application/xhtml+xml;q=0.9');
     const imageUrl = item.imageUrl || safeImageUrl(metadataValue(html, ['og:image', 'twitter:image']), item.url);
@@ -348,7 +352,8 @@ async function enrichItem(item: ExternalNewsItem) {
     return {
       ...item,
       imageUrl,
-      description: item.description || truncate(sourceDescription, 240),
+      description: sourceDescription.length > item.description.length
+        ? truncate(sourceDescription, 680) : item.description,
     };
   } catch {
     return item;
@@ -373,7 +378,7 @@ function deduplicate(items: ExternalNewsItem[]) {
   });
 }
 
-async function loadLatestNews(): Promise<NewsFeedResult> {
+async function loadLiveNews(): Promise<NewsFeedResult> {
   const [results, curated] = await Promise.all([
     Promise.allSettled(NEWS_FEEDS.map(fetchFeed)),
     getPublicCurated('news'),
@@ -400,11 +405,57 @@ async function loadLatestNews(): Promise<NewsFeedResult> {
     }));
 
   return {
-    items: [...originals, ...external].slice(0, 48),
+    items: [...originals, ...external],
     checkedAt: new Date().toISOString(),
     successfulFeeds,
     totalFeeds: NEWS_FEEDS.length,
   };
 }
 
+export const getLiveNews = cache(loadLiveNews);
+
+type ArchivedNews = { payload: ExternalNewsItem };
+async function readArchive(query: string): Promise<ExternalNewsItem[]> {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/naqada_news_archive?select=payload&${query}`, {
+      headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(4000),
+    });
+    if (!response.ok) return [];
+    return ((await response.json()) as ArchivedNews[]).map(row => row.payload).filter(row => row?.id && row?.url);
+  } catch { return []; }
+}
+
+async function loadLatestNews(): Promise<NewsFeedResult> {
+  const [live, archived, curated] = await Promise.all([
+    getLiveNews(), readArchive('order=published_at.desc&limit=60'), getPublicCurated('news'),
+  ]);
+  const hidden = new Set(curated.filter(item => item.status === 'hidden').map(item => item.slug));
+  const existing = new Set(live.items.map(item => item.id));
+  return {
+    ...live,
+    items: [...live.items, ...archived.filter(item => !existing.has(item.id) && !hidden.has(item.id))].slice(0, 48),
+  };
+}
 export const getLatestNews = cache(loadLatestNews);
+
+export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | null> => {
+  if (!/^[a-z0-9-]{3,90}$/i.test(id)) return null;
+  const [archived, curated] = await Promise.all([
+    readArchive(`id=eq.${encodeURIComponent(id)}&limit=1`), getPublicCurated('news'),
+  ]);
+  const revision = curated.find(item => item.slug === id);
+  if (revision?.status === 'hidden') return null;
+  const item = archived[0] || (await getLatestNews()).items.find(story => story.id === id);
+  if (!item) return null;
+  if (revision?.status === 'published') return { ...item, title: revision.payload.title || item.title, description: revision.payload.summary || item.description };
+  return item;
+});
+
+export async function getArchivedNews(page: number) {
+  const offset = (Math.max(1, page) - 1) * 24;
+  const [rows, curated] = await Promise.all([
+    readArchive(`order=published_at.desc&limit=25&offset=${offset}`), getPublicCurated('news'),
+  ]);
+  const hidden = new Set(curated.filter(item => item.status === 'hidden').map(item => item.slug));
+  return { items: rows.slice(0, 24).filter(item => !hidden.has(item.id)), hasMore: rows.length > 24 };
+}

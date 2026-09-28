@@ -104,7 +104,7 @@ export function SanadAssistant() {
         <input id="sanad-question" ref={field} value={input} maxLength={600} autoComplete="off" onChange={event => setInput(event.target.value)} placeholder="اكتب سؤالك… أنا معاك" />
         <button type="submit" disabled={pending || !input.trim()} aria-label="إرسال السؤال"><Icon /></button>
       </form>
-      <p className={styles.note}>من بيانات الدليل · راجع التفاصيل قبل الزيارة</p>
+      <p className={styles.note}>من بيانات الدليل · الأسئلة والإجابات تُحفظ ٩٠ يومًا للإدارة بعد حجب بيانات التواصل · <Link href="/privacy">الخصوصية</Link></p>
     </section>}
   </div>;
 }

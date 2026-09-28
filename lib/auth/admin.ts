@@ -126,3 +126,39 @@ export async function getDiscoveryInsights(accessToken: string): Promise<Discove
     missedSearches: report.missedSearches.filter((item) => item.query && !item.query.includes('\uFFFD')),
   };
 }
+
+export type MemberAccount = {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: string;
+  lastSeenAt: string | null;
+  avatarUrl: string | null;
+};
+
+export async function getMemberAccounts(accessToken: string): Promise<MemberAccount[]> {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_naqada_member_accounts`, {
+    method: 'POST', headers: restHeaders(accessToken, true), body: '{}', cache: 'no-store',
+  });
+  if (!response.ok) throw new Error('ADMIN_MEMBERS_FAILED');
+  return response.json() as Promise<MemberAccount[]>;
+}
+
+export type SanadInsights = {
+  today: number;
+  yesterday: number;
+  questions30d: number;
+  visitors30d: number;
+  answered30d: number;
+  noResult30d: number;
+  recent: Array<{ question: string; answer: string; outcome: string; cards: string[]; at: string }>;
+  frequent: Array<{ question: string; count: number }>;
+};
+
+export async function getSanadInsights(accessToken: string): Promise<SanadInsights> {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_naqada_sanad_insights`, {
+    method: 'POST', headers: restHeaders(accessToken, true), body: '{}', cache: 'no-store',
+  });
+  if (!response.ok) throw new Error('SANAD_INSIGHTS_FAILED');
+  return response.json() as Promise<SanadInsights>;
+}
