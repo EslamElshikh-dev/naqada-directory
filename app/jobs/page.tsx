@@ -9,11 +9,33 @@ import { JobsBoard } from './jobs-board';
 import styles from './jobs.module.css';
 
 export const dynamic = 'force-dynamic';
+const jobsSocialImage = new URL('/images/social/naqada-jobs-share-2026.jpg', siteConfig.url).toString();
+
 export const metadata: Metadata = {
   title: 'وظائف نقادة وقنا والأقصر وقراها | فرص عمل وباحثون عن وظيفة',
   description: 'فرص عمل في نقادة وقراها، ومحافظتي قنا والأقصر بمراكزها وقراها مع مكان الوظيفة ورابط التقديم. أضف وظيفة أو اعرض خبراتك للبحث عن شغل.',
   alternates: { canonical: '/jobs' },
-  openGraph: { title: 'وظائف نقادة وقنا والأقصر | دليل نقادة', description: 'اعرض وظيفة أو دوّر على شغل في نقادة وقنا والأقصر وقراها.', url: absoluteUrl('/jobs'), locale: siteConfig.locale, type: 'website' },
+  openGraph: {
+    title: 'وظائف نقادة وقنا والأقصر | دليل نقادة',
+    description: 'دوّر على فرصة عمل قريبة، أو اعرض وظيفة وخبرتك في نقادة وقنا والأقصر.',
+    url: absoluteUrl('/jobs'),
+    locale: siteConfig.locale,
+    type: 'website',
+    siteName: siteConfig.shortName,
+    images: [{
+      url: jobsSocialImage,
+      width: 1200,
+      height: 630,
+      type: 'image/jpeg',
+      alt: 'وظائف نقادة وقنا والأقصر في دليل نقادة — شغلك الجاي يمكن يكون هنا',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'وظائف نقادة وقنا والأقصر | دليل نقادة',
+    description: 'دوّر على فرصة عمل قريبة، أو اعرض وظيفة وخبرتك في نقادة وقنا والأقصر.',
+    images: [jobsSocialImage],
+  },
 };
 
 export default async function JobsPage() {
