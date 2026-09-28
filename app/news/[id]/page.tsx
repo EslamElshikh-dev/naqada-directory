@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NewsImage } from '@/components/news-image';
-import { getLatestNews, getNewsItem } from '@/lib/news';
+import { getExpandedNewsBody, getLatestNews, getNewsItem } from '@/lib/news';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
 import { NewsShare } from './news-share';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 type StoryPageProps = { params: Promise<{ id: string }> };
 
@@ -58,8 +59,10 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
 
 export default async function NewsStoryPage({ params }: StoryPageProps) {
   const { id } = await params;
-  const [feed, item] = await Promise.all([getLatestNews(), getNewsItem(id)]);
+  const item = await getNewsItem(id);
   if (!item) notFound();
+  const [feed, generatedBody] = await Promise.all([getLatestNews(), getExpandedNewsBody(item)]);
+  const detailedBody = item.editorialBody || generatedBody;
 
   const related = feed.items
     .filter((story) => story.id !== item.id && (story.category === item.category || story.isNaqada === item.isNaqada))
@@ -119,41 +122,24 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
             </figure> : null}
 
             <section className={styles.summary} aria-labelledby="story-summary-title">
-              <span>{item.isOriginal ? 'من فريق دليل نقادة' : 'ملخص المصدر'}</span>
-              <h2 id="story-summary-title">{item.isOriginal ? 'تفاصيل الخبر' : 'أبرز التفاصيل المتاحة'}</h2>
-              <p>{item.description || 'لم يرسل المصدر ملخصًا لهذا الخبر. يمكنك فتح الرابط الأصلي لقراءة التفاصيل الكاملة.'}</p>
-              {item.isOriginal ? item.editorialBody?.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
+              <span>{item.isOriginal ? 'خبر محلي · دليل نقادة' : detailedBody ? 'تغطية موسعة · مع ذكر المصدر' : 'الملخص المتاح من المصدر'}</span>
+              <h2 id="story-summary-title">{detailedBody ? 'تفاصيل الخبر' : 'ما ورد في الخبر'}</h2>
+              {detailedBody && item.description ? <div className={styles.summaryLead}><strong>في سطور</strong><p>{item.description}</p></div> : null}
+              {detailedBody
+                ? detailedBody.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)
+                : <p>{item.description || 'لم يرسل المصدر تفاصيل كافية لهذا الخبر. ستجد التغطية الأصلية في قسم المصادر أدناه.'}</p>}
+              {generatedBody ? <p className={styles.editorialDisclosure}>صياغة آلية للوقائع المنشورة لدى {item.source}؛ راجع الخبر الأصلي عند وجود تحديثات أو تصحيحات.</p> : null}
             </section>
-            {!item.isOriginal && item.editorialBody ? <section className={styles.summary} aria-labelledby="story-editorial-title">
-              <span>صياغة أصلية · دليل نقادة</span>
-              <h2 id="story-editorial-title">تفاصيل الخبر بكتابة فريق الدليل</h2>
-              {item.editorialBody.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-              <p>المعلومات من {item.source}؛ التغطية الأصلية ورابط تحديثاتها لدى الناشر أدناه.</p>
-            </section> : null}
             <NewsShare title={item.title} url={previewUrl} />
-
-            {!item.isOriginal ? <section className={styles.continueCard} aria-label="متابعة الخبر من المصدر">
-              <span className={styles.continueIcon} aria-hidden="true">↗</span>
-              <div>
-                <small>التفاصيل الكاملة لدى الناشر</small>
-                <strong>أكمل قراءة الخبر من {item.source}</strong>
-                <p>سينقلك الزر إلى صفحة الخبر الأصلية، حيث النص الكامل والصور أو التحديثات اللاحقة.</p>
-              </div>
-              <a href={item.url} target="_blank" rel="noopener noreferrer external">فتح الخبر الأصلي <b aria-hidden="true">↗</b></a>
-            </section> : null}
-
-            {!item.isOriginal ? <section className={styles.editorialNote} aria-labelledby="editorial-note-title">
-              <h2 id="editorial-note-title">لماذا لا نعرض النص كاملًا؟</h2>
-              <p>ننشر ملخص المصدر، ويمكن لفريق الدليل كتابة تفاصيل موسعة بصياغته الخاصة بعد التحقق. النص الأصلي والصور وتحديثات الناشر متاحة من رابط الخبر أعلاه.</p>
-            </section> : null}
           </div>
 
           {!item.isOriginal ? <aside className={styles.side}>
             <section className={styles.sourceCard}>
-              <span>بطاقة المصدر</span>
+              <span>روابط المصدر</span>
               <strong>{item.source}</strong>
-              <p>العنوان والملخص والصورة مستلمة من بيانات المصدر العامة، ولم يحرر دليل نقادة مضمون الخبر.</p>
-              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer external">زيارة موقع المصدر <b aria-hidden="true">↗</b></a>
+              <p>التغطية الأصلية، والصور والتحديثات والتصحيحات لدى الناشر.</p>
+              <a className={styles.sourcePrimary} href={item.url} target="_blank" rel="noopener noreferrer external">قراءة من المصدر <b aria-hidden="true">↗</b></a>
+              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer external">زيارة موقع الناشر <b aria-hidden="true">↗</b></a>
             </section>
             <section className={styles.statusCard}>
               <span><i aria-hidden="true" /> رابط موثّق</span>

@@ -69,20 +69,10 @@ function StoryMeta({ item }: { item: ExternalNewsItem }) {
   );
 }
 
-function SourceButton({ item, compact = false }: { item: ExternalNewsItem; compact?: boolean }) {
-  if (item.isOriginal) return <Link className={compact ? styles.sourceButtonCompact : styles.sourceButton} href={item.url}>اقرأ الخبر <b aria-hidden="true">←</b></Link>;
-  return (
-    <a
-      className={compact ? styles.sourceButtonCompact : styles.sourceButton}
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer external"
-      aria-label={`اقرأ الخبر كاملًا من ${item.source} (يفتح في نافذة جديدة)`}
-    >
-      <span>اقرأ من المصدر</span>
-      <b aria-hidden="true">↗</b>
-    </a>
-  );
+function StoryButton({ item, compact = false }: { item: ExternalNewsItem; compact?: boolean }) {
+  return <Link className={compact ? styles.sourceButtonCompact : styles.sourceButton} href={`/news/${item.id}`}>
+    <span>معرفة المزيد</span><b aria-hidden="true">←</b>
+  </Link>;
 }
 
 function NewsCard({ item }: { item: ExternalNewsItem }) {
@@ -96,10 +86,10 @@ function NewsCard({ item }: { item: ExternalNewsItem }) {
       <div className={styles.cardBody}>
         <div className={styles.cardTop}><StoryMeta item={item} /><span className={styles.category}>{item.category}</span></div>
         <h2><Link href={`/news/${item.id}`}>{item.title}</Link></h2>
-        {item.description ? <p>{item.description}</p> : <p className={styles.descriptionFallback}>ملخص الخبر غير متاح من المصدر؛ افتح الرابط للاطلاع على التفاصيل الكاملة.</p>}
+        {item.description ? <p>{item.description}</p> : <p className={styles.descriptionFallback}>افتَح تفاصيل الخبر وروابط الناشر.</p>}
         <div className={styles.cardFooter}>
           <span>{item.isOriginal ? 'خبر من فريق الدليل' : 'نشر خارجي · الحقوق للمصدر'}</span>
-          <SourceButton item={item} compact />
+          <StoryButton item={item} compact />
         </div>
       </div>
     </article>
@@ -213,8 +203,8 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                   <div className={styles.leadLabels}><span>{featured.category}</span>{featured.isNaqada ? <b>من نقادة</b> : <b>من قنا</b>}</div>
                   <StoryMeta item={featured} />
                   <h2><Link href={`/news/${featured.id}`}>{featured.title}</Link></h2>
-                  {featured.description ? <p>{featured.description}</p> : <p className={styles.descriptionFallback}>يفتح الرابط التالي التفاصيل الكاملة كما نشرها المصدر.</p>}
-                  <div className={styles.leadFooter}><SourceButton item={featured} /><span>{featured.isOriginal ? 'خبر محلي من الدليل' : `يفتح في موقع ${featured.source}`}</span></div>
+                  {featured.description ? <p>{featured.description}</p> : <p className={styles.descriptionFallback}>تعرّف على التفاصيل وروابط المصدر في صفحة الخبر.</p>}
+                  <div className={styles.leadFooter}><StoryButton item={featured} /><span>{featured.isOriginal ? 'خبر محلي من الدليل' : `المصدر: ${featured.source}`}</span></div>
                 </div>
               </article>
             </section>
