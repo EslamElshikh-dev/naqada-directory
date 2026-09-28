@@ -22,7 +22,10 @@ export type NormalizedSearchFields = {
 const synonymGroups = [
   ['دكتور', 'دكتوره', 'دكاتره', 'طبيب', 'طبيبه', 'اطباء', 'عياده', 'عيادات'],
   ['صيدليه', 'صيدليات', 'صيدلي'],
-  ['موبايل', 'موبايلات', 'محمول', 'تليفون', 'تلفون', 'هاتف', 'هواتف'],
+  ['موبايل', 'موبايلات', 'محمول', 'تليفون', 'تلفون', 'تلفونات', 'تليفونات', 'هاتف', 'هواتف'],
+  ['حلواني', 'حلوانى', 'حلويات', 'حلاوه', 'جاتوه', 'تورت'],
+  ['تسالي', 'تسالى', 'محمصه', 'محمصة'],
+  ['شابات', 'شبات'],
   ['حضانه', 'حضانات'],
   ['معمل', 'معامل', 'مختبر', 'مختبرات', 'تحاليل'],
   ['مطعم', 'مطاعم'],
@@ -72,6 +75,9 @@ const queryNoiseWords = new Set([
   'اين',
   'الي',
   'الى',
+  'محل',
+  'اماكن',
+  'مكان',
 ].map((value) => normalizeArabic(value)));
 
 function normalizeField(value?: string | null) {
@@ -87,6 +93,7 @@ function baseFormsFor(token: string) {
   if (token.startsWith('لل') && token.length > 3) {
     forms.add(`ال${token.slice(2)}`);
   }
+  if (token.startsWith('ب') && token.length > 4) forms.add(token.slice(1));
 
   for (const form of [...forms]) {
     if (form.startsWith('ال') && form.length > 4) forms.add(form.slice(2));
@@ -100,7 +107,7 @@ function isQueryNoise(token: string) {
 }
 
 export function prepareSearchQuery(value: string) {
-  const rawNormalizedQuery = normalizeArabic(value);
+  const rawNormalizedQuery = normalizeArabic(value).replace(/\bاماكنجمله\b/g, 'اماكن جمله');
   const rawTokens = rawNormalizedQuery.split(' ').filter(Boolean);
   const meaningfulTokens = rawTokens.filter((token) => !isQueryNoise(token));
   const tokens = meaningfulTokens.length ? meaningfulTokens : rawTokens;

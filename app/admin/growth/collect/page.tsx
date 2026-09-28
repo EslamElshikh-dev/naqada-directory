@@ -50,6 +50,9 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
     { title: 'ابحث في Google', subtitle: 'تحقّق من الاسم والمكان وحداثة المعلومات', href: `https://www.google.com/search?q=${encodeURIComponent(`${query} نقادة قنا`)}` },
     { title: 'افتح خرائط Google', subtitle: 'قارن العنوان والهاتف ومعرّف المكان', href: `https://www.google.com/maps/search/${encodeURIComponent(`${query} نقادة قنا`)}` },
     { title: 'ابحث في Facebook', subtitle: 'راجع صفحة النشاط ومنشوراته الأصلية', href: `https://www.facebook.com/search/top?q=${encodeURIComponent(`${query} نقادة قنا`)}` },
+    { title: 'فتش في يلوبيدجز', subtitle: 'قارن العنوان ورقم الهاتف المنشورين', href: `https://www.google.com/search?q=${encodeURIComponent(`site:yellowpages.com.eg ${query} نقادة`)}` },
+    { title: 'فتش في دليل 140', subtitle: 'راجع الاسم والموضع مع مصدر ثانٍ', href: `https://www.google.com/search?q=${encodeURIComponent(`site:dalil140.com ${query} نقادة`)}` },
+    { title: 'مصدر رسمي أو مدرسة', subtitle: 'ابحث في مصادر محافظة قنا والتعليم عند الحاجة', href: `https://www.google.com/search?q=${encodeURIComponent(`site:qena.gov.eg ${query}`)}` },
   ] : [];
 
   return (
