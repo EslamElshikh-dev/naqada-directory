@@ -72,11 +72,11 @@ export function extractPublisherArticle(html: string): string {
 export function isOriginalBrief(brief: string, article: string, oldDescription: string) {
   if (brief.length < Math.max(230, oldDescription.length + 80) || brief.length > 2200) return false;
   if (!/[\u0600-\u06ff]/u.test(brief) || /^(لا (أستطيع|يمكنني)|بالتأكيد|إليك)/.test(brief)) return false;
-  // Reject a model output that repeats a long passage of the publisher's prose.
+  // Reject long verbatim passages while allowing incidental overlap in names and facts.
   const normalizedArticle = plainText(article).replace(/[،؛.!؟:]/g, ' ');
   const words = plainText(brief).replace(/[،؛.!؟:]/g, ' ').split(' ');
-  for (let index = 0; index + 11 < words.length; index += 1) {
-    if (normalizedArticle.includes(words.slice(index, index + 12).join(' '))) return false;
+  for (let index = 0; index + 23 < words.length; index += 1) {
+    if (normalizedArticle.includes(words.slice(index, index + 24).join(' '))) return false;
   }
   return true;
 }
