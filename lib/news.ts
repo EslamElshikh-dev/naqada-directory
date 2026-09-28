@@ -426,7 +426,7 @@ const expandedNewsBody = unstable_cache(async (url: string, title: string, descr
     return null;
   }
   return brief;
-}, ['news-factual-brief-v3'], { revalidate: 60 * 60 * 24 });
+}, ['news-factual-brief-v4'], { revalidate: 60 * 60 * 24 });
 
 export async function getExpandedNewsBody(item: ExternalNewsItem): Promise<string | null> {
   if (item.isOriginal || item.editorialBody || !(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN)) return null;
