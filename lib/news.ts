@@ -408,15 +408,36 @@ const expandedNewsBody = unstable_cache(async (url: string, title: string, descr
     cache: 'no-store',
   });
   if (!response.ok) throw new Error(`News summary service returned ${response.status}`);
-  const result = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
-  const brief = result.choices?.[0]?.message?.content?.trim() || '';
-  return isOriginalBrief(brief, article, description) ? brief : null;
-}, ['news-factual-brief-v1'], { revalidate: 60 * 60 * 24 * 7 });
+  const result = await response.json() as {
+    choices?: Array<{ finish_reason?: string; message?: { content?: string | Array<{ type?: string; text?: string }> } }>;
+  };
+  const content = result.choices?.[0]?.message?.content;
+  const brief = (typeof content === 'string' ? content : Array.isArray(content)
+    ? content.filter(part => part.type === 'text').map(part => part.text || '').join('\n') : '').trim();
+  if (!isOriginalBrief(brief, article, description)) {
+    // Only log diagnostic metadata. The publisher's prose and the generated text stay private.
+    console.warn('[news-brief] generated text rejected', {
+      publisher: new URL(url).hostname,
+      characters: brief.length,
+      minimum: Math.max(230, description.length + 80),
+      finishReason: result.choices?.[0]?.finish_reason || 'unknown',
+      messageFields: Object.keys(result.choices?.[0]?.message || {}),
+    });
+    return null;
+  }
+  return brief;
+}, ['news-factual-brief-v2'], { revalidate: 60 * 60 * 24 });
 
 export async function getExpandedNewsBody(item: ExternalNewsItem): Promise<string | null> {
   if (item.isOriginal || item.editorialBody || !(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN)) return null;
   try { return await expandedNewsBody(item.url, item.title, item.description); }
-  catch { return null; }
+  catch (error) {
+    console.warn('[news-brief] unable to expand article', {
+      publisher: new URL(item.url).hostname,
+      reason: error instanceof Error ? error.message : 'unknown',
+    });
+    return null;
+  }
 }
 
 function deduplicate(items: ExternalNewsItem[]) {
