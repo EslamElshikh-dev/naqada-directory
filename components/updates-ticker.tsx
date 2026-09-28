@@ -34,7 +34,7 @@ export function UpdatesTicker() {
       const [jobResult, newsResult] = results;
       const jobItems = jobResult.status === 'fulfilled' && Array.isArray(jobResult.value.items) ? jobResult.value.items.slice(0, 4) : [];
       const newsItems = newsResult.status === 'fulfilled' && Array.isArray(newsResult.value.items) ? newsResult.value.items.slice(0, 6) : [];
-      setLiveItems([...jobItems, ...newsItems, ...(!jobItems.length ? [fallbackUpdates[0]] : [])]);
+      setLiveItems([...jobItems, ...newsItems, fallbackUpdates[2], ...(!jobItems.length ? [fallbackUpdates[0]] : [])]);
     };
     // Let the visible page and its image finish first; abort on navigation/unmount.
     let timer: ReturnType<typeof setTimeout>;
@@ -65,11 +65,11 @@ export function UpdatesTicker() {
           </div>
           <div className={`${styles.group} ${styles.clone}`} aria-hidden="true">
             {tickerItems.map((item) => (
-              <span className={styles.item} key={`clone-${item.tag}-${item.href}-${item.text}`}>
+              <Link prefetch={false} tabIndex={-1} className={styles.item} href={item.href} key={`clone-${item.tag}-${item.href}-${item.text}`}>
                 <span>{item.tag}</span>
                 <strong>{item.text}</strong>
                 <b aria-hidden="true">←</b>
-              </span>
+              </Link>
             ))}
           </div>
         </div>

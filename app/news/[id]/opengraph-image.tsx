@@ -2,17 +2,17 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import { notFound } from 'next/navigation';
-import { getNewsItem } from '@/lib/news';
+import { getNewsItem, getNewsShareImageUrl } from '@/lib/news';
 
 export const runtime = 'nodejs';
-export const alt = 'صورة الخبر وعنوانه ومصدره على دليل نقادة';
+export const alt = 'صورة الخبر وعنوانه على أخبار نقادة';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 async function photoData(url: string | null) {
   if (!url) return null;
   try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(4500), headers: { Accept: 'image/avif,image/webp,image/jpeg,image/png' } });
+    const response = await fetch(url, { signal: AbortSignal.timeout(5_000), headers: { Accept: 'image/webp,image/jpeg,image/png' } });
     const mime = response.headers.get('content-type')?.split(';')[0] || '';
     if (!response.ok || !['image/jpeg', 'image/png', 'image/webp'].includes(mime)
       || Number(response.headers.get('content-length') || 0) > 5_000_000) return null;
@@ -22,32 +22,59 @@ async function photoData(url: string | null) {
   } catch { return null; }
 }
 
+function headlineLines(title: string) {
+  const words = title.replace(/\s+/g, ' ').trim().split(' ');
+  const lines: string[] = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length <= 43 || !line) { line = next; continue; }
+    lines.push(line);
+    line = word;
+    if (lines.length === 3) break;
+  }
+  if (lines.length < 3 && line) lines.push(line);
+  if (lines.join(' ').length < title.trim().length - 1 && lines.length === 3) {
+    lines[2] = `${lines[2].replace(/[،؛:,.…\s]+$/u, '')}…`;
+  }
+  return lines;
+}
+
 export default async function NewsOpenGraph({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await getNewsItem(id);
   if (!item) notFound();
-  const [photo, font] = await Promise.all([
-    photoData(item.imageUrl),
+  const [imageUrl, font, icon] = await Promise.all([
+    getNewsShareImageUrl(item),
     readFile(join(process.cwd(), 'app/fonts/dejavu-sans-bold.ttf')),
+    readFile(join(process.cwd(), 'public/app-icons/icon-512.png')),
   ]);
+  const photo = await photoData(imageUrl) || (imageUrl !== item.imageUrl ? await photoData(item.imageUrl) : null);
+  const logo = `data:image/png;base64,${icon.toString('base64')}`;
+  const lines = headlineLines(item.title);
+
   return new ImageResponse(
-    <div dir="rtl" style={{ display: 'flex', width: '100%', height: '100%', backgroundColor: '#09271e', color: '#fff', fontFamily: 'NaqadaArabic', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', position: 'relative', width: 540, height: 630, backgroundColor: '#215940', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-        {photo ? (
-          <img src={photo} alt="" width={540} height={630} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : <span style={{ fontSize: 280, color: '#c69f56' }}>ن</span>}
-        <div style={{ display: 'flex', position: 'absolute', left: 0, right: 0, bottom: 0, height: 8, backgroundColor: '#dfb764' }} />
-      </div>
-      <div style={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '48px 42px', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 25, color: '#f3d58f' }}>
-          <span>دليل نقادة</span><span style={{ fontSize: 17, color: '#9ec4ad' }}>أخبار نقادة وقنا</span>
+    <div dir="rtl" style={{ display: 'flex', position: 'relative', width: '100%', height: '100%', backgroundColor: '#143c30', color: '#fff', fontFamily: 'NaqadaArabic', overflow: 'hidden' }}>
+      {photo ? (
+        <img src={photo} alt="" width={1200} height={630} style={{ position: 'absolute', top: 0, left: 0, width: 1200, height: 630, objectFit: 'cover' }} />
+      ) : <div style={{ display: 'flex', position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(120deg, #0b2b24, #246347)', color: '#d6b778', fontSize: 260 }}>ن</div>}
+
+      <div style={{ display: 'flex', position: 'absolute', top: 0, right: 0, left: 0, height: 166, flexDirection: 'row', alignItems: 'center', padding: '22px 34px', background: 'linear-gradient(90deg, rgba(7, 34, 28, .91), rgba(7, 34, 28, .97))' }}>
+        <div style={{ display: 'flex', width: 164, flexShrink: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', color: '#f2d18d', fontSize: 28, lineHeight: 1.4 }}>
+          <span>أخبار</span><span>نقادة</span>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <span style={{ color: '#f2c876', fontSize: 20 }}>{item.category} · {item.isNaqada ? 'نقادة' : 'قنا'}</span>
-          <span style={{ fontSize: item.title.length > 110 ? 32 : item.title.length > 65 ? 37 : item.title.length > 42 ? 40 : 48, lineHeight: 1.45, textAlign: 'right', maxHeight: 400, overflow: 'hidden' }}>{item.title}</span>
+        <div style={{ display: 'flex', width: 2, height: 82, flexShrink: 0, backgroundColor: '#d0a96c', opacity: .8 }} />
+        <div dir="rtl" style={{ display: 'flex', flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', paddingRight: 24, overflow: 'hidden', fontSize: lines.length > 2 ? 31 : 37, lineHeight: 1.4 }}>
+          {lines.map((line, index) => <span key={index} style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>{line}</span>)}
         </div>
-        <div style={{ display: 'flex', borderTop: '2px solid #3b6654', paddingTop: 20, color: '#dce9df', fontSize: 20 }}><span>المصدر: {item.source}</span></div>
       </div>
+
+      <div style={{ display: 'flex', position: 'absolute', top: 184, right: 28, width: 86, height: 86, padding: 5, alignItems: 'center', justifyContent: 'center', border: '2px solid #e4c286', borderRadius: 22, backgroundColor: 'rgba(8, 36, 29, .9)' }}>
+        <img src={logo} alt="" width={72} height={72} style={{ width: 72, height: 72, borderRadius: 16 }} />
+      </div>
+
+      {photo && !item.isOriginal ? <div style={{ display: 'flex', position: 'absolute', bottom: 25, left: 30, padding: '9px 15px', borderRadius: 8, backgroundColor: 'rgba(6, 29, 24, .78)', color: '#fff', fontSize: 16 }}>الصورة: {item.source}</div> : null}
+      <div style={{ display: 'flex', position: 'absolute', inset: 0, border: '6px solid #155039', pointerEvents: 'none' }} />
     </div>,
     { ...size, fonts: [{ name: 'NaqadaArabic', data: font, weight: 700, style: 'normal' }] },
   );

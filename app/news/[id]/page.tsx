@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   const { id } = await params;
   const item = await getNewsItem(id);
   if (!item) return { robots: { index: false, follow: true } };
+  const shareImage = `${siteConfig.url}/news/${item.id}/opengraph-image?v=2`;
 
   return {
     title: item.title,
@@ -46,13 +47,13 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
       description: item.description,
       siteName: 'دليل نقادة',
       publishedTime: item.publishedAt || undefined,
-      images: [{ url: `${siteConfig.url}/news/${item.id}/opengraph-image`, width: 1200, height: 630, alt: `${item.title} · ${item.source} · دليل نقادة` }],
+      images: [{ url: shareImage, width: 1200, height: 630, alt: `${item.title} · ${item.source} · دليل نقادة` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: item.title,
       description: item.description,
-      images: [`${siteConfig.url}/news/${item.id}/opengraph-image`],
+      images: [shareImage],
     },
   };
 }
