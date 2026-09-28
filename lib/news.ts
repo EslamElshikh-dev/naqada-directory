@@ -369,7 +369,8 @@ async function fetchFeed(feed: FeedDefinition) {
 async function enrichItem(item: ExternalNewsItem) {
   try {
     const html = await fetchText(item.url, ARTICLE_REVALIDATE_SECONDS, ARTICLE_TIMEOUT_MS, 'text/html, application/xhtml+xml;q=0.9');
-    const imageUrl = item.imageUrl || safeImageUrl(metadataValue(html, ['og:image', 'twitter:image']), item.url);
+    // Publisher artwork is usually the full article image; news-search thumbnails are much smaller.
+    const imageUrl = safeImageUrl(metadataValue(html, ['og:image', 'twitter:image']), item.url) || item.imageUrl;
     const sourceDescription = stripHtml(metadataValue(html, ['og:description', 'twitter:description', 'description']));
     return {
       ...item,
@@ -380,6 +381,27 @@ async function enrichItem(item: ExternalNewsItem) {
   } catch {
     return item;
   }
+}
+
+// Verified from the publisher page. The archived item predates the preference for original images,
+// and this publisher can refuse server-side article requests while still serving its image CDN.
+const verifiedNewsArtwork: Record<string, { article: string; image: string }> = {
+  '16mwrfh': {
+    article: 'https://www.masrawy.com/news/news_regions/details/2026/9/27/3054654/',
+    image: 'https://media.gemini.media/img/large/2026/9/27/2026_9_27_19_1_59_279.webp',
+  },
+};
+
+export async function getNewsShareImageUrl(item: ExternalNewsItem): Promise<string | null> {
+  if (item.isOriginal) return item.imageUrl;
+  const verified = verifiedNewsArtwork[item.id];
+  if (verified && item.url.startsWith(verified.article)) return verified.image;
+  if (!item.imageUrl || new URL(item.imageUrl).hostname !== 'www.bing.com') return item.imageUrl;
+  if (unwrapArticleUrl(item.url) !== item.url) return item.imageUrl;
+  try {
+    const html = await fetchText(item.url, ARTICLE_REVALIDATE_SECONDS, 3_500, 'text/html, application/xhtml+xml;q=0.9');
+    return safeImageUrl(metadataValue(html, ['og:image', 'twitter:image']), item.url) || item.imageUrl;
+  } catch { return item.imageUrl; }
 }
 
 // The publisher's body is used only as transient reference material. Readers receive
