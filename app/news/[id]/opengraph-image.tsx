@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import { notFound } from 'next/navigation';
+import sharp from 'sharp';
 import { getNewsItem, getNewsShareImageUrl } from '@/lib/news';
 
 export const runtime = 'nodejs';
@@ -18,6 +19,12 @@ async function photoData(url: string | null) {
       || Number(response.headers.get('content-length') || 0) > 5_000_000) return null;
     const bytes = await response.arrayBuffer();
     if (bytes.byteLength > 5_000_000) return null;
+    if (mime === 'image/webp') {
+      // ImageResponse cannot render all WebP variants directly. Convert only the publisher's
+      // original bytes; the preview keeps the original dimensions before compositing.
+      const jpeg = await sharp(Buffer.from(bytes)).jpeg({ quality: 92 }).toBuffer();
+      return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
+    }
     return `data:${mime};base64,${Buffer.from(bytes).toString('base64')}`;
   } catch { return null; }
 }
@@ -28,7 +35,7 @@ function headlineLines(title: string) {
   let line = '';
   for (const word of words) {
     const next = line ? `${line} ${word}` : word;
-    if (next.length <= 43 || !line) { line = next; continue; }
+    if (next.length <= 34 || !line) { line = next; continue; }
     lines.push(line);
     line = word;
     if (lines.length === 3) break;
@@ -59,13 +66,15 @@ export default async function NewsOpenGraph({ params }: { params: Promise<{ id: 
         <img src={photo} alt="" width={1200} height={630} style={{ position: 'absolute', top: 0, left: 0, width: 1200, height: 630, objectFit: 'cover' }} />
       ) : <div style={{ display: 'flex', position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(120deg, #0b2b24, #246347)', color: '#d6b778', fontSize: 260 }}>ن</div>}
 
-      <div style={{ display: 'flex', position: 'absolute', top: 0, right: 0, left: 0, height: 166, flexDirection: 'row', alignItems: 'center', padding: '22px 34px', background: 'linear-gradient(90deg, rgba(7, 34, 28, .91), rgba(7, 34, 28, .97))' }}>
-        <div style={{ display: 'flex', width: 164, flexShrink: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', color: '#f2d18d', fontSize: 28, lineHeight: 1.4 }}>
+      <div style={{ display: 'flex', position: 'absolute', top: 0, right: 0, left: 0, height: 166, background: 'linear-gradient(90deg, rgba(7, 34, 28, .91), rgba(7, 34, 28, .97))' }}>
+        <div style={{ display: 'flex', position: 'absolute', right: 38, top: 29, width: 135, height: 105, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', color: '#f2d18d', fontSize: 28, lineHeight: 1.4 }}>
           <span>أخبار</span><span>نقادة</span>
         </div>
-        <div style={{ display: 'flex', width: 2, height: 82, flexShrink: 0, backgroundColor: '#d0a96c', opacity: .8 }} />
-        <div dir="rtl" style={{ display: 'flex', flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', paddingRight: 24, overflow: 'hidden', fontSize: lines.length > 2 ? 31 : 37, lineHeight: 1.4 }}>
-          {lines.map((line, index) => <span key={index} style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>{line}</span>)}
+        <div style={{ display: 'flex', position: 'absolute', right: 193, top: 42, width: 2, height: 82, backgroundColor: '#d0a96c', opacity: .8 }} />
+        <div style={{ display: 'flex', position: 'absolute', top: 17, right: 219, left: 32, height: 135, flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden', fontSize: lines.length > 2 ? 31 : 36, lineHeight: 1.4 }}>
+          {lines.map((line, index) => <div key={index} style={{ display: 'flex', flexDirection: 'row-reverse', gap: 10, whiteSpace: 'nowrap' }}>
+            {line.split(' ').map((word, wordIndex) => <span key={wordIndex}>{word}</span>)}
+          </div>)}
         </div>
       </div>
 
