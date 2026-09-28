@@ -44,7 +44,7 @@ export default async function NewsOpenGraph({ params }: { params: Promise<{ id: 
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <span style={{ color: '#f2c876', fontSize: 20 }}>{item.category} · {item.isNaqada ? 'نقادة' : 'قنا'}</span>
-          <span style={{ fontSize: item.title.length > 125 ? 36 : item.title.length > 80 ? 42 : 50, lineHeight: 1.6, textAlign: 'right', maxHeight: 340, overflow: 'hidden' }}>{item.title}</span>
+          <span style={{ fontSize: item.title.length > 110 ? 32 : item.title.length > 65 ? 37 : item.title.length > 42 ? 40 : 48, lineHeight: 1.45, textAlign: 'right', maxHeight: 400, overflow: 'hidden' }}>{item.title}</span>
         </div>
         <div style={{ display: 'flex', borderTop: '2px solid #3b6654', paddingTop: 20, color: '#dce9df', fontSize: 20 }}><span>المصدر: {item.source}</span></div>
       </div>

@@ -274,6 +274,9 @@ function parseFeed(xml: string): ExternalNewsItem[] {
     if (!url) continue;
 
     const title = truncate(stripHtml(extractTag(block, 'title')), 170);
+    // Some feeds index a publisher's search page as though it were an article.
+    if (/^(نتائج? البحث|بحث عن|الصفحة الرئيسية)/.test(title)
+      || /\/(?:search|بحث)(?:\/|$)/i.test(new URL(url).pathname)) continue;
     const rawDescription = extractTag(block, 'description');
     const encodedContent = extractTag(block, 'content:encoded');
     // Use the richer excerpt when the publisher's RSS provides it. Never reproduce a full article.
@@ -421,7 +424,8 @@ async function readArchive(query: string): Promise<ExternalNewsItem[]> {
       headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(4000),
     });
     if (!response.ok) return [];
-    return ((await response.json()) as ArchivedNews[]).map(row => row.payload).filter(row => row?.id && row?.url);
+    return ((await response.json()) as ArchivedNews[]).map(row => row.payload)
+      .filter(row => row?.id && row?.url && !/^(نتائج? البحث|بحث عن|الصفحة الرئيسية)/.test(row.title));
   } catch { return []; }
 }
 
