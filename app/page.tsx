@@ -12,6 +12,7 @@ import { RoleModelFeature } from '@/components/role-model-feature';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { businesses, localities, meta, officialLocalities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getCategoryMedia } from '@/lib/category-media';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { absoluteUrl, siteConfig } from '@/lib/site';
@@ -232,7 +233,7 @@ export default function HomePage() {
           </header>
           <div className={styles.storyGrid}>
             <Link prefetch={false} href={`/blog/${leadArticle.slug}`} className={styles.leadStory}>
-              <Image src={`/blog-media/${encodeURIComponent(leadArticle.hero.asset)}`} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
+              <Image src={editorialImagePath(leadArticle.hero.asset)} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
               <div><span>{leadArticle.category} · {leadArticle.locality}</span><h3>{leadArticle.title}</h3><p>{leadArticle.description}</p><b>اقرأ الحكاية <ActionIcon name="arrow" /></b></div>
             </Link>
             <div className={styles.storyList}>
@@ -240,7 +241,7 @@ export default function HomePage() {
                 <Link prefetch={false} key={article.slug} href={`/blog/${article.slug}`}>
                   <span className={styles.storyThumb}>
                     <Image
-                      src={`/blog-media/${encodeURIComponent(article.hero.asset)}`}
+                      src={editorialImagePath(article.hero.asset)}
                       width={article.hero.width}
                       height={article.hero.height}
                       alt=""

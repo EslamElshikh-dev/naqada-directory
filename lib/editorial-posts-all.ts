@@ -15,8 +15,10 @@ import { editorialPostsBatch3J } from './editorial-posts-batch-3j';
 import { editorialPostsBatch4A } from './editorial-posts-batch-4a';
 import { editorialPostsBatch4B } from './editorial-posts-batch-4b';
 import { enrichEditorialPostImages } from './editorial-post-image-enrichment';
+import { alYounesPost } from './editorial-post-al-younes';
 
 const baseEditorialPosts = [
+  alYounesPost,
   ...firstEditorialPosts,
   ...editorialPostsBatch2A,
   ...editorialPostsBatch2B,

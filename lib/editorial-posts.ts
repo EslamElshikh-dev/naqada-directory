@@ -4,6 +4,7 @@ export type EditorialImage = {
   caption: string;
   width: number;
   height: number;
+  originalAsset?: string;
 };
 
 export type EditorialSource = {
@@ -15,6 +16,8 @@ export type EditorialSection = {
   heading: string;
   paragraphs: string[];
   image?: EditorialImage;
+  timeline?: Array<{ period: string; name: string; description: string }>;
+  sources?: EditorialSource[];
 };
 
 export type EditorialPost = {
@@ -34,6 +37,7 @@ export type EditorialPost = {
   relatedVillage: string;
   publishedAt: string;
   modifiedAt: string;
+  imageNotice?: string;
 };
 
 export const editorialPosts: EditorialPost[] = [

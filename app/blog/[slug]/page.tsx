@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { allEditorialPosts, getAllEditorialPost } from '@/lib/editorial-posts-all';
+import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getPublicCurated } from '@/lib/auth/moderator';
 import { CuratedArticle } from './curated-article';
 import { localities } from '@/lib/data';
@@ -18,11 +19,11 @@ export function generateStaticParams() {
 }
 
 function imageUrl(asset: string) {
-  return `${siteConfig.url}/blog-media/${encodeURIComponent(asset)}`;
+  return `${siteConfig.url}${editorialImagePath(asset)}`;
 }
 
 function localImageUrl(asset: string) {
-  return `/blog-media/${encodeURIComponent(asset)}`;
+  return editorialImagePath(asset);
 }
 
 function metadataTitle(title: string) {
@@ -205,7 +206,7 @@ export default async function EditorialPostPage({ params }: Props) {
                   priority
                   sizes="(max-width: 900px) calc(100vw - 20px), 46vw"
                 />
-                <figcaption>{post.hero.caption}</figcaption>
+                <figcaption>{post.hero.caption}{post.hero.originalAsset && <a className={styles.originalLink} href={localImageUrl(post.hero.originalAsset)} target="_blank" rel="noreferrer">شاهد الصورة الأصلية ↗</a>}</figcaption>
               </figure>
             </div>
           </div>
@@ -219,13 +220,23 @@ export default async function EditorialPostPage({ params }: Props) {
 
             <aside className={styles.imageNotice}>
               <strong>ملاحظة على الصور</strong>
-              <p>الصور التوضيحية المولدة بصريًا في هذا المقال صُممت لتعكس السياق العام للموضوع، ولا تُقدَّم باعتبارها صورًا توثيقية لمعلم أو أشخاص حقيقيين بعينهم.</p>
+              <p>{post.imageNotice || 'الصور التوضيحية المولدة بصريًا في هذا المقال صُممت لتعكس السياق العام للموضوع، ولا تُقدَّم باعتبارها صورًا توثيقية لمعلم أو أشخاص حقيقيين بعينهم.'}</p>
             </aside>
 
             {post.sections.map((section, index) => (
               <section key={section.heading} id={`section-${index + 1}`} className={styles.section}>
                 <h2>{section.heading}</h2>
                 {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                {section.timeline && <ol className={styles.timeline}>
+                  {section.timeline.map((entry) => <li key={entry.name}>
+                    <span>{entry.period}</span>
+                    <h3>{entry.name}</h3>
+                    <p>{entry.description}</p>
+                  </li>)}
+                </ol>}
+                {section.sources && <div className={styles.sectionSources} aria-label="مصادر هذا القسم">
+                  {section.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>)}
+                </div>}
                 {section.image && (
                   <figure className={styles.inlineFigure}>
                     <Image
@@ -235,7 +246,7 @@ export default async function EditorialPostPage({ params }: Props) {
                       alt={section.image.alt}
                       sizes="(max-width: 900px) calc(100vw - 20px), 860px"
                     />
-                    <figcaption>{section.image.caption}</figcaption>
+                    <figcaption>{section.image.caption}{section.image.originalAsset && <a className={styles.originalLink} href={localImageUrl(section.image.originalAsset)} target="_blank" rel="noreferrer">افتح الأصل بالحجم الكامل ↗</a>}</figcaption>
                   </figure>
                 )}
               </section>
