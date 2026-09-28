@@ -56,8 +56,12 @@ test('external article and image URLs are constrained to known secure publishers
 test('news previews preserve attribution and send readers to the original publisher', () => {
   assert.ok(newsPage.includes('الصورة: {item.source}'));
   assert.ok(newsPage.includes('الأخبار الخارجية تحتفظ باسم ناشرها ورابطه'));
-  assert.ok(newsPage.includes('اقرأ من المصدر'));
-  assert.ok(storyPage.includes('فتح الخبر الأصلي'));
+  assert.ok(newsPage.includes('معرفة المزيد'));
+  assert.ok(newsPage.includes('href={`/news/${item.id}`}'));
+  assert.ok(storyPage.includes('قراءة من المصدر'));
+  assert.ok(storyPage.includes('href={item.url}'));
+  assert.ok(storyPage.includes('getExpandedNewsBody(item)'));
+  assert.ok(!newsPage.includes('href={item.url}'));
   assert.ok(storyPage.includes('الحقوق لـ {item.source}'));
   assert.ok(storyPage.includes('isBasedOn: item.isOriginal ? undefined : item.url'));
 });
