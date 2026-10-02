@@ -54,6 +54,9 @@ test('registry discovery excludes unpublished or weak research records', () => {
     { ...sample, locality: 'موضع غير موثق', status: 'manual_review' },
     { ...sample, locality: 'موضع غير موثق', grade: 'C' },
   ]).length, 0);
+  assert.equal(family.buildFamilySearchPages([{ ...sample, grade: 'A/B' }]).length, 2);
+  assert.equal(family.buildFamilySearchPages([{ ...sample, grade: 'A/B', status: 'historical_ready' }]).length, 2);
+  assert.match(data.familySearchPages.find((item) => item.href === '/families').subtitle, /٣٠/);
   assert.match(data.families.find((item) => item.locality === 'طوخ').scope, /جزئي/);
 });
 

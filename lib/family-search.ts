@@ -17,7 +17,7 @@ export function isFamilySearchQuery(query: string) {
 export function buildFamilySearchPages(records: Family[]): FamilySearchPage[] {
   const byLocality = new Map<string, Family[]>();
   for (const record of records) {
-    if (!['ready', 'ready_with_caution'].includes(record.status) || !['A', 'A-', 'B+', 'B'].includes(record.grade)) continue;
+    if (!['ready', 'ready_with_caution', 'historical_ready'].includes(record.status) || !['A', 'A-', 'A/B', 'B+', 'B'].includes(record.grade)) continue;
     const group = byLocality.get(record.locality) || [];
     group.push(record);
     byLocality.set(record.locality, group);
