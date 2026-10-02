@@ -7,7 +7,7 @@ import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { hasBusinessMedia } from '@/lib/business-media';
 import { normalizeSearchFields, prepareSearchQuery, scoreNormalizedSearchFields } from '@/lib/search-ranking';
 import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
-import { searchFamilyPages, type FamilySearchPage } from '@/lib/family-search';
+import { isFamilySearchQuery, searchFamilyPages, type FamilySearchPage } from '@/lib/family-search';
 import { ListingCard } from './listing-card';
 import styles from './directory-explorer.module.css';
 
@@ -90,6 +90,7 @@ export function DirectoryExplorer({
   })), [businesses]);
 
   const rankedQueryMatches = useMemo(() => {
+    if (isFamilySearchQuery(deferredQuery)) return [];
     const { normalizedQuery, tokens } = prepareSearchQuery(deferredQuery);
     return indexedBusinesses
       .map(({ item, normalized }) => ({

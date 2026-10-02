@@ -8,6 +8,7 @@ import {
   type SearchRankingFields,
 } from '@/lib/search-ranking';
 import { normalizeArabic } from '@/lib/site';
+import { isFamilySearchQuery } from '@/lib/family-search';
 import type { Business } from '@/lib/types';
 import { roleModels } from '@/lib/role-models';
 
@@ -247,7 +248,10 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
       },
     })),
   ] : searchIndex;
-  const searchableIndex = allowedKinds ? activeIndex.filter((item) => allowedKinds.has(item.kind)) : activeIndex;
+  const familyIntent = isFamilySearchQuery(query);
+  const searchableIndex = activeIndex.filter((item) =>
+    (!allowedKinds || allowedKinds.has(item.kind))
+    && (!familyIntent || item.href === '/families' || item.href.startsWith('/families?')));
   const safeLimit = Math.max(1, Math.min(limit, searchableIndex.length));
 
   return searchableIndex

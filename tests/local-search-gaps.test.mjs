@@ -46,6 +46,10 @@ test('family questions find the documented locality registry in both search path
   assert.equal(growth.isSearchGapOpen('ماهى عائلات طنطا'), true);
   assert.equal(search.searchSite('ماهى عائلات طنطا', 1).length, 0);
   assert.equal(family.searchFamilyPages('ماهي عائلات نقادة', data.familySearchPages)[0].href, '/families');
+  const registryResults = search.searchSite('ماهي عائلات نقادة', 30);
+  assert.ok(registryResults.length > 0);
+  assert.ok(registryResults.every((item) => item.href === '/families' || item.href.startsWith('/families?')));
+  assert.equal(search.searchSite('ماهي عائلات نقادة', 30, ['listing']).length, 0);
 });
 
 test('registry discovery excludes unpublished or weak research records', () => {
