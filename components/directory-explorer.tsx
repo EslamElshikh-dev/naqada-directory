@@ -7,6 +7,7 @@ import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
 import { hasBusinessMedia } from '@/lib/business-media';
 import { normalizeSearchFields, prepareSearchQuery, scoreNormalizedSearchFields } from '@/lib/search-ranking';
 import { privacySafeSearchTerm, trackEvent } from '@/lib/analytics-client';
+import { searchFamilyPages, type FamilySearchPage } from '@/lib/family-search';
 import { ListingCard } from './listing-card';
 import styles from './directory-explorer.module.css';
 
@@ -16,9 +17,11 @@ type FacetItem = {
   name: string;
   count: number;
 };
+const noFamilyPages: FamilySearchPage[] = [];
 
 export function DirectoryExplorer({
   businesses,
+  familyPages = noFamilyPages,
   categories,
   localities,
   initialQuery = '',
@@ -30,6 +33,7 @@ export function DirectoryExplorer({
   lockedLocality = false,
 }: {
   businesses: DirectoryItem[];
+  familyPages?: FamilySearchPage[];
   categories: Category[];
   localities: LocalityPage[];
   initialQuery?: string;
@@ -49,6 +53,7 @@ export function DirectoryExplorer({
   const [page, setPage] = useState(initialPage);
   const [hydratedFromUrl, setHydratedFromUrl] = useState(false);
   const deferredQuery = useDeferredValue(query);
+  const familyResults = useMemo(() => !category && !locality ? searchFamilyPages(deferredQuery, familyPages) : [], [category, deferredQuery, familyPages, locality]);
   const pageSize = 12;
 
   useEffect(() => {
@@ -163,17 +168,18 @@ export function DirectoryExplorer({
 
     const timer = window.setTimeout(() => {
       const safeTerm = privacySafeSearchTerm(term);
-      trackEvent(filtered.length === 0 ? 'Directory Zero Results' : 'Directory Search', {
-        results: filtered.length,
+      const resultCount = filtered.length + familyResults.length;
+      trackEvent(resultCount === 0 ? 'Directory Zero Results' : 'Directory Search', {
+        results: resultCount,
         queryLength: term.length,
         category: category || 'all',
         locality: locality || 'all',
-        ...(filtered.length === 0 && safeTerm ? { query: safeTerm } : {}),
+        ...(resultCount === 0 && safeTerm ? { query: safeTerm } : {}),
       });
     }, 900);
 
     return () => window.clearTimeout(timer);
-  }, [category, deferredQuery, filtered.length, locality]);
+  }, [category, deferredQuery, familyResults.length, filtered.length, locality]);
 
   function reset() {
     setQuery('');
@@ -232,7 +238,7 @@ export function DirectoryExplorer({
               <strong>{trimmedQuery ? `«${trimmedQuery}»` : [categoryLabels.get(category) || category, locality].filter(Boolean).join(' · ')}</strong>
               <small>{category ? `القسم: ${categoryLabels.get(category) || category}` : 'كل الأقسام'} · {locality ? `المكان: ${locality}` : 'كل المناطق'} · الترتيب: {sort === 'recommended' ? 'الأكثر صلة' : sort === 'rating' ? 'الأعلى تقييمًا' : 'أبجديًا'}</small>
             </div>
-            <span className={styles.count}><b>{filtered.length.toLocaleString('ar-EG')}</b><small>نتيجة</small></span>
+            <span className={styles.count}><b>{(filtered.length + familyResults.length).toLocaleString('ar-EG')}</b><small>نتيجة</small></span>
           </div>
 
           {trimmedQuery && (facets.categories.length > 1 || facets.localities.length > 1) ? (
@@ -259,11 +265,16 @@ export function DirectoryExplorer({
       ) : null}
 
       <div className="results-bar" aria-live="polite">
-        <div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> نتيجة مطابقة</span></div>
+        <div><strong>{(filtered.length + familyResults.length).toLocaleString('ar-EG')}</strong><span> نتيجة مطابقة</span></div>
         {(query || (!lockedCategory && category) || (!lockedLocality && locality)) && <button type="button" onClick={reset}>مسح الفلاتر</button>}
       </div>
 
-      {visible.length ? <div className="listing-grid">{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : <div className="empty-state"><strong>{filterConflict ? 'العبارة موجودة لكن الفلاتر ضيّقت النتائج أكثر من اللازم' : 'لا توجد نتيجة مطابقة'}</strong><p>{filterConflict ? 'وسّع المكان أو القسم مع الاحتفاظ بعبارة البحث، وستظهر النتائج المطابقة المتاحة.' : 'جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.'}</p>{filterConflict ? <div className={styles.recovery}>{category && !lockedCategory ? <button type="button" onClick={() => { setCategory(''); setPage(1); }}>إزالة فلتر القسم</button> : null}{locality && !lockedLocality ? <button type="button" onClick={() => { setLocality(''); setPage(1); }}>إزالة فلتر المكان</button> : null}{category && locality && (!lockedCategory || !lockedLocality) ? <button type="button" onClick={clearResultFilters}>عرض كل نتائج العبارة</button> : null}</div> : null}<div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link className="button button--ghost" href={missingHref} onClick={() => trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' })}>اقترح نتيجة مفقودة</Link></div></div>}
+      {familyResults.length ? <section className={styles.context} aria-label="نتائج سجل العائلات">
+        <div className={styles.contextCopy}><span>من سجل العائلات</span><strong>نتائج موثقة بحسب الموضع</strong><small>السجل جزئي؛ افتح النتيجة لمراجعة المصدر وحدود الدليل.</small></div>
+        <div className="detail-actions">{familyResults.map((item) => <Link key={item.href} href={item.href} className="button button--ghost">{item.title} ←</Link>)}</div>
+      </section> : null}
+
+      {visible.length ? <div className="listing-grid">{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : familyResults.length ? null : <div className="empty-state"><strong>{filterConflict ? 'العبارة موجودة لكن الفلاتر ضيّقت النتائج أكثر من اللازم' : 'لا توجد نتيجة مطابقة'}</strong><p>{filterConflict ? 'وسّع المكان أو القسم مع الاحتفاظ بعبارة البحث، وستظهر النتائج المطابقة المتاحة.' : 'جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.'}</p>{filterConflict ? <div className={styles.recovery}>{category && !lockedCategory ? <button type="button" onClick={() => { setCategory(''); setPage(1); }}>إزالة فلتر القسم</button> : null}{locality && !lockedLocality ? <button type="button" onClick={() => { setLocality(''); setPage(1); }}>إزالة فلتر المكان</button> : null}{category && locality && (!lockedCategory || !lockedLocality) ? <button type="button" onClick={clearResultFilters}>عرض كل نتائج العبارة</button> : null}</div> : null}<div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link className="button button--ghost" href={missingHref} onClick={() => trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' })}>اقترح نتيجة مفقودة</Link></div></div>}
 
       {totalPages > 1 && <nav className="pagination" aria-label="صفحات النتائج">
         {currentPage > 1

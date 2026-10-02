@@ -1,20 +1,20 @@
 {
   "meta": {
     "title": "دليل نقادة",
-    "updatedAt": "2026-09-28",
-    "businessCount": 329,
+    "updatedAt": "2026-10-02",
+    "businessCount": 331,
     "localityCount": 64,
-    "familyCount": 29,
+    "familyCount": 30,
     "peopleCount": 10,
     "landmarkCount": 12
   },
   "categoryCounts": [
     {"name":"الطب والصحة","count":46},
-    {"name":"التجزئة والتسوق","count":47},
+    {"name":"التجزئة والتسوق","count":48},
     {"name":"التعليم","count":30},
     {"name":"المطاعم والأطعمة","count":20},
     {"name":"دور العبادة","count":22},
-    {"name":"البناء والصيانة","count":21},
+    {"name":"البناء والصيانة","count":22},
     {"name":"السيارات والنقل","count":16},
     {"name":"الإلكترونيات والهواتف","count":14},
     {"name":"الخدمات المهنية","count":9},
@@ -33,8 +33,8 @@
     {"name":"المعالم والترفيه","count":1}
   ],
   "localityCounts": [
-    {"name":"مدينة نقادة","count":132},
-    {"name":"الخطارة","count":37},
+    {"name":"مدينة نقادة","count":133},
+    {"name":"الخطارة","count":38},
     {"name":"طوخ","count":13},
     {"name":"الأوسط قمولا","count":16},
     {"name":"دنفيق","count":9},

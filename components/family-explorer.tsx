@@ -14,11 +14,11 @@ const typeLabels: Record<string, string> = {
   family_core: 'عائلة',
 };
 
-export function FamilyExplorer({ families }: { families: Family[] }) {
-  const [query, setQuery] = useState('');
-  const [locality, setLocality] = useState('');
+export function FamilyExplorer({ families, initialLocality = '', initialQuery = '' }: { families: Family[]; initialLocality?: string; initialQuery?: string }) {
+  const [query, setQuery] = useState(initialQuery);
+  const [locality, setLocality] = useState(initialLocality);
   const [grade, setGrade] = useState('');
-  const localities = [...new Set(families.map((item) => item.locality))].sort((a, b) => a.localeCompare(b, 'ar'));
+  const localities = [...new Set([...families.map((item) => item.locality), initialLocality].filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ar'));
   const grades = [...new Set(families.map((item) => item.grade))].sort();
   const tokens = normalizeArabic(query).split(' ').filter(Boolean);
   const filtered = families.filter((item) => {
@@ -37,6 +37,8 @@ export function FamilyExplorer({ families }: { families: Family[] }) {
         <label className="select-field"><span>الدرجة</span><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">كل الدرجات</option>{grades.map((item) => <option key={item}>{item}</option>)}</select></label>
       </div>
       <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> سجلًا منشورًا</span></div></div>
+      <p className="record-card__scope">السجل جزئي، ويعرض ما توفر له دليل منشور. عدم ظهور عائلة لا ينفي وجودها في الموضع.</p>
+      {!filtered.length ? <div className="empty-state"><strong>لا يوجد سجل موثق يطابق البحث حتى الآن</strong><p>جرّب اسم العائلة أو غيّر الموضع، ويمكنك إرسال مصدر لإضافته من صفحة المساهمات.</p></div> : null}
       <div className="record-grid">{filtered.map((item) => (
         <article className="record-card" key={item.id}>
           <div className="record-card__top"><span>{typeLabels[item.type] || item.type.replaceAll('_', ' ')}</span><b>درجة {item.grade}</b></div>

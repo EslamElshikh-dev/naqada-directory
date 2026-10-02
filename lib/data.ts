@@ -18,6 +18,7 @@ import rawLandmarks from '@/data/landmarks.json';
 import rawLocalities from '@/data/localities.json';
 import rawPeople from '@/data/people.json';
 import { bashlawListingEnrichment } from './bashlaw-listing-enrichment';
+import { buildFamilySearchPages } from './family-search';
 import { normalizeRouteSlug, slugify } from './site';
 import type { Business, Category, DirectoryItem, Family, Landmark, LocalityPage, LocalityRecord, PersonRecord } from './types';
 
@@ -136,6 +137,7 @@ export const directoryBusinesses: DirectoryItem[] = businesses.map((item) => ({
 }));
 
 export const families = rawFamilies as Family[];
+export const familySearchPages = buildFamilySearchPages(families);
 export const people = rawPeople as PersonRecord[];
 export const landmarks = rawLandmarks as Landmark[];
 

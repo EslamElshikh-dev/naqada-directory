@@ -1,4 +1,4 @@
-import { businesses, categories, landmarks, localities } from '@/lib/data';
+import { businesses, categories, familySearchPages, landmarks, localities } from '@/lib/data';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces } from '@/lib/knowledge';
 import {
   normalizeSearchFields,
@@ -57,7 +57,6 @@ const pages: SearchItem[] = [
   { kind: 'page', title: 'أضف نشاطك باسمك', subtitle: 'سجّل بيانات نشاطك وصوره من حسابك', href: '/contribute', badge: 'مشاركة', fields: { title: 'أضف نشاطك باسمك', auxiliary: 'اضافة نشاط تصحيح بيانات مساهمة' } },
   { kind: 'page', title: 'مدونة دليل نقادة', subtitle: 'مقالات وموضوعات محلية', href: '/blog', badge: 'محتوى', fields: { title: 'مدونة دليل نقادة', auxiliary: 'مدونة مقالات اخبار محتوى' } },
   { kind: 'page', title: 'نماذج مشرفة في نقادة', subtitle: 'حكايات أشخاص من نقادة مع مصدر كل قصة', href: '/role-models', badge: 'نماذج', fields: { title: 'نماذج مشرفة في نقادة', auxiliary: 'شخصيات آية رفاعي عبدالشافي نجاح تطوع' } },
-  { kind: 'page', title: 'عائلات نقادة', subtitle: 'سجل العائلات المنشور مع الموضع والدليل', href: '/families', badge: 'عائلات', fields: { title: 'عائلات نقادة', auxiliary: 'عايلات نقاده عائلات نقادة عايلات نجوع قرى اسر' } },
 ];
 
 function indexItem(item: SearchItem): IndexedSearchItem {
@@ -65,6 +64,7 @@ function indexItem(item: SearchItem): IndexedSearchItem {
 }
 
 const searchIndex: IndexedSearchItem[] = [
+  ...familySearchPages.map(indexItem),
   ...businesses.map((item): SearchItem => ({
     kind: 'listing',
     title: item.name,

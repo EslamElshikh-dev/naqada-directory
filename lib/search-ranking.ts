@@ -72,6 +72,9 @@ const queryNoiseWords = new Set([
   'اريد',
   'ابحث',
   'بحث',
+  'ماهي',
+  'ما',
+  'هي',
   'عن',
   'فين',
   'اين',
@@ -113,7 +116,9 @@ export function prepareSearchQuery(value: string) {
   const rawNormalizedQuery = normalizeArabic(value)
     .replace(/اماكنجمله/g, 'اماكن جمله')
     .replace(/محلاتوالاقمشه/g, 'محلات اقمشه')
-    .replace(/جمعيه الشبات/g, 'جمعيه الشابات');
+    .replace(/جمعيه الشبات/g, 'جمعيه الشابات')
+    .replace(/(^|\s)اولتد(?=\s|$)/gu, '$1اولاد')
+    .replace(/(^|\s)الشبخ(?=\s|$)/gu, '$1الشيخ');
   const rawTokens = rawNormalizedQuery.split(' ').filter(Boolean);
   const meaningfulTokens = rawTokens.filter((token) => !isQueryNoise(token));
   const tokens = meaningfulTokens.length ? meaningfulTokens : rawTokens;

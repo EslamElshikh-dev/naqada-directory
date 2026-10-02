@@ -6,6 +6,8 @@ import { resolveSession } from '@/lib/auth/session';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { businesses } from '@/lib/data';
 import { isSearchGapOpen } from '@/lib/growth-priority';
+import { isFamilySearchQuery } from '@/lib/family-search';
+import { getSearchGapResearch } from '@/lib/search-gap-research';
 import { normalizeArabic } from '@/lib/site';
 import { sanitizeSiteSearchQuery, searchSite } from '@/lib/site-search';
 import styles from './collect.module.css';
@@ -36,9 +38,13 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
   const activeBusinesses = catalog?.businesses || businesses;
   const normalized = normalizeArabic(query);
   const homeware = /ادوات|منزليه/.test(normalized);
-  const exactMatches = query ? searchSite(query, 6, ['listing'], activeBusinesses) : [];
-  const relatedMatches = homeware && !exactMatches.length
-    ? searchSite('أدوات منزلية', 8, ['listing'], activeBusinesses)
+  const familyQuery = isFamilySearchQuery(query);
+  const research = getSearchGapResearch(query);
+  const exactMatches = query ? searchSite(query, 6, familyQuery ? ['page'] : ['listing'], activeBusinesses)
+    .filter((item) => !familyQuery || item.href === '/families' || item.href.startsWith('/families?')) : [];
+  const relatedQuery = research?.relatedQuery || (homeware ? 'أدوات منزلية' : null);
+  const relatedMatches = relatedQuery && !exactMatches.length
+    ? searchSite(relatedQuery, 8, ['listing'], activeBusinesses)
     : [];
   const open = query ? isSearchGapOpen(query, activeBusinesses) : false;
 
@@ -74,14 +80,15 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
           <div className={styles.columns}>
             <section className={styles.panel}>
               <span className={styles.eyebrow}>01 · بيانات الدليل</span>
-              <h2>{exactMatches.length ? 'نشاط منشور يطابق العبارة' : 'لا توجد مطابقة مباشرة'}</h2>
-              {exactMatches.length ? <ul className={styles.matches}>{exactMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع السجل ←</b></Link></li>)}</ul> : <p>العبارة لا تطابق نشاطًا منشورًا حاليًا. ظهور متاجر مشابهة لا يثبت أنها تبيع بالجملة أو أنها «البراق» المقصود.</p>}
-              {relatedMatches.length ? <div className={styles.alternatives}><h3>متاجر أدوات منزلية قريبة من الموضوع</h3><p>نتائج مرتبطة بالنوع فقط؛ البيع بالجملة غير مثبت لهذه النتائج.</p><ul className={styles.matches}>{relatedMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع البيانات ←</b></Link></li>)}</ul></div> : null}
+              <h2>{exactMatches.length ? 'سجل منشور يطابق العبارة' : 'لا توجد مطابقة مباشرة'}</h2>
+              {exactMatches.length ? <ul className={styles.matches}>{exactMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع السجل ←</b></Link></li>)}</ul> : <p>العبارة لا تطابق سجلًا منشورًا حاليًا. وجود نتائج قريبة لا يثبت الاسم المطلوب أو توفر الخدمة المقصودة.</p>}
+              {relatedMatches.length ? <div className={styles.alternatives}><h3>سجلات مرتبطة بالموضوع</h3><p>هذه بدائل للمراجعة؛ ظهورها لا يغلق طلب البحث ولا يثبت الاسم أو الخدمة المقصودين.</p><ul className={styles.matches}>{relatedMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع البيانات ←</b></Link></li>)}</ul></div> : null}
             </section>
 
             <section className={styles.panel}>
               <span className={styles.eyebrow}>02 · المصادر المفتوحة</span>
               <h2>افحص الاسم والقرية ووسيلة التواصل</h2>
+              {research ? <aside className={styles.lead}><b>نتيجة التحقق · {research.checked}</b><p>{research.summary}</p><p><strong>المطلوب لاستكمال البيانات:</strong> {research.needed}</p>{research.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</aside> : null}
               <div className={styles.sourceLinks}>{searches.map((source) => <a key={source.title} href={source.href} target="_blank" rel="noopener noreferrer"><strong>{source.title} ↗</strong><small>{source.subtitle}</small></a>)}</div>
               {homeware ? <aside className={styles.lead}><b>خيط من السوشيال ميديا يحتاج تأكيدًا</b><p>صفحة «أبو مروان لتجهيز العروسة بطوخ» نشرت بيع أدوات منزلية بالجملة والقطاعي وذكرت طوخ، نقادة. المنشورات التي ظهرت في البحث قديمة؛ يلزم التأكد من استمرار النشاط قبل نشره.</p><a href="https://www.facebook.com/abumarwanlitajhizalearusihbutukh/videos/737259768108409/" target="_blank" rel="noopener noreferrer">راجع المنشور الأصلي ↗</a></aside> : null}
             </section>

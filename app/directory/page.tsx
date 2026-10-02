@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
-import { categories, localities } from '@/lib/data';
+import { categories, familySearchPages, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import Link from 'next/link';
 
@@ -80,6 +80,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
           <DirectoryExplorer
             key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
             businesses={directoryBusinesses}
+            familyPages={familySearchPages}
             categories={categories}
             localities={localities}
             initialQuery={state.q}

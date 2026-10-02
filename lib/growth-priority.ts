@@ -1,5 +1,7 @@
 import { businesses, canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
 import { searchSite } from '@/lib/site-search';
+import { isFamilySearchQuery } from '@/lib/family-search';
+import { getSearchGapResearch } from '@/lib/search-gap-research';
 import type { Business } from '@/lib/types';
 
 export type MissedSearch = { query: string; count: number; variants?: string[] };
@@ -181,6 +183,8 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   if (locality) signals.push(`${localityCount.toLocaleString('ar-EG')} سجلًا منشورًا في ${locality.name}`);
   if (category && pairCount !== null) signals.push(`${pairCount.toLocaleString('ar-EG')} من فئة ${category.shortLabel} داخل الموضع`);
   if (!locality && !category) signals.push('نية بحث حقيقية تحتاج تصنيفًا يدويًا قبل الجمع');
+  const research = getSearchGapResearch(query);
+  if (research) signals.push(`المطلوب للتحقق: ${research.needed}`);
 
   return {
     id: `search:${normalizeArabic(query)}`,
@@ -246,7 +250,9 @@ function buildCoveragePriorities(): GrowthPriority[] {
 export function isSearchGapOpen(query: string, currentBusinesses?: Business[]) {
   // Historic zero-result events remain in analytics, even after a listing is published.
   // Families belong to the dedicated registry, rather than the business catalog.
-  if (/^(عائلات|عايلات)\s+نقاده?$/u.test(normalizeArabic(query))) return searchSite(query, 1, ['page']).length === 0;
+  if (isFamilySearchQuery(query)) {
+    return !searchSite(query, 20, ['page']).some((item) => item.href === '/families' || item.href.startsWith('/families?'));
+  }
   return searchSite(query, 1, ['listing'], currentBusinesses).length === 0;
 }
 
