@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Suspense } from 'react';
 import localFont from 'next/font/local';
 import { Footer, SiteHeader } from '@/components/site-shell';
 import { MobileNav } from '@/components/mobile-nav';
@@ -7,6 +8,7 @@ import { VisitorTracker } from '@/components/visitor-tracker';
 import { SanadAssistant } from '@/components/sanad-assistant';
 import { UpdatesTicker } from '@/components/updates-ticker';
 import { PwaSetup } from '@/components/pwa-setup';
+import { MetaPixel } from '@/components/meta-pixel';
 import './globals.css';
 import './naqada-theme.css';
 import './member-system.css';
@@ -125,6 +127,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <UpdatesTicker />
         <VisitorTracker />
         <PwaSetup />
+        <Suspense fallback={null}><MetaPixel /></Suspense>
+        <noscript>
+          {/* A tracking beacon must load directly from Meta, without image optimization. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img height="1" width="1" style={{ display: 'none' }} alt=""
+            src="https://www.facebook.com/tr?id=28666614406293709&ev=PageView&noscript=1" />
+        </noscript>
         {children}
         <Footer />
         <MobileNav />
