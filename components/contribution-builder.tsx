@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import type { Category, LocalityPage } from '@/lib/types';
 import { submitContribution, trackEvent } from '@/lib/analytics-client';
 
@@ -23,6 +24,7 @@ function normalizeType(value: string | null): ContributionType {
 }
 
 function errorText(error?: string) {
+  if (error === 'login_required') return 'انتهت جلسة حسابك. سجّل دخولك ثم أرسل الطلب؛ البيانات المكتوبة محفوظة هنا.';
   if (error === 'rate_limited') return 'تم إرسال عدة طلبات من نفس الاتصال خلال وقت قصير. حاول مرة أخرى لاحقًا.';
   if (error === 'invalid_form_timing') return 'تعذر قبول الطلب بهذه السرعة. راجع البيانات ثم أعد الإرسال.';
   if (error === 'origin_not_allowed') return 'تعذر التحقق من مصدر الطلب.';
@@ -130,6 +132,7 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
     <div className="detail-layout">
       <form className="detail-card" onSubmit={submitRequest}>
         <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">بيانات المساهمة</span><h2>أرسل الطلب مباشرة إلى قائمة المراجعة</h2></div>
+        <p>لو الطلب مرتبط بحسابك، هيجيلك إشعار بقرار المراجعة. <Link href="/account/login/">سجّل دخولك</Link> قبل الإرسال عشان تتابعه من حسابك.</p>
         <div className="detail-grid">
           <label><span>نوع الطلب</span><select style={fieldStyle} value={type} onChange={(event) => { setType(event.target.value as ContributionType); markChanged(); }}><option value="add">إضافة نشاط أو خدمة</option><option value="correction">تصحيح بيانات سجل</option><option value="missing">نتيجة بحث مفقودة</option></select></label>
           <label><span>اسم النشاط أو الخدمة</span><input style={fieldStyle} required maxLength={160} value={name} onChange={(event) => { setName(event.target.value); markChanged(); }} placeholder="مثال: معمل تحاليل أو اسم النشاط" /></label>

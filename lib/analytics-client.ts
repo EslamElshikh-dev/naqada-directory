@@ -118,6 +118,7 @@ export async function submitContribution(payload: ContributionPayload) {
   const body = { sessionHint: sessionHint(), ...payload };
   try {
     const sessionResponse = await fetch('/api/auth/session', { cache: 'no-store', credentials: 'same-origin' });
+    if (!sessionResponse.ok) return { ok: false, error: 'network_error', status: sessionResponse.status };
     const sessionData = sessionResponse.ok ? await sessionResponse.json().catch(() => null) as { user?: unknown } | null : null;
     const endpoint = sessionData?.user ? '/api/contributions' : INTAKE_URL;
     const response = await fetch(endpoint, {

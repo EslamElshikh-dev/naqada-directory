@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { OwnerListing } from '@/lib/owner-listings';
 import { ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import styles from './pending-activities.module.css';
 
 export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
+  const router = useRouter();
   const [listings, setListings] = useState(initial);
   const [working, setWorking] = useState('');
   const [error, setError] = useState('');
@@ -20,6 +22,7 @@ export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
       });
       if (!response.ok || !(await response.json() as { ok: boolean }).ok) throw new Error('save');
       setListings((current) => current.filter((item) => item.id !== id));
+      router.refresh();
     } catch { setError('ما قدرناش نحفظ القرار دلوقت. حاول تاني.'); }
     finally { setWorking(''); }
   }
@@ -27,7 +30,7 @@ export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
   return <div className={styles.list}>
     <p>في انتظار المراجعة: <strong>{listings.length.toLocaleString('ar-EG')}</strong></p>
     {error && <p role="alert" className={styles.error}>{error}</p>}
-    {listings.length ? listings.map((item) => <article className={styles.card} key={item.id}>
+    {listings.length ? listings.map((item) => <article id={`business-${item.id}`} className={styles.card} key={item.id}>
       <header><span>نشاط يملكه عضو مسجّل</span><time dateTime={item.updated_at}>{new Date(item.updated_at).toLocaleString('ar-EG')}</time></header>
       <h2>{item.name}</h2>
       <p><strong>{item.category}</strong> · {item.locality} · {item.address}</p>

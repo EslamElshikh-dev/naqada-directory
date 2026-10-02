@@ -16,6 +16,8 @@ import reportStyles from './moderator-report.module.css';
 import ownerStyles from './owner-dashboard.module.css';
 import { AdminLiveRefresh } from './admin-live-refresh';
 import { SanadPanel } from './sanad-panel';
+import { getRecentRequests } from '@/lib/contribution-review';
+import { RecentRequests } from './recent-requests';
 
 export const metadata: Metadata = { title: 'لوحة إدارة الدليل', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
@@ -91,7 +93,7 @@ function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsig
 export default async function AdminPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
-  const [statsResult, analyticsResult, discoveryResult, ownerResponse, moderatorReport, catalog, memberAccounts, sanadInsights] = await Promise.all([
+  const [statsResult, analyticsResult, discoveryResult, ownerResponse, moderatorReport, catalog, memberAccounts, sanadInsights, recentRequests] = await Promise.all([
     getAdminStats(session.accessToken).catch(() => null),
     getVisitorAnalytics(session.accessToken).catch(() => null),
     getDiscoveryInsights(session.accessToken).catch(() => null),
@@ -100,6 +102,7 @@ export default async function AdminPage() {
     getPublicBusinessCatalog().catch(() => null),
     getMemberAccounts(session.accessToken).catch(() => null),
     getSanadInsights(session.accessToken).catch(() => null),
+    getRecentRequests(session.accessToken).catch(() => null),
   ]);
   const ownerStatuses = ownerResponse?.ok ? await ownerResponse.json() as Array<{ status: string }> : [];
   const pendingOwnerCount = ownerStatuses.filter((item) => item.status === 'pending').length;
@@ -125,9 +128,10 @@ export default async function AdminPage() {
 
   return (
     <main id="main-content" className={`admin-page admin-page--premium ${ownerStyles.dashboard}`}>
-      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز الإدارة · دليل نقادة</span><h1>كل ما تحتاجه <em>لإدارة الدليل.</em></h1><p>الزيارات والمراجعات وأداء آية في لوحة واحدة؛ الأرقام مأخوذة من السجلات الحية.</p><div className={ownerStyles.heroSignals}><span><b>{analyticsResult ? format(totals.uniqueVisitors30d) : '—'}</b> زائر فريد · ٣٠ يومًا</span><span><b>{ownerResponse?.ok && statsResult ? format(stats.pendingContributions + pendingOwnerCount) : '—'}</b> طلبات متابعة</span><span><b>{moderatorReport ? format(moderatorReport.actions30d) : '—'}</b> إجراء لآية</span></div><div className={ownerStyles.freshness}><span>آخر تحديث {analyticsResult?.generatedAt ? timeLabel(analyticsResult.generatedAt) : 'غير متاح'} · توقيت مصر · تحديث تلقائي كل ٩٠ ثانية</span><AdminLiveRefresh /></div></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>القياس</small>٣٠ يومًا</b><b><small>تعريف الزائر</small>متصفح</b><b><small>حالة البيانات</small>{analyticsResult && discoveryResult && statsResult ? 'متاحة' : 'تحتاج مراجعة'}</b></div></aside></div></section>
+      <section className="workspace-hero workspace-hero--admin admin-hero"><div className="shell workspace-hero__grid"><div><span>مركز الإدارة · دليل نقادة</span><h1>كل ما تحتاجه <em>لإدارة الدليل.</em></h1><p>الزيارات والمراجعات وأداء آية في لوحة واحدة؛ الأرقام مأخوذة من السجلات الحية.</p><div className={ownerStyles.heroSignals}><span><b>{analyticsResult ? format(totals.uniqueVisitors30d) : '—'}</b> زائر فريد · ٣٠ يومًا</span><span><b>{ownerResponse?.ok && statsResult ? format(stats.pendingContributions + pendingOwnerCount) : '—'}</b> طلبات متابعة</span><span><b>{moderatorReport ? format(moderatorReport.actions30d) : '—'}</b> إجراء لآية</span></div><div className={ownerStyles.freshness}><span>آخر تحديث {analyticsResult?.generatedAt ? timeLabel(analyticsResult.generatedAt) : 'غير متاح'} · توقيت مصر · تحديث تلقائي كل ١٥ ثانية</span><AdminLiveRefresh /></div></div><aside><span>جلسة إدارة محمية</span><strong>{session.user.displayName}</strong><small>{session.user.email}</small><div><b><small>القياس</small>٣٠ يومًا</b><b><small>تعريف الزائر</small>متصفح</b><b><small>حالة البيانات</small>{analyticsResult && discoveryResult && statsResult ? 'متاحة' : 'تحتاج مراجعة'}</b></div></aside></div></section>
 
       <div className="shell admin-shell admin-shell--premium">
+        <RecentRequests items={recentRequests} compact />
         <nav className="admin-section-nav" aria-label="اختصارات لوحة التحكم"><a href="#audience"><b>01</b>الجمهور</a><a href="#discovery"><b>02</b>القياس اليومي</a><a href="#content"><b>03</b>الصفحات والمصادر</a><a href="#members"><b>04</b>كل الأعضاء</a><a href="#sanad-insights"><b>05</b>سند</a><a href="#recommendations"><b>06</b>التحسين</a><a href="#operations"><b>07</b>التشغيل</a></nav>
         {!analyticsResult || !discoveryResult || !statsResult || !catalog || !ownerResponse?.ok ? <div role="status" className="admin-data-warning">تعذّر تحميل جزء من بيانات اللوحة. الخانات غير المتاحة معروضة بعلامة «—»، ويمكن إعادة المحاولة من زر التحديث.</div> : null}
 

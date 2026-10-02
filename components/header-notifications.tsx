@@ -175,7 +175,7 @@ export function HeaderNotifications() {
       {open ? <section id="header-notifications-panel" className={styles.panel} role="dialog" aria-labelledby="header-notifications-title">
         <header className={styles.head}>
           <span className={styles.headIcon}><BellIcon /></span>
-          <div><small>تنبيهات الدليل</small><strong id="header-notifications-title">إشعاراتك</strong><p>{personalEnabled ? 'طلبات الإشراف الخاصة بحسابك وآخر أخبار الدليل.' : 'آخر أخبار الدليل وتحديثاته المنشورة.'}</p></div>
+          <div><small>تنبيهات الدليل</small><strong id="header-notifications-title">إشعاراتك</strong><p>{personalEnabled ? 'حالة طلباتك وتنبيهات حسابك وآخر أخبار الدليل.' : 'آخر أخبار الدليل وتحديثاته المنشورة.'}</p></div>
           <button type="button" onClick={() => setOpen(false)} aria-label="إغلاق الإشعارات">×</button>
         </header>
 
@@ -184,7 +184,7 @@ export function HeaderNotifications() {
             <span className={styles.marker} aria-hidden="true">✦</span>
             <span className={styles.copy}><small>تحية أول زيارة</small><strong>{SALAWAT}</strong><p>نورت بلدك ودليلك.</p></span>
           </div> : null}
-          {personalEnabled ? <div className={styles.personalHeading}><span>✦ لكِ يا آية</span><small>طلبات ومتابعات مساحة الإشراف</small></div> : null}
+          {personalEnabled ? <div className={styles.personalHeading}><span>✦ خاصة بحسابك</span><small>طلباتك والمتابعات المسموح بها لك</small></div> : null}
           {personalItems.map((item) => (
             <Link key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>
               <span className={styles.marker} aria-hidden="true">✦</span>
@@ -192,7 +192,7 @@ export function HeaderNotifications() {
               <span className={styles.arrow} aria-hidden="true">←</span>
             </Link>
           ))}
-          {personalEnabled && !personalItems.length ? <p className={styles.empty}>لا توجد طلبات مراجعة جديدة الآن. <Link href="/moderator/" onClick={() => setOpen(false)}>افتحي مساحة الإشراف</Link></p> : null}
+          {personalEnabled && !personalItems.length ? <p className={styles.empty}>مفيش تنبيهات خاصة جديدة دلوقت. قرارات مراجعة طلباتك هتظهر هنا.</p> : null}
           {personalEnabled ? <div className={styles.personalHeading}><span>من الدليل</span><small>أخبار منشورة للجميع</small></div> : null}
           {items.map((item) => (
             <Link key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>

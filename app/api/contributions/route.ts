@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   if (!body) return NextResponse.json({ ok: false, error: 'invalid_json' }, { status: 400 });
 
   const session = await resolveSession();
+  if (!session) return sessionJson({ ok: false, error: 'login_required' }, null, 401);
   const origin = request.headers.get('origin') || new URL(request.url).origin;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

@@ -30,7 +30,7 @@ export function PendingContributions({ items, categories, localities }: {
   return <section className={styles.list} aria-labelledby="contribution-queue-title">
     <h2 id="contribution-queue-title">طلبات الإضافة والتصحيح <span>({items.length.toLocaleString('ar-EG')})</span></h2>
     {message ? <p role="status">{message}</p> : null}
-    {items.length ? items.map((item) => <article className={styles.card} key={item.id}>
+    {items.length ? items.map((item) => <article id={`contribution-${item.id}`} className={styles.card} key={item.id}>
       <header><span>{typeLabels[item.requestType]} · {item.status === 'needs_info' ? 'يحتاج استكمال' : 'في انتظار المراجعة'}</span><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}</time></header>
       <h3>{item.name}</h3><p><strong>نص الطلب:</strong> {item.details || 'لم يرفق تفاصيل'}</p>
       {item.contact ? <p>وسيلة متابعة خاصة: <b dir="auto">{item.contact}</b></p> : null}

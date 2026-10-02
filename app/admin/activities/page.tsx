@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { resolveSession } from '@/lib/auth/session';
 import { canModerate } from '@/lib/auth/moderator';
-import { getContributionQueue } from '@/lib/contribution-review';
+import { getContributionQueue, getRecentRequests } from '@/lib/contribution-review';
+import { RecentRequests } from '../recent-requests';
 import { getEffectiveBusiness } from '@/lib/curated-content';
 import { categories, localities } from '@/lib/data';
 import { PendingContributions } from './pending-contributions';
@@ -18,11 +19,10 @@ export const metadata: Metadata = { title: 'مراجعة أنشطة الأعضا
 export default async function ActivitiesModerationPage() {
   const session = await resolveSession(false);
   if (!session || !(await canModerate(session.accessToken))) redirect('/account');
-  const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/directory_owner_listings?status=eq.pending&select=${ownerListingSelect}&order=created_at.asc&limit=100`,
+  const [response, contributions, recentRequests] = await Promise.all([fetch(
+    `${SUPABASE_URL}/rest/v1/directory_owner_listings?status=eq.pending&select=${ownerListingSelect}&order=created_at.desc&limit=100`,
     { headers: restHeaders(session.accessToken), cache: 'no-store' },
-  );
-  const contributions = await getContributionQueue(session.accessToken).catch(() => null);
+  ), getContributionQueue(session.accessToken).catch(() => null), getRecentRequests(session.accessToken).catch(() => null)]);
   const items = await Promise.all((contributions || []).map(async (item) => {
     const existing = item.listingSlug ? await getEffectiveBusiness(item.listingSlug) : null;
     return { ...item, payload: {
@@ -38,6 +38,7 @@ export default async function ActivitiesModerationPage() {
     <span className="eyebrow eyebrow--dark">أنشطة من أهل البلد</span>
     <h1>طلبات الأنشطة والإضافة والتصحيح</h1><AdminLiveRefresh />
     <p>افحص الاسم والرقم والعنوان والوصف والصور، ثم انشر النشاط أو ارجعه لصاحبه للتعديل. الصفحة العامة والدليل يظهروا بعد اعتمادك بس.</p>
+    <RecentRequests items={recentRequests} />
     {!response.ok ? <p role="alert">تعذر تحميل طلبات المراجعة. حدّث الصفحة وحاول تاني.</p> : <PendingActivities key={listings.map((item) => `${item.id}:${item.updated_at}`).join()} initial={listings} />}
     {contributions === null ? <p role="alert">تعذر تحميل طلبات الإضافة والتصحيح. حاول التحديث.</p> : <PendingContributions items={items} categories={categories.map((item) => item.name)} localities={localities.map((item) => item.name)} />}
   </main>;

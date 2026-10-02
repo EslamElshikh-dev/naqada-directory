@@ -1,0 +1,26 @@
+.section { margin-block: 28px; padding: clamp(18px, 3vw, 30px); border: 1px solid #dbe5db; border-radius: 22px; background: #f7faf5; color: #193e2d; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; }
+.heading span { color: #53765e; font-size: .8rem; }
+.heading h2 { margin: 6px 0; font-size: clamp(1.35rem, 2vw, 1.8rem); }
+.heading p { margin: 0; color: #5d6e60; font-size: .85rem; line-height: 1.8; }
+.heading a, .actions a { color: #185640; font-weight: 700; }
+.list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; margin: 0; }
+.card { min-width: 0; padding: 20px; background: #fff; border: 1px solid #dbe5db; border-radius: 16px; overflow-wrap: anywhere; scroll-margin-top: 110px; }
+.top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: .78rem; }
+.status { border-radius: 20px; padding: 5px 10px; background: #fff4db; color: #75571a; }
+.status[data-status="published"] { background: #e2f5e9; color: #185640; }
+.status[data-status="rejected"] { background: #fff0ed; color: #94392f; }
+.card h3 { margin: 16px 0 8px; font-size: 1rem; line-height: 1.7; }
+.meta { margin: 0; font-size: .82rem; color: #647365; }
+.dates { display: flex; flex-wrap: wrap; gap: 18px; margin-block: 16px; font-size: .78rem; }
+.dates dt { color: #687b6b; margin-bottom: 4px; }
+.dates dd { margin: 0; }
+.hint { background: #faf5e7; border-radius: 8px; padding: 8px 10px; font-size: .76rem; line-height: 1.7; color: #75622f; }
+.details { border-top: 1px solid #e6ece2; padding-top: 12px; font-size: .85rem; }
+.details summary { cursor: pointer; min-height: 32px; color: #315940; }
+.details p { white-space: pre-wrap; line-height: 1.8; }
+.details small { display: block; color: #6b776e; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 14px; font-size: .85rem; }
+.actions a { display: inline-flex; align-items: center; min-height: 40px; }
+.empty { color: #5d765f; line-height: 1.8; }
+@media (max-width: 700px) { .list { grid-template-columns: 1fr; } .section { padding: 16px; } .card { padding: 16px; } }
