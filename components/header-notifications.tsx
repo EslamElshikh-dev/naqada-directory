@@ -96,7 +96,7 @@ export function HeaderNotifications() {
       } catch { /* Keep the last successfully loaded account feed. */ }
     };
     void load();
-    const interval = window.setInterval(load, 60_000);
+    const interval = window.setInterval(load, 15_000);
     const onVisible = () => { if (!document.hidden) void load(); };
     document.addEventListener('visibilitychange', onVisible);
     return () => { active = false; window.clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); };

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { resolveSession, sessionJson } from '@/lib/auth/session';
-import { isDirectoryAdmin } from '@/lib/auth/admin';
+import { canModerate } from '@/lib/auth/moderator';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
 
 export const runtime = 'nodejs';
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
   const session = await resolveSession(false);
-  if (!session || !(await isDirectoryAdmin(session.accessToken))) return sessionJson({ ok: false }, session, 403);
+  if (!session || !(await canModerate(session.accessToken))) return sessionJson({ ok: false }, session, 403);
   const reply = await fetch(
     `${SUPABASE_URL}/rest/v1/directory_owner_listings?id=eq.${body.id}&status=eq.pending&select=id,status`,
     {

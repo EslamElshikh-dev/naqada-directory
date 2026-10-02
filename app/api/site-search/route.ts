@@ -5,7 +5,7 @@ import { getPublicBusinessCatalog } from '@/lib/curated-content';
 
 export const dynamic = 'force-dynamic';
 
-const cacheHeaders = { 'Cache-Control': 'public, max-age=0, s-maxage=30, stale-while-revalidate=60' };
+const cacheHeaders = { 'Cache-Control': 'no-store' };
 
 export async function GET(request: NextRequest) {
   const query = sanitizeSiteSearchQuery(request.nextUrl.searchParams.get('q'));

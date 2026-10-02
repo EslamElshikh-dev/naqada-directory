@@ -23,10 +23,12 @@ const synonymGroups = [
   ['دكتور', 'دكتوره', 'دكاتره', 'طبيب', 'طبيبه', 'اطباء', 'عياده', 'عيادات'],
   ['صيدليه', 'صيدليات', 'صيدلي'],
   ['موبايل', 'موبايلات', 'محمول', 'تليفون', 'تلفون', 'تلفونات', 'تليفونات', 'هاتف', 'هواتف'],
-  ['حلواني', 'حلوانى', 'حلويات', 'حلاوه', 'جاتوه', 'تورت'],
+  ['حلواني', 'حلوانى', 'حلويات', 'حلاوه', 'جاتوه', 'تورت', 'حلوى'],
   ['تسالي', 'تسالى', 'محمصه', 'محمصة'],
   ['شابات', 'شبات'],
   ['حضانه', 'حضانات'],
+  ['قماش', 'اقمشه', 'اقمشة'],
+  ['عايلات', 'عائلات', 'عائله', 'عايله', 'اسر'],
   ['معمل', 'معامل', 'مختبر', 'مختبرات', 'تحاليل'],
   ['مطعم', 'مطاعم'],
   ['كافيه', 'كوفي', 'مقهي', 'مقاهي', 'قهوه'],
@@ -76,6 +78,7 @@ const queryNoiseWords = new Set([
   'الي',
   'الى',
   'محل',
+  'محلات',
   'اماكن',
   'مكان',
 ].map((value) => normalizeArabic(value)));
@@ -107,7 +110,10 @@ function isQueryNoise(token: string) {
 }
 
 export function prepareSearchQuery(value: string) {
-  const rawNormalizedQuery = normalizeArabic(value).replace(/\bاماكنجمله\b/g, 'اماكن جمله');
+  const rawNormalizedQuery = normalizeArabic(value)
+    .replace(/اماكنجمله/g, 'اماكن جمله')
+    .replace(/محلاتوالاقمشه/g, 'محلات اقمشه')
+    .replace(/جمعيه الشبات/g, 'جمعيه الشابات');
   const rawTokens = rawNormalizedQuery.split(' ').filter(Boolean);
   const meaningfulTokens = rawTokens.filter((token) => !isQueryNoise(token));
   const tokens = meaningfulTokens.length ? meaningfulTokens : rawTokens;

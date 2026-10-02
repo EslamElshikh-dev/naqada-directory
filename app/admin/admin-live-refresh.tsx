@@ -8,7 +8,7 @@ export function AdminLiveRefresh() {
 
   useEffect(() => {
     const refresh = () => { if (!document.hidden) router.refresh(); };
-    const interval = window.setInterval(refresh, 90_000);
+    const interval = window.setInterval(refresh, 15_000);
     document.addEventListener('visibilitychange', refresh);
     return () => { window.clearInterval(interval); document.removeEventListener('visibilitychange', refresh); };
   }, [router]);

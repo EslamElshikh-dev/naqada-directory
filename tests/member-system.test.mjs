@@ -88,7 +88,8 @@ test('the deployment uses the Next.js server runtime for protected routes', () =
 test('Google profile photos use the shared avatar component with constrained delivery and graceful fallback', () => {
   assert.ok(nextConfig.includes("hostname: 'lh3.googleusercontent.com'"));
   assert.ok(accountButton.includes('<MemberAvatar'));
-  assert.ok(accountButton.includes('src={user.avatarUrl}'));
+  assert.ok(accountButton.includes('profile?.avatarUrl || user?.avatarUrl'));
+  assert.ok(accountButton.includes('src={avatarUrl}'));
   assert.ok(memberAvatar.includes("import Image from 'next/image'"));
   assert.ok(memberAvatar.includes('Boolean(src && src !== failedSrc)'));
   assert.ok(memberAvatar.includes('onError={() => setFailedSrc(src || null)}'));

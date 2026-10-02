@@ -77,7 +77,7 @@ const searchIndex: IndexedSearchItem[] = [
       subcategory: item.subcategory || '',
       locality: item.locality || '',
       address: item.address || '',
-      auxiliary: item.normalizedName || '',
+      auxiliary: [item.normalizedName, item.description, ...(item.seoKeywords || [])].filter(Boolean).join(' '),
     },
   })),
   ...categories.map((item): SearchItem => ({
@@ -243,7 +243,7 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
       badge: item.id.startsWith('owner:') ? 'نشاط من صاحبه' : 'نشاط',
       fields: {
         title: item.name, category: item.category, subcategory: item.subcategory || '',
-        locality: item.locality || '', address: item.address || '', auxiliary: item.normalizedName || '',
+        locality: item.locality || '', address: item.address || '', auxiliary: [item.normalizedName, item.description, ...(item.seoKeywords || [])].filter(Boolean).join(' '),
       },
     })),
   ] : searchIndex;
