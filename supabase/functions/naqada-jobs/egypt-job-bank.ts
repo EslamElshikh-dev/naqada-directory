@@ -22,8 +22,12 @@ function clean(value: unknown, limit: number) {
 
 export function egyptJobBankLinks(html: string) {
   const list = schema(html, 'ItemList');
-  return [...new Set((Array.isArray(list?.itemListElement) ? list.itemListElement : [])
-    .slice(0, 15).map((item: { url?: unknown }) => item.url).filter((url: unknown): url is string => typeof url === 'string' && POST_URL.test(url)))].slice(0, 8);
+  const items: unknown[] = Array.isArray(list?.itemListElement) ? list.itemListElement : [];
+  const links = items.slice(0, 15).flatMap((item) => {
+    const url = item && typeof item === 'object' ? (item as { url?: unknown }).url : null;
+    return typeof url === 'string' && POST_URL.test(url) ? [url] : [];
+  });
+  return [...new Set(links)].slice(0, 8);
 }
 
 export function readEgyptJobBankPosting(html: string, url: string, now = Date.now()) {

@@ -89,14 +89,25 @@ export const LOCAL_PLACES = [
   "نجع الجنيدي"
 ] as const;
 
-const rankedPlaces = [...LOCAL_PLACES].sort((a, b) => b.length - a.length);
+const centreNames = new Set<string>(['نقادة', 'مركز نقادة', 'مدينة نقادة']);
+const rankedPlaces = [...LOCAL_PLACES].sort((a, b) => Number(centreNames.has(a)) - Number(centreNames.has(b)) || b.length - a.length);
 const normalized = (value: string) => value.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[\u064b-\u065f\u0670]/g, '');
+
+const localAliases: [RegExp, string][] = [
+  [/\b(?:naqada|naqadah|nagada|negada)\b/i, 'نقادة'],
+  [/(?:الاوسط|الوسط)\s+(?:قامولا|قمولا)/, 'الأوسط قمولا'],
+  [/البحر[ىي]\s+(?:قامولا|قمولا)/, 'البحري قمولا'],
+  [/\b(?:danfiq|danfeeq|danfik)\b/i, 'دنفيق'],
+  [/\b(?:bishlaw|bashlaw|beshlao)\b/i, 'بشلاو'],
+];
 
 export function findLocalPlace(headline: string, details = '') {
   const head = normalized(headline);
   const body = normalized(details);
   return rankedPlaces.find((place) => head.includes(normalized(place)))
-    || rankedPlaces.find((place) => body.includes(normalized(place)));
+    || localAliases.find(([pattern]) => pattern.test(head))?.[1]
+    || rankedPlaces.find((place) => body.includes(normalized(place)))
+    || localAliases.find(([pattern]) => pattern.test(body))?.[1];
 }
 
 // Centres and villages of Luxor governorate. The villages below are listed by
@@ -151,7 +162,12 @@ export function findJobPlace(headline: string, details = ''): { locality: string
   // are skipped, since their work location cannot be established.
   const luxor = findLuxorPlace(headline, details);
   const qena = findLocalPlace(headline, details);
-  const mentionsQena = /(قنا|نقاده)/.test(`${head} ${body}`);
+  const mentionsQena = /(?:قنا|نقاده|\b(?:qena|qina|naqada|naqadah|nagada|negada)\b)/.test(`${head} ${body}`);
+  // Toukh and Daraw also name places in other governorates. Do not treat a
+  // Qalyubia/Aswan vacancy as a village job just because a footer mentions Qena.
+  if (qena && /(طوخ|دراو|المنشيه)/.test(normalized(qena))
+    && /(القليوبيه|اسوان|\b(?:qalyubia|aswan)\b)/.test(`${head} ${body}`)
+    && !/(نقاده|\b(?:naqada|naqadah|nagada)\b)/.test(`${head} ${body}`)) return null;
   if (luxor && (!mentionsQena || (!qena && /(اسنا|ارمنت|القرنه|الزينيه|الطود|البياضيه)/.test(head)))) return { locality: luxor, governorate: 'الأقصر' };
   if (qena && (qena === 'نقادة' || mentionsQena || /(بشلاو|قمولا|دنفيق)/.test(normalized(qena)))) {
     return { locality: qena === 'نقادة' ? 'مدينة نقادة' : qena, governorate: 'قنا' };

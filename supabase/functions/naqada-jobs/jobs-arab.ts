@@ -23,11 +23,11 @@ function withoutContacts(value: string) {
 }
 
 export function jobsArabLinks(html: string) {
-  const results = [...html.matchAll(/<li\s+class=["']job["'][^>]*>([\s\S]*?)<\/li>/gi)].slice(0, 12);
+  const results = [...html.matchAll(/<li\s+class=["']job["'][^>]*>([\s\S]*?)<\/li>/gi)].slice(0, 24);
   return [...new Set(results.flatMap((match) => {
     const href = /<h2\s+class=["']job-title["'][^>]*>\s*<a\s+href=["']([^"']+)/i.exec(match[1])?.[1];
     return href && POST_URL.test(href) ? [href] : [];
-  }))].slice(0, 8);
+  }))].slice(0, 12);
 }
 
 export function readJobsArabPosting(html: string, url: string, now = Date.now()) {

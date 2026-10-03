@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { localities } from '@/lib/data';
 import { getJobs } from '@/lib/jobs';
-import { LUXOR_PLACES } from '@/supabase/functions/naqada-jobs/places';
+import { LOCAL_PLACES, LUXOR_PLACES } from '@/supabase/functions/naqada-jobs/places';
 import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { JobsBoard } from './jobs-board';
 import styles from './jobs.module.css';
@@ -42,7 +42,7 @@ export default async function JobsPage() {
   const { jobs, state, available } = await getJobs();
   const offers = jobs.filter((job) => job.kind === 'offer');
   const seekers = jobs.filter((job) => job.kind === 'seeker');
-  const localitiesList = [...new Set(['مركز نقادة', 'مدينة نقادة', ...localities.map((locality) => locality.name)])].sort((a, b) => a.localeCompare(b, 'ar'));
+  const localitiesList = [...new Set([...LOCAL_PLACES, ...localities.map((locality) => locality.name)])].sort((a, b) => a.localeCompare(b, 'ar'));
   const localOffers = offers.filter((job) => job.governorate === 'قنا' && localitiesList.includes(job.locality));
   const regionalOffers = offers.filter((job) => job.governorate === 'قنا' && !localitiesList.includes(job.locality));
   const luxorOffers = offers.filter((job) => job.governorate === 'الأقصر');

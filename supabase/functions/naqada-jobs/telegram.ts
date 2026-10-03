@@ -25,17 +25,19 @@ export function readPublicTelegram(html: string, name: string, channel: string, 
     // channel name often includes Luxor even when the job is in another city.
     const message = clean(content, 1700)
       .split(/🔥 تابع فرص عمل الصعيد|______|لينك جروب الفيسبوك|لينك قناة الواتساب/i)[0]
-      .replace(/https?:\/\/\S+/gi, ' ').replace(/\s+/g, ' ').trim().slice(0, 1200);
+      .replace(/https?:\/\/\S+/gi, ' ').replace(/#[^\s·]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 1200);
     const normalized = norm(message);
     const place = findJobPlace(message.slice(0, 180), message.slice(180));
-    if (!post?.startsWith(`${channel}/`) || !place || !/(وظيف|توظيف|مطلوب|تعيين|فرص عمل|شاغر)/.test(normalized)
+    const hiring = /(وظيف|توظيف|مطلوب|تعيين|فرص عمل|شاغر|\b(?:hiring|vacanc(?:y|ies)|recruiting|job opening)\b)/i;
+    if (!post?.startsWith(`${channel}/`) || !place || !hiring.test(normalized)
       || /(بدور على شغل|ابحث عن وظيفه|نتائج التقديم)/.test(normalized)
       || !Number.isFinite(age) || age < -86_400_000 || age > 14 * 86_400_000) return [];
-    const headline = message.split(/[.!؟·\n]/).map((part) => part.trim()).find((part) => /(مطلوب|وظيف|فرص عمل|تعيين)/.test(norm(part))) || `فرصة عمل في ${place.locality}`;
+    const headline = message.split(/[.!؟·\n]/).map((part) => part.trim()).find((part) => hiring.test(norm(part))) || `فرصة عمل في ${place.locality}`;
     const sourceUrl = `https://t.me/${post}`;
     return [{ kind: 'offer', origin: 'external', status: 'published', title: headline.slice(0, 140), organization: name,
       locality: place.locality, governorate: place.governorate, field: 'وظائف محلية',
-      description: message, contact_kind: 'link', contact_value: sourceUrl, contact_consent: false,
+      description: message.replace(/(?:\+?20|0020)?\s*01[0125](?:[\s-]?\d){8}/g, 'رقم التواصل في الإعلان الأصلي')
+        .replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g, 'البريد في الإعلان الأصلي'), contact_kind: 'link', contact_value: sourceUrl, contact_consent: false,
       source_name: name, source_url: sourceUrl, source_published_at: publishedAt.toISOString(),
       published_at: publishedAt.toISOString(), expires_at: new Date(publishedAt.getTime() + 14 * 86_400_000).toISOString() }];
   });
