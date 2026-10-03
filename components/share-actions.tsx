@@ -31,8 +31,8 @@ export function ShareActions({ title, locality, listingSlug }: { title: string; 
 
   return (
     <div className="detail-actions" style={{ marginTop: 18 }}>
-      <button className="button button--ghost" type="button" onClick={shareListing}>مشاركة السجل</button>
-      <button className="button button--ghost" type="button" onClick={copyLink}>{copied ? 'تم نسخ الرابط ✓' : 'نسخ الرابط'}</button>
+      <button className="button button--ghost" type="button" onClick={shareListing}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg><span>مشاركة النشاط</span></button>
+      <button className="button button--ghost" type="button" onClick={copyLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span>{copied ? 'تم النسخ ✓' : 'نسخ الرابط'}</span></button>
     </div>
   );
 }

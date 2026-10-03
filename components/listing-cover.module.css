@@ -11,4 +11,10 @@
 .detail .symbolic { min-height: 0; }
 .detail .symbolic :global(.category-visual) { width: 64px; height: 64px; border-radius: 20px; }
 .detail .symbolic strong { font-size: clamp(1.35rem, 3vw, 2rem); }
-@media(max-width: 580px) { .detail { aspect-ratio: 16 / 10; border-radius: 18px; } }
+@media(max-width: 580px) {
+  .detail { aspect-ratio: 16 / 10; min-height: 0; border-radius: 18px; }
+  .detail .symbolic { padding: 18px 14px 38px; gap: 4px; }
+  .detail .symbolic :global(.category-visual) { width: 42px; height: 42px; border-radius: 14px; }
+  .detail .symbolic strong { font-size: 1.15rem; line-height: 1.5; }
+  .detail .caption { bottom: 10px; inset-inline-start: 10px; font-size: .6875rem; padding: 4px 8px; }
+}
