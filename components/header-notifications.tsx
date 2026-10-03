@@ -198,8 +198,8 @@ export function HeaderNotifications() {
 
       {decisionToast?.userId === viewerId && <div className={styles.decisionToast} role="status" aria-live="polite">
         <span className={styles.decisionMark} aria-hidden="true">✓</span>
-        <Link href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>تم قبول نشاطك ونشره</small><strong>{decisionToast.notice.title}</strong><span>نشاطك بقى ظاهر في الدليل. شوف صفحته</span></Link>
-        <button type="button" onClick={() => setDecisionToast(null)} aria-label="إغلاق إشعار قبول النشاط">×</button>
+        <Link href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>{decisionToast.notice.label}</small><strong>{decisionToast.notice.title}</strong><span>{decisionToast.notice.detail}</span></Link>
+        <button type="button" onClick={() => setDecisionToast(null)} aria-label="إغلاق إشعار القبول">×</button>
       </div>}
 
       {!open ? <InstallBanner welcomeVisible={welcomeVisible || !loaded} /> : null}

@@ -17,6 +17,7 @@ function load(path, modules = {}, globals = {}) {
 }
 const media = load('../lib/owner-listing-photo.ts');
 const maps = load('../lib/activity-map.ts', {}, { URL });
+const site = load('../lib/site.ts');
 const ownerId = '00000000-0000-4000-8000-000000000001';
 const id = '00000000-0000-4000-8000-000000000002';
 const photo = (number) => `${ownerId}/${id}/00000000-0000-4000-8000-${String(number).padStart(12, '0')}.jpg`;
@@ -26,6 +27,16 @@ test('legacy galleries become covers and an explicit cover keeps all gallery ima
   assert.equal(media.ownerListingCoverPath({ cover_path: photo(5), photo_paths: [photo(3), photo(4)] }), photo(5));
   assert.equal(JSON.stringify(media.ownerListingPhotoPaths({ cover_path: photo(4), photo_paths: [photo(3), photo(4)] })), JSON.stringify([photo(4), photo(3)]));
   assert.equal(media.ownerListingCoverPath({ photo_paths: [] }), null);
+});
+
+test('activity WhatsApp buttons accept local and international Egyptian mobile numbers', () => {
+  for (const phone of ['01095525541', '010 9552 5541', '(010) 9552-5541', '+201095525541', '201095525541', '00201095525541']) {
+    assert.equal(site.whatsappUrl(phone), 'https://wa.me/201095525541');
+  }
+  for (const phone of ['01112345678', '01212345678', '01512345678']) {
+    assert.equal(site.whatsappUrl(phone), `https://wa.me/20${phone.slice(1)}`);
+  }
+  for (const phone of [null, '', '0961234567', '01312345678', '0109552554', 'https://evil.test']) assert.equal(site.whatsappUrl(phone), null);
 });
 
 test('map links accept Google Maps only and text-address search is identified honestly', () => {

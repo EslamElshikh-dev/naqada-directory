@@ -179,8 +179,10 @@ export function truncateMetaDescription(value: string, maxLength = 160) {
 }
 
 export function whatsappUrl(phone: string | null) {
-  const clean = cleanPhone(phone)?.replace(/^\+/, '');
-  return clean?.startsWith('201') && clean.length === 12 ? `https://wa.me/${clean}` : null;
+  const clean = cleanPhone(phone)?.replace(/^(?:\+|00)/, '');
+  if (!clean) return null;
+  const international = /^01[0125]\d{8}$/.test(clean) ? `20${clean.slice(1)}` : clean;
+  return /^201[0125]\d{8}$/.test(international) ? `https://wa.me/${international}` : null;
 }
 
 export function isSafeExternalUrl(url: string | null) {
