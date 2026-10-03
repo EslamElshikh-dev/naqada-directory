@@ -6,6 +6,10 @@ const normalize = (value: string) => value.toLowerCase().replace(/[أإآ]/g, '�
 function urlKey(value: string) {
   try {
     const url = new URL(value);
+    // Forasna keeps the ID when it changes the employer/title slug. A renamed
+    // URL must not duplicate a live job or revive a moderated one.
+    const forasnaId = url.hostname === 'forasna.com' && /^\/job\/p\/.*-(\d+)\/?$/.exec(url.pathname)?.[1];
+    if (forasnaId) return `https://forasna.com/job/p/${forasnaId}`;
     for (const key of [...url.searchParams.keys()]) if (/^(?:utm_|fbclid$|gclid$|ref$)/i.test(key)) url.searchParams.delete(key);
     return url.href.replace(/\/$/, '');
   } catch { return value; }
@@ -15,7 +19,7 @@ function contentKey(job: JobIdentity) {
   const company = normalize(job.organization);
   // Anonymous employers and channel names are not a company identity. Two
   // different shops advertising a cashier must remain separate opportunities.
-  if (company.length < 3 || /جه[هة]|غير مفصح|confidential|المصدر|تيليجرام|فيسبوك|وظائف|Google|Bing/i.test(company)) return null;
+  if (company.length < 3 || /جه[هة]|غير (?:مفصح|معلن)|كبرى|شهيره|confidential|المصدر|تيليجرام|فيسبوك|وظائف|Google|Bing/i.test(company)) return null;
   const title = normalize(job.title).replace(/^(?:مطلوب|وظائف (?:قنا|الاقصر))\s+/, '');
   const locality = normalize(job.locality).replace(/^(?:مدينه|محافظه)\s+/, '');
   const date = job.source_published_at.slice(0, 10);

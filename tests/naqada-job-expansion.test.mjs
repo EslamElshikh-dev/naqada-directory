@@ -89,6 +89,9 @@ test('deduplication keeps different anonymous employers and blocks existing mode
   assert.equal(dedupeJobs([mirror], [job]).length, 0);
   assert.equal(dedupeJobs([job, { ...mirror, source_published_at: '2026-09-30T10:00:00Z' }]).length, 2);
   assert.equal(dedupeJobs([job, mirror].map((entry) => ({ ...entry, organization: 'جهة التوظيف في المصدر' }))).length, 2);
+  assert.equal(dedupeJobs([job, mirror].map((entry) => ({ ...entry, organization: 'شركة غير معلنة' }))).length, 2);
+  const oldSlug = { ...job, source_url: 'https://forasna.com/job/p/old-company-441405' };
+  assert.equal(dedupeJobs([{ ...mirror, source_url: 'https://forasna.com/job/p/new-company-441405' }], [oldSlug]).length, 0);
 });
 
 test('all known Naqada villages have public search coverage and every Telegram search retains its channel identity', () => {
