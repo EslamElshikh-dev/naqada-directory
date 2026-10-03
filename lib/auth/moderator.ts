@@ -63,7 +63,7 @@ export type ModeratorDashboard = {
   businesses: Array<{
     id: string; owner_user_id: string; name: string; phone: string; hours: string;
     address: string; description: string; category: string; locality: string;
-    photo_paths: string[]; status: string; created_at: string;
+    photo_paths: string[]; cover_path?: string | null; maps_url?: string | null; status: string; created_at: string;
   }>;
   contributions: Array<{
     id: string; name: string; request_type: string; category: string; locality: string;

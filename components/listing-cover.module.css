@@ -1,0 +1,14 @@
+.cover { position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 180px; overflow: hidden; background: #eaf1ec; isolation: isolate; }
+.cover > img { object-fit: cover; }
+.detail { aspect-ratio: 16 / 11; min-height: 230px; border-radius: 24px; }
+.symbolic { height: 100%; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 14px 16px 34px; text-align: center; color: #194936; background: radial-gradient(ellipse at 12% 12%, #dcebe2, transparent 70%), linear-gradient(145deg, #f5f9f6, #dfebe4); }
+.symbolic :global(.category-visual) { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px; background: #fff; box-shadow: 0 6px 18px #18433112; }
+.symbolic :global(.category-visual svg) { width: 26px; height: 26px; }
+.category { font-size: .8rem; color: #446450; }
+.symbolic strong { font-size: clamp(1.1rem, 2vw, 1.45rem); line-height: 1.5; max-width: 26ch; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.symbolic small { position: absolute; bottom: 15px; inset-inline-end: 14px; font-size: .75rem; color: #52705e; }
+.caption { position: absolute; bottom: 12px; inset-inline-start: 14px; padding: 5px 10px; border-radius: 8px; background: #fffef4ed; color: #2d4938; font-size: .75rem; line-height: 1.5; font-weight: 700; box-shadow: 0 2px 8px #0000000a; }
+.detail .symbolic { min-height: 0; }
+.detail .symbolic :global(.category-visual) { width: 64px; height: 64px; border-radius: 20px; }
+.detail .symbolic strong { font-size: clamp(1.35rem, 3vw, 2rem); }
+@media(max-width: 580px) { .detail { aspect-ratio: 16 / 10; border-radius: 18px; } }

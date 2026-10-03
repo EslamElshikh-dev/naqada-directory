@@ -210,3 +210,12 @@
   0%, 100% { transform: scale(1); }
   45% { transform: scale(1.13); box-shadow: 0 0 0 7px rgba(207, 90, 59, .08); }
 }
+.decisionToast { position: fixed; inset-inline-end: 20px; bottom: 94px; z-index: 130; display: grid; grid-template-columns: 38px minmax(0, 1fr) 28px; align-items: start; gap: 11px; width: min(365px, calc(100vw - 32px)); padding: 17px; border: 1px solid #bcdbc8; border-radius: 20px; background: #f4fff7; color: #224b34; box-shadow: 0 16px 45px #173c2824; }
+.decisionMark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: #1e6543; color: #fff; font-size: 1.25rem; }
+.decisionToast a { display: grid; gap: 4px; min-width: 0; text-decoration: none; }
+.decisionToast small { color: #347050; font-size: .875rem; font-weight: 700; }
+.decisionToast strong { font-size: 1rem; line-height: 1.6; overflow-wrap: anywhere; }
+.decisionToast a > span { color: #5a7664; font-size: .8rem; line-height: 1.7; }
+.decisionToast button { width: 28px; height: 28px; border: 0; border-radius: 9px; background: #e4f1e8; color: #42604c; font-size: 1.2rem; cursor: pointer; }
+@media(max-width: 720px) { .decisionToast { inset-inline-end: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); } }
+@media(prefers-reduced-motion: no-preference) { .decisionToast { animation: notificationsArrive .22s ease-out; } }

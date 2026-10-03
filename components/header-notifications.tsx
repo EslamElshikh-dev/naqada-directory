@@ -11,6 +11,7 @@ const WELCOME_ID = 'welcome-salawat-v1';
 const WELCOME_KEY = 'naqada_notification_welcome_v1';
 const SEEN_KEY = 'naqada_seen_notices_v1';
 const PERSONAL_SEEN_KEY = 'naqada_seen_personal_notices_v1:';
+const DELIVERED_KEY = 'naqada_delivered_decisions_v1:';
 const SALAWAT = 'اللهم صل وسلم وزد وبارك علي سيدنا محمد';
 
 function BellIcon() {
@@ -32,6 +33,8 @@ export function HeaderNotifications() {
   const [personalItems, setPersonalItems] = useState<DirectoryNotice[]>([]);
   const [personalEnabled, setPersonalEnabled] = useState(false);
   const [personalSeen, setPersonalSeen] = useState<string[]>([]);
+  const [decisionToast, setDecisionToast] = useState<{ notice: DirectoryNotice; userId: string } | null>(null);
+  const toastDelivered = useRef(new Set<string>());
   const viewerRef = useRef<string | null>(null);
   const [seenIds, setSeenIds] = useState<string[]>([WELCOME_ID]);
   const [loaded, setLoaded] = useState(false);
@@ -72,6 +75,8 @@ export function HeaderNotifications() {
       setViewerId(id);
       setPersonalItems([]);
       setPersonalEnabled(false);
+      setDecisionToast(null);
+      toastDelivered.current = new Set();
       try {
         const seen = JSON.parse(localStorage.getItem(`${PERSONAL_SEEN_KEY}${id}`) || '[]') as unknown;
         setPersonalSeen(id && Array.isArray(seen) ? seen.filter((item): item is string => typeof item === 'string').slice(-100) : []);
@@ -92,7 +97,22 @@ export function HeaderNotifications() {
         if (response.status === 403) { forbidden = true; return; }
         if (!response.ok) return;
         const data = await response.json() as { items?: DirectoryNotice[] };
-        if (active && viewerRef.current === viewerId && Array.isArray(data.items)) { setPersonalEnabled(true); setPersonalItems(data.items); }
+        if (active && viewerRef.current === viewerId && Array.isArray(data.items)) {
+          setPersonalEnabled(true); setPersonalItems(data.items);
+          let seen: string[] = [];
+          try {
+            const saved = JSON.parse(localStorage.getItem(`${DELIVERED_KEY}${viewerId}`) || '[]') as unknown;
+            if (Array.isArray(saved)) seen = saved.filter((id): id is string => typeof id === 'string');
+          } catch { /* In-memory delivery still prevents repeated alerts. */ }
+          const decisions = data.items.filter((item) => item.kind === 'decision' && item.status === 'published');
+          const newest = decisions.find((item) => !seen.includes(item.id) && !toastDelivered.current.has(item.id));
+          if (newest) {
+            setDecisionToast({ notice: newest, userId: viewerId });
+            const delivered = [...new Set([...seen, ...decisions.map((item) => item.id)])].slice(-100);
+            delivered.forEach((id) => toastDelivered.current.add(id));
+            try { localStorage.setItem(`${DELIVERED_KEY}${viewerId}`, JSON.stringify(delivered)); } catch { /* Keep the alert available in this session. */ }
+          }
+        }
       } catch { /* Keep the last successfully loaded account feed. */ }
     };
     void load();
@@ -101,6 +121,12 @@ export function HeaderNotifications() {
     document.addEventListener('visibilitychange', onVisible);
     return () => { active = false; window.clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); };
   }, [viewerId]);
+
+  useEffect(() => {
+    if (!decisionToast) return;
+    const timer = window.setTimeout(() => setDecisionToast(null), 14_000);
+    return () => window.clearTimeout(timer);
+  }, [decisionToast]);
 
   useEffect(() => {
     if (!welcomeVisible) return;
@@ -169,6 +195,12 @@ export function HeaderNotifications() {
         <span aria-hidden="true">✦</span><div><small>نورت دليل نقادة</small><strong>{SALAWAT}</strong></div>
         <button type="button" aria-label="إغلاق رسالة الترحيب" onClick={() => setWelcomeVisible(false)}>×</button>
       </div> : null}
+
+      {decisionToast?.userId === viewerId && <div className={styles.decisionToast} role="status" aria-live="polite">
+        <span className={styles.decisionMark} aria-hidden="true">✓</span>
+        <Link href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>تم قبول نشاطك ونشره</small><strong>{decisionToast.notice.title}</strong><span>نشاطك بقى ظاهر في الدليل. شوف صفحته</span></Link>
+        <button type="button" onClick={() => setDecisionToast(null)} aria-label="إغلاق إشعار قبول النشاط">×</button>
+      </div>}
 
       {!open ? <InstallBanner welcomeVisible={welcomeVisible || !loaded} /> : null}
 

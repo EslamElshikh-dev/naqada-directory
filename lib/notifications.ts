@@ -6,6 +6,8 @@ export type DirectoryNotice = {
   detail: string;
   occurredAt: string;
   tone: 'mint' | 'gold' | 'coral';
+  kind?: 'decision' | 'cover';
+  status?: string;
 };
 
 export function mergePersonalNotices(...feeds: DirectoryNotice[][]): DirectoryNotice[] {

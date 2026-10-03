@@ -150,7 +150,7 @@ export default async function ListingPage({ params }: Props) {
     ],
   };
   return (
-    <main id="main-content" className="page-main">
+    <main id="main-content" className={`page-main ${styles.page}`}>
       <section className="detail-hero">
         <div className="shell detail-hero__grid">
           <div>

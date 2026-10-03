@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { canonicalLocalityName } from '@/lib/data';
 import type { DirectoryItem } from '@/lib/types';
 import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
@@ -7,6 +6,7 @@ import { BusinessMedia } from './business-media';
 import { CategoryVisual } from './category-visual';
 import { ActionIcon } from './action-icon';
 import { ListingCardActions } from './listing-card-actions';
+import { ListingCover } from './listing-cover';
 
 export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
   const phone = cleanPhone(listing.phone);
@@ -24,7 +24,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   return (
     <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
       <div className="listing-card__cover">
-        {listing.imageUrl ? <figure className="listing-card__media" style={{ margin: 0, position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' }}><Image src={listing.imageUrl} alt={`صورة ${listing.name} قدّمها صاحب النشاط`} fill sizes="(max-width: 760px) 92vw, (max-width: 1100px) 45vw, 360px" unoptimized style={{ objectFit: 'cover' }} /></figure> :
+        {listing.imageUrl || listing.id.startsWith('owner-') ? <ListingCover src={listing.imageUrl} name={listing.name} category={listing.category} locality={locality} /> :
           <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
         <Link className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
         <Link className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>

@@ -1,5 +1,5 @@
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
-import { ownerPhotoUrl } from '@/lib/owner-listing-photo';
+import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import type { DirectoryItem } from '@/lib/types';
 
 export type OwnerListing = {
@@ -13,12 +13,14 @@ export type OwnerListing = {
   category: string;
   locality: string;
   photo_paths: string[];
+  cover_path?: string | null;
+  maps_url?: string | null;
   status: 'pending' | 'published' | 'rejected';
   created_at: string;
   updated_at: string;
 };
 
-export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,status,created_at,updated_at';
+export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at';
 
 export async function getPublishedOwnerListings(): Promise<OwnerListing[]> {
   const response = await fetch(
@@ -40,6 +42,7 @@ export async function getPublishedOwnerListing(id: string): Promise<OwnerListing
 }
 
 export function ownerListingDirectoryItem(listing: OwnerListing): DirectoryItem {
+  const coverPath = ownerListingCoverPath(listing);
   return {
     id: `owner-${listing.id}`,
     slug: listing.id,
@@ -53,9 +56,9 @@ export function ownerListingDirectoryItem(listing: OwnerListing): DirectoryItem 
     phone: listing.phone,
     rating: null,
     reviews: null,
-    mapsUrl: null,
+    mapsUrl: listing.maps_url || null,
     verification: null,
     detailHref: `/activity/${listing.id}/`,
-    imageUrl: listing.photo_paths[0] ? ownerPhotoUrl(listing.photo_paths[0]) : null,
+    imageUrl: coverPath ? ownerPhotoUrl(coverPath) : null,
   };
 }

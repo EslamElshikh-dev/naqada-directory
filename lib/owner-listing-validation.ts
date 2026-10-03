@@ -1,4 +1,5 @@
 import { categories, localities } from '@/lib/data';
+import { isActivityMapUrl } from '@/lib/activity-map';
 
 function field(value: unknown, max: number) {
   return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max) : '';
@@ -15,6 +16,7 @@ export function validateOwnerListing(input: unknown) {
     description: field(body.description, 2000),
     category: field(body.category, 120),
     locality: field(body.locality, 160),
+    ...('maps_url' in body ? { maps_url: field(body.maps_url, 600) || null } : {}),
   };
   if (data.name.length < 2) return { error: 'اكتب اسم النشاط بوضوح.' } as const;
   if (!/^\+?[0-9]{10,15}$/.test(data.phone)) return { error: 'اكتب رقم جوال صحيحًا مثل 01012345678.' } as const;
@@ -23,5 +25,6 @@ export function validateOwnerListing(input: unknown) {
   if (data.description.length < 20) return { error: 'صف نشاطك وخدماتك في ٢٠ حرفًا على الأقل.' } as const;
   if (!categories.some((item) => item.name === data.category)) return { error: 'اختر تصنيف النشاط من القائمة.' } as const;
   if (!localities.some((item) => item.name === data.locality)) return { error: 'اختر القرية أو الموضع من القائمة.' } as const;
+  if (data.maps_url && !isActivityMapUrl(data.maps_url)) return { error: 'أضف رابطًا صحيحًا من خرائط Google، أو اتركه فارغًا.' } as const;
   return { data } as const;
 }

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { OwnerListing } from '@/lib/owner-listings';
-import { ownerPhotoUrl } from '@/lib/owner-listing-photo';
+import { ownerListingCoverPath, ownerListingPhotoPaths, ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import styles from './pending-activities.module.css';
 
 export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
@@ -42,7 +42,8 @@ export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
       <p><strong>{item.category}</strong> · {item.locality} · {item.address}</p>
       <p>{item.description}</p>
       <dl><div><dt>رقم الجوال</dt><dd dir="ltr">{item.phone}</dd></div><div><dt>المواعيد</dt><dd>{item.hours}</dd></div></dl>
-      {!!item.photo_paths.length && <div className={styles.photos}>{item.photo_paths.map((path, index) => <a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" key={path} aria-label={`افتح الصورة ${index + 1} كاملة`}><Image src={ownerPhotoUrl(path)} alt={`صورة ${index + 1} من ${item.name}`} width={150} height={110} unoptimized /></a>)}</div>}
+      {item.maps_url && <p><a href={item.maps_url} target="_blank" rel="noopener noreferrer">مراجعة موقع النشاط على الخريطة</a></p>}
+      {(item.cover_path || item.photo_paths.length > 0) && <div className={styles.photos}>{ownerListingPhotoPaths(item).map((path, index) => <a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" key={path} aria-label={`افتح ${path === ownerListingCoverPath(item) ? 'غلاف النشاط' : `الصورة ${index + 1}`} كاملة`}><Image src={ownerPhotoUrl(path)} alt={`${path === ownerListingCoverPath(item) ? 'غلاف' : 'صورة'} ${item.name}`} width={150} height={110} unoptimized /></a>)}</div>}
       <div className={styles.actions} aria-busy={working === item.id}><button type="button" disabled={Boolean(working)} onClick={() => void decide(item.id, 'published')}>{working === item.id ? 'جارٍ حفظ القرار…' : 'اعتماد ونشر'}</button><button type="button" disabled={Boolean(working)} onClick={() => void decide(item.id, 'rejected')}>إرجاع للتعديل</button></div>
     </article>) : <div className={styles.empty}>كل الطلبات اتراجعت. مفيش أنشطة جديدة دلوقت.</div>}
   </div>;

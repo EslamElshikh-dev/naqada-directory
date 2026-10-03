@@ -5,6 +5,18 @@
 .intro h2 { margin: 13px 0 8px; color: #123e30; font-size: clamp(1.65rem, 3vw, 2.4rem); line-height: 1.4; }
 .intro p { margin: 0; color: #52685d; line-height: 1.9; max-width: 68ch; }
 .form { padding: clamp(18px, 3vw, 34px); border: 1px solid #d7e3d8; border-radius: 24px; background: #fff; box-shadow: 0 14px 40px rgba(15, 54, 37, .07); }
+.fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.coverBox { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); align-items: center; gap: 20px; padding: 18px; border: 1px solid #cdded3; border-radius: 18px; background: #f5f9f6; }
+.coverPreview { overflow: hidden; border-radius: 14px; min-width: 0; aspect-ratio: 16 / 10; }
+.coverPreview > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.coverPreview > div { height: 100%; }
+.coverControls { min-width: 0; }
+.coverControls label { display: grid; gap: 7px; }
+.coverControls strong { font-size: 1rem; color: #19543b; }
+.coverControls span, .coverControls p { font-size: .875rem; line-height: 1.8; color: #4c6958; }
+.coverControls button { min-height: 44px; border: 1px solid #b7cebe; border-radius: 10px; padding: 8px 12px; background: #fff; color: #22573d; font: inherit; font-size: .875rem; cursor: pointer; }
+.photo .makeCover { background: #dfefe4; color: #1f5c3b; min-height: 38px; }
+.sectionTitle h3 small { font-size: .8rem; font-weight: 500; color: #647b6c; }
 .sectionTitle { display: flex; align-items: flex-start; gap: 13px; margin: 8px 0 19px; }
 .sectionTitle:not(:first-child) { margin-top: 31px; padding-top: 28px; border-top: 1px solid #e7ede5; }
 .sectionTitle b { flex: 0 0 34px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: #e8efe9; color: #18503b; }
@@ -58,5 +70,6 @@
 .signInActions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .loading { padding: 36px; border-radius: 20px; background: #eef4ed; color: #315543; }
 @media (max-width: 1000px) { .layout { grid-template-columns: minmax(0, 1fr); } .sidebar { position: static; } }
+@media (max-width: 700px) { .coverBox { grid-template-columns: minmax(0, 1fr); padding: 14px; } .coverPreview { max-height: 250px; } }
 @media (max-width: 640px) { .grid { grid-template-columns: minmax(0, 1fr); } .submit { align-items: stretch; flex-direction: column; } .submit button { width: 100%; } .form { padding: 17px; border-radius: 18px; } .sectionTitle:not(:first-child) { margin-top: 23px; padding-top: 23px; } }
 @media (prefers-reduced-motion: no-preference) { .submit button, .ownList article { transition: transform .18s ease, background .18s ease; } .submit button:hover { transform: translateY(-2px); } }
