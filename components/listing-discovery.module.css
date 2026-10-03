@@ -78,8 +78,7 @@
 
 .primaryActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .primaryAction { flex: 1 1 140px; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 62px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; }
-.actionGlyph { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 34px; border-radius: 11px; background: #ffffff65; }
-.actionGlyph svg { width: 21px; height: 21px; }
+.actionGlyph { --contact-icon-size: 36px; --contact-glyph-size: 22px; }
 .actionCopy { display: grid; gap: 2px; text-align: start; min-width: 0; }
 .actionCopy strong { font-size: .875rem; line-height: 1.5; }
 .actionCopy small { font-size: .75rem; line-height: 1.5; opacity: .8; }
@@ -87,27 +86,24 @@
 .callAction { background: #fff6e6; color: #254534; }
 .whatsappAction { background: #f2faf5; border-color: #cde2d5; color: #1a6540; }
 .mapAction { background: #ffffff10; border-color: #ffffff44; color: #fff; }
+.mapAction { --contact-icon-color: #fff; --contact-icon-background: #ffffff10; --contact-icon-border: #ffffff30; --contact-pin-fill: #c79342; }
 .onLight .callAction { background: #18513b; color: #fff; }
-.onLight .callAction .actionGlyph { background: #ffffff12; }
+.onLight .callAction { --contact-icon-color: #fff; --contact-icon-background: linear-gradient(145deg, #ffffff20, #ffffff0b); --contact-icon-border: #ffffff32; }
 .onLight .mapAction { background: #f5f8fa; border-color: #dce5e9; color: #365970; }
-.onLight .whatsappAction .actionGlyph { background: #e3f2e8; }
-.onLight .mapAction .actionGlyph { background: #e9f0f5; }
-.primaryAction:hover { filter: brightness(.96); }
+.onLight .mapAction { --contact-icon-color: #365f78; --contact-icon-background: linear-gradient(145deg, #fff, #e7eff6); --contact-icon-border: #d6e3ec; --contact-pin-fill: #e9b962; }
 .primaryAction:focus-visible { outline: 3px solid #ae774c; outline-offset: 4px; }
-@media(prefers-reduced-motion: no-preference) { .primaryAction { transition: transform .18s ease, box-shadow .18s ease; } .primaryAction:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #103f2514; } }
+@media(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) { .primaryAction { transition: transform .18s ease; } .primaryAction:hover { transform: translateY(-2px); } }
 @media(max-width: 580px) {
   .primaryActions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 18px; }
   .primaryActions[data-contacts='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .primaryActions[data-contacts='1'] { grid-template-columns: minmax(0, 1fr); }
   .primaryActions[data-contacts='0'] { display: none; }
-  .primaryAction { flex-direction: column; min-height: 72px; padding: 10px 6px; gap: 5px; border-radius: 13px; }
-  .actionGlyph { width: 26px; height: 26px; flex-basis: 26px; border-radius: 0; background: transparent; }
-  .actionGlyph svg { width: 22px; height: 22px; }
+  .primaryAction { flex-direction: column; min-height: 76px; padding: 10px 6px; gap: 5px; border-radius: 13px; }
+  .actionGlyph { --contact-icon-size: 30px; --contact-glyph-size: 21px; border-radius: 10px; }
   .actionCopy { text-align: center; }
   .actionCopy strong { font-size: .8125rem; line-height: 1.4; }
   .actionCopy small, .desktopLabel { display: none; }
   .mobileLabel { display: inline; }
-  .onLight .callAction .actionGlyph, .onLight .whatsappAction .actionGlyph, .onLight .mapAction .actionGlyph { background: transparent; }
 }
 
 .heroDiscovery a:hover,
