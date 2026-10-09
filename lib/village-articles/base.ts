@@ -26,7 +26,7 @@ export const villageArticleAuthor = {
   name: 'إسلام الشيخ',
   role: 'كاتب وباحث ومطور دليل نقادة',
   bio: 'يوثق قرى ونجوع مركز نقادة وذاكرتها المحلية بلغة قريبة من الناس، مع تنظيم المعلومات وربطها بالخدمات والأنشطة المحلية.',
-  href: '/about',
+  href: '/developer',
 };
 
 export const villageArticles: VillageArticle[] = [

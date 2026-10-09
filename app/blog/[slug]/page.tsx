@@ -68,6 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: revision?.status === 'published' ? post.title : metadataTitle(post.seoTitle),
     description: post.description,
     keywords: post.keywords,
+    authors: [{ name: villageArticleAuthor.name, url: `${siteConfig.url}${villageArticleAuthor.href}/` }],
     alternates: { canonical: `/blog/${post.slug}` },
     robots: {
       index: true,
@@ -148,8 +149,11 @@ export default async function EditorialPostPage({ params }: Props) {
         about: { '@type': 'Place', name: post.locality, containedInPlace: { '@type': 'AdministrativeArea', name: 'مركز نقادة، قنا، مصر' } },
         author: {
           '@type': 'Person',
+          '@id': 'https://www.eslam-elshikh.com/#person',
           name: villageArticleAuthor.name,
-          url: `${siteConfig.url}${villageArticleAuthor.href}`,
+          alternateName: 'Eslam Elshikh',
+          url: `${siteConfig.url}${villageArticleAuthor.href}/`,
+          sameAs: ['https://www.eslam-elshikh.com/about/', 'https://www.wikidata.org/wiki/Q138800449', 'https://github.com/EslamElshikh-dev'],
         },
         publisher: {
           '@type': 'Organization',
@@ -192,7 +196,7 @@ export default async function EditorialPostPage({ params }: Props) {
                 <h1>{post.title}</h1>
                 <p>{post.excerpt}</p>
                 <div className={styles.meta}>
-                  <span>بقلم {villageArticleAuthor.name}</span>
+                  <span>بقلم <Link href={villageArticleAuthor.href} rel="author">{villageArticleAuthor.name}</Link></span>
                   <time dateTime={post.publishedAt}>{formatArticleDate(post.publishedAt)}</time>
                   <span>مقال محلي مصوّر</span>
                 </div>
@@ -296,7 +300,7 @@ export default async function EditorialPostPage({ params }: Props) {
                 <strong>{villageArticleAuthor.name}</strong>
                 <small>{villageArticleAuthor.role}</small>
                 <p>{villageArticleAuthor.bio}</p>
-                <Link href={villageArticleAuthor.href}>عن الكاتب ودليل نقادة ←</Link>
+                <Link href={villageArticleAuthor.href} rel="author">عن إسلام الشيخ، مطور دليل نقادة ←</Link>
               </div>
             </footer>
           </div>
