@@ -86,6 +86,12 @@ export async function signIn(email: string, password: string) {
   });
 }
 
+export async function resendConfirmation(email: string, redirectTo: string) {
+  return authRequest<{ message_id?: string }>(`resend?redirect_to=${encodeURIComponent(redirectTo)}`, {
+    method: 'POST', body: JSON.stringify({ type: 'signup', email }),
+  });
+}
+
 export async function getUser(accessToken: string) {
   return authRequest<SupabaseUser>('user', { method: 'GET' }, accessToken);
 }

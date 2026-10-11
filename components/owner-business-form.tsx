@@ -9,6 +9,7 @@ import type { OwnerListing } from '@/lib/owner-listings';
 import { ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import styles from './owner-business-form.module.css';
 import { ListingCover } from './listing-cover';
+import { trackEvent } from '@/lib/analytics-client';
 
 type Fields = Pick<OwnerListing, 'name' | 'phone' | 'hours' | 'address' | 'description' | 'category' | 'locality'> & { maps_url: string };
 const empty: Fields = { name: '', phone: '', hours: '', address: '', description: '', category: '', locality: '', maps_url: '' };
@@ -49,6 +50,11 @@ export function OwnerBusinessForm({
   const [success, setSuccess] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const started = useRef(false);
+
+  function markStarted() {
+    if (!started.current) { started.current = true; trackEvent('Owner Form Started'); }
+  }
 
   useEffect(() => {
     let active = true;
@@ -86,6 +92,7 @@ export function OwnerBusinessForm({
   }, [editId]);
 
   function update<K extends keyof Fields>(key: K, value: Fields[K]) {
+    markStarted();
     setFields((current) => ({ ...current, [key]: value }));
     setSuccess('');
     setError('');
@@ -155,8 +162,11 @@ export function OwnerBusinessForm({
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
+    markStarted(); trackEvent('Owner Form Submitted');
     setBusy(true); setSuccess(''); setError(''); setUploading('');
     let savedId = listingId;
+    let photoStage = false;
     try {
       const response = await fetch(savedId ? `/api/owner-listings/${savedId}` : '/api/owner-listings', {
         method: savedId ? 'PATCH' : 'POST',
@@ -165,11 +175,13 @@ export function OwnerBusinessForm({
       });
       const data = await response.json() as { listing?: OwnerListing; error?: string };
       if (!response.ok || !data.listing) throw new Error(data.error || 'تعذر حفظ النشاط.');
+      trackEvent('Owner Form Saved');
       savedId = data.listing.id;
       setListingId(savedId);
       showMedia(data.listing);
 
       if (coverFile) {
+        photoStage = true;
         setUploading('جارٍ رفع غلاف النشاط…');
         const form = new FormData();
         form.append('photo', coverFile); form.append('role', 'cover');
@@ -180,6 +192,7 @@ export function OwnerBusinessForm({
       }
 
       for (let index = 0; index < files.length; index += 1) {
+        photoStage = true;
         setUploading(`جارٍ رفع الصورة ${index + 1} من ${files.length}…`);
         const form = new FormData();
         form.append('photo', files[index]);
@@ -192,10 +205,12 @@ export function OwnerBusinessForm({
         showMedia(uploadData.listing);
       }
       setFiles([]);
+      photoStage = false;
       setSuccess('نشاطك اتحفظ ووصل للمراجعة. أول ما يتقبل هيوصلك إشعار في حسابك، والغلاف هيظهر تلقائيًا في البطاقة وصفحة النشاط.');
-      const ownReply = await fetch('/api/owner-listings', { cache: 'no-store' });
-      if (ownReply.ok) setMine((await ownReply.json() as { listings: OwnerListing[] }).listings);
+      const ownReply = await fetch('/api/owner-listings', { cache: 'no-store' }).catch(() => null);
+      if (ownReply?.ok) setMine((await ownReply.json() as { listings: OwnerListing[] }).listings);
     } catch (failure) {
+      trackEvent(photoStage ? 'Owner Photo Error' : 'Owner Form Error');
       setError(failure instanceof Error ? failure.message : 'تعذر حفظ النشاط.');
     } finally { setBusy(false); setUploading(''); }
   }
@@ -214,7 +229,7 @@ export function OwnerBusinessForm({
     <div className={styles.layout}>
       <div className={styles.formWrap}>
         <div className={styles.intro}><span className={styles.step}>٠١ / بيانات النشاط</span><h2>{listingId ? 'عدّل نشاطك' : 'عرّف الناس بنشاطك'}</h2><p>اكتب البيانات اللي تساعد أهل البلد يوصلوا لك من أول مرة. النشاط هيتسجل باسم حسابك، والنشر بعد مراجعة البيانات والصور.</p></div>
-        <form className={styles.form} onSubmit={save}>
+        <form className={styles.form} onSubmit={save} onInvalid={() => { markStarted(); trackEvent('Owner Form Error'); }}>
           <fieldset className={styles.fieldset} disabled={busy}>
           <div className={styles.sectionTitle}><b>١</b><div><h3>الاسم والتواصل</h3><p>بيانات واضحة تظهر في صفحة نشاطك بعد اعتمادها.</p></div></div>
           <div className={styles.grid}>

@@ -11,6 +11,7 @@ import { normalizeArabic } from '@/lib/site';
 import { isFamilySearchQuery } from '@/lib/family-search';
 import type { Business } from '@/lib/types';
 import { roleModels } from '@/lib/role-models';
+import { jobSearchIntent } from '@/lib/job-search';
 
 export type SiteSearchKind =
   | 'listing'
@@ -254,7 +255,7 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
     && (!familyIntent || item.href === '/families' || item.href.startsWith('/families?')));
   const safeLimit = Math.max(1, Math.min(limit, searchableIndex.length));
 
-  return searchableIndex
+  const rankedResults = searchableIndex
     .map((item) => {
       const baseRank = scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens);
       return { item, rank: baseRank < 0 ? -1 : baseRank + (item.kind === 'listing' ? 6 : 0) };
@@ -265,6 +266,10 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
     .filter((item) => !seen.has(item.href) && Boolean(seen.add(item.href)))
     .slice(0, safeLimit)
     .map(({ kind, title, subtitle, href, badge }) => ({ kind, title, subtitle, href, badge }));
+  const jobIntent = jobSearchIntent(query);
+  return jobIntent && (!allowedKinds || allowedKinds.has('page')) && !familyIntent
+    ? [jobIntent, ...rankedResults.filter((item) => item.href !== '/jobs')].slice(0, Math.max(1, limit))
+    : rankedResults;
 }
 
 export function recoverSiteSearch(value: string, kinds?: readonly SiteSearchKind[], limit = 4): SearchRecoverySuggestion[] {

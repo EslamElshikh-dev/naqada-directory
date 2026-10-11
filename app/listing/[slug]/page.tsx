@@ -56,6 +56,7 @@ export default async function ListingPage({ params }: Props) {
   if (canonicalAlias) permanentRedirect(`/listing/${encodeURIComponent(canonicalAlias)}`);
   const listing = await getEffectiveBusiness(slug);
   if (!listing) notFound();
+  if (listing.id.startsWith('owner:')) permanentRedirect(`/activity/${listing.id.slice(6)}/`);
   const media = getBusinessMedia(listing.id);
   const ownerPhotoPaths = listing.ownerPhotoPaths || [];
   const locality = canonicalLocalityName(listing.locality);

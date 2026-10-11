@@ -4,6 +4,7 @@ import { canModerate, callModeratorAction } from '@/lib/auth/moderator';
 import { sameOrigin } from '@/lib/auth/supabase-rest';
 import { categories, localities, businesses } from '@/lib/data';
 import { getContributionQueue } from '@/lib/contribution-review';
+import { proposedContributionPhone } from '@/lib/contribution-phone';
 
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
@@ -24,6 +25,10 @@ export async function POST(request: Request) {
       for (const [key, limit] of Object.entries(limits)) {
         if (typeof body.payload[key] !== 'string' || body.payload[key].length > limit) throw Error('INVALID');
         payload[key] = body.payload[key].trim();
+      }
+      const proposedPhone = proposedContributionPhone(item.requestType, item.details);
+      if (proposedPhone && payload.phone !== proposedPhone) {
+        return sessionJson({ error: 'الطلب يصحح رقم الهاتف. راجع الرقم المرسل وضعه في حقل رقم النشاط قبل النشر، أو اطلب استكمال البيانات.' }, session, 422);
       }
       if (payload.title.length < 3 || payload.summary.length < 15
         || !categories.some((c) => c.name === payload.category)

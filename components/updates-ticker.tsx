@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from './updates-ticker.module.css';
+import { MAX_JOB_HEADLINES } from '@/lib/job-headlines';
 
 type TickerItem = { href: string; tag: string; text: string };
 
@@ -32,7 +33,7 @@ export function UpdatesTicker() {
       }));
       if (controller.signal.aborted) return;
       const [jobResult, newsResult] = results;
-      const jobItems = jobResult.status === 'fulfilled' && Array.isArray(jobResult.value.items) ? jobResult.value.items.slice(0, 4) : [];
+      const jobItems = jobResult.status === 'fulfilled' && Array.isArray(jobResult.value.items) ? jobResult.value.items.slice(0, MAX_JOB_HEADLINES) : [];
       const newsItems = newsResult.status === 'fulfilled' && Array.isArray(newsResult.value.items) ? newsResult.value.items.slice(0, 6) : [];
       setLiveItems([...jobItems, ...newsItems, fallbackUpdates[2], ...(!jobItems.length ? [fallbackUpdates[0]] : [])]);
     };

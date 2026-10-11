@@ -11,6 +11,7 @@ import { AdminLiveRefresh } from '../admin-live-refresh';
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { ownerListingSelect, type OwnerListing } from '@/lib/owner-listings';
 import { PendingActivities } from './pending-activities';
+import { proposedContributionPhone } from '@/lib/contribution-phone';
 import styles from './pending-activities.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function ActivitiesModerationPage() {
     return { ...item, payload: {
       title: existing?.name || item.name, category: existing?.category || item.category || '',
       locality: existing?.locality || item.locality || '',
-      phone: existing?.phone || '', address: existing?.address || '',
+      phone: proposedContributionPhone(item.requestType, item.details) || existing?.phone || '', address: existing?.address || '',
       sourceUrl: item.sourceUrl || '',
       summary: existing?.description || (existing ? `${existing.name} في ${existing.locality || 'مركز نقادة'}.` : item.details || ''),
     } };

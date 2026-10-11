@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type FormEvent } from 'react';
+import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { Category, LocalityPage } from '@/lib/types';
@@ -49,6 +49,7 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [submissionId, setSubmissionId] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const submitting = useRef(false);
 
   const typeLabel = type === 'add' ? 'إضافة نشاط أو خدمة' : type === 'correction' ? 'تصحيح بيانات سجل' : 'نتيجة بحث مفقودة';
   const requestText = useMemo(() => [
@@ -72,6 +73,8 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
 
   async function submitRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setPrepared(true);
     setStatus('submitting');
     setErrorMessage('');
@@ -97,6 +100,7 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
       formStartedAt,
       website,
     });
+    submitting.current = false;
 
     if (result.ok) {
       setStatus('success');

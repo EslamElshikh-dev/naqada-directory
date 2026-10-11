@@ -12,6 +12,16 @@ const allowedEventTypes = new Set([
   "contribution_copy",
   "contribution_share",
   "contribution_contact",
+  "registration_start",
+  "registration_submit",
+  "registration_created",
+  "registration_error",
+  "confirmation_resend",
+  "owner_form_start",
+  "owner_form_submit",
+  "owner_form_saved",
+  "owner_form_error",
+  "owner_photo_error",
 ]);
 const allowedRequestTypes = new Set(["add", "correction", "missing"]);
 

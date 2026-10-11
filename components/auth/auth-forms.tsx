@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { evaluatePassword, PASSWORD_MIN_LENGTH } from '@/lib/auth/password-policy';
 import { setClientSessionUser, type ClientSessionUser } from './client-session';
+import { trackEvent } from '@/lib/analytics-client';
 
 type Result = { error?: string; verificationSent?: boolean; user?: ClientSessionUser };
 
@@ -44,6 +45,28 @@ function SocialAuth() {
   );
 }
 
+function ResendConfirmation({ email }: { email: string }) {
+  const [busy, setBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
+  const [message, setMessage] = useState('');
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  async function resend() {
+    if (busy || cooldown) return;
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) { setMessage('اكتب بريد حسابك في خانة البريد أولًا.'); return; }
+    setBusy(true); setMessage('');
+    try {
+      await send('/api/auth/resend', { email });
+      trackEvent('Confirmation Resent');
+      setMessage('لو الحساب محتاج تأكيد، هتوصلك رسالة جديدة. راجع البريد الوارد والرسائل غير المرغوب فيها.');
+      setCooldown(true);
+      timer.current = setTimeout(() => setCooldown(false), 60_000);
+    } catch (failure) { setMessage(failure instanceof Error ? failure.message : 'تعذر الإرسال.'); }
+    finally { setBusy(false); }
+  }
+  return <div className="auth-switch auth-resend"><button type="button" disabled={busy || cooldown} onClick={() => void resend()}>{busy ? 'جارٍ إرسال التأكيد…' : cooldown ? 'انتظر دقيقة لإعادة الإرسال' : 'إعادة إرسال رسالة تأكيد البريد'}</button>{message ? <p role="status">{message}</p> : null}</div>;
+}
+
 function PasswordField({ id, name, value, onChange, autoComplete }: { id: string; name: string; value?: string; onChange?: (value: string) => void; autoComplete: string }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -58,6 +81,7 @@ export function LoginForm() {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true); setError('');
@@ -75,12 +99,13 @@ export function LoginForm() {
     <form className="auth-form" onSubmit={submit}>
       <SocialAuth />
       <label htmlFor="login-email">البريد الإلكتروني</label>
-      <input id="login-email" name="email" type="email" autoComplete="email" inputMode="email" required placeholder="name@example.com" dir="ltr"/>
+      <input id="login-email" name="email" type="email" autoComplete="email" inputMode="email" required placeholder="name@example.com" dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} />
       <label htmlFor="login-password">كلمة المرور</label>
       <PasswordField id="login-password" name="password" autoComplete="current-password"/>
       <div className="auth-feedback" aria-live="polite">{error && <span>{error}</span>}</div>
       <button className="auth-submit" type="submit" disabled={busy}>{busy ? 'جارٍ تسجيل الدخول…' : 'تسجيل الدخول'}</button>
       <p className="auth-switch">ليس لديك حساب؟ <Link href="/account/register">أنشئ حسابًا جديدًا</Link></p>
+      <ResendConfirmation email={email} />
     </form>
   );
 }
@@ -92,33 +117,41 @@ export function RegisterForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [verificationSent, setVerificationSent] = useState(false);
+  const [email, setEmail] = useState('');
+  const started = useRef(false);
+  function markStarted() { if (!started.current) { started.current = true; trackEvent('Registration Started'); } }
   const strength = evaluatePassword(password);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (password !== confirm) { setError('كلمتا المرور غير متطابقتين.'); return; }
-    if (!strength.valid) { setError(strength.message); return; }
+    if (busy) return;
+    markStarted();
+    if (password !== confirm) { setError('كلمتا المرور غير متطابقتين.'); trackEvent('Registration Error'); return; }
+    if (!strength.valid) { setError(strength.message); trackEvent('Registration Error'); return; }
     setBusy(true); setError('');
+    trackEvent('Registration Submitted');
     const form = new FormData(event.currentTarget);
     try {
       const result = await send('/api/auth/register', { name: String(form.get('name') || ''), email: String(form.get('email') || ''), password });
+      trackEvent('Registration Created', { results: result.verificationSent ? 0 : 1 });
       if (result.verificationSent) { setVerificationSent(true); return; }
       if (result.user) setClientSessionUser(result.user);
       router.replace('/account');
       router.refresh();
     } catch (failure) {
+      trackEvent('Registration Error');
       setError(failure instanceof Error ? failure.message : 'تعذر إنشاء الحساب.');
     } finally { setBusy(false); }
   }
   if (verificationSent) return (
-    <div className="auth-success"><span>✓</span><h2>تم إنشاء حسابك</h2><p>أرسلنا رابط تأكيد إلى بريدك. افتح الرسالة وأكد الحساب، ثم سجّل الدخول.</p><Link href="/account/login">الذهاب إلى تسجيل الدخول</Link></div>
+    <div className="auth-success"><span>✓</span><h2>راجع بريدك لتأكيد الحساب</h2><p>افتح رسالة التأكيد وسجّل الدخول بعدها. لو الرسالة مش ظاهرة، راجع الرسائل غير المرغوب فيها أو اطلب إعادة الإرسال.</p><ResendConfirmation email={email} /><Link href="/account/login">الذهاب إلى تسجيل الدخول</Link></div>
   );
   return (
-    <form className="auth-form" onSubmit={submit}>
+    <form className="auth-form" onSubmit={submit} onChange={markStarted} onInvalid={() => { markStarted(); trackEvent('Registration Error'); }}>
       <SocialAuth />
       <label htmlFor="register-name">الاسم الكامل</label>
       <input id="register-name" name="name" type="text" autoComplete="name" minLength={2} maxLength={80} required placeholder="اسمك كما تحب أن يظهر"/>
       <label htmlFor="register-email">البريد الإلكتروني</label>
-      <input id="register-email" name="email" type="email" autoComplete="email" inputMode="email" required placeholder="name@example.com" dir="ltr"/>
+      <input id="register-email" name="email" type="email" autoComplete="email" inputMode="email" required placeholder="name@example.com" dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} />
       <label htmlFor="register-password">كلمة المرور</label>
       <PasswordField id="register-password" name="password" autoComplete="new-password" value={password} onChange={setPassword}/>
       <div className="password-meter" aria-live="polite"><span style={{ width: `${strength.score * 25}%` }}/><b>{password ? strength.label : `ابدأ بـ ${PASSWORD_MIN_LENGTH} أحرف مع حرف ورقم`}</b></div>

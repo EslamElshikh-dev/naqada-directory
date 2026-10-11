@@ -27,6 +27,8 @@ const eventLabels: Record<string, string> = {
   listing_whatsapp: 'فتح واتساب', listing_map: 'فتح الخرائط', listing_share: 'مشاركة نشاط',
   contribution_prepare: 'بدء مساهمة', contribution_copy: 'نسخ مساهمة', contribution_share: 'مشاركة طلب',
   contribution_contact: 'التواصل للإضافة',
+  registration_start: 'بدء كتابة التسجيل', registration_submit: 'إرسال التسجيل', registration_created: 'قبول طلب التسجيل', registration_error: 'خطأ في التسجيل', confirmation_resend: 'إعادة إرسال التأكيد',
+  owner_form_start: 'بدء بيانات النشاط', owner_form_submit: 'إرسال بيانات النشاط', owner_form_saved: 'حفظ النشاط للمراجعة', owner_form_error: 'خطأ في حفظ النشاط', owner_photo_error: 'خطأ في رفع الصور',
 };
 
 function format(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
@@ -93,7 +95,7 @@ function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsig
 export default async function AdminPage() {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
-  const [statsResult, analyticsResult, discoveryResult, ownerResponse, moderatorReport, catalog, memberAccounts, sanadInsights, recentRequests] = await Promise.all([
+  const [statsResult, analyticsResult, discoveryResult, ownerResponse, moderatorReport, catalog, memberAccounts, sanadInsights, recentRequests, pendingJobsResponse] = await Promise.all([
     getAdminStats(session.accessToken).catch(() => null),
     getVisitorAnalytics(session.accessToken).catch(() => null),
     getDiscoveryInsights(session.accessToken).catch(() => null),
@@ -103,7 +105,9 @@ export default async function AdminPage() {
     getMemberAccounts(session.accessToken).catch(() => null),
     getSanadInsights(session.accessToken).catch(() => null),
     getRecentRequests(session.accessToken).catch(() => null),
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/get_pending_naqada_jobs`, { method: 'POST', headers: restHeaders(session.accessToken, true), body: '{}', cache: 'no-store' }).catch(() => null),
   ]);
+  const pendingJobs = pendingJobsResponse?.ok ? await pendingJobsResponse.json() as Array<{ id: string }> : null;
   const ownerStatuses = ownerResponse?.ok ? await ownerResponse.json() as Array<{ status: string }> : [];
   const pendingOwnerCount = ownerStatuses.filter((item) => item.status === 'pending').length;
   const stats = statsResult || { members: 0, siteReviews: 0, siteRating: 0, listingRatings: 0, pendingContributions: 0, events30d: 0 };
@@ -141,6 +145,8 @@ export default async function AdminPage() {
         </section>
 
         <DiscoveryPanel insights={discovery} available={Boolean(discoveryResult)} pathLabel={pathLabel} />
+
+        <section className="admin-section" id="forms"><header><div><span>متابعة التسجيل والإضافة · آخر ٣٠ يومًا</span><h2>أين يتوقف التسجيل وإضافة النشاط؟</h2><p>القياس يبدأ من التفاعل مع النموذج. قبول التسجيل لا يثبت تأكيد البريد، وحفظ النشاط يسبق مراجعة النشر. الجلسات محسوبة لكل مرحلة ولا تثبت عدد الأشخاص.</p></div><Link href="/admin/jobs/">طلبات الوظائف والخبرات: {pendingJobs ? format(pendingJobs.length) : '—'} ←</Link></header>{discovery.formFunnel ? <div className="admin-insight-grid">{['registration', 'owner'].map((flow) => <article className="admin-ranked-card" key={flow}><h3>{flow === 'registration' ? 'التسجيل بالبريد' : 'إضافة وتعديل النشاط'}</h3><div className="admin-rank-list">{Object.entries(eventLabels).filter(([stage]) => flow === 'registration' ? stage.startsWith('registration_') || stage === 'confirmation_resend' : stage.startsWith('owner_')).map(([stage, label]) => { const metric = discovery.formFunnel?.find((item) => item.stage === stage); return <div className="admin-rank-row" key={stage}><div><p><strong>{label}</strong><small>{format(metric?.events || 0)} حدث مسجل</small></p><b>{format(metric?.sessions || 0)} جلسة</b></div></div>; })}</div></article>)}</div> : <p role="status">تعذر تحميل قياس النماذج حاليًا.</p>}</section>
 
         <section className="admin-section" id="content"><header><div><span>فهم الاهتمام</span><h2>الصفحات والمصادر والأجهزة</h2><p>تعرف أين يذهب الجمهور، ومن أين وصل، وكيف تصفح الدليل.</p></div></header><div className="admin-insight-grid"><article className="admin-ranked-card admin-ranked-card--wide"><header><span>ترتيب المحتوى</span><h3>أكثر الصفحات زيارة</h3></header><RankList type="pages" max={pageMax} items={analytics.topPages.map((item) => ({ label: pathLabel(item.path), value: item.views, detail: `${format(item.visitors)} زائرًا فريدًا` }))} /></article><article className="admin-ranked-card"><header><span>الاكتساب</span><h3>مصادر الوصول</h3></header><RankList type="sources" max={sourceMax} items={analytics.sources.map((item) => ({ label: sourceLabel(item.source), value: item.visitors, detail: 'زائرًا فريدًا' }))} /></article><article className="admin-ranked-card"><header><span>تجربة الأجهزة</span><h3>طريقة التصفح</h3></header><div className="admin-device-list">{analytics.devices.length ? analytics.devices.map((item) => { const share = totals.uniqueVisitors30d ? item.visitors / totals.uniqueVisitors30d * 100 : 0; return <div key={item.device}><span>{item.device === 'mobile' ? 'هاتف جوال' : item.device === 'tablet' ? 'جهاز لوحي' : 'كمبيوتر'}</span><strong>{percentage(share)}</strong><i><span style={{ width: `${share}%` }} /></i><small>{format(item.visitors)} زائرًا</small></div>; }) : <div className="admin-empty">بانتظار بيانات الأجهزة.</div>}</div></article></div></section>
 

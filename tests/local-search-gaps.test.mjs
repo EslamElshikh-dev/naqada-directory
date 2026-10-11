@@ -34,6 +34,7 @@ const search = loadModule('./lib/site-search');
 const growth = loadModule('./lib/growth-priority');
 const family = loadModule('./lib/family-search');
 const research = loadModule('./lib/search-gap-research');
+const jobSearch = loadModule('./lib/job-search');
 
 test('family questions find the documented locality registry in both search paths', () => {
   for (const query of ['ماهى عائلات طوخ', 'ما هي عائلات طوخ', 'ما هى عايلات طوخ']) {
@@ -50,6 +51,23 @@ test('family questions find the documented locality registry in both search path
   assert.ok(registryResults.length > 0);
   assert.ok(registryResults.every((item) => item.href === '/families' || item.href.startsWith('/families?')));
   assert.equal(search.searchSite('ماهي عائلات نقادة', 30, ['listing']).length, 0);
+});
+
+test('cashier search routes to real job filtering and never drops the profession', () => {
+  for (const query of ['كشير بسوبر ماركت', 'كاشير بسوبر ماركت', 'cashier']) {
+    const result = search.searchSite(query, 1)[0];
+    const destination = new URL(result.href, 'https://example.com');
+    assert.equal(destination.pathname, '/jobs');
+    assert.equal(destination.searchParams.get('view'), 'all');
+    assert.equal(destination.searchParams.get('q'), 'كاشير');
+    assert.equal(jobSearch.jobMatchesSearch('مطلوب كشير سوبر ماركت', 'كاشير'), true);
+    assert.equal(jobSearch.jobMatchesSearch('كاشير بأحد المحلات', 'كشير'), true);
+    assert.equal(jobSearch.jobMatchesSearch('مطلوب سائق', 'كاشير'), false);
+    assert.equal(search.recoverSiteSearch(query).length, 0);
+  }
+  assert.equal(jobSearch.jobSearchIntent('تخاطب'), null);
+  assert.equal(jobSearch.jobSearchIntent('مطلوب سباك للبيت'), null);
+  assert.equal(new URL(search.searchSite('باحث عن عمل', 1)[0].href, 'https://example.com').searchParams.get('view'), 'seeker');
 });
 
 test('registry discovery excludes unpublished or weak research records', () => {

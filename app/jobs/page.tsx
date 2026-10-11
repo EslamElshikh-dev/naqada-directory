@@ -38,8 +38,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function JobsPage() {
-  const { jobs, state, available } = await getJobs();
+export default async function JobsPage({ searchParams }: { searchParams: Promise<{ q?: string | string[]; view?: string | string[] }> }) {
+  const [{ jobs, state, available }, params] = await Promise.all([getJobs(), searchParams]);
+  const initialQuery = (Array.isArray(params.q) ? params.q[0] : params.q || '').trim().slice(0, 100);
+  const view = Array.isArray(params.view) ? params.view[0] : params.view;
+  const initialView = view === 'seeker' || view === 'all' ? view : undefined;
   const offers = jobs.filter((job) => job.kind === 'offer');
   const seekers = jobs.filter((job) => job.kind === 'seeker');
   const localitiesList = [...new Set([...LOCAL_PLACES, ...localities.map((locality) => locality.name)])].sort((a, b) => a.localeCompare(b, 'ar'));
@@ -68,7 +71,7 @@ export default async function JobsPage() {
       </div>
     </section>
     <div className={`shell ${styles.ribbon}`} aria-label="كيف يعمل قسم الوظائف"><span><b>01</b> شوف الوظائف القريبة</span><i aria-hidden="true" /><span><b>02</b> افتح الإعلان الأصلي أو تواصل</span><i aria-hidden="true" /><span><b>03</b> اعرض فرصتك أو خبرتك</span></div>
-    <JobsBoard jobs={jobs} offers={localOffers.length} regionalOffers={regionalOffers.length} luxorOffers={luxorOffers.length} seekers={seekers.length} state={state} available={available} localities={localitiesList} luxorLocalities={luxorLocalities} />
+    <JobsBoard jobs={jobs} offers={localOffers.length} regionalOffers={regionalOffers.length} luxorOffers={luxorOffers.length} seekers={seekers.length} state={state} available={available} localities={localitiesList} luxorLocalities={luxorLocalities} initialQuery={initialQuery} initialView={initialView} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
   </main>;
 }

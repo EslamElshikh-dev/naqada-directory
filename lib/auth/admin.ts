@@ -104,6 +104,7 @@ export type DiscoveryInsights = {
   topPages: Array<{ path: string; views: number; visitors: number }>;
   searchSummary: { total: number; missed: number };
   missedSearches: Array<{ query: string; count: number; category: string | null; locality: string | null; lastSeenAt: string }>;
+  formFunnel?: Array<{ stage: string; sessions: number; events: number }>;
 };
 
 export const emptyDiscoveryInsights: DiscoveryInsights = {

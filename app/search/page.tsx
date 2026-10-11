@@ -7,6 +7,7 @@ import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
 import { normalizeArabic } from '@/lib/site';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { jobSearchIntent } from '@/lib/job-search';
 import contextStyles from './search-context.module.css';
 import styles from './search.module.css';
 
@@ -118,8 +119,9 @@ export default async function SearchPage({ searchParams }: Props) {
   const query = queryValue(params.q);
   const activeScope = scopeValue(params.scope);
   const canSearch = query.length >= 2;
+  const jobIntent = canSearch ? jobSearchIntent(query) : null;
   const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER, undefined, catalog.businesses) : [];
-  const searchContext = canSearch && (activeScope === 'all' || activeScope === 'directory')
+  const searchContext = canSearch && !jobIntent && (activeScope === 'all' || activeScope === 'directory')
     ? buildSearchContext(query)
     : null;
   const searchJourney = searchContext ? buildSearchJourney(query) : null;
@@ -137,14 +139,15 @@ export default async function SearchPage({ searchParams }: Props) {
   const grouped = groups
     .map((group) => ({ ...group, items: results.filter((item) => group.kinds.includes(item.kind)) }))
     .filter((group) => group.items.length > 0);
-  const recoverySuggestions = canSearch && !scopedResults.length
+  const recoverySuggestions = canSearch && !scopedResults.length && !jobIntent
     ? recoverSiteSearch(query, activeOption.kinds, 4)
     : [];
   const normalizedQuery = normalizeArabic(query);
-  const relatedHomeware = canSearch && !scopedResults.length
+  const isWholesaleHomeware = canSearch
     && (activeScope === 'all' || activeScope === 'directory')
     && normalizedQuery.includes('جمله')
-    && /ادوات|منزليه/.test(normalizedQuery)
+    && /ادوات|منزليه/.test(normalizedQuery);
+  const relatedHomeware = isWholesaleHomeware && !scopedResults.length
     ? searchSite('أدوات منزلية', 8, ['listing'], catalog.businesses)
     : [];
 
@@ -196,6 +199,10 @@ export default async function SearchPage({ searchParams }: Props) {
             ))}
           </nav>
         ) : null}
+
+        {jobIntent ? <Link className={contextStyles.card} href={jobIntent.href} prefetch={false}><span className={contextStyles.copy}><span className={contextStyles.kicker}>{jobIntent.badge}</span><strong>{jobIntent.title}</strong><small>{jobIntent.subtitle}</small></span><span className={contextStyles.action}>فتح قسم الوظائف ←</span></Link> : null}
+
+        {isWholesaleHomeware && scopedResults.length ? <p role="note">النتائج مرتبطة بالأدوات المنزلية، لكن البيع بالجملة غير مؤكد في بياناتها. تواصل مع النشاط للتأكد من الكميات والأسعار.</p> : null}
 
         {searchJourney ? <SearchJourneyPanel journey={searchJourney} /> : searchContext ? (
           <Link className={contextStyles.card} href={searchContext.href} prefetch={false} aria-label={`فتح المسار المحلي: ${searchContext.title}`}>

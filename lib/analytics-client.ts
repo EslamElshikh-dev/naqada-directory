@@ -14,7 +14,17 @@ type IntakeEventType =
   | 'contribution_prepare'
   | 'contribution_copy'
   | 'contribution_share'
-  | 'contribution_contact';
+  | 'contribution_contact'
+  | 'registration_start'
+  | 'registration_submit'
+  | 'registration_created'
+  | 'registration_error'
+  | 'confirmation_resend'
+  | 'owner_form_start'
+  | 'owner_form_submit'
+  | 'owner_form_saved'
+  | 'owner_form_error'
+  | 'owner_photo_error';
 
 type ContributionPayload = {
   requestType: 'add' | 'correction' | 'missing';
@@ -48,6 +58,16 @@ const EVENT_MAP: Record<string, IntakeEventType | undefined> = {
   'Contribution Copied': 'contribution_copy',
   'Contribution Shared': 'contribution_share',
   'Contribution Contact Opened': 'contribution_contact',
+  'Registration Started': 'registration_start',
+  'Registration Submitted': 'registration_submit',
+  'Registration Created': 'registration_created',
+  'Registration Error': 'registration_error',
+  'Confirmation Resent': 'confirmation_resend',
+  'Owner Form Started': 'owner_form_start',
+  'Owner Form Submitted': 'owner_form_submit',
+  'Owner Form Saved': 'owner_form_saved',
+  'Owner Form Error': 'owner_form_error',
+  'Owner Photo Error': 'owner_photo_error',
 };
 
 function dimension(value: unknown) {
