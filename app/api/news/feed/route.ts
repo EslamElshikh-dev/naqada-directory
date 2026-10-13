@@ -10,5 +10,5 @@ export async function GET() {
     items: feed.items.filter(item => !item.isOriginal).slice(0, 120),
     checkedAt: feed.checkedAt,
     successfulFeeds: feed.successfulFeeds,
-  }, { headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=240' } });
+  }, { headers: { 'Cache-Control': 'no-store' } });
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { resolveSession } from '@/lib/auth/session';
 import { isDirectoryAdmin } from '@/lib/auth/admin';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
+import { invalidatePublicContent } from '@/lib/public-content-cache';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,5 +14,7 @@ export async function POST(request: Request) {
   const session = await resolveSession(false);
   if (!session || !(await isDirectoryAdmin(session.accessToken))) return NextResponse.json({ ok: false }, { status: 403 });
   const reply = await fetch(`${SUPABASE_URL}/rest/v1/rpc/moderate_naqada_job`, { method: 'POST', cache: 'no-store', headers: restHeaders(session.accessToken, true), body: JSON.stringify({ p_id: body.id, p_status: body.status }) });
-  return NextResponse.json({ ok: reply.ok && (await reply.json().catch(() => false)) === true }, { status: reply.ok ? 200 : 502 });
+  const ok = reply.ok && (await reply.json().catch(() => false)) === true;
+  if (ok) invalidatePublicContent();
+  return NextResponse.json({ ok }, { status: reply.ok ? 200 : 502 });
 }

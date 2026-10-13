@@ -15,7 +15,7 @@ export async function GET() {
     const time = Date.parse(date);
     return Number.isFinite(time) && time >= earliest && time <= now + 24 * 60 * 60 * 1000;
   };
-  const { jobs } = await getJobs(AbortSignal.timeout(4500));
+  const { jobs } = await getJobs();
   const notices: DirectoryNotice[] = [
     ...jobs.filter((job) => job.kind === 'offer' && recent(job.published_at)).slice(0, 2).map((job) => ({
       id: `job:${job.id}:${job.published_at}`, href: `/jobs#job-${job.id}`,
@@ -42,6 +42,6 @@ export async function GET() {
 
   notices.sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt));
   return NextResponse.json({ items: notices.slice(0, 8) }, {
-    headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+    headers: { 'Cache-Control': 'no-store' },
   });
 }

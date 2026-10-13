@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { resolveSession, sessionJson } from '@/lib/auth/session';
 import { canModerate } from '@/lib/auth/moderator';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
+import { invalidatePublicContent } from '@/lib/public-content-cache';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
       console.error('owner_activity_review_failed', { code: 'UNEXPECTED_RESULT' });
       return saveFailed(session);
     }
+    invalidatePublicContent();
     return sessionJson({ ok: true, status: result.status }, session);
   } catch {
     console.error('owner_activity_review_failed', { code: 'REQUEST_FAILED' });

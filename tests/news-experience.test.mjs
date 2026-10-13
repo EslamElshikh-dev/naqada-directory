@@ -38,7 +38,7 @@ test('news sources are fetched concurrently and cached at the server boundary', 
   assert.ok(newsLibrary.includes('Promise.allSettled(NEWS_FEEDS.map(fetchFeed))'));
   assert.ok(newsLibrary.includes('next: { revalidate }'));
   assert.ok(newsLibrary.includes('FEED_REVALIDATE_SECONDS = 15 * 60'));
-  assert.ok(newsApi.includes("'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60'"));
+  assert.ok(newsApi.includes("'Cache-Control': 'no-store'"));
 });
 
 test('external article and image URLs are constrained to known secure publishers', () => {

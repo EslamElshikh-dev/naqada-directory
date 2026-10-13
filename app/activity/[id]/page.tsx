@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import { OwnerPhoto } from '@/components/owner-photo';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ActionIcon } from '@/components/action-icon';
@@ -89,7 +89,7 @@ export default async function ActivityPage({ params }: Props) {
         </section>
         {photoPaths.length > 0 && <section className={styles.gallery} aria-labelledby="activity-gallery-title">
           <div className={styles.galleryHead}><div><h2 id="activity-gallery-title">صور النشاط</h2><p>اضغط على الصورة لعرضها كاملة</p></div><span className={styles.photoCount}>{photoPaths.length === 1 ? 'صورة واحدة' : photoPaths.length === 2 ? 'صورتان' : `${photoPaths.length.toLocaleString('ar-EG')} صور`}</span></div>
-          <div className={styles.photos}>{photoPaths.map((path, index) => <figure key={path}><a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" aria-label={`افتح صورة ${index + 1} من ${listing.name} كاملة`}><Image src={ownerPhotoUrl(path)} alt={`صورة ${index + 1} من ${listing.name}`} width={720} height={520} sizes={index === 0 ? '(max-width: 800px) 90vw, 760px' : '(max-width: 800px) 44vw, 380px'} unoptimized /><span className={styles.photoOpen} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M20 4l-8 8M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></span></a><figcaption>{path === coverPath ? 'غلاف النشاط' : `صورة ${(index + 1).toLocaleString('ar-EG')}`}</figcaption></figure>)}</div>
+          <div className={styles.photos}>{photoPaths.map((path, index) => <figure key={path}><a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" aria-label={`افتح صورة ${index + 1} من ${listing.name} كاملة`}><OwnerPhoto src={ownerPhotoUrl(path)} alt={`صورة ${index + 1} من ${listing.name}`} width={720} height={520} sizes={index === 0 ? '(max-width: 800px) 90vw, 760px' : '(max-width: 800px) 44vw, 380px'} /><span className={styles.photoOpen} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M20 4l-8 8M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></span></a><figcaption>{path === coverPath ? 'غلاف النشاط' : `صورة ${(index + 1).toLocaleString('ar-EG')}`}</figcaption></figure>)}</div>
         </section>}
         <section className={styles.share} aria-labelledby="activity-share-title">
           <h2 id="activity-share-title">دلّ غيرك على المكان</h2><p className={styles.shareIntro}>ابعته للي محتاج الخدمة من أهل البلد.</p>

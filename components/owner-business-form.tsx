@@ -1,5 +1,6 @@
 'use client';
 
+import { OwnerPhoto } from '@/components/owner-photo';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
@@ -18,7 +19,7 @@ const maxPhotoSize = 4 * 1024 * 1024;
 function PhotoPreview({ file }: { file: File }) {
   const [url] = useState(() => URL.createObjectURL(file));
   useEffect(() => () => URL.revokeObjectURL(url), [url]);
-  return <Image src={url} alt={`صورة جديدة: ${file.name}`} width={130} height={110} unoptimized />;
+  return <Image src={url} alt={`صورة جديدة: ${file.name}`} width={130} height={110} sizes="130px" />;
 }
 
 export function OwnerBusinessForm({
@@ -267,7 +268,7 @@ export function OwnerBusinessForm({
             <label className={styles.photoPicker} htmlFor="owner-photos"><strong>＋ أضف صور النشاط</strong><span>لحد ٥ صور · JPG أو PNG أو WebP · ٤ ميجابايت للصورة</span></label>
             <input id="owner-photos" ref={inputRef} className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => choosePhotos(event.target.files)} disabled={busy || photos.length + files.length >= 5} />
             {(photos.length > 0 || files.length > 0) && <div className={styles.photoGrid}>
-              {photos.map((path, index) => <div className={styles.photo} key={path}><Image src={ownerPhotoUrl(path)} alt={`صورة النشاط ${index + 1}`} width={130} height={110} unoptimized /><button className={styles.makeCover} type="button" disabled={busy || (!coverFile && path === (coverPath || photos[0]))} onClick={() => void selectCover(path)} aria-label={`استخدم الصورة ${index + 1} كغلاف`}>{!coverFile && path === (coverPath || photos[0]) ? '✓ الغلاف الحالي' : 'اختارها كغلاف'}</button><button type="button" disabled={busy} onClick={() => void removePhoto(path)} aria-label={`حذف صورة النشاط ${index + 1}`}>حذف</button></div>)}
+              {photos.map((path, index) => <div className={styles.photo} key={path}><OwnerPhoto src={ownerPhotoUrl(path)} alt={`صورة النشاط ${index + 1}`} width={130} height={110} sizes="130px" /><button className={styles.makeCover} type="button" disabled={busy || (!coverFile && path === (coverPath || photos[0]))} onClick={() => void selectCover(path)} aria-label={`استخدم الصورة ${index + 1} كغلاف`}>{!coverFile && path === (coverPath || photos[0]) ? '✓ الغلاف الحالي' : 'اختارها كغلاف'}</button><button type="button" disabled={busy} onClick={() => void removePhoto(path)} aria-label={`حذف صورة النشاط ${index + 1}`}>حذف</button></div>)}
               {files.map((file, index) => <div className={styles.photo} key={`${file.name}-${file.size}-${file.lastModified}-${index}`}><PhotoPreview file={file} /><button type="button" disabled={busy} onClick={() => setFiles((current) => current.filter((_, item) => item !== index))} aria-label={`إزالة الصورة الجديدة ${index + 1}`}>إزالة</button></div>)}
             </div>}
           </div>

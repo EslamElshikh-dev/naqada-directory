@@ -17,7 +17,22 @@ const routes = [
   ['blog', '/blog'],
   ['blog-article', '/blog/bashlaw-today-quran-youth-education'],
   ['role-model-aya', '/role-models/aya-refai-abdelshafi'],
+  ['news-archive', '/news/archive/?page=2'],
 ];
+
+// Discover published records instead of making deleted or hidden IDs a CI fixture.
+const sitemapResponse = await fetch(`${baseURL}/sitemap.xml`);
+if (!sitemapResponse.ok) throw new Error(`Sitemap discovery failed: HTTP ${sitemapResponse.status}`);
+const sitemap = await sitemapResponse.text();
+const ownerPath = sitemap.match(/<loc>https:\/\/naqada-directory\.vercel\.app(\/activity\/[0-9a-f-]{36}\/)\s*<\/loc>/i)?.[1];
+if (ownerPath) routes.push(['owner-activity', ownerPath]);
+const archiveResponse = await fetch(`${baseURL}/news/archive/`);
+if (!archiveResponse.ok) throw new Error(`News discovery failed: HTTP ${archiveResponse.status}`);
+const archive = await archiveResponse.text();
+const storyPath = [...archive.matchAll(/href="(\/news\/([a-z0-9-]{3,90})\/?)"/gi)]
+  .find((match) => match[2] !== 'archive')?.[1];
+if (storyPath) routes.push(['news-story', storyPath]);
+
 const viewports = [
   ['mobile-390', 390, 844],
   ['mobile-430', 430, 932],
@@ -83,6 +98,9 @@ async function inspectRoute(viewportName, width, height, routeName, path) {
       }),
       categoryGridColumns: categoryGridStyle?.gridTemplateColumns || null,
       categoryCardCount: categoryGrid?.querySelectorAll('.category-card').length || 0,
+      ownerPhotos: [...document.querySelectorAll('main img')]
+        .filter((img) => img.getAttribute('src')?.includes('/api/owner-photos/'))
+        .map((img) => ({ src: img.currentSrc, loaded: img.complete && img.naturalWidth > 0 })),
     };
   });
 
@@ -93,6 +111,12 @@ async function inspectRoute(viewportName, width, height, routeName, path) {
   if (metrics.heroControlsClipped) out.failures.push(`${key}: homepage content or search button clipped by viewport`);
   if (status !== 200) out.failures.push(`${key}: HTTP ${status}`);
   if (metrics.horizontalOverflow) out.failures.push(`${key}: document horizontal overflow (${metrics.scrollWidth}px > ${width}px)`);
+  for (const photo of metrics.ownerPhotos) {
+    if (!photo.loaded) out.failures.push(`${key}: owner photo did not load: ${photo.src}`);
+    if (!/[?&]w=(256|384|640|960|1280|1800)(?:&|$)/.test(photo.src)) {
+      out.failures.push(`${key}: owner photo is missing a bounded responsive variant: ${photo.src}`);
+    }
+  }
 
   await page.screenshot({ path: `artifacts/${viewportName}/${routeName}.png`, fullPage: true });
   await page.close();
@@ -103,6 +127,12 @@ for (const [viewportName, width, height] of viewports) {
   for (const [routeName, path] of routes) {
     await inspectRoute(viewportName, width, height, routeName, path);
   }
+}
+
+// News previously overflowed between the mobile image rule and the wide layout.
+await fs.mkdir('artifacts/small-desktop-1024', { recursive: true });
+for (const [routeName, path] of routes.filter(([name]) => ['news-story', 'news-archive', 'owner-activity'].includes(name))) {
+  await inspectRoute('small-desktop-1024', 1024, 900, routeName, path);
 }
 
 for (const [viewportName, width, height] of viewports) {

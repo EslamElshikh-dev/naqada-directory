@@ -50,6 +50,7 @@ test('map links accept Google Maps only and text-address search is identified ho
 
 function harness({ signedIn = true, gallery = [photo(3)], cover = null, conflict = false } = {}) {
   const calls = [];
+  let invalidations = 0;
   let listing = { id, owner_user_id: ownerId, name: 'نشاط تجريبي', photo_paths: gallery, cover_path: cover, updated_at: '2026-10-03T00:00:00+00:00', status: 'published' };
   const route = load('../app/api/owner-listings/[id]/photos/route.ts', {
     'next/server': { NextResponse: { json: Response.json } },
@@ -58,6 +59,7 @@ function harness({ signedIn = true, gallery = [photo(3)], cover = null, conflict
       sessionJson: (body, _session, status = 200) => Response.json(body, { status }),
     },
     '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://database.example', restHeaders: () => ({}), sameOrigin: (request) => request.headers.get('origin') === 'https://directory.example' },
+    '@/lib/public-content-cache': { invalidatePublicContent: () => { invalidations++; } },
     '@/lib/owner-listings': { ownerListingSelect: 'id,photo_paths,cover_path,updated_at' }, sharp,
   }, {
     Buffer, File, Uint8Array, String, crypto: { randomUUID },
@@ -73,7 +75,7 @@ function harness({ signedIn = true, gallery = [photo(3)], cover = null, conflict
       return Response.json({}, { status: 200 });
     },
   });
-  return { calls, listing: () => listing,
+  return { calls, listing: () => listing, invalidations: () => invalidations,
     call: (method, body, origin = 'https://directory.example') => route[method](new Request('https://directory.example/api/owner-listings/' + id + '/photos', {
       method, body: body instanceof FormData ? body : JSON.stringify(body),
       headers: { Origin: origin, ...(body instanceof FormData ? {} : { 'Content-Type': 'application/json' }) },
@@ -96,12 +98,14 @@ test('a separate optimized cover can be uploaded even with five gallery photos',
   const upload = h.calls.find((call) => call.url.includes('/storage/v1/object/') && call.method === 'POST');
   assert.equal((await sharp(upload.body).metadata()).format, 'webp');
   assert.ok(h.calls.find((call) => call.method === 'PATCH').url.includes('updated_at=eq.'));
+  assert.equal(h.invalidations(), 1);
 });
 
 test('gallery limits still apply without blocking an independent cover', async () => {
   const h = harness({ gallery: [3,4,5,6,7].map(photo) });
   assert.equal((await h.call('POST', await imageForm('gallery'))).status, 400);
   assert.equal(h.calls.some((call) => call.url.includes('/storage/')), false);
+  assert.equal(h.invalidations(), 0);
 });
 
 test('unauthenticated and foreign-origin requests cannot change media', async () => {
@@ -117,6 +121,7 @@ test('owners can select their gallery image and cannot select an unrelated image
   const h = harness({ gallery: [photo(3), photo(4)] });
   assert.equal((await h.call('PATCH', { cover_path: photo(4) })).status, 200);
   assert.equal(h.listing().cover_path, photo(4));
+  assert.equal(h.invalidations(), 1);
   assert.equal((await h.call('PATCH', { cover_path: photo(9) })).status, 400);
   assert.equal(h.listing().cover_path, photo(4));
 });
@@ -126,6 +131,7 @@ test('deleting the selected gallery image clears its explicit cover and chooses 
   assert.equal((await h.call('DELETE', { path: photo(3) })).status, 200);
   assert.equal(h.listing().cover_path, null);
   assert.equal(media.ownerListingCoverPath(h.listing()), photo(4));
+  assert.equal(h.invalidations(), 1);
 });
 
 test('an upload that loses a concurrent edit cleans its orphan and retains the old cover', async () => {
@@ -136,4 +142,5 @@ test('an upload that loses a concurrent edit cleans its orphan and retains the o
   assert.equal(deletes.length, 1);
   assert.ok(JSON.parse(deletes[0].body).prefixes[0].endsWith('.webp'));
   assert.notEqual(JSON.parse(deletes[0].body).prefixes[0], photo(8));
+  assert.equal(h.invalidations(), 0);
 });

@@ -5,6 +5,7 @@ import { extractPublisherArticle, isOriginalBrief } from './news-article';
 import { localNewsBriefs } from './news-editorial';
 import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
+import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL } from './public-content-cache';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -518,18 +519,24 @@ async function loadLiveNews(): Promise<NewsFeedResult> {
   };
 }
 
-export const getLiveNews = cache(loadLiveNews);
+const cachedLiveNews = unstable_cache(loadLiveNews, ['naqada-live-news-v1'], {
+  revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
+});
+export const getLiveNews = cache(() => cachedLiveNews());
 
 type ArchivedNews = { payload: ExternalNewsItem };
+const cachedArchive = unstable_cache(async (query: string): Promise<ExternalNewsItem[]> => {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/naqada_news_archive?select=payload&${query}`, {
+    headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(4000),
+  });
+  if (!response.ok) throw Error('NEWS_ARCHIVE_UNAVAILABLE');
+  return ((await response.json()) as ArchivedNews[]).map(row => row.payload)
+    .filter(row => row?.id && row?.url && !/^(نتائج? البحث|بحث عن|الصفحة الرئيسية)/.test(row.title));
+}, ['naqada-news-archive-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
+
 async function readArchive(query: string): Promise<ExternalNewsItem[]> {
-  try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/naqada_news_archive?select=payload&${query}`, {
-      headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(4000),
-    });
-    if (!response.ok) return [];
-    return ((await response.json()) as ArchivedNews[]).map(row => row.payload)
-      .filter(row => row?.id && row?.url && !/^(نتائج? البحث|بحث عن|الصفحة الرئيسية)/.test(row.title));
-  } catch { return []; }
+  try { return await cachedArchive(query); }
+  catch { return []; }
 }
 
 async function loadLatestNews(): Promise<NewsFeedResult> {

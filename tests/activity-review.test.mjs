@@ -15,6 +15,7 @@ function harness({ session = true, moderator = true, reply, failFetch = false } 
   const calls = [];
   const logs = [];
   let sessionCalls = 0;
+  let invalidations = 0;
   const modules = {
     'next/server': { NextResponse: { json: Response.json } },
     '@/lib/auth/session': {
@@ -22,6 +23,7 @@ function harness({ session = true, moderator = true, reply, failFetch = false } 
       sessionJson: (payload, _session, status = 200) => Response.json(payload, { status }),
     },
     '@/lib/auth/moderator': { canModerate: async () => moderator },
+    '@/lib/public-content-cache': { invalidatePublicContent: () => { invalidations++; } },
     '@/lib/auth/supabase-rest': {
       SUPABASE_URL: 'https://database.example',
       restHeaders: () => ({ Authorization: 'Bearer private-test-token' }),
@@ -38,7 +40,7 @@ function harness({ session = true, moderator = true, reply, failFetch = false } 
     },
   });
   return {
-    calls, logs, get sessionCalls() { return sessionCalls; },
+    calls, logs, get sessionCalls() { return sessionCalls; }, get invalidations() { return invalidations; },
     post: (body, origin = 'https://directory.example') => exports.POST(new Request('https://directory.example/api/admin/activities/', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Origin: origin }, body: JSON.stringify(body),
     })),
@@ -52,6 +54,7 @@ for (const status of ['published', 'rejected']) {
     assert.equal(response.status, 200);
     assert.equal((await response.json()).ok, true);
     assert.equal(h.calls.length, 1);
+    assert.equal(h.invalidations, 1);
     assert.equal(h.calls[0].url, 'https://database.example/rest/v1/rpc/review_naqada_owner_listing');
     assert.deepEqual(JSON.parse(h.calls[0].body), { p_id: id, p_status: status });
   });
@@ -62,6 +65,7 @@ test('malformed IDs and unsupported decisions cannot reach the database', async 
     const h = harness();
     assert.equal((await h.post(body)).status, 400);
     assert.equal(h.calls.length, 0);
+    assert.equal(h.invalidations, 0);
   }
 });
 
@@ -70,6 +74,7 @@ test('foreign origins and members without moderation permission cannot decide re
     const h = harness(options);
     assert.equal((await h.post({ id, status: 'published' })).status, 403);
     assert.equal(h.calls.length, 0);
+    assert.equal(h.invalidations, 0);
   }
   const h = harness();
   assert.equal((await h.post({ id, status: 'published' }, 'https://other.example')).status, 403);
@@ -81,6 +86,7 @@ test('a competing moderation decision returns a conflict without overwriting it'
   const response = await h.post({ id, status: 'published' });
   assert.equal(response.status, 409);
   assert.equal((await response.json()).code, 'ALREADY_REVIEWED');
+  assert.equal(h.invalidations, 0);
 });
 
 test('database failures produce a useful response and log no token or private payload', async () => {
@@ -93,6 +99,7 @@ test('database failures produce a useful response and log no token or private pa
     const response = await h.post({ id, status: 'published' });
     assert.equal(response.status, 502);
     assert.equal((await response.json()).code, 'REVIEW_SAVE_FAILED');
+    assert.equal(h.invalidations, 0);
     assert.ok(h.logs.length);
     assert.doesNotMatch(JSON.stringify(h.logs), /private-test-token|private database details/);
   }
