@@ -38,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/directory', lastModified: latestBusinessDate },
     { path: '/activities', lastModified: latestBusinessDate },
     { path: '/news' },
+    { path: '/news/archive' },
     { path: '/jobs' },
     { path: '/blog', lastModified: latestEditorialDate },
     { path: '/role-models', lastModified: new Date(Math.max(...roleModels.map((person) => Date.parse(person.modifiedAt)))) },

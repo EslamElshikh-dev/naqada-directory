@@ -2,18 +2,39 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { NewsImage } from '@/components/news-image';
 import { getArchivedNews } from '@/lib/news';
+import { buildPageMetadata, siteConfig } from '@/lib/site';
 import styles from './archive.module.css';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'أرشيف أخبار نقادة وقنا | دليل نقادة', description: 'تصفح عناوين الأخبار السابقة وملخصاتها، مع مصدر كل خبر ورابطه الأصلي.' };
 
-export default async function NewsArchive({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const params = await searchParams;
-  const raw = Number(params.page);
-  const page = Number.isSafeInteger(raw) && raw >= 1 && raw <= 1000 ? raw : 1;
+type ArchiveProps = { searchParams: Promise<{ page?: string | string[] }> };
+
+function archivePage(value?: string | string[]) {
+  const raw = typeof value === 'string' ? Number(value) : Number.NaN;
+  return Number.isSafeInteger(raw) && raw >= 1 && raw <= 1000 ? raw : 1;
+}
+
+export async function generateMetadata({ searchParams }: ArchiveProps): Promise<Metadata> {
+  const page = archivePage((await searchParams).page);
+  const canonical = page === 1 ? '/news/archive/' : `/news/archive/?page=${page}`;
+  const metadata = buildPageMetadata({
+    title: page === 1 ? 'أرشيف أخبار نقادة وقنا' : `أرشيف أخبار نقادة وقنا — الصفحة ${page.toLocaleString('ar-EG')}`,
+    description: 'تصفح أخبار نقادة وقنا السابقة وملخصاتها، مع تاريخ النشر واسم الناشر ورابط المصدر الأصلي لكل خبر.',
+    path: '/news/archive',
+  });
+
+  return {
+    ...metadata,
+    alternates: { canonical },
+    openGraph: { ...metadata.openGraph, url: `${siteConfig.url}${canonical}` },
+  };
+}
+
+export default async function NewsArchive({ searchParams }: ArchiveProps) {
+  const page = archivePage((await searchParams).page);
   const archive = await getArchivedNews(page);
   return <main id="main-content" className={styles.page}>
-    <header className={styles.hero}><div className="shell"><nav><Link href="/">الرئيسية</Link><span> / </span><Link href="/news">الأخبار</Link><span> / </span>الأرشيف</nav><span>ذاكرة الأخبار المحلية</span><h1>أرشيف الأخبار</h1><p>أخبار سابقة بالصور وأسماء الناشرين؛ تفاصيل كل خبر ورابطه الأصلي في صفحته.</p></div></header>
+    <header className={styles.hero}><div className="shell"><nav><Link href="/">الرئيسية</Link><span> / </span><Link href="/news">الأخبار</Link><span> / </span>الأرشيف</nav><span>ذاكرة الأخبار المحلية</span><h1>أرشيف أخبار نقادة وقنا</h1><p>أخبار سابقة بالصور وأسماء الناشرين؛ تفاصيل كل خبر ورابطه الأصلي في صفحته.</p></div></header>
     <div className="shell">
       <div className={styles.heading}><h2>الصفحة {page.toLocaleString('ar-EG')}</h2><Link href="/news">العودة إلى أحدث الأخبار ←</Link></div>
       {archive.items.length ? <div className={styles.grid}>{archive.items.map(item => <article key={item.id} className={styles.card}>
