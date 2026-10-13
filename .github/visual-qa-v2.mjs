@@ -129,6 +129,12 @@ for (const [viewportName, width, height] of viewports) {
   }
 }
 
+// News previously overflowed between the mobile image rule and the wide layout.
+await fs.mkdir('artifacts/small-desktop-1024', { recursive: true });
+for (const [routeName, path] of routes.filter(([name]) => ['news-story', 'news-archive', 'owner-activity'].includes(name))) {
+  await inspectRoute('small-desktop-1024', 1024, 900, routeName, path);
+}
+
 for (const [viewportName, width, height] of viewports) {
   const page = await browser.newPage({ viewport: { width, height } });
   await page.goto(`${baseURL}/blog/bashlaw-today-quran-youth-education`, { waitUntil: 'networkidle' });

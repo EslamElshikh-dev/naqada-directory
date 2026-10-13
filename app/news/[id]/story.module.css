@@ -37,7 +37,7 @@
 
 .layout { display: grid; grid-template-columns: minmax(0,1fr) 290px; gap: 32px; align-items: start; padding-block: 42px 76px; }
 .mainColumn { min-width: 0; }
-.figure { position: relative; min-height: 470px; aspect-ratio: 16/9; overflow: hidden; margin: 0; border: 1px solid rgba(18,64,50,.12); border-radius: 30px 30px 9px 30px; background: #123f32; box-shadow: 0 22px 55px rgba(14,47,37,.1); }
+.figure { position: relative; width: 100%; min-height: 0; aspect-ratio: 16/9; overflow: hidden; margin: 0; border: 1px solid rgba(18,64,50,.12); border-radius: 30px 30px 9px 30px; background: #123f32; box-shadow: 0 22px 55px rgba(14,47,37,.1); }
 .figure figcaption { position: absolute; z-index: 2; inset-inline: 14px; inset-block-end: 13px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.14); border-radius: 9px; background: rgba(7,30,24,.78); color: #e7efeb; font-size: .57rem; font-weight: 750; backdrop-filter: blur(9px); }
 .summary { margin-top: 27px; padding: 27px; border: 1px solid rgba(18,64,50,.1); border-radius: 22px 22px 7px 22px; background: #fffefa; box-shadow: 0 9px 30px rgba(19,51,41,.045); }
 .summary > span,.sourceCard > span { color: #9a6b32; font-size: .62rem; font-weight: 950; }
