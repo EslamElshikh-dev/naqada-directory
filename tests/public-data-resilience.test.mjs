@@ -1,0 +1,128 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
+import test from 'node:test';
+import ts from 'typescript';
+
+function load(path, modules, globals = {}) {
+  const record = { exports: {} };
+  const code = ts.transpileModule(readFileSync(new URL(path, import.meta.url), 'utf8'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  vm.runInNewContext(code, { module: record, exports: record.exports, require: name => modules[name],
+    AbortSignal, Response, Date, console, ...globals });
+  return record.exports;
+}
+
+function cacheHarness() {
+  const values = new Map();
+  const registrations = [];
+  const invalidations = [];
+  const nextCache = {
+    unstable_cache(fn, keys, options) {
+      registrations.push({ keys, options });
+      return (...args) => {
+        const key = JSON.stringify([keys, args]);
+        if (!values.has(key)) {
+          const promise = Promise.resolve().then(() => fn(...args));
+          values.set(key, promise);
+          promise.catch(() => { if (values.get(key) === promise) values.delete(key); });
+        }
+        return values.get(key);
+      };
+    },
+    revalidateTag(tag, profile) { invalidations.push({ tag, profile }); values.clear(); },
+  };
+  const publicCache = load('../lib/public-content-cache.ts', { 'next/cache': nextCache });
+  return { nextCache, publicCache, registrations, invalidations };
+}
+
+test('public reads are shared briefly while authenticated moderator reads remain separate', async () => {
+  const cache = cacheHarness();
+  const calls = [];
+  const moderator = load('../lib/auth/moderator.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: token => ({ Authorization: `Bearer ${token || 'public'}` }), SupabaseAuthError: Error },
+  }, { fetch: async (url, init) => { calls.push({ url, ...init }); return Response.json([]); } });
+  await moderator.getPublicCurated('business');
+  await moderator.getPublicCurated('business');
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].headers.Authorization, 'Bearer public');
+  assert.ok(calls[0].signal instanceof AbortSignal);
+  await moderator.getPublicCurated('news');
+  assert.equal(calls.length, 2);
+  await moderator.getEditorContent('editor-a');
+  await moderator.getEditorContent('editor-b');
+  assert.equal(calls.length, 4);
+  assert.equal(calls[2].headers.Authorization, 'Bearer editor-a');
+  assert.equal(calls[3].headers.Authorization, 'Bearer editor-b');
+  assert.equal(cache.registrations[0].options.revalidate, 60);
+});
+
+test('a successful moderation decision expires old public rows without serving the old visible record', async () => {
+  const cache = cacheHarness();
+  let hidden = false;
+  const moderator = load('../lib/auth/moderator.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}), SupabaseAuthError: Error },
+  }, { fetch: async url => {
+    if (url.endsWith('/save_naqada_editor_content')) { hidden = true; return Response.json(true); }
+    return Response.json([{ slug: 'listing', status: hidden ? 'hidden' : 'published' }]);
+  } });
+  assert.equal((await moderator.getPublicCurated('business'))[0].status, 'published');
+  await moderator.callModeratorAction('editor', 'save_naqada_editor_content', {});
+  assert.equal((await moderator.getPublicCurated('business'))[0].status, 'hidden');
+  assert.equal(cache.invalidations.length, 1);
+  assert.equal(cache.invalidations[0].tag, cache.publicCache.PUBLIC_CONTENT_TAG);
+  assert.equal(cache.invalidations[0].profile.expire, 0);
+});
+
+test('failed public reads are not cached as empty catalogs and can recover on the next request', async () => {
+  const cache = cacheHarness();
+  let fail = true;
+  let calls = 0;
+  const owners = load('../lib/owner-listings.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({ Authorization: 'Bearer public' }) },
+    '@/lib/owner-listing-photo': {},
+  }, { fetch: async (url, init) => {
+    calls++;
+    assert.match(url, /status=eq\.published/);
+    assert.ok(init.signal instanceof AbortSignal);
+    return fail ? new Response(null, { status: 503 }) : Response.json([{ id: 'published' }]);
+  } });
+  await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
+  fail = false;
+  assert.equal((await owners.getPublishedOwnerListings())[0].id, 'published');
+  assert.equal(calls, 2);
+});
+
+test('job expiry is checked on each read rather than frozen in the short shared cache', async () => {
+  const cache = cacheHarness();
+  let now = Date.parse('2026-10-13T03:00:00Z');
+  let calls = 0;
+  class Clock extends Date { static now() { return now; } }
+  const jobs = load('../lib/jobs.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+  }, { Date: Clock, fetch: async url => {
+    calls++;
+    if (url.includes('kind=eq.offer')) return Response.json([{ id: 'offer', published_at: '2026-10-13T02:00:00Z', expires_at: '2026-10-13T03:00:10Z' }]);
+    return Response.json([]);
+  } });
+  assert.equal((await jobs.getJobs()).jobs.length, 1);
+  now += 20_000;
+  assert.equal((await jobs.getJobs()).jobs.length, 0);
+  assert.equal(calls, 3);
+});
+
+test('cancelled job reads preserve the unavailable state and do not populate the shared cache', async () => {
+  const cache = cacheHarness();
+  const jobs = load('../lib/jobs.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+  }, { fetch: async (_url, init) => { init.signal.throwIfAborted(); return Response.json([]); } });
+  const controller = new AbortController(); controller.abort();
+  assert.equal((await jobs.getJobs(controller.signal)).available, false);
+  assert.equal((await jobs.getJobs()).available, true);
+});

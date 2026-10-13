@@ -1,6 +1,8 @@
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import type { DirectoryItem } from '@/lib/types';
+import { unstable_cache } from 'next/cache';
+import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 
 export type OwnerListing = {
   id: string;
@@ -22,24 +24,24 @@ export type OwnerListing = {
 
 export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at';
 
-export async function getPublishedOwnerListings(): Promise<OwnerListing[]> {
+export const getPublishedOwnerListings = unstable_cache(async (): Promise<OwnerListing[]> => {
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/directory_owner_listings?status=eq.published&select=${ownerListingSelect}&order=created_at.desc&limit=500`,
-    { headers: restHeaders(), cache: 'no-store' },
+    { headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS) },
   );
-  if (!response.ok) return [];
+  if (!response.ok) throw Error('PUBLIC_ACTIVITIES_UNAVAILABLE');
   return response.json() as Promise<OwnerListing[]>;
-}
+}, ['naqada-published-activities-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
 
-export async function getPublishedOwnerListing(id: string): Promise<OwnerListing | null> {
+export const getPublishedOwnerListing = unstable_cache(async (id: string): Promise<OwnerListing | null> => {
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/directory_owner_listings?id=eq.${encodeURIComponent(id)}&status=eq.published&select=${ownerListingSelect}&limit=1`,
-    { headers: restHeaders(), cache: 'no-store' },
+    { headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS) },
   );
-  if (!response.ok) return null;
+  if (!response.ok) throw Error('PUBLIC_ACTIVITY_UNAVAILABLE');
   const rows = await response.json() as OwnerListing[];
   return rows[0] || null;
-}
+}, ['naqada-published-activity-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
 
 export function ownerListingDirectoryItem(listing: OwnerListing): DirectoryItem {
   const coverPath = ownerListingCoverPath(listing);

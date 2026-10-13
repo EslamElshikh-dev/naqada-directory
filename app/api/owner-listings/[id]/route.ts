@@ -3,6 +3,7 @@ import { resolveSession, sessionJson } from '@/lib/auth/session';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
 import { ownerListingSelect, type OwnerListing } from '@/lib/owner-listings';
 import { validateOwnerListing } from '@/lib/owner-listing-validation';
+import { invalidatePublicContent } from '@/lib/public-content-cache';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -47,6 +48,7 @@ export async function PATCH(request: Request, { params }: Props) {
     );
     if (!response.ok) throw new Error('update');
     const [listing] = await response.json() as OwnerListing[];
+    if (listing) invalidatePublicContent();
     return sessionJson(listing ? { listing } : { error: 'النشاط غير موجود في حسابك.' }, session, listing ? 200 : 404);
   } catch {
     return sessionJson({ error: 'تعذر حفظ التعديل. حاول تاني.' }, session, 502);

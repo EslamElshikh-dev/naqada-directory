@@ -3,6 +3,7 @@ import { resolveSession, sessionJson } from '@/lib/auth/session';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
 import { ownerListingSelect, type OwnerListing } from '@/lib/owner-listings';
 import sharp from 'sharp';
+import { invalidatePublicContent } from '@/lib/public-content-cache';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -41,6 +42,7 @@ async function saveMedia(listing: OwnerListing, token: string, patch: { photo_pa
   if (!response.ok) throw new Error('save');
   const [updated] = await response.json() as OwnerListing[];
   if (!updated) throw new Error('conflict');
+  invalidatePublicContent();
   return updated;
 }
 

@@ -1,4 +1,6 @@
 import { SUPABASE_URL, restHeaders, SupabaseAuthError } from '@/lib/auth/supabase-rest';
+import { unstable_cache } from 'next/cache';
+import { invalidatePublicContent, PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 
 export type CuratedKind = 'business' | 'news' | 'article';
 export type CuratedRecord = {
@@ -12,12 +14,13 @@ export type CuratedRecord = {
   updatedBy?: string;
 };
 
-async function rpc<T>(name: string, token?: string, data: Record<string, unknown> = {}): Promise<T> {
+async function rpc<T>(name: string, token?: string, data: Record<string, unknown> = {}, signal?: AbortSignal): Promise<T> {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
     method: 'POST',
     headers: restHeaders(token, true),
     body: JSON.stringify(data),
     cache: 'no-store',
+    signal,
   });
   if (!response.ok) throw new Error(`RPC_${name}_${response.status}`);
   return response.json() as Promise<T>;
@@ -41,9 +44,9 @@ export async function assertMemberAllowed(token: string) {
   }
 }
 
-export async function getPublicCurated(kind: CuratedKind): Promise<CuratedRecord[]> {
-  return rpc<CuratedRecord[]>('get_public_naqada_content', undefined, { p_kind: kind });
-}
+export const getPublicCurated = unstable_cache(async (kind: CuratedKind): Promise<CuratedRecord[]> => {
+  return rpc<CuratedRecord[]>('get_public_naqada_content', undefined, { p_kind: kind }, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS));
+}, ['naqada-public-curated-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
 
 export async function getEditorContent(token: string): Promise<CuratedRecord[]> {
   return rpc<CuratedRecord[]>('get_naqada_editor_content', token);
@@ -100,5 +103,7 @@ export async function getGoldModeratorNotifications(token: string) {
 }
 
 export async function callModeratorAction(token: string, name: string, body: Record<string, unknown>) {
-  return rpc<unknown>(name, token, body);
+  const result = await rpc<unknown>(name, token, body);
+  invalidatePublicContent();
+  return result;
 }

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NewsImage } from '@/components/news-image';
-import { getExpandedNewsBody, getLatestNews, getNewsItem } from '@/lib/news';
+import { getExpandedNewsBody, getLatestNews, getNewsItem, type ExternalNewsItem } from '@/lib/news';
 import { jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
 import { NewsShare } from './news-share';
@@ -58,16 +59,61 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   };
 }
 
+function StorySummary({ item, generatedBody = null }: { item: ExternalNewsItem; generatedBody?: string | null }) {
+  const detailedBody = item.editorialBody || generatedBody;
+  return (
+    <section className={styles.summary} aria-labelledby="story-summary-title">
+      <span>{item.isOriginal ? 'خبر محلي · دليل نقادة' : detailedBody ? 'تغطية موسعة · مع ذكر المصدر' : 'الملخص المتاح من المصدر'}</span>
+      <h2 id="story-summary-title">{detailedBody ? 'تفاصيل الخبر' : 'ما ورد في الخبر'}</h2>
+      {detailedBody && item.description ? <div className={styles.summaryLead}><strong>في سطور</strong><p>{item.description}</p></div> : null}
+      {detailedBody
+        ? detailedBody.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)
+        : <p>{item.description || 'لم يرسل المصدر تفاصيل كافية لهذا الخبر. ستجد التغطية الأصلية في قسم المصادر أدناه.'}</p>}
+      {generatedBody ? <p className={styles.editorialDisclosure}>صياغة آلية للوقائع المنشورة لدى {item.source}؛ راجع الخبر الأصلي عند وجود تحديثات أو تصحيحات.</p> : null}
+    </section>
+  );
+}
+
+async function ExpandedStorySummary({ item }: { item: ExternalNewsItem }) {
+  return <StorySummary item={item} generatedBody={await getExpandedNewsBody(item)} />;
+}
+
+async function RelatedStories({ item }: { item: ExternalNewsItem }) {
+  const feed = await getLatestNews().catch(() => null);
+  if (!feed) return null;
+  const related = feed.items
+    .filter((story) => story.id !== item.id && (story.category === item.category || story.isNaqada === item.isNaqada))
+    .slice(0, 3);
+  return related.length ? (
+    <section className={styles.related} aria-labelledby="related-news-title">
+      <div className="shell">
+        <div className={styles.relatedHeading}>
+          <div><span>تابع المشهد</span><h2 id="related-news-title">أخبار مرتبطة</h2></div>
+          <Link href="/news">كل الأخبار ←</Link>
+        </div>
+        <div className={styles.relatedGrid}>
+          {related.map((story) => (
+            <Link href={`/news/${story.id}`} className={styles.relatedCard} key={story.id}>
+              <span className={styles.relatedMedia}>
+                <NewsImage src={story.imageUrl} alt={story.imageAlt} sizes="(max-width: 700px) 120px, 260px" />
+              </span>
+              <span className={styles.relatedCopy}>
+                <small>{story.source} · {story.category}</small>
+                <strong>{story.title}</strong>
+                <b>افتح المعاينة ←</b>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null;
+}
+
 export default async function NewsStoryPage({ params }: StoryPageProps) {
   const { id } = await params;
   const item = await getNewsItem(id);
   if (!item) notFound();
-  const [feed, generatedBody] = await Promise.all([getLatestNews(), getExpandedNewsBody(item)]);
-  const detailedBody = item.editorialBody || generatedBody;
-
-  const related = feed.items
-    .filter((story) => story.id !== item.id && (story.category === item.category || story.isNaqada === item.isNaqada))
-    .slice(0, 3);
   const previewUrl = `${siteConfig.url}/news/${item.id}/`;
   const structuredData = {
     '@context': 'https://schema.org',
@@ -122,15 +168,8 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
               <figcaption>صورة الخبر كما قدمها المصدر · الحقوق لـ {item.source}</figcaption>
             </figure> : null}
 
-            <section className={styles.summary} aria-labelledby="story-summary-title">
-              <span>{item.isOriginal ? 'خبر محلي · دليل نقادة' : detailedBody ? 'تغطية موسعة · مع ذكر المصدر' : 'الملخص المتاح من المصدر'}</span>
-              <h2 id="story-summary-title">{detailedBody ? 'تفاصيل الخبر' : 'ما ورد في الخبر'}</h2>
-              {detailedBody && item.description ? <div className={styles.summaryLead}><strong>في سطور</strong><p>{item.description}</p></div> : null}
-              {detailedBody
-                ? detailedBody.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)
-                : <p>{item.description || 'لم يرسل المصدر تفاصيل كافية لهذا الخبر. ستجد التغطية الأصلية في قسم المصادر أدناه.'}</p>}
-              {generatedBody ? <p className={styles.editorialDisclosure}>صياغة آلية للوقائع المنشورة لدى {item.source}؛ راجع الخبر الأصلي عند وجود تحديثات أو تصحيحات.</p> : null}
-            </section>
+            {item.isOriginal || item.editorialBody ? <StorySummary item={item} /> :
+              <Suspense fallback={<StorySummary item={item} />}><ExpandedStorySummary item={item} /></Suspense>}
             <NewsShare title={item.title} url={previewUrl} />
           </div>
 
@@ -150,30 +189,7 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
         </div>
       </article>
 
-      {related.length ? (
-        <section className={styles.related} aria-labelledby="related-news-title">
-          <div className="shell">
-            <div className={styles.relatedHeading}>
-              <div><span>تابع المشهد</span><h2 id="related-news-title">أخبار مرتبطة</h2></div>
-              <Link href="/news">كل الأخبار ←</Link>
-            </div>
-            <div className={styles.relatedGrid}>
-              {related.map((story) => (
-                <Link href={`/news/${story.id}`} className={styles.relatedCard} key={story.id}>
-                  <span className={styles.relatedMedia}>
-                    <NewsImage src={story.imageUrl} alt={story.imageAlt} sizes="(max-width: 700px) 120px, 260px" />
-                  </span>
-                  <span className={styles.relatedCopy}>
-                    <small>{story.source} · {story.category}</small>
-                    <strong>{story.title}</strong>
-                    <b>افتح المعاينة ←</b>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
+      <Suspense fallback={null}><RelatedStories item={item} /></Suspense>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>

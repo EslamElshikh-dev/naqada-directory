@@ -14,7 +14,7 @@ export async function GET() {
     items: buildJobHeadlines(jobs, naqadaPlaces),
     checkedAt: state?.last_checked_at || null,
     available,
-  }, { headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=240' } });
+  }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
 export async function POST(request: Request) {
