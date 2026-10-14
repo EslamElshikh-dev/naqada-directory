@@ -9,30 +9,7 @@ import { SanadAssistant } from '@/components/sanad-assistant';
 import { UpdatesTicker } from '@/components/updates-ticker';
 import { PwaSetup } from '@/components/pwa-setup';
 import { MetaPixel } from '@/components/meta-pixel';
-import './globals.css';
-import './naqada-theme.css';
-import './member-system.css';
-import './premium-refresh.css';
-import './experience-polish.css';
-import './design-rework.css';
-import './global-search.css';
-import './responsive-mobile.css';
-import './interface-refresh.css';
-import './design-system-v2.css';
-import './detail-experience-v2.css';
-import './discovery-experience-v2.css';
-import './ui-quality-v13.css';
-import './stability-overrides.css';
-import './design-v18.css';
-import './design-v18-responsive.css';
-import './design-v18-directory.css';
-import './design-v19-detail.css';
-import './design-v20-editorial.css';
-import './mobile-editorial.css';
-import './encyclopedia-refresh.css';
-import './usayrat-parity.css';
-import './listing-card-resilience.css';
-import './navigation-refresh.css';
+import './site-styles.css';
 
 const notoKufi = localFont({
   src: './fonts/noto-kufi-arabic.woff2',
