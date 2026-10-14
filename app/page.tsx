@@ -123,8 +123,7 @@ export default function HomePage() {
               src="/images/naqada-home.jpg"
               alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"
               fill
-              loading="eager"
-              fetchPriority="high"
+              preload
               sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 40vw, 480px"
             />
             <span className={styles.placeShade} aria-hidden="true" />

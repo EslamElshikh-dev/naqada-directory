@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   experimental: {
     globalNotFound: true,
+    // Share styles by route instead of pulling unrelated component styles into large common chunks.
+    cssChunking: { type: 'graph', requestCost: 100_000 },
   },
   images: {
     formats: ['image/avif', 'image/webp'],
