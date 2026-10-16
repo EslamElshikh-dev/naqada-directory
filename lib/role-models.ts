@@ -96,10 +96,10 @@ export const roleModels: RoleModel[] = [
       cardPosition: 'center 27%',
     }],
     socialImage: {
-      src: '/images/role-models/ahmed-sayed-ahmed-farrag/october-share.jpg',
+      src: '/images/role-models/ahmed-sayed-ahmed-farrag/october-victory-share-v2.jpg',
       width: 1200,
       height: 630,
-      alt: 'أحمد سيد أحمد فراج — ابن بشلاو في ذاكرة نصر أكتوبر، ضمن نماذج مشرفة بدليل نقادة؛ نسخة محسّنة رقميًا',
+      alt: 'أحمد سيد أحمد فراج، ابن بشلاو في ذاكرة نصر أكتوبر، مع صورته وخلفية فنية لعبور القناة؛ دليل نقادة، نماذج مشرفة',
     },
   },
   {

@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: person.modifiedAt,
       images: [{ url: socialImage, type: 'image/jpeg', ...socialImageDetails }],
     },
-    twitter: { card: 'summary_large_image', title, description: person.description, images: [socialImage] },
+    twitter: { card: 'summary_large_image', title, description: person.description, images: [{ url: socialImage, alt: socialImageDetails.alt }] },
   };
 }
 
