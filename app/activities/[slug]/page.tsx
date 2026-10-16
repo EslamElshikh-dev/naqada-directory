@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const catalog = await getPublicBusinessCatalog();
   const count = getBusinessesForActivity(activity, catalog.businesses).length;
   return buildPageMetadata({
-    title: `${activity.name} | الأسماء والعناوين في دليل نقادة`,
+    title: `${activity.name}: الأسماء والعناوين`,
     description: `${activity.description} تصفح ${count.toLocaleString('ar-EG')} اسمًا منشورًا، وابحث حسب القرية أو النجع داخل مركز نقادة بمحافظة قنا.`,
     path: `/activities/${activity.slug}`,
     keywords: activityKeywords(activity.name, activity.searchLabel),

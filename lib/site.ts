@@ -57,7 +57,7 @@ export function buildPageMetadata({
         alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
       };
   return {
-    title,
+    title: title.includes(siteConfig.shortName) ? { absolute: title } : title,
     description,
     ...(keywords?.length ? { keywords } : {}),
     alternates: { canonical: normalizedPath },
