@@ -2,7 +2,7 @@ import { SUPABASE_URL, restHeaders, SupabaseAuthError } from '@/lib/auth/supabas
 import { unstable_cache } from 'next/cache';
 import { invalidatePublicContent, PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 
-export type CuratedKind = 'business' | 'news' | 'article';
+export type CuratedKind = 'business' | 'news' | 'article' | 'role_model';
 export type CuratedRecord = {
   id?: string;
   kind: CuratedKind;
@@ -12,6 +12,8 @@ export type CuratedRecord = {
   payload: Record<string, string>;
   updatedAt: string;
   updatedBy?: string;
+  version?: string;
+  publishedStatus?: string;
 };
 
 async function rpc<T>(name: string, token?: string, data: Record<string, unknown> = {}, signal?: AbortSignal): Promise<T> {
@@ -22,7 +24,11 @@ async function rpc<T>(name: string, token?: string, data: Record<string, unknown
     cache: 'no-store',
     signal,
   });
-  if (!response.ok) throw new Error(`RPC_${name}_${response.status}`);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    if (name === 'save_naqada_article_document' && error.code === '40001') throw new Error('ARTICLE_CONFLICT');
+    throw new Error(`RPC_${name}_${response.status}`);
+  }
   return response.json() as Promise<T>;
 }
 

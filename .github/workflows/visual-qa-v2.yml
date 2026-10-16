@@ -33,7 +33,9 @@ jobs:
         run: npm ci
 
       - name: Build Next.js
-        run: npm run build
+        run: |
+          node scripts/prepare-article-editor-fixture.mjs
+          npm run build
 
       - name: Install Playwright and Chromium
         run: |
@@ -55,6 +57,9 @@ jobs:
 
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs
+
+      - name: Verify complete article editor on desktop and mobile
+        run: node .github/article-editor-qa.mjs
 
       - name: Upload visual QA artifacts
         if: always()

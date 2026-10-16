@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       const origin = body.origin;
       const status = body.status;
       const payload = payloadFrom(body.payload);
-      if (!['business','news','article'].includes(kind) || !['static','original'].includes(origin)
+      if (!['business','news'].includes(kind) || !['static','original'].includes(origin)
         || !['draft','published','hidden'].includes(status) || !payload) throw Error('BAD_INPUT');
       let slug = typeof body.slug === 'string' ? body.slug : '';
       if (origin === 'original') {

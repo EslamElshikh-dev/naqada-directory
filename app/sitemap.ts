@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 import { canonicalLocalityName, categories, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { getPublicCurated } from '@/lib/auth/moderator';
-import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
+import { readArticleDocument } from '@/lib/article-document';
 import { siteConfig } from '@/lib/site';
-import { roleModels } from '@/lib/role-models';
 import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
@@ -24,25 +24,25 @@ function latestDate(items: Array<{ checked: string | null }>) {
 function sitemapUrl(path = '') { return path ? `${siteConfig.url}${path}/` : `${siteConfig.url}/`; }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [catalog, curatedArticles, curatedNews, ownerListings] = await Promise.all([
-    getPublicBusinessCatalog(), getPublicCurated('article'), getPublicCurated('news'), getPublishedOwnerListings(),
+  const [catalog, curatedArticles, curatedNews, ownerListings, roleModels, publicPosts] = await Promise.all([
+    getPublicBusinessCatalog(), getPublicCurated('article'), getPublicCurated('news'), getPublishedOwnerListings(), getPublicRoleModels(), getPublicEditorialPosts(),
   ]);
   const businesses = catalog.businesses;
   const hiddenArticles = new Set(curatedArticles.filter((row) => row.status === 'hidden').map((row) => row.slug));
-  const editorialPosts = allEditorialPosts.filter((post) => !hiddenArticles.has(post.slug));
-  const newArticles = curatedArticles.filter((row) => row.origin === 'original' && row.status === 'published');
+  const editorialPosts = publicPosts.filter((post) => !hiddenArticles.has(post.slug));
+  const newArticles = curatedArticles.filter((row) => row.origin === 'original' && row.status === 'published' && !readArticleDocument(row.payload));
   const newNews = curatedNews.filter((row) => row.origin === 'original' && row.status === 'published');
   const latestBusinessDate = latestDate(businesses);
   const latestEditorialDate = editorialPosts.length ? new Date(Math.max(...editorialPosts.map((post) => Date.parse(post.modifiedAt)), ...newArticles.map((post) => Date.parse(post.updatedAt)))) : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
-    { path: '', lastModified: getHomeLastModified() },
+    { path: '', lastModified: getHomeLastModified(editorialPosts, roleModels) },
     { path: '/directory', lastModified: latestBusinessDate },
     { path: '/activities', lastModified: latestBusinessDate },
     { path: '/news' },
     { path: '/news/archive' },
     { path: '/jobs' },
     { path: '/blog', lastModified: latestEditorialDate },
-    { path: '/role-models', lastModified: new Date(Math.max(...roleModels.map((person) => Date.parse(person.modifiedAt)))) },
+    { path: '/role-models', lastModified: new Date(Math.max(Date.parse('2026-09-04'), ...roleModels.map((person) => Date.parse(person.modifiedAt)))) },
     { path: '/villages', lastModified: fallbackDate },
     { path: '/families' },
     { path: '/heritage' },

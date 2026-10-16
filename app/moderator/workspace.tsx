@@ -1,6 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import type { ArticleEditorState } from './article-editor';
+const FullArticleEditor = dynamic(() => import('./article-editor'), { ssr: false });
 import Image from 'next/image';
 import { ownerListingPhotoPaths } from '@/lib/owner-listing-photo';
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -10,7 +13,7 @@ import { MemberAvatar } from '@/components/auth/member-avatar';
 import { categories, localities } from '@/lib/data';
 import styles from './workspace.module.css';
 
-type Tab = 'overview' | 'business' | 'news' | 'article' | 'members' | 'activity';
+type Tab = 'overview' | 'business' | 'news' | 'article' | 'role_model' | 'members' | 'activity';
 type SourceItem = { slug: string; title: string; summary: string; category?: string; locality?: string; phone?: string; address?: string; hours?: string; sourceUrl?: string; source?: string };
 type Editor = { kind: CuratedKind; origin: 'static' | 'original'; slug: string; status: string; payload: Record<string, string> };
 
@@ -19,6 +22,7 @@ const tabs: Array<{ id: Tab; label: string; icon: string }> = [
   { id: 'business', label: 'الأنشطة', icon: '▦' },
   { id: 'news', label: 'الأخبار', icon: '◉' },
   { id: 'article', label: 'المقالات', icon: '▤' },
+  { id: 'role_model', label: 'نماذج مشرفة', icon: '✦' },
   { id: 'members', label: 'الأعضاء', icon: '♙' },
   { id: 'activity', label: 'سجل العمل', icon: '◷' },
 ];
@@ -27,7 +31,7 @@ const statusLabels: Record<string, string> = {
   approved: 'معتمد', published: 'منشور', rejected: 'مرفوض', hidden: 'مخفي',
   draft: 'مسودة', active: 'نشط', suspended: 'مقيد مؤقتًا', removed: 'أزيل من الدليل',
 };
-const kindLabels: Record<CuratedKind, string> = { business: 'نشاط', news: 'خبر', article: 'مقال' };
+const kindLabels: Record<CuratedKind, string> = { business: 'نشاط', news: 'خبر', article: 'مقال', role_model: 'نموذج مشرف' };
 function number(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
 function date(value: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(value)); }
 function chartHeight(value: number, maximum: number) { return `${Math.max(value ? 9 : 3, Math.round(value / Math.max(1, maximum) * 100))}%`; }
@@ -41,6 +45,8 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
   const [search, setSearch] = useState('');
   const [sourceItems, setSourceItems] = useState<SourceItem[]>([]);
   const [loadingSources, setLoadingSources] = useState(false);
+  const [fullEditor, setFullEditor] = useState<ArticleEditorState | null>(null);
+  const [openingArticle, setOpeningArticle] = useState(false);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [selectedBusiness, setSelectedBusiness] = useState<ModeratorDashboard['businesses'][number] | null>(null);
   const [selectedContribution, setSelectedContribution] = useState<ModeratorDashboard['contributions'][number] | null>(null);
@@ -78,7 +84,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
   }, []);
 
   useEffect(() => {
-    if (!['business', 'news', 'article'].includes(tab)) return;
+    if (!['business', 'news', 'article', 'role_model'].includes(tab)) return;
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       setLoadingSources(true);
@@ -109,7 +115,19 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
     finally { setBusy(false); }
   }
 
+  async function openArticle(kind: 'article' | 'role_model', slug = '') {
+    setOpeningArticle(true); setError('');
+    try {
+      const response = await fetch(`/api/moderator/article?kind=${kind}&slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'تعذّر فتح المقال.');
+      setFullEditor(data);
+    } catch (failure) { setError(failure instanceof Error ? failure.message : 'تعذّر فتح المقال.'); }
+    finally { setOpeningArticle(false); }
+  }
+
   function startEdit(kind: CuratedKind, source?: SourceItem) {
+    if (kind === 'article' || kind === 'role_model') { void openArticle(kind, source?.slug); return; }
     const stored = content.find((item) => item.kind === kind && item.slug === source?.slug);
     const payload = source ? {
       title: source.title, summary: source.summary, category: source.category || '',
@@ -142,6 +160,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
       <section className={styles.workspace} id="workspace">
         <header className={styles.workspaceHead}><div><span>مركز التشغيل · أرقام حية من الدليل</span><h2>{tabs.find((item) => item.id === tab)?.label}</h2><p>آخر تحديث {lastUpdated} بتوقيت مصر · تحديث تلقائي كل دقيقة</p></div><button type="button" onClick={() => void refresh(tab === 'members' ? search : '')} disabled={refreshing}>{refreshing ? 'جارٍ التحديث…' : '↻ تحديث البيانات'}</button></header>
         <nav className={styles.tabbar} aria-label="أقسام مساحة الإشراف">{tabs.map((item) => <button key={item.id} className={tab === item.id ? styles.activeTab : ''} type="button" onClick={() => { setTab(item.id); setSearch(''); setSourceItems([]); setEditor(null); setError(''); }} aria-current={tab === item.id ? 'page' : undefined}><span aria-hidden="true">{item.icon}</span>{item.label}{item.id === 'business' && dashboard.metrics.pendingBusinesses ? <b>{number(dashboard.metrics.pendingBusinesses)}</b> : null}</button>)}</nav>
+        {openingArticle && <p role="status">جارٍ فتح المقال بكل تفاصيله…</p>}
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
         {message ? <p className={styles.success} role="status">{message}</p> : null}
 
@@ -171,8 +190,8 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
           <ContentList kind="business" {...{ search, setSearch, sourceItems, content, loadingSources, startEdit }} />
         </div> : null}
 
-        {(tab === 'news' || tab === 'article') ? <div className={styles.sectionStack}>
-          <div className={styles.sectionTitle}><div><span>تحرير ومراجعة</span><h3>{tab === 'news' ? 'الأخبار المحلية' : 'المقالات'}</h3><p>{tab === 'news' ? 'العناوين الخارجية تظل مرتبطة بناشرها الأصلي. اكتبي الخبر المحلي باسم الدليل من «إضافة خبر».' : 'تقدري تحرري عنوان وملخص مقال منشور أو تضيفي مقالًا أصليًا كاملًا.'}</p></div><button type="button" onClick={() => startEdit(tab)}>+ إضافة {tab === 'news' ? 'خبر' : 'مقال'}</button></div>
+        {(tab === 'news' || tab === 'article' || tab === 'role_model') ? <div className={styles.sectionStack}>
+          <div className={styles.sectionTitle}><div><span>تحرير ومراجعة</span><h3>{tab === 'news' ? 'الأخبار المحلية' : tab === 'role_model' ? 'نماذج مشرفة' : 'المقالات'}</h3><p>{tab === 'news' ? 'العناوين الخارجية تظل مرتبطة بناشرها الأصلي. اكتبي الخبر المحلي باسم الدليل من «إضافة خبر».' : 'حرري المقال كاملًا: النصوص والأقسام والصور والمصادر والسيو والمشاركة، مع حفظ مسودة ومعاينة قبل النشر.'}</p></div>{tab !== 'role_model' && <button type="button" onClick={() => startEdit(tab)}>+ إضافة {tab === 'news' ? 'خبر' : 'مقال'}</button>}</div>
           <ContentList kind={tab} {...{ search, setSearch, sourceItems, content, loadingSources, startEdit }} />
         </div> : null}
 
@@ -185,6 +204,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
         {tab === 'activity' ? <div className={styles.sectionStack}><div className={styles.sectionTitle}><div><span>شفافية الإجراءات</span><h3>أعمالك المسجلة</h3><p>كل تعديل موثق باسم الحساب ووقت التنفيذ. يظهر ملخص عملك أيضًا في لوحة مالك الدليل.</p></div></div><div className={styles.timeline}>{dashboard.activity.length ? dashboard.activity.map((item, index) => <article key={`${item.at}-${index}`}><i>✦</i><div><strong>{moderatorActionLabel(item.action)}</strong><small>{moderatorKindLabel(item.kind)} · {item.target}</small></div><time>{date(item.at)}</time></article>) : <p className={styles.empty}>لسه ما اتسجلش إجراء. أول مراجعة هتظهر هنا.</p>}</div></div> : null}
       </section>
 
+      {fullEditor && <FullArticleEditor initial={fullEditor} onClose={() => setFullEditor(null)} onSaved={() => void refresh()} />}
       {editor ? <div className={styles.backdrop} onMouseDown={(event) => { if (event.target === event.currentTarget) setEditor(null); }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-label={`تحرير ${kindLabels[editor.kind]}`}><header><div><small>{editor.origin === 'static' ? 'تعديل سجل موجود' : 'محتوى جديد'}</small><h2>تحرير {kindLabels[editor.kind]}</h2></div><button type="button" onClick={() => setEditor(null)} aria-label="إغلاق">×</button></header><form onSubmit={(event: FormEvent) => { event.preventDefault(); void act({ type: 'content', ...editor, status: 'published' }); }}>
         <label>العنوان أو اسم النشاط<input required minLength={3} maxLength={160} value={editor.payload.title || ''} onChange={(event) => updateEditor('title', event.target.value)} /></label>
         <label>الملخص أو الوصف القصير<textarea required minLength={15} maxLength={500} rows={3} value={editor.payload.summary || ''} onChange={(event) => updateEditor('summary', event.target.value)} /></label>

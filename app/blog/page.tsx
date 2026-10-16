@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { getPublicEditorialPosts } from '@/lib/article-content';
+import { readArticleDocument } from '@/lib/article-document';
 import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getPublicCurated } from '@/lib/auth/moderator';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -36,20 +37,8 @@ function formatArticleDate(date: string) {
 export default async function BlogPage() {
   const blogUrl = `${siteConfig.url}/blog/`;
   const curated = await getPublicCurated('article');
-  const revisions = new Map(curated.filter((row) => row.origin === 'static').map((row) => [row.slug, row]));
-  const originalPosts = curated.filter((row) => row.origin === 'original' && row.status === 'published');
-  const displayPosts = allEditorialPosts.filter((post) => revisions.get(post.slug)?.status !== 'hidden')
-    .map((post) => {
-      const revision = revisions.get(post.slug);
-      return revision?.status === 'published'
-        ? { ...post, title: revision.payload.title || post.title,
-            description: revision.payload.summary || post.description,
-            excerpt: revision.payload.summary || post.excerpt,
-            modifiedAt: revision.updatedAt.slice(0, 10) }
-        : post;
-    }).sort(
-    (a, b) => Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt)
-  );
+  const originalPosts = curated.filter(row => row.origin === 'original' && row.status === 'published' && !readArticleDocument(row.payload));
+  const displayPosts = (await getPublicEditorialPosts()).sort((a,b) => Date.parse(b.modifiedAt) - Date.parse(a.modifiedAt));
   const totalPosts = displayPosts.length + originalPosts.length;
   const schema = {
     '@context': 'https://schema.org',
@@ -139,7 +128,7 @@ export default async function BlogPage() {
               {displayPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <Image
-                    src={editorialImagePath(post.hero.asset)}
+                    unoptimized={post.hero.asset.startsWith('/api/article-media/')} src={editorialImagePath(post.hero.asset)}
                     width={post.hero.width}
                     height={post.hero.height}
                     alt={post.hero.alt}

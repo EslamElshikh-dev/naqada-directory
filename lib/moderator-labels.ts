@@ -5,7 +5,7 @@ const actionLabels: Record<string, string> = {
   submission_reviewing: 'بدء مراجعة', submission_needs_info: 'طلب استكمال بيانات',
   content_published: 'نشر محتوى', content_hidden: 'إخفاء محتوى', content_draft: 'حفظ مسودة',
 };
-const kindLabels: Record<string, string> = { business: 'نشاط', contribution: 'مساهمة', review: 'تقييم', member: 'عضو', news: 'خبر', article: 'مقال' };
+const kindLabels: Record<string, string> = { business: 'نشاط', contribution: 'مساهمة', review: 'تقييم', member: 'عضو', news: 'خبر', article: 'مقال', role_model: 'نموذج مشرف' };
 
 export function moderatorActionLabel(action: string) { return actionLabels[action] || action.replaceAll('_', ' '); }
 export function moderatorKindLabel(kind: string) { return kindLabels[kind] || kind; }

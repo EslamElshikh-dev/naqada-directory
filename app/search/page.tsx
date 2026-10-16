@@ -6,6 +6,7 @@ import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
 import { normalizeArabic } from '@/lib/site';
+import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { jobSearchIntent } from '@/lib/job-search';
 import contextStyles from './search-context.module.css';
@@ -115,12 +116,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const [params, catalog] = await Promise.all([searchParams, getPublicBusinessCatalog()]);
+  const [params, catalog, people, posts] = await Promise.all([searchParams, getPublicBusinessCatalog(), getPublicRoleModels(), getPublicEditorialPosts()]);
   const query = queryValue(params.q);
   const activeScope = scopeValue(params.scope);
   const canSearch = query.length >= 2;
   const jobIntent = canSearch ? jobSearchIntent(query) : null;
-  const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER, undefined, catalog.businesses) : [];
+  const allResults = canSearch ? searchSite(query, Number.MAX_SAFE_INTEGER, undefined, catalog.businesses, { people, posts }) : [];
   const searchContext = canSearch && !jobIntent && (activeScope === 'all' || activeScope === 'directory')
     ? buildSearchContext(query)
     : null;
@@ -148,7 +149,7 @@ export default async function SearchPage({ searchParams }: Props) {
     && normalizedQuery.includes('جمله')
     && /ادوات|منزليه/.test(normalizedQuery);
   const relatedHomeware = isWholesaleHomeware && !scopedResults.length
-    ? searchSite('أدوات منزلية', 8, ['listing'], catalog.businesses)
+    ? searchSite('أدوات منزلية', 8, ['listing'], catalog.businesses, { people, posts })
     : [];
 
   const hasMore = scopedResults.length > results.length;
