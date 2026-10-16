@@ -116,7 +116,7 @@
 .featureButtons button:focus-visible { outline:3px solid #f1d7a9; outline-offset:3px; }
 .featureAnnouncement { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
 @media(prefers-reduced-motion:no-preference) { .homeFeatureSlideCopy,.homeFeatureVisual { animation:featureReveal .4s ease-out both; } @keyframes featureReveal { from { opacity:.35; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } }
-@media(max-width:700px) { .homeFeature { grid-template-columns:1fr; margin-block:20px 35px; } .homeFeatureCopy { padding:24px; } .homeFeatureVisual { min-height:280px; } }
+@media(max-width:700px) { .homeFeature { grid-template-columns:1fr; margin-block:20px 35px; } .homeFeatureCopy { padding:24px; } .homeFeatureVisual { min-height:0; height:clamp(340px,100vw,460px); } .homeFeatureVisual img { object-fit:contain; } }
 
 /* A guided, image-led story for Aya. Shared navigation remains useful to every profile. */
 .articlePortrait { position:relative; }
