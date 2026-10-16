@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { allEditorialPosts, getAllEditorialPost } from '@/lib/editorial-posts-all';
+import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getPublicCurated } from '@/lib/auth/moderator';
+import { getPublicEditorialPosts } from '@/lib/article-content';
+import { readArticleDocument } from '@/lib/article-document';
 import { CuratedArticle } from './curated-article';
-import { localities } from '@/lib/data';
-import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { siteConfig } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
-import styles from './post.module.css';
+import { EditorialPostArticle } from './article-view';
 
 type Props = { params: Promise<{ slug: string }> };
 export const dynamic = 'force-dynamic';
@@ -22,30 +21,15 @@ function imageUrl(asset: string) {
   return `${siteConfig.url}${editorialImagePath(asset)}`;
 }
 
-function localImageUrl(asset: string) {
-  return editorialImagePath(asset);
-}
-
 function metadataTitle(title: string) {
   return title.replace(/\s*\|\s*دليل نقادة\s*$/u, '').trim();
-}
-
-function formatArticleDate(date: string) {
-  const [year, month, day] = date.split('-').map(Number);
-  if (!year || !month || !day) return date;
-  return new Intl.DateTimeFormat('ar-EG', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, month - 1, day, 12)));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const revision = (await getPublicCurated('article')).find((item) => item.slug === slug);
   if (revision?.status === 'hidden') return { robots: { index: false, follow: false } };
-  if (revision?.origin === 'original' && revision.status === 'published') {
+  if (revision?.origin === 'original' && revision.status === 'published' && !readArticleDocument(revision.payload)) {
     return {
       title: revision.payload.title, description: revision.payload.summary,
       alternates: { canonical: `/blog/${slug}` },
@@ -53,22 +37,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: revision.payload.summary, publishedTime: revision.updatedAt },
     };
   }
-  const original = getAllEditorialPost(slug);
-  const post = original && revision?.status === 'published'
-    ? { ...original, title: revision.payload.title || original.title,
-        description: revision.payload.summary || original.description,
-        excerpt: revision.payload.summary || original.excerpt,
-        modifiedAt: revision.updatedAt.slice(0, 10) }
-    : original;
+  const post = (await getPublicEditorialPosts()).find(item => item.slug === slug);
   if (!post) return {};
   const url = `${siteConfig.url}/blog/${post.slug}`;
-  const hero = imageUrl(post.hero.asset);
+  const sharing = revision && readArticleDocument(revision.payload)?.sharing;
+  const hero = sharing?.image ? new URL(sharing.image.src, siteConfig.url).toString() : imageUrl(post.hero.asset);
+  const sharedTitle = sharing?.title || post.title;
+  const sharedDescription = sharing?.description || post.description;
 
   return {
-    title: revision?.status === 'published' ? post.title : metadataTitle(post.seoTitle),
+    title: metadataTitle(post.seoTitle || post.title),
     description: post.description,
     keywords: post.keywords,
-    authors: [{ name: villageArticleAuthor.name, url: `${siteConfig.url}${villageArticleAuthor.href}/` }],
+    authors: [{ name: post.authorName || villageArticleAuthor.name, ...((post.authorUrl || !post.authorName || post.authorName === villageArticleAuthor.name) ? { url: new URL(post.authorUrl || villageArticleAuthor.href, siteConfig.url).toString() } : {}) }],
     alternates: { canonical: `/blog/${post.slug}` },
     robots: {
       index: true,
@@ -85,18 +66,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       locale: siteConfig.locale,
       url,
-      title: post.title,
-      description: post.description,
+      title: sharedTitle,
+      description: sharedDescription,
       siteName: siteConfig.shortName,
       publishedTime: post.publishedAt,
       modifiedTime: post.modifiedAt,
-      authors: [villageArticleAuthor.name],
-      images: [{ url: hero, width: post.hero.width, height: post.hero.height, alt: post.hero.alt }],
+      authors: [(post.authorName || villageArticleAuthor.name)],
+      images: [{ url: hero, width: sharing?.image?.width || post.hero.width, height: sharing?.image?.height || post.hero.height, alt: sharing?.image?.alt || post.hero.alt }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.description,
+      title: sharedTitle,
+      description: sharedDescription,
       images: [hero],
     },
   };
@@ -106,217 +87,10 @@ export default async function EditorialPostPage({ params }: Props) {
   const { slug } = await params;
   const revision = (await getPublicCurated('article')).find((item) => item.slug === slug);
   if (revision?.status === 'hidden') notFound();
-  if (revision?.status === 'published' && (revision.origin === 'original' || revision.payload.body?.trim())) {
+  if (revision?.status === 'published' && (!readArticleDocument(revision.payload) && (revision.origin === 'original' || revision.payload.body?.trim()))) {
     return <CuratedArticle slug={slug} title={revision.payload.title} summary={revision.payload.summary} body={revision.payload.body} updatedAt={revision.updatedAt} />;
   }
-  const original = getAllEditorialPost(slug);
-  const post = original && revision?.status === 'published'
-    ? { ...original, title: revision.payload.title || original.title,
-        description: revision.payload.summary || original.description,
-        excerpt: revision.payload.summary || original.excerpt,
-        modifiedAt: revision.updatedAt.slice(0, 10) }
-    : original;
+  const post = (await getPublicEditorialPosts()).find(item => item.slug === slug);
   if (!post) notFound();
-
-  const canonicalUrl = `${siteConfig.url}/blog/${post.slug}`;
-  const relatedLocality = localities.find((item) => item.name === post.relatedVillage);
-  const isDirectLocalityPage = post.locality === post.relatedVillage;
-  const allImages = [post.hero, ...post.sections.flatMap((section) => section.image ? [section.image] : [])];
-
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'BlogPosting',
-        '@id': `${canonicalUrl}#article`,
-        headline: post.title,
-        description: post.description,
-        keywords: post.keywords.join(', '),
-        inLanguage: 'ar-EG',
-        datePublished: post.publishedAt,
-        dateModified: post.modifiedAt,
-        mainEntityOfPage: canonicalUrl,
-        image: allImages.map((image) => ({
-          '@type': 'ImageObject',
-          url: imageUrl(image.asset),
-          contentUrl: imageUrl(image.asset),
-          width: image.width,
-          height: image.height,
-          name: image.alt,
-          description: image.alt,
-          caption: image.caption,
-        })),
-        about: { '@type': 'Place', name: post.locality, containedInPlace: { '@type': 'AdministrativeArea', name: 'مركز نقادة، قنا، مصر' } },
-        author: {
-          '@type': 'Person',
-          '@id': 'https://www.eslam-elshikh.com/#person',
-          name: villageArticleAuthor.name,
-          alternateName: 'Eslam Elshikh',
-          url: `${siteConfig.url}${villageArticleAuthor.href}/`,
-          sameAs: ['https://www.eslam-elshikh.com/about/', 'https://www.wikidata.org/wiki/Q138800449', 'https://github.com/EslamElshikh-dev'],
-        },
-        publisher: {
-          '@type': 'Organization',
-          name: siteConfig.shortName,
-          url: siteConfig.url,
-          logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
-        },
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: siteConfig.url },
-          { '@type': 'ListItem', position: 2, name: 'المدونة', item: `${siteConfig.url}/blog` },
-          { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
-        ],
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonicalUrl}#faq`,
-        mainEntity: post.faqs.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
-      },
-    ],
-  };
-
-  return (
-    <main id="main-content" className={styles.page}>
-      <article>
-        <header className={styles.hero}>
-          <div className="shell">
-            <nav className={styles.breadcrumbs} aria-label="مسار المقال">
-              <Link href="/">الرئيسية</Link><span>/</span><Link href="/blog">المدونة</Link><span>/</span><span>{post.locality}</span>
-            </nav>
-            <div className={styles.heroGrid}>
-              <div className={styles.heroCopy}>
-                <div className={styles.kicker}><span>{post.category}</span><span>{post.locality}</span></div>
-                <h1>{post.title}</h1>
-                <p>{post.excerpt}</p>
-                <div className={styles.meta}>
-                  <span>بقلم <Link href={villageArticleAuthor.href} rel="author">{villageArticleAuthor.name}</Link></span>
-                  <time dateTime={post.publishedAt}>{formatArticleDate(post.publishedAt)}</time>
-                  <span>مقال محلي مصوّر</span>
-                </div>
-              </div>
-              <figure className={styles.heroFigure}>
-                <Image
-                  src={localImageUrl(post.hero.asset)}
-                  width={post.hero.width}
-                  height={post.hero.height}
-                  alt={post.hero.alt}
-                  priority
-                  sizes="(max-width: 900px) calc(100vw - 20px), 46vw"
-                />
-                <figcaption>{post.hero.caption}{post.hero.originalAsset && <a className={styles.originalLink} href={localImageUrl(post.hero.originalAsset)} target="_blank" rel="noreferrer">شاهد الصورة الأصلية ↗</a>}</figcaption>
-              </figure>
-            </div>
-          </div>
-        </header>
-
-        <div className={`shell ${styles.layout}`}>
-          <div className={styles.content}>
-            <div className={styles.lead}>
-              {post.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            </div>
-
-            <aside className={styles.imageNotice}>
-              <strong>ملاحظة على الصور</strong>
-              <p>{post.imageNotice || 'الصور التوضيحية المولدة بصريًا في هذا المقال صُممت لتعكس السياق العام للموضوع، ولا تُقدَّم باعتبارها صورًا توثيقية لمعلم أو أشخاص حقيقيين بعينهم.'}</p>
-            </aside>
-
-            {post.sections.map((section, index) => (
-              <section key={section.heading} id={`section-${index + 1}`} className={styles.section}>
-                <h2>{section.heading}</h2>
-                {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                {section.timeline && <ol className={styles.timeline}>
-                  {section.timeline.map((entry) => <li key={entry.name}>
-                    <span>{entry.period}</span>
-                    <h3>{entry.name}</h3>
-                    <p>{entry.description}</p>
-                  </li>)}
-                </ol>}
-                {section.sources && <div className={styles.sectionSources} aria-label="مصادر هذا القسم">
-                  {section.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>)}
-                </div>}
-                {section.image && (
-                  <figure className={styles.inlineFigure}>
-                    <Image
-                      src={localImageUrl(section.image.asset)}
-                      width={section.image.width}
-                      height={section.image.height}
-                      alt={section.image.alt}
-                      sizes="(max-width: 900px) calc(100vw - 20px), 860px"
-                    />
-                    <figcaption>{section.image.caption}{section.image.originalAsset && <a className={styles.originalLink} href={localImageUrl(section.image.originalAsset)} target="_blank" rel="noreferrer">افتح الأصل بالحجم الكامل ↗</a>}</figcaption>
-                  </figure>
-                )}
-              </section>
-            ))}
-
-            {relatedLocality && (
-              <aside className={styles.villageBridge}>
-                <span>{isDirectLocalityPage ? 'الصفحة المرجعية للمكان' : 'المكان في سياقه المحلي'}</span>
-                <strong>
-                  {isDirectLocalityPage
-                    ? `عايز تعرف ${post.locality} نفسها من أول الحكاية؟`
-                    : `عايز تربط ${post.locality} بالقرية الأم ${post.relatedVillage}؟`}
-                </strong>
-                <p>
-                  {isDirectLocalityPage
-                    ? `صفحة المكان تجمع الموقع والهوية المحلية والخدمات، بينما المقال الحالي يركز على موضوع مستقل داخل ${post.locality} بزاوية أعمق ومصادر وصور مخصصة.`
-                    : `المقال الحالي يركز على ${post.locality}، بينما صفحة ${post.relatedVillage} تجمع السياق الجغرافي والخدمي الأوسع والمواضع المرتبطة بها داخل مركز نقادة.`}
-                </p>
-                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.relatedVillage} الكامل ←</Link>
-              </aside>
-            )}
-
-            <section className={styles.faq}>
-              <h2>أسئلة شائعة ومفيدة عن {post.locality}</h2>
-              {post.faqs.map((item, index) => (
-                <details key={item.question} open={index === 0}>
-                  <summary>{item.question}</summary>
-                  <p>{item.answer}</p>
-                </details>
-              ))}
-            </section>
-
-            <section className={styles.sources}>
-              <h2>المصادر والمراجع</h2>
-              <p>المراجع التالية استُخدمت لتثبيت الوقائع المذكورة في المقال. الروابط الخارجية تفتح في نافذة جديدة.</p>
-              <ol>
-                {post.sources.map((source) => (
-                  <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a></li>
-                ))}
-              </ol>
-            </section>
-
-            <footer className={styles.authorCard}>
-              <div className={styles.authorMark} aria-hidden="true">إش</div>
-              <div>
-                <span>كتب وبحث وحرّر</span>
-                <strong>{villageArticleAuthor.name}</strong>
-                <small>{villageArticleAuthor.role}</small>
-                <p>{villageArticleAuthor.bio}</p>
-                <Link href={villageArticleAuthor.href} rel="author">عن إسلام الشيخ، مطور دليل نقادة ←</Link>
-              </div>
-            </footer>
-          </div>
-
-          <aside className={styles.side} aria-label="ملخص المقال">
-            <div className={styles.sideCard}>
-              <span>في المقال</span>
-              <strong>{post.locality}</strong>
-              <ul>
-                {post.sections.map((section, index) => <li key={section.heading}><a href={`#section-${index + 1}`}>{section.heading}</a></li>)}
-              </ul>
-            </div>
-          </aside>
-        </div>
-      </article>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
-    </main>
-  );
+  return <EditorialPostArticle post={post} />;
 }

@@ -21,6 +21,10 @@ export type EditorialSection = {
 };
 
 export type EditorialPost = {
+  authorName?: string;
+  authorUrl?: string;
+  authorRole?: string;
+  authorBio?: string;
   slug: string;
   locality: string;
   category: string;

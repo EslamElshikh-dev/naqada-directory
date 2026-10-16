@@ -64,6 +64,7 @@ test('search returns a recoverable uncached response when public data is unavail
   let reads = 0;
   const api = load('../app/api/site-search/route.ts', {
     'next/server': { NextResponse: Response },
+    '@/lib/article-content': { getPublicRoleModels: async () => [], getPublicEditorialPosts: async () => [] },
     '@/lib/curated-content': { getPublicBusinessCatalog: async () => { reads++; throw Error('offline'); } },
     '@/lib/site-search': { sanitizeSiteSearchQuery: value => value || '' },
     '@/lib/search-context': {},

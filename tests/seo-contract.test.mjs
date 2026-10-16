@@ -163,7 +163,7 @@ test('homepage routes priority locality and service intent to canonical landing 
 });
 
 test('homepage editorial preview uses real blog posts instead of village directory pages', () => {
-  assert.ok(homepage.includes("import { allEditorialPosts } from '@/lib/editorial-posts-all';"));
+  assert.ok(homepage.includes("getPublicEditorialPosts"));
   assert.ok(homepage.includes('const featuredArticles = allEditorialPosts.slice(0, 4);'));
   assert.ok(homepage.includes('href={`/blog/${article.slug}`}'));
   assert.ok(!homepage.includes('getVillageArticle'));

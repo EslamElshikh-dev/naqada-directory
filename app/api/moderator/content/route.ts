@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { roleModels } from '@/lib/role-models';
 import { businesses } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { getLatestNews } from '@/lib/news';
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const kind = url.searchParams.get('kind') as CuratedKind;
   const query = (url.searchParams.get('q') || '').trim().toLocaleLowerCase('ar-EG').slice(0, 80);
-  if (!['business', 'news', 'article'].includes(kind)) {
+  if (!['business', 'news', 'article', 'role_model'].includes(kind)) {
     return sessionJson({ error: 'اختر قسمًا صحيحًا.' }, session, 400);
   }
   try {
@@ -32,6 +33,8 @@ export async function GET(request: Request) {
             slug: item.slug, title: item.title, summary: item.description, body: '',
             category: item.category, locality: item.locality,
           }))
+        : kind === 'role_model'
+          ? roleModels.filter(item => !query || `${item.name} ${item.locality} ${item.articleTitle || ''}`.toLocaleLowerCase('ar-EG').includes(query)).slice(0, 25).map(item => ({ slug: item.slug, title: item.articleTitle || item.name, summary: item.description, locality: item.locality, category: 'نماذج مشرفة' }))
         : (await getLatestNews()).items.filter((item) => !item.isOriginal && (!query || item.title.toLocaleLowerCase('ar-EG').includes(query)))
           .slice(0, 25).map((item) => ({
             slug: item.id, title: item.title, summary: item.description, category: item.category,

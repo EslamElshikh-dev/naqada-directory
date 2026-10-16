@@ -10,7 +10,8 @@ import {
 import { normalizeArabic } from '@/lib/site';
 import { isFamilySearchQuery } from '@/lib/family-search';
 import type { Business } from '@/lib/types';
-import { roleModels } from '@/lib/role-models';
+import { roleModels, type RoleModel } from '@/lib/role-models';
+import type { EditorialPost } from '@/lib/editorial-posts';
 import { jobSearchIntent } from '@/lib/job-search';
 
 export type SiteSearchKind =
@@ -229,14 +230,14 @@ export function sanitizeSiteSearchQuery(value?: string | null) {
   return (value || '').trim().replace(/\s+/g, ' ').slice(0, 100);
 }
 
-export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[], currentBusinesses?: Business[]): SiteSearchResult[] {
+export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[], currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }): SiteSearchResult[] {
   const query = sanitizeSiteSearchQuery(value);
   if (query.length < 2) return [];
 
   const { normalizedQuery, tokens } = prepareSearchQuery(query);
   const seen = new Set<string>();
   const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
-  const activeIndex = currentBusinesses ? [
+  let activeIndex = currentBusinesses ? [
     ...searchIndex.filter((item) => item.kind !== 'listing'),
     ...currentBusinesses.map((item) => indexItem({
       kind: 'listing' as const, title: item.name,
@@ -249,6 +250,11 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
       },
     })),
   ] : searchIndex;
+  if (currentContent) activeIndex = [
+    ...activeIndex.filter(item => item.kind !== 'role-model'),
+    ...currentContent.people.map(person => indexItem({ kind: 'role-model', title: person.name, subtitle: person.shortTitle + ' · ' + person.locality, href: '/role-models/' + person.slug, badge: 'نموذج مشرف', fields: { title: person.name, locality: person.locality, category: 'نماذج مشرفة', auxiliary: [person.description, ...(person.alternateNames || [])].join(' ') } })),
+    ...currentContent.posts.map(post => indexItem({ kind: 'page', title: post.title, subtitle: post.description, href: '/blog/' + post.slug, badge: 'مقال', fields: { title: post.title, locality: post.locality, category: post.category, auxiliary: post.keywords.join(' ') } })),
+  ];
   const familyIntent = isFamilySearchQuery(query);
   const searchableIndex = activeIndex.filter((item) =>
     (!allowedKinds || allowedKinds.has(item.kind))

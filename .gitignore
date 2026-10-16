@@ -6,3 +6,6 @@ dist/
 node_modules/
 npm-debug.log*
 *.tsbuildinfo
+supabase/.temp/
+app/qa-article-editor/
+app/qa-role-model/

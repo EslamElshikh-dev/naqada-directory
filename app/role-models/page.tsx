@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { roleModels } from '@/lib/role-models';
+import { getPublicRoleModels } from '@/lib/article-content';
 import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './role-models.module.css';
 
@@ -19,7 +19,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RoleModelsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function RoleModelsPage() {
+  const roleModels = await getPublicRoleModels();
   const collection = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -63,7 +66,7 @@ export default function RoleModelsPage() {
             <Link href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
               <span className={styles.cardVisual}>
                 {photo
-                  ? <Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 720px) 100vw, 390px" style={photo.cardPosition ? { objectPosition: photo.cardPosition } : undefined} />
+                  ? <Image unoptimized={photo.src.startsWith('/api/article-media/')} src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 720px) 100vw, 390px" style={photo.cardPosition ? { objectPosition: photo.cardPosition } : undefined} />
                   : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
                 <span className={styles.cardLabel}>نموذج من نقادة</span>
               </span>

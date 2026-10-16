@@ -100,7 +100,7 @@ export function RoleModelFeature({ people }: { people: FeaturedRoleModel[] }) {
     </div>
     <div key={person.slug} className={styles.homeFeatureVisual}>
       {person.photo
-        ? <Image src={person.photo.src} alt={person.photo.alt} width={person.photo.width} height={person.photo.height} sizes="(max-width: 700px) calc(100vw - 32px), 32vw" style={person.photo.cardPosition ? { objectPosition: person.photo.cardPosition } : undefined} />
+        ? <Image unoptimized={person.photo.src.startsWith('/api/article-media/')} src={person.photo.src} alt={person.photo.alt} width={person.photo.width} height={person.photo.height} sizes="(max-width: 700px) calc(100vw - 32px), 32vw" style={person.photo.cardPosition ? { objectPosition: person.photo.cardPosition } : undefined} />
         : <span className={styles.monogram} aria-hidden="true">{person.name.slice(0, 1)}</span>}
       <small>{person.name} · {person.locality}</small>
     </div>

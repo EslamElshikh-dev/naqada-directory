@@ -11,13 +11,12 @@ import { BrandMark } from '@/components/site-shell';
 import { RoleModelFeature } from '@/components/role-model-feature';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { businesses, localities, meta, officialLocalities } from '@/lib/data';
-import { allEditorialPosts } from '@/lib/editorial-posts-all';
+import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
 import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getCategoryMedia } from '@/lib/category-media';
 import { getHomeLastModified } from '@/lib/home-content';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { absoluteUrl, siteConfig } from '@/lib/site';
-import { roleModels } from '@/lib/role-models';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
 
@@ -55,7 +54,10 @@ const faq = [
   { question: 'الموسوعة فيها كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
 ];
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const [allEditorialPosts, roleModels] = await Promise.all([getPublicEditorialPosts(), getPublicRoleModels()]);
   const topLocalities = officialLocalities.filter((item) => item.businessCount > 0).slice(0, 10);
   const priorityLocalities = priorityLocalityNames
     .map((name) => localities.find((item) => item.name === name))
@@ -84,7 +86,7 @@ export default function HomePage() {
     description: siteConfig.description,
     url: absoluteUrl('/'),
     inLanguage: 'ar-EG',
-    dateModified: getHomeLastModified().toISOString(),
+    dateModified: getHomeLastModified(allEditorialPosts, roleModels).toISOString(),
     isPartOf: { '@id': absoluteUrl('/') + '#website' },
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
     contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: absoluteUrl(`/contributors/${primaryKnowledgeContributor.slug}`) },
@@ -235,7 +237,7 @@ export default function HomePage() {
           </header>
           <div className={styles.storyGrid}>
             <Link prefetch={false} href={`/blog/${leadArticle.slug}`} className={styles.leadStory}>
-              <Image src={editorialImagePath(leadArticle.hero.asset)} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
+              <Image unoptimized={leadArticle.hero.asset.startsWith('/api/article-media/')} src={editorialImagePath(leadArticle.hero.asset)} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
               <div><span>{leadArticle.category} · {leadArticle.locality}</span><h3>{leadArticle.title}</h3><p>{leadArticle.description}</p><b>اقرأ الحكاية <ActionIcon name="arrow" /></b></div>
             </Link>
             <div className={styles.storyList}>

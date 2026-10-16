@@ -9,6 +9,8 @@ export type RoleModelPhoto = {
 };
 
 export type RoleModel = {
+  seoTitle?: string;
+  keywords?: string[];
   slug: string;
   name: string;
   articleTitle?: string;
