@@ -155,17 +155,18 @@ export default async function RoleModelArticle({ params }: Props) {
             </figure>)}</div>
           </section>}
           <section className={styles.sourceNote} id="source" aria-labelledby="source-title">
-            <span>الشفافية في الحكاية</span>
-            <h2 id="source-title">المصدر وما نعرفه</h2>
-            <p>{person.sourceDisclosure}</p>
+            {person.sourceDisclosure && <span>الشفافية في الحكاية</span>}
+            <h2 id="source-title">{person.sourceDisclosure ? 'المصدر وما نعرفه' : 'المصدر'}</h2>
+            {person.sourceDisclosure && <p>{person.sourceDisclosure}</p>}
             <a href={person.sourceUrl} target="_blank" rel="noopener noreferrer external">{person.sourceLabel} <span aria-hidden="true">↗</span></a>
             {person.additionalSources?.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer external">{source.label} <span aria-hidden="true">↗</span></a>)}
+            {person.rewrittenBy && <p>تمت إعادة الصياغة بواسطة | {person.rewrittenBy}</p>}
           </section>
           <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
         </div>
         <aside className={styles.articleSide} aria-label="معلومات عن المقال">
           <div className={styles.sideCard}><small>الاسم</small><strong>{person.name}</strong><small>من</small><b>{person.locality}</b></div>
-          <nav className={styles.sideCard} aria-label="أقسام المقال"><strong>محطات الحكاية</strong><a href="#story">بداية الحكاية</a>{person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}>{section.heading}</a>)}{person.photos.length > 1 && <a href="#gallery">الصور</a>}<a href="#source">المصدر والتصحيحات</a></nav>
+          <nav className={styles.sideCard} aria-label="أقسام المقال"><strong>محطات الحكاية</strong><a href="#story">بداية الحكاية</a>{person.sections.map((section, index) => <a key={section.heading} href={'#chapter-' + (index + 1)}>{section.heading}</a>)}{person.photos.length > 1 && <a href="#gallery">الصور</a>}<a href="#source">{person.sourceDisclosure ? 'المصدر والتصحيحات' : 'المصدر'}</a></nav>
           <div className={styles.sideCard}><strong>{person.interestsLabel || 'اهتمامات مذكورة'}</strong><div className={styles.interestList}>{person.interests.map((interest) => <span key={interest}>{interest}</span>)}</div></div>
         </aside>
       </div>
