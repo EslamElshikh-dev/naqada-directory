@@ -139,14 +139,14 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
               <section key={section.heading} id={`section-${index + 1}`} className={styles.section}>
                 <h2>{section.heading}</h2>
                 {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                {section.timeline && <ol className={styles.timeline}>
+                {section.timeline && section.timeline.length > 0 && <ol className={styles.timeline}>
                   {section.timeline.map((entry) => <li key={entry.name}>
                     <span>{entry.period}</span>
                     <h3>{entry.name}</h3>
                     <p>{entry.description}</p>
                   </li>)}
                 </ol>}
-                {section.sources && <div className={styles.sectionSources} aria-label="مصادر هذا القسم">
+                {section.sources && section.sources.length > 0 && <div className={styles.sectionSources} aria-label="مصادر هذا القسم">
                   {section.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>)}
                 </div>}
                 {section.image && (

@@ -28,7 +28,8 @@ test('existing illustrated article retains every section, picture, timeline and 
     assert.equal(edited.content.sections.length, post.sections.length);
     for (let n = 0; n < post.sections.length; n++) {
       assert.deepEqual(edited.content.sections[n].image, post.sections[n].image);
-      assert.deepEqual(edited.content.sections[n].timeline, post.sections[n].timeline || []);
+      assert.deepEqual(edited.content.sections[n].sources, post.sections[n].sources);
+      assert.deepEqual(edited.content.sections[n].timeline, post.sections[n].timeline);
     }
     assert.deepEqual(readArticleDocument({ document: JSON.stringify(edited) }), edited);
   }

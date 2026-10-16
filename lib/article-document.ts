@@ -9,7 +9,7 @@ export type ArticleDocument =
 
 export type Field = { key: string; label: string; type: 'text' | 'long' | 'lines' | 'number' | 'date' | 'url' | 'imagePath' | 'object' | 'list'; fields?: Field[]; optional?: boolean; max?: number; image?: boolean };
 const text = (key: string, label: string, type: Field['type'] = 'text', optional = false): Field => ({ key, label, type, optional });
-const list = (key: string, label: string, fields: Field[]): Field => ({ key, label, type: 'list', fields });
+const list = (key: string, label: string, fields: Field[], optional = false): Field => ({ key, label, type: 'list', fields, optional });
 const sourceFields = [text('label', 'اسم المصدر'), text('url', 'رابط المصدر', 'url')];
 export const editorialImageFields: Field[] = [text('asset', 'الصورة', 'imagePath'), text('alt', 'وصف الصورة لمحركات البحث'), text('caption', 'التعليق أسفل الصورة', 'long'), text('width', 'العرض', 'number'), text('height', 'الارتفاع', 'number'), text('originalAsset', 'الصورة الأصلية (اختياري)', 'imagePath', true)];
 export const rolePhotoFields: Field[] = [text('src', 'الصورة', 'imagePath'), text('alt', 'وصف الصورة لمحركات البحث'), text('caption', 'التعليق أسفل الصورة', 'long'), text('width', 'العرض', 'number'), text('height', 'الارتفاع', 'number'), text('cardPosition', 'موضع الصورة في البطاقة (مثل 50% 30%)', 'text', true), text('heroPosition', 'موضع الصورة في الغلاف (مثل 50% 30%)', 'text', true)];
@@ -19,7 +19,7 @@ export const editorialFields: Field[] = [
   text('seoTitle', 'عنوان نتائج البحث'), text('description', 'وصف نتائج البحث', 'long'), text('keywords', 'الكلمات المفتاحية — كلمة في كل سطر', 'lines'),
   { key: 'hero', label: 'غلاف المقال', type: 'object', fields: editorialImageFields, image: true },
   text('intro', 'مقدمة المقال — فقرة في كل سطر فارغ', 'lines'),
-  list('sections', 'أقسام المقال', [text('heading', 'عنوان القسم'), text('paragraphs', 'فقرات القسم', 'lines'), { key: 'image', label: 'صورة القسم', type: 'object', image: true, optional: true, fields: editorialImageFields }, list('timeline', 'التسلسل الزمني', [text('period', 'الفترة'), text('name', 'العنوان'), text('description', 'التفاصيل', 'long')]), list('sources', 'مصادر القسم', sourceFields)]),
+  list('sections', 'أقسام المقال', [text('heading', 'عنوان القسم'), text('paragraphs', 'فقرات القسم', 'lines'), { key: 'image', label: 'صورة القسم', type: 'object', image: true, optional: true, fields: editorialImageFields }, list('timeline', 'التسلسل الزمني', [text('period', 'الفترة'), text('name', 'العنوان'), text('description', 'التفاصيل', 'long')], true), list('sources', 'مصادر القسم', sourceFields, true)]),
   list('faqs', 'الأسئلة الشائعة', [text('question', 'السؤال'), text('answer', 'الإجابة', 'long')]), list('sources', 'المصادر والمراجع', sourceFields),
   text('relatedVillage', 'القرية المرتبطة بالمقال'), text('publishedAt', 'تاريخ النشر', 'date'), text('imageNotice', 'ملاحظة الصور', 'long', true),
   text('authorName', 'اسم الكاتب', 'text', true), text('authorUrl', 'رابط الكاتب', 'url', true), text('authorRole', 'صفة الكاتب', 'text', true), text('authorBio', 'نبذة الكاتب', 'long', true),
