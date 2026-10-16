@@ -16,17 +16,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const person = getRoleModel(slug);
   if (!person) return { robots: { index: false, follow: true } };
+  const title = person.articleTitle || person.name + ' | نماذج مشرفة في نقادة';
   const url = absoluteUrl('/role-models/' + person.slug);
   const socialPhoto = person.photos[person.socialPhotoIndex ?? 0];
   const isMahmoudMemorial = person.slug === 'mahmoud-ahmed-abdel-sabour';
-  const socialImage = isMahmoudMemorial
+  const socialImage = person.socialImage
+    ? new URL(person.socialImage.src, siteConfig.url).toString()
+    : isMahmoudMemorial
     ? new URL('/images/social/mahmoud-danfiq-share-2026.jpg', siteConfig.url).toString()
     : socialPhoto ? new URL(socialPhoto.src, siteConfig.url).toString() : siteConfig.socialImage;
-  const socialImageDetails = isMahmoudMemorial
+  const socialImageDetails = person.socialImage
+    ? { width: person.socialImage.width, height: person.socialImage.height, alt: person.socialImage.alt }
+    : isMahmoudMemorial
     ? { width: 1200, height: 630, alt: 'صور الشهيد محمود أحمد عبد الصبور سعد الثلاث مع عبارة شهيد دنفيق _ فخر نقادة' }
     : { ...(socialPhoto ? { width: socialPhoto.width, height: socialPhoto.height } : {}), alt: socialPhoto?.alt || 'دليل نقادة' };
   return {
-    title: person.name + ' | نماذج مشرفة في نقادة',
+    title,
     description: person.description,
     keywords: [person.name, ...(person.alternateNames || []), 'نماذج مشرفة في نقادة', person.locality, 'مركز نقادة'],
     alternates: { canonical: '/role-models/' + person.slug },
@@ -35,14 +40,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       locale: siteConfig.locale,
       url,
-      title: person.name + ' | نماذج مشرفة في نقادة',
+      title,
       description: person.description,
       siteName: siteConfig.shortName,
       publishedTime: person.publishedAt,
       modifiedTime: person.modifiedAt,
       images: [{ url: socialImage, type: 'image/jpeg', ...socialImageDetails }],
     },
-    twitter: { card: 'summary_large_image', title: person.name + ' | نماذج مشرفة في نقادة', description: person.description, images: [socialImage] },
+    twitter: { card: 'summary_large_image', title, description: person.description, images: [socialImage] },
   };
 }
 
@@ -57,7 +62,7 @@ export default async function RoleModelArticle({ params }: Props) {
       {
         '@type': 'Article',
         '@id': url + '#article',
-        headline: person.name + ' | نماذج مشرفة في نقادة',
+        headline: person.articleTitle || person.name + ' | نماذج مشرفة في نقادة',
         description: person.description,
         datePublished: person.publishedAt,
         dateModified: person.modifiedAt,
@@ -98,7 +103,7 @@ export default async function RoleModelArticle({ params }: Props) {
     ],
   };
 
-  return <main id="main-content" className={styles.page + (['aya-refai-abdelshafi', 'mahmoud-ahmed-abdel-sabour'].includes(person.slug) ? ' ' + styles.ayaProfile : '') + (person.diedAt ? ' ' + styles.memorialProfile : '')}>
+  return <main id="main-content" className={styles.page + (person.articleTitle ? ' ' + styles.titledProfile : '') + (['aya-refai-abdelshafi', 'mahmoud-ahmed-abdel-sabour'].includes(person.slug) ? ' ' + styles.ayaProfile : '') + (person.diedAt ? ' ' + styles.memorialProfile : '')}>
     <article>
       <header className={styles.articleHero}>
         <div className={'shell ' + styles.articleHeroInner}>
@@ -106,10 +111,10 @@ export default async function RoleModelArticle({ params }: Props) {
           <div className={styles.articleHeroGrid}>
             <div>
               <span className={styles.eyebrow}>نماذج مشرفة في نقادة · {person.locality}</span>
-              <h1>{person.name}</h1>
+              <h1>{person.articleTitle || person.name}</h1>
               <p>{person.shortTitle}</p>
               <div className={styles.heroTags}>{person.heroTags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-              <div className={styles.heroActions}><a href="#story">ابدأ الحكاية <span aria-hidden="true">↙</span></a><a href="#gallery">شوف الصور <span aria-hidden="true">↙</span></a></div>
+              <div className={styles.heroActions}><a href="#story">ابدأ الحكاية <span aria-hidden="true">↙</span></a>{person.photos.length > 1 ? <a href="#gallery">شوف الصور <span aria-hidden="true">↙</span></a> : <a href="#source">مصدر الحكاية <span aria-hidden="true">↙</span></a>}</div>
             </div>
             <div className={styles.articlePortrait}>
               {person.photos[0]
