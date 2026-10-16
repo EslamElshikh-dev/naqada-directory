@@ -44,6 +44,7 @@
 .articleHero .breadcrumbs { margin-bottom:44px; }
 .articleHeroGrid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr); align-items:center; gap:clamp(24px,6vw,90px); }
 .articleHero h1 { font-size:clamp(2.7rem,5vw,4.5rem); }
+.titledProfile .articleHero h1 { font-size:clamp(1.9rem,3.6vw,3.5rem); line-height:1.6; letter-spacing:-.025em; }
 .articleHeroGrid > div:first-child > p { max-width:550px; font-size:1.1rem; line-height:2; color:#e5eddf; }
 .heroTags { display:flex; flex-wrap:wrap; gap:9px; margin-top:28px; }
 .heroTags span { padding:7px 12px; border:1px solid #e3d1a94f; border-radius:999px; color:#f3ddb3; font-size:.78rem; }
