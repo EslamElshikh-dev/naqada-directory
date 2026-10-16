@@ -14,6 +14,7 @@ import { businesses, localities, meta, officialLocalities } from '@/lib/data';
 import { allEditorialPosts } from '@/lib/editorial-posts-all';
 import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getCategoryMedia } from '@/lib/category-media';
+import { getHomeLastModified } from '@/lib/home-content';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import { roleModels } from '@/lib/role-models';
@@ -48,7 +49,7 @@ const homeRoutes: { href: string; title: string; description: string; icon: Navi
   { href: '/blog', title: 'خد لك حكاية', description: 'الشاي عليك والحكاوي علينا', icon: 'stories' },
 ];
 const faq = [
-  { question: 'أقدر أدوّر على إيه هنا؟', answer: 'خدمات ومحلات، قرى ونجوع، وشخصيات ومعالم وحكايات من نقادة. اكتب اللي في بالك وشوف النتائج.' },
+  { question: 'إيه هو دليل نقادة؟', answer: 'دليل نقادة مشروع خدمي مستقل ومجاني لمركز نقادة بمحافظة قنا. يجمع الخدمات والأنشطة والقرى والنجوع، ويعرّف بأهل نقادة ومعالمها وحكاياتها، مع مصادر المعلومات ووسيلة لإرسال التصحيحات.' },
   { question: 'كل نشاط في الدليل معتمد رسميًا؟', answer: 'لا. الدليل منصة معلوماتية مستقلة، ويعرض مصدر البيانات وتاريخ المراجعة بقدر ما تسمح به المادة المتاحة.' },
   { question: 'بتراجعوا المعلومات كيف؟', answer: 'تُربط البيانات بمصدرها، وتُعرض حدود المعلومة بوضوح، ويمكن لأهل نقادة إرسال تصحيح للمراجعة.' },
   { question: 'الموسوعة فيها كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
@@ -79,10 +80,12 @@ export default function HomePage() {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'دليل وموسوعة مركز نقادة',
+    name: siteConfig.shortName,
+    description: siteConfig.description,
     url: absoluteUrl('/'),
     inLanguage: 'ar-EG',
-    dateModified: meta.updatedAt,
+    dateModified: getHomeLastModified().toISOString(),
+    isPartOf: { '@id': absoluteUrl('/') + '#website' },
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
     contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: absoluteUrl(`/contributors/${primaryKnowledgeContributor.slug}`) },
   };
@@ -98,9 +101,9 @@ export default function HomePage() {
               <span className={styles.liveBadge}><i /> دليل محلي متجدد باستمرار</span>
               <span className={styles.location}>مركز نقادة · محافظة قنا</span>
             </div>
-            <span className={styles.heroEyebrow}>دليل نقادة · من أهل البلد، لأهل البلد</span>
-            <h1>عاوز إيه من نقادة؟<br /><em>تعال نوصّلك.</em></h1>
-            <p>بتدوّر على خدمة، ولا عاوز تعرف بلدك أكتر؟<br />قول لنا محتاج إيه… ونوفّر عليك اللفّة.</p>
+            <span className={styles.heroEyebrow}>من أهل البلد، لأهل البلد</span>
+            <h1>دليل نقادة<br /><em>خدمات بلدنا وحكاياتها.</em></h1>
+            <p>دليلك للخدمات والأنشطة في مركز نقادة بمحافظة قنا.<br />دوّر على صيدلية أو طبيب أو مدرسة، واعرف قرى نقادة ونجوعها وحكايات أهلها.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <nav className={styles.quickLinks} aria-label="وصول سريع">
               <span>على طول</span>

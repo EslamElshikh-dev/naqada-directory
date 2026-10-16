@@ -9,6 +9,7 @@ import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { getPublishedOwnerListings } from '@/lib/owner-listings';
+import { getHomeLastModified } from '@/lib/home-content';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const latestBusinessDate = latestDate(businesses);
   const latestEditorialDate = editorialPosts.length ? new Date(Math.max(...editorialPosts.map((post) => Date.parse(post.modifiedAt)), ...newArticles.map((post) => Date.parse(post.updatedAt)))) : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
-    { path: '', lastModified: latestBusinessDate },
+    { path: '', lastModified: getHomeLastModified() },
     { path: '/directory', lastModified: latestBusinessDate },
     { path: '/activities', lastModified: latestBusinessDate },
     { path: '/news' },
