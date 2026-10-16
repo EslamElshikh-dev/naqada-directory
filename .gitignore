@@ -7,5 +7,5 @@ node_modules/
 npm-debug.log*
 *.tsbuildinfo
 supabase/.temp/
-app/__qa-article-editor/
-app/__qa-role-model/
+app/qa-article-editor/
+app/qa-role-model/

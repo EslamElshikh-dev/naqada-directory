@@ -6,7 +6,7 @@ await mkdir('artifacts/article-editor', { recursive: true });
 const browser = await chromium.launch({ headless: true });
 try {
   for (const [width, height] of [[390, 844], [1440, 1000]]) {
-    for (const fixture of ['__qa-article-editor', '__qa-role-model']) {
+    for (const fixture of ['qa-article-editor', 'qa-role-model']) {
       const page = await browser.newPage({ viewport: { width, height } });
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -15,10 +15,11 @@ try {
         const body = route.request().postDataJSON(); saves.push(body);
         await route.fulfill({ json: { ok: true, slug: body.slug, version: '2026-10-16T17:00:00.000Z', document: body.document } });
       });
-      await page.goto(`http://127.0.0.1:3000/${fixture}/`, { waitUntil: 'networkidle' });
+      const response = await page.goto(`http://127.0.0.1:3000/${fixture}/`, { waitUntil: 'networkidle' });
+      assert.equal(response.status(), 200, 'editor fixture route is missing');
       const dialog = page.getByRole('dialog', { name: 'محرر المقال الكامل' });
       await dialog.waitFor();
-      const field = fixture === '__qa-role-model' ? 'عنوان المقال' : 'عنوان المقال';
+      const field = fixture === 'qa-role-model' ? 'عنوان المقال' : 'عنوان المقال';
       const title = dialog.getByLabel(field, { exact: true });
       await title.fill('عنوان اختبار محفوظ مع الصور والأقسام');
       await dialog.getByRole('button', { name: 'النص والأقسام', exact: true }).click();
@@ -29,7 +30,7 @@ try {
       assert.equal(saves.length, 1);
       assert.equal(saves[0].status, 'draft');
       assert.ok(saves[0].document.content.sections.length > 1);
-      assert.ok(fixture === '__qa-role-model' ? saves[0].document.content.photos.length : saves[0].document.content.hero.asset);
+      assert.ok(fixture === 'qa-role-model' ? saves[0].document.content.photos.length : saves[0].document.content.hero.asset);
       await dialog.getByRole('button', { name: 'الصور والغلاف', exact: true }).click();
       await dialog.getByText('استبدال الصورة', { exact: true }).first().waitFor();
       await page.screenshot({ path: `artifacts/article-editor/${fixture}-${width}.png`, fullPage: true });

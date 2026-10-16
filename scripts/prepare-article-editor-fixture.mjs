@@ -1,8 +1,8 @@
 // CI-only fixtures: generated in the local checkout, never committed or deployed.
 import { mkdirSync, writeFileSync } from 'node:fs';
 for (const [path, document] of [
-  ['__qa-article-editor', "{ format: 'editorial', content: editorialPosts[0], sharing: { title: '', description: '' } }"],
-  ['__qa-role-model', "{ format: 'role_model', content: roleModels[0], sharing: { title: '', description: '' } }"],
+  ['qa-article-editor', "{ format: 'editorial', content: editorialPosts[0], sharing: { title: '', description: '' } }"],
+  ['qa-role-model', "{ format: 'role_model', content: roleModels[0], sharing: { title: '', description: '' } }"],
 ]) {
   mkdirSync(`app/${path}`, { recursive: true });
   writeFileSync(`app/${path}/page.tsx`, `'use client';

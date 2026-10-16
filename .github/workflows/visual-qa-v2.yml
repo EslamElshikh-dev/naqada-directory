@@ -55,11 +55,11 @@ jobs:
           cat /tmp/naqada-next.log
           exit 1
 
-      - name: Run responsive diagnostics and screenshots
-        run: node .github/visual-qa-v2.mjs
-
       - name: Verify complete article editor on desktop and mobile
         run: node .github/article-editor-qa.mjs
+
+      - name: Run responsive diagnostics and screenshots
+        run: node .github/visual-qa-v2.mjs
 
       - name: Upload visual QA artifacts
         if: always()
