@@ -12,11 +12,11 @@ export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'طلب غير مسموح.' }, { status: 403 });
   const session = await resolveSession();
   if (!session || !(await canModerate(session.accessToken))) return NextResponse.json({ error: 'هذه المساحة للمشرفين فقط.' }, { status: 403 });
-  if (Number(request.headers.get('content-length')) > 6_500_000) return sessionJson({ error: 'اختاري صورة أقل من ٦ ميجابايت.' }, session, 413);
+  if (Number(request.headers.get('content-length')) > 4_300_000) return sessionJson({ error: 'اختاري صورة أقل من ٤ ميجابايت.' }, session, 413);
   try {
     const form = await request.formData();
     const photo = form.get('photo');
-    if (!(photo instanceof File) || !['image/jpeg', 'image/png', 'image/webp'].includes(photo.type) || !photo.size || photo.size > 6_000_000) return sessionJson({ error: 'اختاري صورة JPG أو PNG أو WebP أقل من ٦ ميجابايت.' }, session, 400);
+    if (!(photo instanceof File) || !['image/jpeg', 'image/png', 'image/webp'].includes(photo.type) || !photo.size || photo.size > 4_000_000) return sessionJson({ error: 'اختاري صورة JPG أو PNG أو WebP أقل من ٤ ميجابايت.' }, session, 400);
     const { data, info } = await sharp(Buffer.from(await photo.arrayBuffer()), { limitInputPixels: 32_000_000, animated: false })
       .rotate().resize({ width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true }).webp({ quality: 86 }).toBuffer({ resolveWithObject: true });
     const path = `${session.user.id}/${randomUUID()}.webp`;

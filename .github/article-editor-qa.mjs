@@ -11,6 +11,13 @@ try {
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       const saves = [];
+      let uploads = 0;
+      await page.route('**/api/moderator/article-media', async route => {
+        uploads++;
+        const content = saves[0].document.content;
+        const image = content.hero || content.photos[0];
+        await route.fulfill({ json: { src: image.asset || image.src, width: image.width, height: image.height } });
+      });
       await page.route('**/api/moderator/article', async route => {
         const body = route.request().postDataJSON(); saves.push(body);
         await route.fulfill({ json: { ok: true, slug: body.slug, version: '2026-10-16T17:00:00.000Z', document: body.document } });
@@ -33,10 +40,16 @@ try {
       assert.ok(fixture === 'qa-role-model' ? saves[0].document.content.photos.length : saves[0].document.content.hero.asset);
       await dialog.getByRole('button', { name: 'الصور والغلاف', exact: true }).click();
       await dialog.getByText('استبدال الصورة', { exact: true }).first().waitFor();
+      const fileInput = dialog.locator('input[type=file]').first();
+      await fileInput.setInputFiles({ name: 'too-large.png', mimeType: 'image/png', buffer: Buffer.alloc(4_000_001) });
+      await dialog.getByRole('alert').filter({ hasText: '٤ ميجابايت' }).waitFor();
+      assert.equal(uploads, 0, 'oversized photos must be rejected before a network request');
+      await fileInput.setInputFiles({ name: 'small.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl/IAAAAASUVORK5CYII=', 'base64') });
       await page.screenshot({ path: `artifacts/article-editor/${fixture}-${width}.png`, fullPage: true });
       const overflow = await dialog.evaluate(el => el.scrollWidth > el.clientWidth + 1);
       assert.equal(overflow, false, 'editor overflows horizontally');
       await dialog.getByRole('button', { name: 'السيو والمشاركة', exact: true }).click();
+      assert.equal(uploads, 1, 'small photos should use the authenticated upload endpoint');
       await dialog.getByLabel('عنوان المشاركة', { exact: true }).fill('عنوان مشاركة مختلف');
       await dialog.getByRole('button', { name: 'نشر التعديلات', exact: true }).click();
       await dialog.getByRole('status').filter({ hasText: 'تم نشر المقال' }).waitFor();

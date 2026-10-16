@@ -32,6 +32,7 @@ function ImageUpload({ value, onChange, onUpload }: { value: Values; onChange: (
   const path = typeof value[key] === 'string' ? value[key] as string : '';
   async function upload(file?: File) {
     if (!file) return;
+    if (file.size > 4_000_000) { setError('اختاري صورة أقل من ٤ ميجابايت.'); return; }
     setBusy(true); onUpload(true); setError('');
     try {
       const form = new FormData(); form.set('photo', file);
@@ -42,7 +43,7 @@ function ImageUpload({ value, onChange, onUpload }: { value: Values; onChange: (
     } catch (failure) { setError(failure instanceof Error ? failure.message : 'تعذّر رفع الصورة.'); }
     finally { setBusy(false); onUpload(false); }
   }
-  return <div className={styles.upload}>{path && <Image src={path.startsWith('/') ? path : editorialImagePath(path)} width={Math.min(Number(value.width) || 360, 600)} height={Math.min(Number(value.height) || 240, 600)} alt={String(value.alt || 'معاينة الصورة')} unoptimized />}<label><span>{busy ? 'جارٍ رفع الصورة…' : path ? 'استبدال الصورة' : 'رفع صورة'}</span><input type="file" disabled={busy} accept="image/jpeg,image/png,image/webp" onChange={event => void upload(event.target.files?.[0])} /></label><small>JPG أو PNG أو WebP · حتى ٦ ميجابايت. الصورة تبقى خاصة حتى نشر المقال.</small>{error && <p role="alert">{error}</p>}</div>;
+  return <div className={styles.upload}>{path && <Image src={path.startsWith('/') ? path : editorialImagePath(path)} width={Number(value.width) || 360} height={Number(value.height) || 240} alt={String(value.alt || 'معاينة الصورة')} unoptimized />}<label><span>{busy ? 'جارٍ رفع الصورة…' : path ? 'استبدال الصورة' : 'رفع صورة'}</span><input type="file" disabled={busy} accept="image/jpeg,image/png,image/webp" onChange={event => void upload(event.target.files?.[0])} /></label><small>JPG أو PNG أو WebP · حتى ٤ ميجابايت. الصورة تبقى خاصة حتى نشر المقال.</small>{error && <p role="alert">{error}</p>}</div>;
 }
 
 const sections = [{ id: 'basics', label: 'التعريف' }, { id: 'story', label: 'النص والأقسام' }, { id: 'media', label: 'الصور والغلاف' }, { id: 'sources', label: 'المصادر والكاتب' }, { id: 'seo', label: 'السيو والمشاركة' }] as const;
