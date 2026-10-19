@@ -340,3 +340,7 @@
 @media(prefers-reduced-motion:reduce){
   .scopeRail a,.recoveryGrid a,.resultCard { transition: none; }
 }
+
+.exploreMore { margin-top: 26px; border: 1px solid var(--nq-line); border-radius: 18px; background: var(--nq-paper); }
+.exploreMore > summary { padding: 16px 20px; min-height: 48px; cursor: pointer; font-weight: 750; }
+.exploreMore > summary:focus-visible { outline: 3px solid var(--nq-copper-dark); outline-offset: 3px; border-radius: 16px; }

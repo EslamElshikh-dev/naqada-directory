@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CopyInstallLink, InstallAction } from '@/components/pwa-setup';
-import { siteConfig } from '@/lib/site';
+import { buildPageMetadata, siteConfig } from '@/lib/site';
 import styles from './install.module.css';
 
-export const metadata: Metadata = {
-  title: 'حمّل تطبيق دليل نقادة',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'تثبيت تطبيق دليل نقادة على أندرويد وآيفون',
   description: 'ثبّت دليل نقادة على شاشة هاتفك من المتصفح. خطوات التثبيت لأندرويد وآيفون ورابط مباشر للمشاركة.',
-  alternates: { canonical: '/install' },
-};
+  path: '/install',
+});
 
 const installUrl = `${siteConfig.url}/install`;
 

@@ -5,7 +5,8 @@ import type { SiteSearchResult } from '@/lib/site-search';
 export function searchOwnerListings(value: string, listings: OwnerListing[], limit = 8): SiteSearchResult[] {
   const query = value.trim();
   if (query.length < 2) return [];
-  const { normalizedQuery, tokens } = prepareSearchQuery(query);
+  const intent = prepareSearchQuery(query, listings.map((item) => item.locality));
+  const { normalizedQuery, tokens } = intent;
   return listings
     .map((listing) => ({
       listing,
@@ -14,7 +15,7 @@ export function searchOwnerListings(value: string, listings: OwnerListing[], lim
           title: listing.name, category: listing.category, locality: listing.locality,
           address: listing.address, auxiliary: listing.description,
         }),
-        normalizedQuery, tokens,
+        normalizedQuery, tokens, intent,
       ),
     }))
     .filter((item) => item.score >= 0)

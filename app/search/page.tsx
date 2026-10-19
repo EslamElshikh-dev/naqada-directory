@@ -5,7 +5,7 @@ import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
 import { buildSearchJourney } from '@/lib/search-journey';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite, type SiteSearchKind, type SiteSearchResult } from '@/lib/site-search';
-import { normalizeArabic } from '@/lib/site';
+import { buildPageMetadata, normalizeArabic } from '@/lib/site';
 import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { jobSearchIntent } from '@/lib/job-search';
@@ -107,12 +107,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const query = queryValue(params.q);
   const scope = scopeValue(params.scope);
   const scopeLabel = scopeOptions.find((item) => item.id === scope)?.shortLabel;
-  return {
+  return buildPageMetadata({
     title: query ? `نتائج ${scopeLabel} عن ${query}` : 'البحث الموحد',
     description: 'ابحث في أنشطة وخدمات وقرى ومعالم وموسوعة نقادة من صفحة بحث واحدة.',
-    alternates: { canonical: '/search' },
+    path: '/search',
     robots: { index: false, follow: true },
-  };
+  });
 }
 
 export default async function SearchPage({ searchParams }: Props) {
@@ -205,17 +205,6 @@ export default async function SearchPage({ searchParams }: Props) {
 
         {isWholesaleHomeware && scopedResults.length ? <p role="note">النتائج مرتبطة بالأدوات المنزلية، لكن البيع بالجملة غير مؤكد في بياناتها. تواصل مع النشاط للتأكد من الكميات والأسعار.</p> : null}
 
-        {searchJourney ? <SearchJourneyPanel journey={searchJourney} /> : searchContext ? (
-          <Link className={contextStyles.card} href={searchContext.href} prefetch={false} aria-label={`فتح المسار المحلي: ${searchContext.title}`}>
-            <span className={contextStyles.copy}>
-              <span className={contextStyles.kicker}>مسار محلي مقترح</span>
-              <strong>{searchContext.title}</strong>
-              <small>{searchContext.subtitle}</small>
-            </span>
-            <span className={contextStyles.action}>فتح الصفحة المحلية ←</span>
-          </Link>
-        ) : null}
-
         {!canSearch ? (
           <div className={styles.startState}>
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
@@ -268,7 +257,7 @@ export default async function SearchPage({ searchParams }: Props) {
         ) : (
           <div className={styles.emptyState}>
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
-            <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أكثر احتمالًا مبنية على بيانات الدليل نفسها؛ اختر الاقتراح الذي يعبّر عن قصدك.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل إلى القسم المناسب يدويًا.'}</p></div>
+            <div><strong>لا توجد نتائج دقيقة داخل «{activeOption.label}» لعبارة «{query}»</strong><p>{recoverySuggestions.length ? 'وجدنا اقتراحات أكثر احتمالًا مبنية على بيانات الدليل نفسها؛ اختر الاقتراح الذي يعبّر عن قصدك.' : activeScope === 'all' ? 'غيّر العبارة، أو اختار الخدمة أو القرية من دليل الأنشطة.' : 'جرّب «كل النتائج»، أو غيّر العبارة، أو انتقل إلى القسم المناسب يدويًا.'}</p></div>
 
             {relatedHomeware.length ? <section className={styles.relatedPanel} aria-label="متاجر أدوات منزلية قريبة من العبارة"><h2>متاجر أدوات منزلية قد تفيدك</h2><p>هذه متاجر مرتبطة بالأدوات المنزلية. لم نتحقق من أنها تبيع بالجملة؛ اتصل بالمحل أولًا للتأكد من الكميات والأسعار.</p><div className={styles.resultsGrid}>{relatedHomeware.map((item) => <ResultCard item={item} key={item.href} />)}</div></section> : null}
 
@@ -288,13 +277,22 @@ export default async function SearchPage({ searchParams }: Props) {
             ) : null}
 
             <div className={styles.emptyActions}>
-              <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link>
+              {activeScope !== 'all' ? <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link> : null}
               <Link href="/directory">فتح دليل الأنشطة</Link>
               <Link href="/knowledge">فتح موسوعة نقادة</Link>
               <Link href={`/contribute?type=missing&name=${encodeURIComponent(query)}`} prefetch={false}>تعرف النشاط؟ ابعت تفاصيله</Link>
             </div>
           </div>
         )}
+        {searchJourney ? <details className={styles.exploreMore}>
+          <summary>استكشف خدمات وقرى مرتبطة ببحثك</summary>
+          <SearchJourneyPanel journey={searchJourney} />
+        </details> : searchContext ? (
+          <Link className={contextStyles.card} href={searchContext.href} prefetch={false}>
+            <span className={contextStyles.copy}><strong>{searchContext.title}</strong><small>{searchContext.subtitle}</small></span>
+            <span className={contextStyles.action}>فتح الصفحة المحلية ←</span>
+          </Link>
+        ) : null}
       </section>
     </main>
   );

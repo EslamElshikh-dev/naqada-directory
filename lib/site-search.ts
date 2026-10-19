@@ -234,7 +234,8 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
   const query = sanitizeSiteSearchQuery(value);
   if (query.length < 2) return [];
 
-  const { normalizedQuery, tokens } = prepareSearchQuery(query);
+  const intent = prepareSearchQuery(query, localities.map((item) => item.name));
+  const { normalizedQuery, tokens } = intent;
   const seen = new Set<string>();
   const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
   let activeIndex = currentBusinesses ? [
@@ -263,7 +264,8 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
 
   const rankedResults = searchableIndex
     .map((item) => {
-      const baseRank = scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens);
+      const baseRank = scoreNormalizedSearchFields(item.normalized, normalizedQuery, tokens,
+        item.kind === 'listing' ? intent : { serviceTokens: intent.serviceTokens });
       return { item, rank: baseRank < 0 ? -1 : baseRank + (item.kind === 'listing' ? 6 : 0) };
     })
     .filter(({ rank }) => rank >= 0)

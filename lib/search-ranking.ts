@@ -51,6 +51,20 @@ for (const group of synonymGroups) {
   for (const token of normalizedGroup) synonymMap.set(token, normalizedGroup);
 }
 
+// These service names have explicit counterparts in the published activity types.
+// An address mentioning a school or pharmacy does not make the record one.
+const serviceNames = new Set([
+  'مدرسه', 'مدارس', 'معهد', 'معاهد', 'صيدليه', 'صيدليات', 'صيدلي',
+  'مسجد', 'مساجد', 'جامع', 'جوامع', 'كنيسه', 'كنائس', 'كنايس',
+  'مطعم', 'مطاعم', 'مخبز', 'مخابز', 'فرن', 'افران',
+]);
+
+type SearchIntent = { serviceTokens?: readonly string[]; localityIntent?: string | null };
+
+function isServiceToken(token: string) {
+  return baseFormsFor(token).some((form) => serviceNames.has(form));
+}
+
 const queryNoiseWords = new Set([
   'في',
   'من',
@@ -112,7 +126,7 @@ function isQueryNoise(token: string) {
   return baseFormsFor(token).some((form) => queryNoiseWords.has(form));
 }
 
-export function prepareSearchQuery(value: string) {
+export function prepareSearchQuery(value: string, localityNames: readonly string[] = []) {
   const rawNormalizedQuery = normalizeArabic(value)
     .replace(/اماكنجمله/g, 'اماكن جمله')
     .replace(/محلاتوالاقمشه/g, 'محلات اقمشه')
@@ -122,7 +136,14 @@ export function prepareSearchQuery(value: string) {
   const rawTokens = rawNormalizedQuery.split(' ').filter(Boolean);
   const meaningfulTokens = rawTokens.filter((token) => !isQueryNoise(token));
   const tokens = meaningfulTokens.length ? meaningfulTokens : rawTokens;
-  return { normalizedQuery: tokens.join(' '), tokens };
+  // Words following an explicit street/landmark marker describe the address.
+  const servicePart = rawNormalizedQuery.split(/(?:^|\s)(?:شارع|طريق|بجوار|بجانب|جنب|امام|خلف|قرب)(?=\s|$)/u)[0];
+  const serviceTokens = servicePart.split(' ').filter(isServiceToken);
+  const localityIntent = serviceTokens.length ? localityNames
+    .map((name) => normalizeArabic(name))
+    .filter((name) => name.length >= 3 && ` ${servicePart} `.includes(` ${name} `))
+    .sort((a, b) => b.length - a.length)[0] || null : null;
+  return { normalizedQuery: tokens.join(' '), tokens, serviceTokens, localityIntent };
 }
 
 export function normalizeSearchFields(fields: SearchRankingFields): NormalizedSearchFields {
@@ -161,8 +182,10 @@ function fieldScore(field: string, variants: string[], exactWeight: number, pref
   return best;
 }
 
-export function scoreNormalizedSearchFields(normalized: NormalizedSearchFields, normalizedQuery: string, tokens: string[]) {
+export function scoreNormalizedSearchFields(normalized: NormalizedSearchFields, normalizedQuery: string, tokens: string[], intent: SearchIntent = {}) {
   if (!tokens.length) return 0;
+  if (intent.localityIntent && !` ${normalized.locality} `.includes(` ${intent.localityIntent} `)) return -1;
+  const serviceTokens = intent.serviceTokens ?? tokens.filter(isServiceToken);
   let score = 0;
   let localityMatchedTokens = 0;
   let serviceMatchedTokens = 0;
@@ -191,6 +214,7 @@ export function scoreNormalizedSearchFields(normalized: NormalizedSearchFields, 
     const locality = fieldScore(normalized.locality, variants, 38, 28, 18);
     const address = fieldScore(normalized.address, variants, 15, 10, 6);
     const auxiliary = fieldScore(normalized.auxiliary, variants, 14, 9, 5);
+    if (serviceTokens.includes(token) && !title && !subcategory && !category) return -1;
     const best = Math.max(title, subcategory, category, locality, address, auxiliary);
     if (!best) return -1;
 
@@ -205,7 +229,8 @@ export function scoreNormalizedSearchFields(normalized: NormalizedSearchFields, 
 }
 
 export function rankSearchFields(fields: SearchRankingFields, query: string) {
-  const { normalizedQuery, tokens } = prepareSearchQuery(query);
+  const intent = prepareSearchQuery(query);
+  const { normalizedQuery, tokens } = intent;
   if (!tokens.length) return 0;
-  return scoreNormalizedSearchFields(normalizeSearchFields(fields), normalizedQuery, tokens);
+  return scoreNormalizedSearchFields(normalizeSearchFields(fields), normalizedQuery, tokens, intent);
 }

@@ -6,6 +6,7 @@ import { localNewsBriefs } from './news-editorial';
 import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
 import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL } from './public-content-cache';
+import { deduplicateNews, selectLatestNews } from './news-feed-quality';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -463,31 +464,13 @@ export async function getExpandedNewsBody(item: ExternalNewsItem): Promise<strin
   }
 }
 
-function deduplicate(items: ExternalNewsItem[]) {
-  const byUrl = new Map<string, ExternalNewsItem>();
-  const titleKeys = new Set<string>();
-
-  for (const item of items) {
-    const urlKey = item.url.replace(/\/$/, '');
-    const titleKey = normalizeArabic(item.title).replace(/\s+/g, ' ');
-    if (byUrl.has(urlKey) || titleKeys.has(titleKey)) continue;
-    byUrl.set(urlKey, item);
-    titleKeys.add(titleKey);
-  }
-
-  return [...byUrl.values()].sort((left, right) => {
-    if (left.isNaqada !== right.isNaqada) return left.isNaqada ? -1 : 1;
-    return Date.parse(right.publishedAt || '1970-01-01') - Date.parse(left.publishedAt || '1970-01-01');
-  });
-}
-
 async function loadLiveNews(): Promise<NewsFeedResult> {
   const [results, curated] = await Promise.all([
     Promise.allSettled(NEWS_FEEDS.map(fetchFeed)),
     getPublicCurated('news'),
   ]);
   const successfulFeeds = results.filter((result) => result.status === 'fulfilled').length;
-  const merged = deduplicate(results.flatMap((result) => result.status === 'fulfilled' ? result.value : []));
+  const merged = deduplicateNews(results.flatMap((result) => result.status === 'fulfilled' ? result.value : []));
   const enriched = await Promise.all(merged.slice(0, MAX_ITEMS_TO_ENRICH).map(enrichItem));
   const revisions = new Map(curated.filter((item) => item.origin === 'static').map((item) => [item.slug, item]));
   const external = [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)]
@@ -519,7 +502,7 @@ async function loadLiveNews(): Promise<NewsFeedResult> {
   };
 }
 
-const cachedLiveNews = unstable_cache(loadLiveNews, ['naqada-live-news-v1'], {
+const cachedLiveNews = unstable_cache(loadLiveNews, ['naqada-live-news-v2'], {
   revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
 });
 export const getLiveNews = cache(() => cachedLiveNews());
@@ -544,10 +527,9 @@ async function loadLatestNews(): Promise<NewsFeedResult> {
     getLiveNews(), readArchive('order=published_at.desc&limit=60'), getPublicCurated('news'),
   ]);
   const hidden = new Set(curated.filter(item => item.status === 'hidden').map(item => item.slug));
-  const existing = new Set(live.items.map(item => item.id));
   return {
     ...live,
-    items: [...live.items, ...archived.filter(item => !existing.has(item.id) && !hidden.has(item.id))].slice(0, 48),
+    items: selectLatestNews([...live.items, ...archived].filter(item => !hidden.has(item.id))),
   };
 }
 export const getLatestNews = cache(loadLatestNews);

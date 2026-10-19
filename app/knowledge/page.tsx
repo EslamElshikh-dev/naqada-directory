@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
+import { buildPageMetadata } from '@/lib/site';
 import { fieldInformants, knowledgeHeritage, knowledgePeople, knowledgePlaces, knowledgeReferences, knowledgeSources, knowledgeSummary, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from './knowledge.module.css';
 import v3Styles from './knowledge-v3.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'موسوعة نقادة — المكان والناس والتراث بالمصادر',
   description: 'قاعدة معرفة منظمة لمركز نقادة: القرى والنجوع، الأعلام، التراث، المراجع والعمل الميداني مع إسناد واضح للمؤلف والمصادر.',
-  alternates: { canonical: '/knowledge' },
-};
+  path: '/knowledge',
+});
 
 const sections = [
   { href: '/knowledge/places', title: 'خريطة المكان', count: knowledgePlaces.length, text: 'قرى ونجوع وعزب وحواجر وعلاقات تبعية وأسماء تاريخية، مع فصل البيانات التاريخية عن الوضع المعاصر.', image: '/images/landmarks/naqada-city.webp', alt: 'مشهد من مدينة نقادة' },

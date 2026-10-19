@@ -91,14 +91,15 @@ export function DirectoryExplorer({
 
   const rankedQueryMatches = useMemo(() => {
     if (isFamilySearchQuery(deferredQuery)) return [];
-    const { normalizedQuery, tokens } = prepareSearchQuery(deferredQuery);
+    const intent = prepareSearchQuery(deferredQuery, localities.map((item) => item.name));
+    const { normalizedQuery, tokens } = intent;
     return indexedBusinesses
       .map(({ item, normalized }) => ({
         item,
-        rank: tokens.length ? scoreNormalizedSearchFields(normalized, normalizedQuery, tokens) : 0,
+        rank: tokens.length ? scoreNormalizedSearchFields(normalized, normalizedQuery, tokens, intent) : 0,
       }))
       .filter(({ rank }) => rank >= 0);
-  }, [deferredQuery, indexedBusinesses]);
+  }, [deferredQuery, indexedBusinesses, localities]);
 
   const filtered = useMemo(() => {
     const hasQuery = Boolean(deferredQuery.trim());

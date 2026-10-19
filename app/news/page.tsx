@@ -188,7 +188,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
           </div>
         </nav>
 
-        <div className={styles.archiveInvite}><div><strong>بتدور على خبر قديم؟</strong><span>تصفح الأخبار المحفوظة بالصور واسم المصدر ورابطه، حتى بعد خروجها من موجز الأخبار المباشر.</span></div><Link href="/news/archive">استعرض أرشيف الأخبار ←</Link></div>
+        <div className={styles.archiveInvite}><div><strong>بتدور على خبر قديم؟</strong><span>الموجز يعرض أخبار آخر ٣٠ يومًا المؤرخة. الأخبار الأقدم أو غير المؤرخة تلاقيها في الأرشيف، مع اسم المصدر ورابطه.</span></div><Link href="/news/archive">استعرض أرشيف الأخبار ←</Link></div>
 
         {featured ? (
           <>

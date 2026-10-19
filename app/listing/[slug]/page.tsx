@@ -227,7 +227,7 @@ export default async function ListingPage({ params }: Props) {
         </aside>
       </section>
 
-      {related.length > 0 && <section className="section section--muted"><div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">قد يفيدك أيضًا</span><h2>أماكن وخدمات قريبة في التصنيف أو الموضع</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
+      {related.length > 0 && <section className="section section--muted"><div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">قد يفيدك أيضًا</span><h2>خدمات وأنشطة من المجال نفسه</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
       {listing.seoKeywords?.length ? <section className="listing-keywords" aria-labelledby="listing-keywords-title"><div className="shell">
         <span className="eyebrow eyebrow--dark">استكشف خدمات مشابهة</span>
         <h2 id="listing-keywords-title">كلمات مرتبطة بالنشاط</h2>

@@ -62,7 +62,7 @@ export function SearchJourneyPanel({ journey }: { journey: SearchJourney }) {
         <div className={styles.legend} aria-label="مبادئ رحلة البحث">
           <span>بيانات منشورة</span>
           <span>بدون تخمين مسافة</span>
-          <span>بدون API مدفوع</span>
+          <span>مصادر واضحة</span>
         </div>
       </header>
 

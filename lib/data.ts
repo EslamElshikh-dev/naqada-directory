@@ -417,8 +417,13 @@ export function getCanonicalLocalitySlugAlias(slug: string) {
 
 export function relatedBusinesses(business: Business, limit = 3) {
   const locality = canonicalLocalityName(business.locality);
+  const priority = (item: Business) => {
+    const samePlace = canonicalLocalityName(item.locality) === locality;
+    const sameType = Boolean(business.subcategory && item.subcategory === business.subcategory);
+    return samePlace ? (sameType ? 0 : 1) : (sameType ? 2 : 3);
+  };
   return businesses
-    .filter((item) => item.id !== business.id && (canonicalLocalityName(item.locality) === locality || item.category === business.category))
-    .sort((a, b) => Number(canonicalLocalityName(b.locality) === locality) - Number(canonicalLocalityName(a.locality) === locality) || (b.reviews || 0) - (a.reviews || 0))
+    .filter((item) => item.id !== business.id && item.category === business.category)
+    .sort((a, b) => priority(a) - priority(b) || (b.reviews || 0) - (a.reviews || 0) || a.name.localeCompare(b.name, 'ar'))
     .slice(0, limit);
 }

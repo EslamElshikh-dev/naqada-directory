@@ -86,7 +86,16 @@ export function knowledgePlaceForLocality(name:string){
 
 export function knowledgePeopleForLocality(name:string,limit=6){
   const normalized=normalizedPlaceLabel(name);
+  const shownNames=new Set<string>();
   return knowledgePeople
     .filter((person)=>person.placeTags.some((tag)=>normalizedPlaceLabel(tag)===normalized))
+    // The source may reference one name under several chapters. Keep its records,
+    // but show the name once in this compact locality preview.
+    .filter((person)=>{
+      const key=normalizedPlaceLabel(person.name);
+      if(shownNames.has(key))return false;
+      shownNames.add(key);
+      return true;
+    })
     .slice(0,limit);
 }
