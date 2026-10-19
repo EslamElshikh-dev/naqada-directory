@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { knowledgeReferences, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from '../knowledge.module.css';
 import v3Styles from '../knowledge-v3.module.css';
 
-export const metadata: Metadata = { title: 'مراجع موسوعة نقادة', description: 'قائمة المراجع التي أوردها مؤلف إقليم نقادة بصعيد مصر، مع حفظها كطبقة مصدر مستقلة.', alternates: { canonical: '/knowledge/references' } };
+export const metadata = buildPageMetadata({ title: 'مراجع موسوعة نقادة', description: 'قائمة المراجع التي أوردها مؤلف إقليم نقادة بصعيد مصر، مع حفظها كطبقة مصدر مستقلة.', path: '/knowledge/references' });
 
 export default function ReferencesPage() {
   const groups = [...new Set(knowledgeReferences.map((item) => item.group))].map((group) => ({

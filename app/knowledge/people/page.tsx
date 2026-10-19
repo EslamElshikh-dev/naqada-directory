@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from '../knowledge.module.css';
 import v3Styles from '../knowledge-v3.module.css';
 
-export const metadata: Metadata = { title: 'أعلام نقادة — الموسوعة', description: 'سجل الأعلام والشخصيات الواردة في مصادر موسوعة نقادة، بوسوم المجال والمكان وإسناد واضح.', alternates: { canonical: '/knowledge/people' } };
+export const metadata = buildPageMetadata({ title: 'أعلام نقادة — الموسوعة', description: 'سجل الأعلام والشخصيات الواردة في مصادر موسوعة نقادة، بوسوم المجال والمكان وإسناد واضح.', path: '/knowledge/people' });
 
 export default function KnowledgePeoplePage() {
   const groups = [...new Set(knowledgePeople.map((item) => item.group))].map((group) => ({

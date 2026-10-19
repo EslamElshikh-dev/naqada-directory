@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
@@ -10,7 +11,17 @@ import v3Styles from '../../knowledge-v3.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams(){ return knowledgePlaces.map((item) => ({ slug: item.slug })); }
-export async function generateMetadata({ params }: Props): Promise<Metadata>{ const { slug } = await params; const place = getKnowledgePlace(slug); if(!place) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } }; return { title: `${place.name} — موسوعة نقادة`, description: `بيانات ${place.name} المكانية والتاريخية كما وردت في مصادر موسوعة دليل نقادة.`, alternates: { canonical: `/knowledge/places/${place.slug}` }, ...(!isKnowledgePlaceIndexable(place) ? { robots: { index: false, follow: true } } : {}) }; }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const place = getKnowledgePlace(slug);
+  if (!place) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } };
+  return buildPageMetadata({
+    title: `${place.name} — موسوعة نقادة`,
+    description: `بيانات ${place.name} المكانية والتاريخية كما وردت في مصادر موسوعة دليل نقادة.`,
+    path: `/knowledge/places/${encodeURIComponent(place.slug)}`,
+    ...(!isKnowledgePlaceIndexable(place) ? { robots: { index: false, follow: true } } : {}),
+  });
+}
 
 export default async function KnowledgePlacePage({ params }: Props){
   const { slug } = await params;

@@ -1,15 +1,26 @@
 import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { RelatedKnowledge } from '@/components/related-knowledge';
-import { getKnowledgeHeritage, knowledgeAttribution, knowledgeHeritage, sourceById } from '@/lib/knowledge';
+import { getKnowledgeHeritage, isKnowledgeRecordIndexable, knowledgeAttribution, knowledgeHeritage, sourceById } from '@/lib/knowledge';
 import styles from '../../knowledge.module.css';
 import v3Styles from '../../knowledge-v3.module.css';
 
 type Props={params:Promise<{slug:string}>};
 export function generateStaticParams(){return knowledgeHeritage.map((item)=>({slug:item.slug}));}
-export async function generateMetadata({params}:Props):Promise<Metadata>{const{slug}=await params;const item=getKnowledgeHeritage(slug);if(!item)return{};return{title:`${item.name} — تراث نقادة`,description:`مدخل ${item.name} ضمن موسوعة تراث ومعالم نقادة بالمصدر والإسناد.`,alternates:{canonical:`/knowledge/heritage/${item.slug}`}};}
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const item = getKnowledgeHeritage(slug);
+  if (!item) return { robots: { index: false, follow: true }, alternates: { canonical: null } };
+  return buildPageMetadata({
+    title: `${item.name} — تراث نقادة`,
+    description: `مدخل ${item.name} ضمن موسوعة تراث ومعالم نقادة بالمصدر والإسناد.`,
+    path: `/knowledge/heritage/${encodeURIComponent(item.slug)}`,
+    ...(!isKnowledgeRecordIndexable(item) ? { robots: { index: false, follow: true } } : {}),
+  });
+}
 
 export default async function HeritageDetail({params}:Props){
   const{slug}=await params;
@@ -24,7 +35,7 @@ export default async function HeritageDetail({params}:Props){
       <article className={styles.detailCard}>
         <span className={styles.eyebrow}>{item.category} · مؤكد من المصدر</span>
         <h1>{item.name}</h1>
-        <div className={styles.notice}>هذا المدخل منشور الآن ببياناته المرجعية المنظمة. الوصف التاريخي الموسع سيُنشر بصياغة تحريرية أصلية بعد المراجعة، مع بقاء الإسناد للمؤلف والمصدر.</div>
+        {isKnowledgeRecordIndexable(item) ? <p>{item.summary}</p> : <div className={styles.notice}>هذا المدخل منشور الآن ببياناته المرجعية المنظمة. الوصف التاريخي الموسع سيُنشر بصياغة تحريرية أصلية بعد المراجعة، مع بقاء الإسناد للمؤلف والمصدر.</div>}
         <div className={styles.sourceBox}><strong>الإسناد</strong><p>{knowledgeAttribution(item.contributorId)}</p><small>المصدر: {source?.title || 'مصدر موسوعة نقادة'}{source?.year ? ` · ${source.year}` : ''}</small></div>
         <RelatedKnowledge kind="heritage" item={item} />
       </article>

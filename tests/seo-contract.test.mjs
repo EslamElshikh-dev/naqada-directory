@@ -65,7 +65,7 @@ test('global 404 metadata is isolated from indexable page metadata', () => {
 });
 
 test('robots.txt stays crawlable and points at the canonical sitemap', () => {
-  assert.ok(robots.includes("allow: '/'"));
+  assert.ok(robots.includes("allow: ['/'"));
   assert.ok(robots.includes('sitemap: `${siteConfig.url}/sitemap.xml`'));
 });
 

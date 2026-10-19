@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { localities } from '@/lib/data';
@@ -6,7 +6,7 @@ import { knowledgeAliases, knowledgePlaces, primaryKnowledgeContributor } from '
 import styles from '../knowledge.module.css';
 import v3Styles from '../knowledge-v3.module.css';
 
-export const metadata: Metadata = { title: 'قرى ونجوع نقادة — الموسوعة', description: 'سجل الأماكن في مركز نقادة كما ورد في المصادر، مع التبعية والأسماء التاريخية وبيانات التعداد التاريخية عند توفرها.', alternates: { canonical: '/knowledge/places' } };
+export const metadata = buildPageMetadata({ title: 'قرى ونجوع نقادة — الموسوعة', description: 'سجل الأماكن في مركز نقادة كما ورد في المصادر، مع التبعية والأسماء التاريخية وبيانات التعداد التاريخية عند توفرها.', path: '/knowledge/places' });
 
 export default function KnowledgePlacesPage() {
   const typeCounts = [...new Set(knowledgePlaces.map((item) => item.type))]

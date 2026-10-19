@@ -7,7 +7,8 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
+      // Published photo responses are public assets; other API routes stay excluded.
+      allow: ['/', '/api/owner-photos/', '/api/directory/photo'],
       disallow: ['/api/'],
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,

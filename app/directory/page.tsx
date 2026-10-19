@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { buildPageMetadata, siteConfig } from '@/lib/site';
 import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
@@ -45,11 +46,17 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString('ar-EG')}` : '';
   const pageHref = state.page > 1 ? `/directory/?page=${state.page}` : '/directory/';
 
-  return {
+  const canonical = hasFilters ? '/directory/' : pageHref;
+  const metadata = buildPageMetadata({
     title: `دليل الخدمات والأنشطة في نقادة${pageLabel}`,
     description,
-    alternates: { canonical: hasFilters ? '/directory/' : pageHref },
+    path: '/directory',
     ...(hasFilters ? { robots: { index: false, follow: true } } : {}),
+  });
+  return {
+    ...metadata,
+    alternates: { canonical },
+    openGraph: { ...metadata.openGraph, url: `${siteConfig.url}${canonical}` },
     pagination: hasFilters ? undefined : {
       previous: state.page > 1 ? (state.page === 2 ? '/directory/' : `/directory/?page=${state.page - 1}`) : null,
       next: state.page < state.totalPages ? `/directory/?page=${state.page + 1}` : null,
