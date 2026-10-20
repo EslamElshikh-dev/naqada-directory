@@ -11,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: ['/', '/api/owner-photos/', '/api/directory/photo'],
       disallow: ['/api/'],
     },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: [`${siteConfig.url}/sitemap.xml`, `${siteConfig.url}/priority/sitemap.xml`],
   };
 }

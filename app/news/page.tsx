@@ -70,7 +70,7 @@ function StoryMeta({ item }: { item: ExternalNewsItem }) {
 }
 
 function StoryButton({ item, compact = false }: { item: ExternalNewsItem; compact?: boolean }) {
-  return <Link className={compact ? styles.sourceButtonCompact : styles.sourceButton} href={`/news/${item.id}`}>
+  return <Link prefetch={false} className={compact ? styles.sourceButtonCompact : styles.sourceButton} href={`/news/${item.id}`}>
     <span>معرفة المزيد</span><b aria-hidden="true">←</b>
   </Link>;
 }
@@ -78,14 +78,14 @@ function StoryButton({ item, compact = false }: { item: ExternalNewsItem; compac
 function NewsCard({ item }: { item: ExternalNewsItem }) {
   return (
     <article className={styles.card} id={`story-${item.id}`}>
-      <Link className={styles.cardMedia} href={`/news/${item.id}`} tabIndex={-1} aria-hidden="true">
+      <Link prefetch={false} className={styles.cardMedia} href={`/news/${item.id}`} tabIndex={-1} aria-hidden="true">
         <NewsImage src={item.imageUrl} alt={item.imageAlt} sizes="(max-width: 720px) calc(100vw - 28px), (max-width: 1050px) 50vw, 360px" />
         <span className={styles.imageCredit}>الصورة: {item.source}</span>
         {item.isNaqada ? <span className={styles.localBadge}>نقادة</span> : null}
       </Link>
       <div className={styles.cardBody}>
         <div className={styles.cardTop}><StoryMeta item={item} /><span className={styles.category}>{item.category}</span></div>
-        <h2><Link href={`/news/${item.id}`}>{item.title}</Link></h2>
+        <h2><Link prefetch={false} href={`/news/${item.id}`}>{item.title}</Link></h2>
         {item.description ? <p>{item.description}</p> : <p className={styles.descriptionFallback}>افتَح تفاصيل الخبر وروابط الناشر.</p>}
         <div className={styles.cardFooter}>
           <span>{item.isOriginal ? 'خبر من فريق الدليل' : 'نشر خارجي · الحقوق للمصدر'}</span>
@@ -145,7 +145,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
       <section className={styles.hero}>
         <div className={`shell ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
-            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link><span>/</span><span>أخبار نقادة وقنا</span></nav>
+            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><span>أخبار نقادة وقنا</span></nav>
             <span className={styles.kicker}><i aria-hidden="true" /> غرفة أخبار محلية متجددة</span>
             <h1>الخبر المحلي… <em>من مصدره.</em></h1>
             <p>متابعة منظمة لأخبار نقادة ومحافظة قنا من المصادر الصحفية والرسمية، ومعها الأخبار المحلية التي يكتبها فريق الدليل.</p>
@@ -178,7 +178,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
           <span>اختر القسم</span>
           <div>
             {filters.map((filter) => (
-              <Link
+              <Link prefetch={false}
                 key={filter.key}
                 href={filter.key === 'الكل' ? '/news' : `/news?section=${encodeURIComponent(filter.key)}`}
                 aria-current={selected === filter.key ? 'page' : undefined}
@@ -188,21 +188,21 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
           </div>
         </nav>
 
-        <div className={styles.archiveInvite}><div><strong>بتدور على خبر قديم؟</strong><span>الموجز يعرض أخبار آخر ٣٠ يومًا المؤرخة. الأخبار الأقدم أو غير المؤرخة تلاقيها في الأرشيف، مع اسم المصدر ورابطه.</span></div><Link href="/news/archive">استعرض أرشيف الأخبار ←</Link></div>
+        <div className={styles.archiveInvite}><div><strong>بتدور على خبر قديم؟</strong><span>الموجز يعرض أخبار آخر ٣٠ يومًا المؤرخة. الأخبار الأقدم أو غير المؤرخة تلاقيها في الأرشيف، مع اسم المصدر ورابطه.</span></div><Link prefetch={false} href="/news/archive">استعرض أرشيف الأخبار ←</Link></div>
 
         {featured ? (
           <>
             <section className={styles.leadSection} aria-labelledby="lead-story-title">
               <div className={styles.sectionTitle}><div><span>الأهم الآن</span><h2 id="lead-story-title">في صدارة المشهد المحلي</h2></div><small>{selected === 'الكل' ? 'مرتبة حسب الصلة والحداثة' : `قسم: ${selected}`}</small></div>
               <article className={styles.leadStory} id={`story-${featured.id}`}>
-                <Link className={styles.leadMedia} href={`/news/${featured.id}`} tabIndex={-1} aria-hidden="true">
+                <Link prefetch={false} className={styles.leadMedia} href={`/news/${featured.id}`} tabIndex={-1} aria-hidden="true">
                   <NewsImage src={featured.imageUrl} alt={featured.imageAlt} priority sizes="(max-width: 820px) calc(100vw - 28px), 58vw" />
                   <span className={styles.imageCredit}>الصورة: {featured.source}</span>
                 </Link>
                 <div className={styles.leadCopy}>
                   <div className={styles.leadLabels}><span>{featured.category}</span>{featured.isNaqada ? <b>من نقادة</b> : <b>من قنا</b>}</div>
                   <StoryMeta item={featured} />
-                  <h2><Link href={`/news/${featured.id}`}>{featured.title}</Link></h2>
+                  <h2><Link prefetch={false} href={`/news/${featured.id}`}>{featured.title}</Link></h2>
                   {featured.description ? <p>{featured.description}</p> : <p className={styles.descriptionFallback}>تعرّف على التفاصيل وروابط المصدر في صفحة الخبر.</p>}
                   <div className={styles.leadFooter}><StoryButton item={featured} /><span>{featured.isOriginal ? 'خبر محلي من الدليل' : `المصدر: ${featured.source}`}</span></div>
                 </div>
@@ -220,7 +220,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
           <section className={styles.emptyState}>
             <span aria-hidden="true">ن</span>
             <div><strong>{feed.items.length ? 'لا توجد أخبار في هذا القسم الآن' : 'نجري الآن أول مزامنة للمصادر'}</strong><p>{feed.items.length ? 'اختر «كل الأخبار» أو قسمًا آخر لمشاهدة التغطية المتاحة.' : 'تظل روابط المصادر المباشرة أدناه متاحة، وستظهر العناوين تلقائيًا عند اكتمال الاتصال.'}</p></div>
-            {feed.items.length ? <Link href="/news">عرض كل الأخبار</Link> : null}
+            {feed.items.length ? <Link prefetch={false} href="/news">عرض كل الأخبار</Link> : null}
           </section>
         )}
 

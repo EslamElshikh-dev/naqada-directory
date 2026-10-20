@@ -34,6 +34,7 @@ const ranking = loadModule('./lib/search-ranking');
 const knowledge = loadModule('./lib/knowledge');
 const news = loadModule('./lib/news-feed-quality');
 const robots = loadModule('./app/robots').default;
+const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
 test('school searches match activity type and locality, not a school in another activity address', () => {
@@ -110,6 +111,18 @@ test('robots permits public listing photos while keeping other API paths exclude
   for (const path of ['/api/auth/session', '/api/owner-listings', '/api/directory/preview']) {
     assert.equal(allowed(path), false, path);
   }
+});
+
+test('focused sitemap keeps canonical priority pages and their actual modification dates', () => {
+  const home = { url: 'https://naqada-directory.vercel.app/', lastModified: '2026-10-16T00:00:00Z' };
+  const bashlaw = { url: `https://naqada-directory.vercel.app/villages/${encodeURIComponent('بشلاو')}/`, lastModified: '2026-09-04T00:00:00Z' };
+  const other = { url: 'https://naqada-directory.vercel.app/account/login/' };
+  const queryCopy = { url: `${home.url}?_rsc=example` };
+  const result = priorities.selectPrioritySitemap([home, other, bashlaw, home, queryCopy]);
+  assert.deepEqual(Array.from(result), [home, bashlaw]);
+  assert.ok(priorities.prioritySitemapUrls.size >= 10 && priorities.prioritySitemapUrls.size <= 25);
+  assert.ok(Array.from(priorities.prioritySitemapUrls).every((url) => url.startsWith(home.url) && url.endsWith('/') && !url.includes('?')));
+  assert.ok([].concat(robots().sitemap).includes('https://naqada-directory.vercel.app/priority/sitemap.xml'));
 });
 
 function story(overrides = {}) {

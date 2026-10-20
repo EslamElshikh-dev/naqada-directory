@@ -59,9 +59,9 @@ function PersonRelated({ item }: { item: KnowledgePerson }) {
   return <section className={styles.section} aria-labelledby="related-knowledge-heading">
     <div className={styles.heading}><div><span>استكشاف موثّق</span><h2 id="related-knowledge-heading">تابع داخل موسوعة نقادة</h2></div></div>
     <div className={styles.grid}>
-      {places.map((place) => <Link className={styles.card} href={`/knowledge/places/${encodeURIComponent(place.slug)}`} key={place.id}><small>مكان مذكور في السجل</small><strong>{place.name}</strong><p>{place.type}{place.parent ? ` · يتبع ${place.parent}` : ''}</p></Link>)}
-      {relatedPeople.map(({ person }) => <Link className={styles.card} href={`/knowledge/people/${encodeURIComponent(person.slug)}`} key={person.id}><small>تخصص أو مكان مشترك صريح</small><strong>{person.name}</strong><p>{person.professionTags.slice(0, 3).join(' · ') || person.group}</p></Link>)}
-      {live ? <Link className={`${styles.card} ${styles.live}`} href={`/villages/${encodeURIComponent(live.slug)}`}><div><small>الطبقة الحديثة</small><strong>افتح دليل {live.name} الحالي</strong><p>الخدمات والأنشطة المنشورة حاليًا منفصلة عن المادة التاريخية المرجعية.</p></div><b>فتح الدليل ←</b></Link> : null}
+      {places.map((place) => <Link prefetch={false} className={styles.card} href={`/knowledge/places/${encodeURIComponent(place.slug)}`} key={place.id}><small>مكان مذكور في السجل</small><strong>{place.name}</strong><p>{place.type}{place.parent ? ` · يتبع ${place.parent}` : ''}</p></Link>)}
+      {relatedPeople.map(({ person }) => <Link prefetch={false} className={styles.card} href={`/knowledge/people/${encodeURIComponent(person.slug)}`} key={person.id}><small>تخصص أو مكان مشترك صريح</small><strong>{person.name}</strong><p>{person.professionTags.slice(0, 3).join(' · ') || person.group}</p></Link>)}
+      {live ? <Link prefetch={false} className={`${styles.card} ${styles.live}`} href={`/villages/${encodeURIComponent(live.slug)}`}><div><small>الطبقة الحديثة</small><strong>افتح دليل {live.name} الحالي</strong><p>الخدمات والأنشطة المنشورة حاليًا منفصلة عن المادة التاريخية المرجعية.</p></div><b>فتح الدليل ←</b></Link> : null}
     </div>
   </section>;
 }
@@ -77,9 +77,9 @@ function PlaceRelated({ item }: { item: KnowledgePlace }) {
   return <section className={styles.section} aria-labelledby="related-knowledge-heading">
     <div className={styles.heading}><div><span>سياق مكاني موثّق</span><h2 id="related-knowledge-heading">اكتشف ما يرتبط بهذا الموضع</h2></div></div>
     <div className={styles.grid}>
-      {people.map((person) => <Link className={styles.card} href={`/knowledge/people/${encodeURIComponent(person.slug)}`} key={person.id}><small>شخصية موسومة بهذا المكان</small><strong>{person.name}</strong><p>{person.professionTags.slice(0, 3).join(' · ') || person.group}</p></Link>)}
-      {siblings.map((place) => <Link className={styles.card} href={`/knowledge/places/${encodeURIComponent(place.slug)}`} key={place.id}><small>ضمن نفس التبعية المرجعية</small><strong>{place.name}</strong><p>{place.type}</p></Link>)}
-      {live ? <Link className={`${styles.card} ${styles.live}`} href={`/villages/${encodeURIComponent(live.slug)}`}><div><small>الدليل الحي</small><strong>الخدمات والأنشطة في {live.name}</strong><p>انتقل من السجل المرجعي إلى صفحة المكان الحديثة دون خلط الطبقتين.</p></div><b>فتح الدليل ←</b></Link> : null}
+      {people.map((person) => <Link prefetch={false} className={styles.card} href={`/knowledge/people/${encodeURIComponent(person.slug)}`} key={person.id}><small>شخصية موسومة بهذا المكان</small><strong>{person.name}</strong><p>{person.professionTags.slice(0, 3).join(' · ') || person.group}</p></Link>)}
+      {siblings.map((place) => <Link prefetch={false} className={styles.card} href={`/knowledge/places/${encodeURIComponent(place.slug)}`} key={place.id}><small>ضمن نفس التبعية المرجعية</small><strong>{place.name}</strong><p>{place.type}</p></Link>)}
+      {live ? <Link prefetch={false} className={`${styles.card} ${styles.live}`} href={`/villages/${encodeURIComponent(live.slug)}`}><div><small>الدليل الحي</small><strong>الخدمات والأنشطة في {live.name}</strong><p>انتقل من السجل المرجعي إلى صفحة المكان الحديثة دون خلط الطبقتين.</p></div><b>فتح الدليل ←</b></Link> : null}
     </div>
   </section>;
 }
@@ -94,7 +94,7 @@ function HeritageRelated({ item }: { item: KnowledgeHeritage }) {
   return <section className={styles.section} aria-labelledby="related-knowledge-heading">
     <div className={styles.heading}><div><span>من نفس المحور</span><h2 id="related-knowledge-heading">موضوعات تراثية ذات صلة تصنيفية</h2></div></div>
     <div className={styles.grid}>
-      {related.map((entry) => <Link className={styles.card} href={`/knowledge/heritage/${encodeURIComponent(entry.slug)}`} key={entry.id}><small>{entry.category}</small><strong>{entry.name}</strong><p>موضوع آخر ضمن نفس التصنيف المرجعي.</p></Link>)}
+      {related.map((entry) => <Link prefetch={false} className={styles.card} href={`/knowledge/heritage/${encodeURIComponent(entry.slug)}`} key={entry.id}><small>{entry.category}</small><strong>{entry.name}</strong><p>موضوع آخر ضمن نفس التصنيف المرجعي.</p></Link>)}
     </div>
   </section>;
 }

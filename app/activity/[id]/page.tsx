@@ -60,11 +60,11 @@ export default async function ActivityPage({ params }: Props) {
   return <main id="main-content" className={`page-main ${styles.page}`}>
     <section className={styles.hero}>
       <div className="shell">
-        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link href="/directory">الدليل</Link><span>/</span><Link href={categoryHref}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
+        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/directory">الدليل</Link><span>/</span><Link prefetch={false} href={categoryHref}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
         <div className={styles.profile}>
           <div className={styles.identity}>
             <div className={styles.identityTop}>
-              <div className={styles.tags}><Link href={categoryHref}>{listing.category}</Link><Link href={localityHref}>{listing.locality}</Link></div>
+              <div className={styles.tags}><Link prefetch={false} href={categoryHref}>{listing.category}</Link><Link prefetch={false} href={localityHref}>{listing.locality}</Link></div>
               <span className={styles.badge}><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" opacity=".1"/><path d="m5.5 10 3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>منشور في الدليل</span>
             </div>
             <h1>{listing.name}</h1>
@@ -85,7 +85,7 @@ export default async function ActivityPage({ params }: Props) {
         <section className={styles.details} aria-labelledby="activity-about-title">
           <header className={styles.sectionHead}><span className={styles.sectionMark}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span className={styles.kicker}>الخدمة اللي بتدور عليها</span><h2 id="activity-about-title">عن النشاط</h2></div></header>
           <p className={styles.description}>{listing.description}</p>
-          <dl className={styles.facts}><div><dt>التصنيف</dt><dd><Link href={categoryHref}>{listing.category}</Link></dd></div><div><dt>القرية أو الموضع</dt><dd><Link href={localityHref}>{listing.locality}</Link></dd></div></dl>
+          <dl className={styles.facts}><div><dt>التصنيف</dt><dd><Link prefetch={false} href={categoryHref}>{listing.category}</Link></dd></div><div><dt>القرية أو الموضع</dt><dd><Link prefetch={false} href={localityHref}>{listing.locality}</Link></dd></div></dl>
         </section>
         {photoPaths.length > 0 && <section className={styles.gallery} aria-labelledby="activity-gallery-title">
           <div className={styles.galleryHead}><div><h2 id="activity-gallery-title">صور النشاط</h2><p>اضغط على الصورة لعرضها كاملة</p></div><span className={styles.photoCount}>{photoPaths.length === 1 ? 'صورة واحدة' : photoPaths.length === 2 ? 'صورتان' : `${photoPaths.length.toLocaleString('ar-EG')} صور`}</span></div>
@@ -94,8 +94,8 @@ export default async function ActivityPage({ params }: Props) {
         <section className={styles.share} aria-labelledby="activity-share-title">
           <h2 id="activity-share-title">دلّ غيرك على المكان</h2><p className={styles.shareIntro}>ابعته للي محتاج الخدمة من أهل البلد.</p>
           <ShareActions title={listing.name} locality={listing.locality} listingSlug={id} />
-          <nav className={styles.explore} aria-label="استكشف أنشطة قريبة"><Link href={`/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(listing.locality)}`}><span>أنشطة مشابهة في {listing.locality}</span><ActionIcon name="arrow" /></Link><Link href={localityHref}><span>كل خدمات {listing.locality}</span><ActionIcon name="arrow" /></Link></nav>
-          <Link className={styles.edit} href={`/contribute?edit=${id}`}>ده نشاطك؟ عدّل بياناته من حسابك <ActionIcon name="arrow" /></Link>
+          <nav className={styles.explore} aria-label="استكشف أنشطة قريبة"><Link prefetch={false} href={`/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(listing.locality)}`}><span>أنشطة مشابهة في {listing.locality}</span><ActionIcon name="arrow" /></Link><Link prefetch={false} href={localityHref}><span>كل خدمات {listing.locality}</span><ActionIcon name="arrow" /></Link></nav>
+          <Link prefetch={false} className={styles.edit} href={`/contribute?edit=${id}`}>ده نشاطك؟ عدّل بياناته من حسابك <ActionIcon name="arrow" /></Link>
         </section>
       </div>
 
