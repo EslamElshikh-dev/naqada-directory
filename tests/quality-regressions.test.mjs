@@ -33,6 +33,8 @@ const search = loadModule('./lib/site-search');
 const ranking = loadModule('./lib/search-ranking');
 const knowledge = loadModule('./lib/knowledge');
 const news = loadModule('./lib/news-feed-quality');
+const robots = loadModule('./app/robots').default;
+const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
 test('school searches match activity type and locality, not a school in another activity address', () => {
@@ -70,6 +72,57 @@ test('compact locality people lists show a repeated source name once without del
   const people = knowledge.knowledgePeopleForLocality('الخطارة', 20);
   assert.equal(people.filter((item) => item.name === 'دسوقي الخطاري').length, 1);
   assert.equal(knowledge.knowledgePeople.filter((item) => item.name === 'دسوقي الخطاري').length, 2);
+});
+
+test('knowledge records need a published summary before becoming eligible for indexing', () => {
+  for (const record of [
+    { editorialStatus: 'summary_pending' },
+    { editorialStatus: 'summary_pending', summary: 'مسودة لم تُراجع' },
+    { editorialStatus: 'published' },
+    { editorialStatus: 'published', summary: '   ' },
+    { editorialStatus: 'unknown', summary: 'نص غير معتمد' },
+  ]) assert.equal(knowledge.isKnowledgeRecordIndexable(record), false);
+  assert.equal(knowledge.isKnowledgeRecordIndexable({ editorialStatus: 'published', summary: 'نبذة تحريرية معتمدة بالمصدر.' }), true);
+});
+
+test('reference-only people and heritage stay available while excluded from indexable collections', () => {
+  for (const [records, indexable] of [
+    [knowledge.knowledgePeople, knowledge.indexableKnowledgePeople],
+    [knowledge.knowledgeHeritage, knowledge.indexableKnowledgeHeritage],
+  ]) {
+    assert.ok(records.length > 0);
+    const pending = records.filter((record) => record.editorialStatus === 'summary_pending');
+    assert.ok(pending.length > 0);
+    assert.ok(pending.every((record) => !indexable.includes(record)));
+    assert.ok(indexable.every(knowledge.isKnowledgeRecordIndexable));
+  }
+});
+
+test('robots permits public listing photos while keeping other API paths excluded', () => {
+  const rules = robots().rules;
+  const allows = [].concat(rules.allow || []);
+  const disallows = [].concat(rules.disallow || []);
+  // Google selects the most specific matching path; allow wins an equal-length tie.
+  const allowed = (path) => Math.max(-1, ...allows.filter((rule) => path.startsWith(rule)).map((rule) => rule.length))
+    >= Math.max(-1, ...disallows.filter((rule) => path.startsWith(rule)).map((rule) => rule.length));
+  for (const path of ['/', '/directory/', '/api/owner-photos/owner/listing/photo.jpg', '/api/directory/photo?path=photo.jpg']) {
+    assert.equal(allowed(path), true, path);
+  }
+  for (const path of ['/api/auth/session', '/api/owner-listings', '/api/directory/preview']) {
+    assert.equal(allowed(path), false, path);
+  }
+});
+
+test('focused sitemap keeps canonical priority pages and their actual modification dates', () => {
+  const home = { url: 'https://naqada-directory.vercel.app/', lastModified: '2026-10-16T00:00:00Z' };
+  const bashlaw = { url: `https://naqada-directory.vercel.app/villages/${encodeURIComponent('بشلاو')}/`, lastModified: '2026-09-04T00:00:00Z' };
+  const other = { url: 'https://naqada-directory.vercel.app/account/login/' };
+  const queryCopy = { url: `${home.url}?_rsc=example` };
+  const result = priorities.selectPrioritySitemap([home, other, bashlaw, home, queryCopy]);
+  assert.deepEqual(Array.from(result), [home, bashlaw]);
+  assert.ok(priorities.prioritySitemapUrls.size >= 10 && priorities.prioritySitemapUrls.size <= 25);
+  assert.ok(Array.from(priorities.prioritySitemapUrls).every((url) => url.startsWith(home.url) && url.endsWith('/') && !url.includes('?')));
+  assert.ok([].concat(robots().sitemap).includes('https://naqada-directory.vercel.app/priority/sitemap.xml'));
 });
 
 function story(overrides = {}) {

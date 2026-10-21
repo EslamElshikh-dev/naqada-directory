@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { knowledgeHeritage, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from '../knowledge.module.css';
 import v3Styles from '../knowledge-v3.module.css';
 
-export const metadata: Metadata = { title: 'تراث ومعالم نقادة — الموسوعة', description: 'المواقع والموضوعات التراثية والسياحية الواردة في مصادر موسوعة نقادة مع الإسناد للمؤلف.', alternates: { canonical: '/knowledge/heritage' } };
+export const metadata = buildPageMetadata({ title: 'تراث ومعالم نقادة — الموسوعة', description: 'المواقع والموضوعات التراثية والسياحية الواردة في مصادر موسوعة نقادة مع الإسناد للمؤلف.', path: '/knowledge/heritage' });
 
 export default function HeritagePage() {
   const groups = [...new Set(knowledgeHeritage.map((item) => item.category))].map((category) => ({

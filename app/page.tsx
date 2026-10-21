@@ -17,6 +17,7 @@ import { getCategoryMedia } from '@/lib/category-media';
 import { getHomeLastModified } from '@/lib/home-content';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { absoluteUrl, siteConfig } from '@/lib/site';
+import { priorityActivityNames, priorityLocalityNames } from '@/lib/seo-priorities';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
 
@@ -26,8 +27,6 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
-const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];
-const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];
 const serviceToneByCategory: Record<string, string> = {
   'الطب والصحة': 'health',
   'التعليم': 'learning',

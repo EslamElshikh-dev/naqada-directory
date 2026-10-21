@@ -7,14 +7,14 @@ import { readArticleDocument } from '@/lib/article-document';
 import { siteConfig } from '@/lib/site';
 import { getVillageArticle } from '@/lib/village-articles';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
-import { indexableKnowledgePlaces, knowledgeHeritage, knowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
+import { indexableKnowledgePlaces, indexableKnowledgeHeritage, indexableKnowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { getPublishedOwnerListings } from '@/lib/owner-listings';
 import { getHomeLastModified } from '@/lib/home-content';
 
 export const dynamic = 'force-dynamic';
 
 const fallbackDate = new Date('2026-09-04T00:00:00.000Z');
-const knowledgeDate = new Date('2026-09-06T00:00:00.000Z');
+const knowledgeDate = new Date('2026-10-20T00:00:00+03:00');
 
 function latestDate(items: Array<{ checked: string | null }>) {
   const timestamps = items.map((item) => item.checked ? Date.parse(item.checked) : Number.NaN).filter((value) => Number.isFinite(value));
@@ -80,8 +80,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...baseRoutes.map(({ path, lastModified }) => ({ url: sitemapUrl(path), ...(lastModified ? { lastModified } : {}) })),
     ...indexableKnowledgePlaces.map((item) => ({ url: sitemapUrl(`/knowledge/places/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
-    ...knowledgePeople.map((item) => ({ url: sitemapUrl(`/knowledge/people/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
-    ...knowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
+    ...indexableKnowledgePeople.map((item) => ({ url: sitemapUrl(`/knowledge/people/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
+    ...indexableKnowledgeHeritage.map((item) => ({ url: sitemapUrl(`/knowledge/heritage/${encodeURIComponent(item.slug)}`), lastModified: knowledgeDate })),
     ...editorialPosts.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.modifiedAt) })),
     ...newArticles.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),
     ...newNews.map((post) => ({ url: sitemapUrl(`/news/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),

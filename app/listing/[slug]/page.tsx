@@ -155,8 +155,8 @@ export default async function ListingPage({ params }: Props) {
       <section className="detail-hero">
         <div className="shell detail-hero__grid">
           <div>
-            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/directory">الدليل</Link><span>/</span><Link href={`/directory/${slugify(listing.category)}`}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
-            <div className="detail-hero__badges"><span>{listing.subcategory || listing.category}</span><Link href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
+            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/directory">الدليل</Link><span>/</span><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
+            <div className="detail-hero__badges"><span>{listing.subcategory || listing.category}</span><Link prefetch={false} href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
             <h1>{listing.name}</h1>
             <p>{listing.address || `${locality}، مركز نقادة، محافظة قنا`}</p>
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
@@ -218,11 +218,11 @@ export default async function ListingPage({ params }: Props) {
 
           <ListingRating listingSlug={listing.slug} listingName={listing.name} />
           <ShareActions title={listing.name} locality={locality} listingSlug={listing.slug} />
-          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
+          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link prefetch={false} href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
         <aside className="detail-aside">
           <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
-          <div className="detail-aside__links"><Link href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link href="/updates">آخر تحديثات الدليل</Link><Link href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link href="/directory">البحث في كل الدليل</Link></div>
+          <div className="detail-aside__links"><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link prefetch={false} href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link prefetch={false} href="/updates">آخر تحديثات الدليل</Link><Link prefetch={false} href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link prefetch={false} href="/directory">البحث في كل الدليل</Link></div>
           <p className="detail-aside__note">الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
         </aside>
       </section>
@@ -235,7 +235,7 @@ export default async function ListingPage({ params }: Props) {
           {listing.seoKeywords.map((keyword) => {
             const { searchTerm, isLocal } = resolveSeoKeywordSearch(keyword);
             const href = `/directory?q=${encodeURIComponent(searchTerm)}${isLocal ? `&locality=${encodeURIComponent(locality)}` : ''}`;
-            return <Link key={keyword} href={href}>{keyword}<span aria-hidden="true">←</span></Link>;
+            return <Link prefetch={false} key={keyword} href={href}>{keyword}<span aria-hidden="true">←</span></Link>;
           })}
         </div>
       </div></section> : null}

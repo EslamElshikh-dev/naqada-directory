@@ -26,22 +26,22 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
       <div className="listing-card__cover">
         {listing.imageUrl || listing.id.startsWith('owner-') ? <ListingCover src={listing.imageUrl} name={listing.name} category={listing.category} locality={locality} /> :
           <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
-        <Link className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
-        <Link className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
+        <Link prefetch={false} className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
+        <Link prefetch={false} className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
           <CategoryVisual category={listing.category} size="sm" />
         </Link>
         {hasMapReference && <span className="source-chip"><i /> موثّق على الخريطة</span>}
       </div>
       <div className="listing-card__head">
         <div className="listing-card__eyebrow">
-          <div><Link href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
+          <div><Link prefetch={false} href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
         </div>
       </div>
       <div className="listing-card__body">
-        <h3><Link href={detailHref}>{listing.name}</Link></h3>
+        <h3><Link prefetch={false} href={detailHref}>{listing.name}</Link></h3>
         <p className="listing-card__location"><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
         <div className="listing-card__meta">
-          <Link href={localityHref}>{locality}</Link>
+          <Link prefetch={false} href={localityHref}>{locality}</Link>
           {typeof listing.rating === 'number' && <span className="rating" aria-label={`التقييم ${listing.rating} من 5`}>★ {listing.rating.toLocaleString('ar-EG')}{listing.reviews ? ` (${listing.reviews.toLocaleString('ar-EG')})` : ''}</span>}
           <span>{verificationLabel(listing.verification)}</span>
         </div>

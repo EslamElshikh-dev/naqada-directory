@@ -21,7 +21,7 @@ export function LocalityExplorer({ localities }: { localities: LocalityPage[] })
       </div>
       <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> موضعًا مطابقًا</span></div></div>
       {filtered.length ? <div className="village-grid">{filtered.map((item, index) => (
-        <Link href={`/villages/${item.slug}`} key={item.slug} className="village-card" aria-label={`فتح دليل ${item.name} في نقادة`}>
+        <Link prefetch={false} href={`/villages/${item.slug}`} key={item.slug} className="village-card" aria-label={`فتح دليل ${item.name} في نقادة`}>
           <div className="village-card__head"><span className="village-card__visual"><BrandMark compact /></span><span className="village-card__index">{String(index + 1).padStart(2, '0')}</span></div>
           <span className="village-card__type">{item.type} · مركز نقادة</span>
           <h2>دليل {item.name}</h2>

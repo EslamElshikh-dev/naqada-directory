@@ -23,8 +23,8 @@ export type KnowledgeContributor = { id:string; name:string; honorific:string; r
 export type KnowledgeSource = { id:string; title:string; kind:string; author:string; priority:string; year:number|null; usage:string };
 export type KnowledgePlace = { id:string; name:string; shortName:string; slug:string; type:string; parent:string; sourceId:string; contributorId:string; verification:string; population1897?:number; male1897?:number; female1897?:number; houses1897?:number; population2014?:number };
 export type KnowledgeAlias = { id:string; canonicalName:string; alias:string; type:string; language:string; note:string; sourceId:string; contributorId:string };
-export type KnowledgePerson = { id:string; number:number; name:string; slug:string; group:string; professionTags:string[]; placeTags:string[]; sourceId:string; contributorId:string; verification:string; editorialStatus:string };
-export type KnowledgeHeritage = { id:string; order:number; name:string; slug:string; category:string; sourceId:string; contributorId:string; verification:string; editorialStatus:string };
+export type KnowledgePerson = { id:string; number:number; name:string; slug:string; group:string; professionTags:string[]; placeTags:string[]; sourceId:string; contributorId:string; verification:string; editorialStatus:string; summary?:string };
+export type KnowledgeHeritage = { id:string; order:number; name:string; slug:string; category:string; sourceId:string; contributorId:string; verification:string; editorialStatus:string; summary?:string };
 export type KnowledgeReference = { id:string; text:string; group:string; sourceId:string; contributorId:string };
 export type FieldInformant = { id:string; name:string; locationScope:string; sourceId:string; listedByAuthor:string; recordType:string };
 
@@ -63,6 +63,14 @@ export function isKnowledgePlaceIndexable(place:KnowledgePlace){
 }
 
 export const indexableKnowledgePlaces = knowledgePlaces.filter(isKnowledgePlaceIndexable);
+
+// Reference-only records remain readable while their original summary is reviewed.
+export function isKnowledgeRecordIndexable(record: { editorialStatus: string; summary?: string }) {
+  return record.editorialStatus === 'published' && Boolean(record.summary?.trim());
+}
+
+export const indexableKnowledgePeople = knowledgePeople.filter(isKnowledgeRecordIndexable);
+export const indexableKnowledgeHeritage = knowledgeHeritage.filter(isKnowledgeRecordIndexable);
 
 function normalizedPlaceLabel(value:string){
   return value

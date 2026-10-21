@@ -5,6 +5,7 @@ import test from 'node:test';
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const layout = read('app/layout.tsx');
 const homepage = read('app/page.tsx');
+const seoPriorities = read('lib/seo-priorities.ts');
 const sitemap = read('app/sitemap.ts');
 const robots = read('app/robots.ts');
 const site = read('lib/site.ts');
@@ -65,8 +66,8 @@ test('global 404 metadata is isolated from indexable page metadata', () => {
 });
 
 test('robots.txt stays crawlable and points at the canonical sitemap', () => {
-  assert.ok(robots.includes("allow: '/'"));
-  assert.ok(robots.includes('sitemap: `${siteConfig.url}/sitemap.xml`'));
+  assert.ok(robots.includes("allow: ['/'"));
+  assert.ok(robots.includes('`${siteConfig.url}/sitemap.xml`'));
 });
 
 test('utility workflows are noindex-follow and excluded from the sitemap', () => {
@@ -154,8 +155,9 @@ test('hub pages emit page-specific Open Graph and Twitter metadata', () => {
 });
 
 test('homepage routes priority locality and service intent to canonical landing pages', () => {
-  assert.ok(homepage.includes("const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];"));
-  assert.ok(homepage.includes("const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];"));
+  assert.ok(homepage.includes("import { priorityActivityNames, priorityLocalityNames } from '@/lib/seo-priorities'"));
+  assert.ok(seoPriorities.includes("const priorityLocalityNames = ['بشلاو', 'الأوسط قمولا', 'طوخ', 'الخطارة', 'دنفيق'];"));
+  assert.ok(seoPriorities.includes("const priorityActivityNames = ['صيدليات نقادة', 'أطباء وعيادات نقادة', 'مدارس ومعاهد نقادة', 'مطاعم ومقاهي نقادة', 'محلات وأسواق نقادة'];"));
   assert.ok(homepage.includes('<strong>دليل {item.name}</strong>'));
   assert.ok(homepage.includes('صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة'));
   assert.ok(homepage.includes('href={`/activities/${activity.slug}`}'));

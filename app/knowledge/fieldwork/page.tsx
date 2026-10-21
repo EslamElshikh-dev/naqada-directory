@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
 import { KnowledgeSectionNav } from '@/components/knowledge-section-nav';
 import { fieldInformants, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from '../knowledge.module.css';
 import v3Styles from '../knowledge-v3.module.css';
 
-export const metadata: Metadata = { title: 'العمل الميداني — موسوعة نقادة', description: 'الأسماء والنطاقات المكانية التي أوردها مؤلف إقليم نقادة بصعيد مصر ضمن المقابلات والمساعدة الميدانية.', alternates: { canonical: '/knowledge/fieldwork' } };
+export const metadata = buildPageMetadata({ title: 'العمل الميداني — موسوعة نقادة', description: 'الأسماء والنطاقات المكانية التي أوردها مؤلف إقليم نقادة بصعيد مصر ضمن المقابلات والمساعدة الميدانية.', path: '/knowledge/fieldwork' });
 
 export default function FieldworkPage() {
   const scopeCounts = [...new Set(fieldInformants.map((item) => item.locationScope))]
