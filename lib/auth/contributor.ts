@@ -49,7 +49,6 @@ type ContributionRow = {
   id: string;
   request_type: string;
   name: string;
-  locality: string | null;
   status: string;
   created_at: string;
 };
@@ -100,7 +99,7 @@ export async function getContributorAccess(accessToken: string, userId: string):
 
 export async function getContributorActivity(accessToken: string, userId: string): Promise<ContributorActivity> {
   const rows = await restGet<ContributionRow[]>(
-    `directory_contributions?select=id,request_type,name,locality,status,created_at&submitted_by_user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc&limit=500`,
+    `directory_contributions?select=id,request_type,name,status,created_at&submitted_by_user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc&limit=500`,
     accessToken,
   );
   const count = (status: string) => rows.filter((item) => item.status === status).length;
@@ -115,7 +114,8 @@ export async function getContributorActivity(accessToken: string, userId: string
       id: item.id,
       requestType: item.request_type,
       name: item.name,
-      locality: item.locality,
+      // The member projection deliberately excludes location and review notes.
+      locality: null,
       status: item.status,
       createdAt: item.created_at,
     })),
