@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { isolatedPage as newIsolatedPage } from './qa-browser-page.mjs';
 
 const baseURL = 'http://127.0.0.1:3000';
 const browser = await chromium.launch({ headless: true });
 const report = [];
 
 async function isolatedPage(viewport) {
-  const page = await browser.newPage({ viewport });
+  const page = await newIsolatedPage(browser, { viewport });
   const events = [];
   // Verify payloads without creating fake production searches or page views.
   await page.route('**/functions/v1/directory-intake*', async (route) => {

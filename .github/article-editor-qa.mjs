@@ -1,13 +1,14 @@
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+import { isolatedPage } from './qa-browser-page.mjs';
 
 await mkdir('artifacts/article-editor', { recursive: true });
 const browser = await chromium.launch({ headless: true });
 try {
   for (const [width, height] of [[390, 844], [1440, 1000]]) {
     for (const fixture of ['qa-article-editor', 'qa-role-model']) {
-      const page = await browser.newPage({ viewport: { width, height } });
+      const page = await isolatedPage(browser, { viewport: { width, height } });
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       const saves = [];
