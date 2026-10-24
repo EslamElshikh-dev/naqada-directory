@@ -12,6 +12,24 @@ export type SearchGapResearch = {
 export function getSearchGapResearch(query: string): SearchGapResearch | null {
   const normalized = prepareSearchQuery(query).normalizedQuery;
   const checked = '2026-10-02';
+  if (/بيت النحل/u.test(normalized)) return {
+    checked: '2026-10-24',
+    summary: 'لم تتوفر مطابقة منشورة تكفي لتثبيت عطارة بيت النحل داخل نقادة. تشابه الاسم مع متاجر عسل خارج النطاق لا يحدد النشاط المقصود.',
+    needed: 'اسم اللافتة والقرية أو الشارع، مع صفحة النشاط أو رقم منشور من صاحبه لتأكيد المطابقة.',
+    sources: [],
+  };
+  if (/دكتور لاب|doctor lab/u.test(normalized)) return {
+    checked: '2026-10-24',
+    summary: 'لم تتوفر مطابقة موثقة لفرع داخل نقادة باسم دكتور لاب. وجود معامل أخرى أو صفحات تحمل اسمًا مشابهًا لا يثبت المطابقة.',
+    needed: 'اسم الفرع وعنوان نقادة ورابط الصفحة الرسمية أو وسيلة حجز منشورة من المعمل.',
+    sources: [],
+  };
+  if (/تخاطب/u.test(normalized)) return {
+    checked: '2026-10-24',
+    summary: 'ظهرت صفحات لخدمات تخاطب مرتبطة بنقادة، لكن المعلومات المفهرسة لا تكفي لتأكيد استمرار العمل والعنوان ووسيلة الحجز الحالية. تحتاج الخدمة تحققًا حديثًا قبل إضافة سجل منشور.',
+    needed: 'اسم مقدم الخدمة والعنوان ووسيلة التواصل الحالية، مع مصدر مباشر حديث يثبت تقديم التخاطب في هذا الموضع.',
+    sources: [{ label: 'صفحة مرتبطة بالخدمة؛ يلزم تأكيد البيانات الحالية', url: 'https://www.facebook.com/Khattary2020/' }],
+  };
   if (isFamilySearchQuery(query) && normalized.includes('طوخ')) return {
     checked,
     summary: 'أضيف سجل جزئي لآل سيد حصاوي في طوخ، من تغطية مناسبة عائلية سنة 2021. البحث يفتح سجلات طوخ مباشرة.',

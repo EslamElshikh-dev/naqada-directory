@@ -58,6 +58,9 @@ jobs:
       - name: Verify complete article editor on desktop and mobile
         run: node .github/article-editor-qa.mjs
 
+      - name: Verify search behavior and event measurement
+        run: node .github/search-quality-qa.mjs
+
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs
 

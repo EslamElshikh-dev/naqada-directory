@@ -68,7 +68,7 @@ export type ModeratorDashboard = {
   };
   daily: Array<{ date: string; visitors: number; views: number }>;
   topPages: Array<{ path: string; views: number }>;
-  missedSearches: Array<{ query: string; count: number }>;
+  missedSearches: Array<{ query: string; count: number; id?: string; variants?: string[] }>;
   businesses: Array<{
     id: string; owner_user_id: string; name: string; phone: string; hours: string;
     address: string; description: string; category: string; locality: string;

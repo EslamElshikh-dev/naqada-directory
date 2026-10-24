@@ -1,4 +1,5 @@
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
+import { groupSearchGaps } from '@/lib/search-gaps';
 
 export async function isDirectoryAdmin(accessToken: string) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/is_directory_admin`, {
@@ -103,7 +104,7 @@ export type DiscoveryInsights = {
   dailySeries: Array<{ date: string; visitors: number; newVisitors: number; views: number }>;
   topPages: Array<{ path: string; views: number; visitors: number }>;
   searchSummary: { total: number; missed: number };
-  missedSearches: Array<{ query: string; count: number; category: string | null; locality: string | null; lastSeenAt: string }>;
+  missedSearches: Array<{ query: string; count: number; category: string | null; locality: string | null; lastSeenAt: string; variants?: string[]; id?: string }>;
   formFunnel?: Array<{ stage: string; sessions: number; events: number }>;
 };
 
@@ -124,7 +125,7 @@ export async function getDiscoveryInsights(accessToken: string): Promise<Discove
   return {
     ...report,
     // Keep raw event totals intact, but don't propose unreadable legacy queries as content ideas.
-    missedSearches: report.missedSearches.filter((item) => item.query && !item.query.includes('\uFFFD')),
+    missedSearches: groupSearchGaps(report.missedSearches),
   };
 }
 

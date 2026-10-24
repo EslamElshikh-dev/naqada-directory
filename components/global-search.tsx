@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { trackCompletedSearch } from '@/lib/search-tracking';
 import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
 import assistStyles from './global-search-assist.module.css';
 
@@ -87,10 +88,10 @@ export function GlobalSearch() {
       }, 0);
       return () => window.clearTimeout(resetTimer);
     }
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
     const timer = window.setTimeout(async () => {
-      requestRef.current?.abort();
-      const controller = new AbortController();
-      requestRef.current = controller;
       setLoading(true);
       setError('');
       try {
@@ -99,11 +100,12 @@ export function GlobalSearch() {
         });
         const payload = await response.json().catch(() => ({})) as SearchResponse;
         if (!response.ok) throw new Error(payload.error || 'تعذر تنفيذ البحث الآن.');
+        if (controller.signal.aborted) return;
         setItems(Array.isArray(payload.items) ? payload.items : []);
         setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
         setActiveIndex(-1);
       } catch (cause) {
-        if ((cause as Error)?.name === 'AbortError') return;
+        if (controller.signal.aborted || (cause as Error)?.name === 'AbortError') return;
         setItems([]);
         setSuggestions([]);
         setError(cause instanceof Error ? cause.message : 'تعذر تنفيذ البحث الآن.');
@@ -111,10 +113,19 @@ export function GlobalSearch() {
         if (!controller.signal.aborted) setLoading(false);
       }
     }, 220);
-    return () => window.clearTimeout(timer);
+    return () => { window.clearTimeout(timer); controller.abort(); };
   }, [canSearch, open, trimmedQuery]);
 
+  function changeQuery(value: string) {
+    setQuery(value.slice(0, 100));
+    setItems([]);
+    setSuggestions([]);
+    setError('');
+    setActiveIndex(-1);
+  }
+
   function navigate(href: string) {
+    if (items.some((item) => item.href === href)) trackCompletedSearch({ query: trimmedQuery, results: items.length });
     setOpen(false);
     setActiveIndex(-1);
     router.push(href);
@@ -125,7 +136,7 @@ export function GlobalSearch() {
   }
 
   function applySuggestion(suggestion: SearchRecoverySuggestion) {
-    setQuery(suggestion.query);
+    changeQuery(suggestion.query);
     setSuggestions([]);
     setActiveIndex(-1);
     window.setTimeout(() => inputRef.current?.focus(), 0);
@@ -172,8 +183,8 @@ export function GlobalSearch() {
           <form className="global-search__form" role="search" onSubmit={submit}>
             <span className="global-search__field-icon"><SearchIcon /></span>
             <label className="sr-only" htmlFor="global-site-search">ابحث في الموقع</label>
-            <input ref={inputRef} id="global-site-search" value={query} onChange={(event) => setQuery(event.target.value.slice(0, 100))} onKeyDown={onInputKeyDown} placeholder="نشاط، خدمة، قرية، شخصية أو معلم…" autoComplete="off" inputMode="search" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} />
-            {query ? <button type="button" className="global-search__clear" onClick={() => setQuery('')}>مسح</button> : null}
+            <input ref={inputRef} id="global-site-search" value={query} onChange={(event) => changeQuery(event.target.value)} onKeyDown={onInputKeyDown} placeholder="نشاط، خدمة، قرية، شخصية أو معلم…" autoComplete="off" inputMode="search" aria-controls="global-search-results" aria-activedescendant={activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined} />
+            {query ? <button type="button" className="global-search__clear" onClick={() => changeQuery('')}>مسح</button> : null}
             <button type="submit" className="global-search__submit">ابحث</button>
           </form>
           <div className={`global-search__status${error ? ' is-error' : ''}`} aria-live="polite"><span>{status}</span>{canSearch && !loading && !error ? <small>Enter لعرض صفحة النتائج الموحدة</small> : null}</div>
