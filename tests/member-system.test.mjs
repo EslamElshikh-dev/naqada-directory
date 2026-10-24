@@ -66,9 +66,9 @@ test('member data is protected by RLS and explicit role grants', () => {
   assert.ok(migration.includes('(select auth.uid()) = user_id'));
 });
 
-test('the only seeded administrator is the approved owner email', () => {
-  assert.ok(migration.includes("'moqawel1215@gmail.com'"));
-  assert.equal((migration.match(/@gmail\.com/g) || []).length, 1);
+test('fresh member schema requires explicit administrator provisioning', () => {
+  assert.doesNotMatch(migration,/insert\s+into\s+public\.directory_admins/i);
+  assert.equal((migration.match(/@gmail\.com/g) || []).length, 0);
   assert.ok(migration.includes('public.is_directory_admin()'));
   assert.ok(migration.includes('public.get_naqada_admin_stats()'));
 });

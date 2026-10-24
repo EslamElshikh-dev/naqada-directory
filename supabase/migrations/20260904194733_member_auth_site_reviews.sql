@@ -29,9 +29,8 @@ create table if not exists public.directory_admins (
   created_at timestamptz not null default now()
 );
 
-insert into public.directory_admins (email, active)
-values ('moqawel1215@gmail.com', true)
-on conflict (email) do update set active = excluded.active;
+-- Do not copy a production account into a new environment. A trusted operator
+-- provisions the intended confirmed Auth account after this schema is installed.
 
 create index if not exists site_reviews_status_created_idx
   on public.site_reviews (status, created_at desc);

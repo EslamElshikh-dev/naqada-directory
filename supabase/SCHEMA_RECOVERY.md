@@ -39,6 +39,9 @@ is counted separately from the single publication notice.
 Run the full repository suite with `npm test`. Its existing CI also runs the
 new database test. No privileged account or contributor mapping is seeded by the
 restored contributor migration; provision trusted identities explicitly.
+The old member foundation migration also leaves its admin registry empty on new
+installs. An operator must explicitly enroll the intended confirmed Auth account.
+This does not remove, update or re-provision any existing production administrator.
 
 ## PostgreSQL 17 Auth and Data API acceptance
 

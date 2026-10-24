@@ -10,6 +10,7 @@ test('fresh database preserves explicit grants, contributor isolation and review
  try {
   const files=await replayMigrations(db);assert.ok(files.length>=30);
   await assertRls(db,23);
+  assert.equal((await db.query('select (select count(*) from public.directory_admins)+(select count(*) from public.directory_member_roles)+(select count(*) from public.directory_contributor_accounts) as privileged_seeds')).rows[0].privileged_seeds,0,'A fresh environment must not enroll production identities');
   // The server must be able to read the data used by the application's backend,
   // even when table creation supplies no automatic grants. Browser access and
   // the intentionally restricted intake role are exercised separately below.
