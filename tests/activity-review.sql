@@ -91,8 +91,16 @@ RESET ROLE;
 DO $$
 BEGIN
   IF (SELECT count(*) FROM public.directory_request_notifications
-    WHERE request_id=current_setting('naqada.review_publish')::uuid) <> 1 THEN
+    WHERE request_id=current_setting('naqada.review_publish')::uuid
+      AND request_kind='business' AND status='published') <> 1 THEN
     RAISE EXCEPTION 'duplicate publication notification';
+  END IF;
+  -- A separate missing-cover reminder may share the activity ID. It is not a
+  -- second publication notification, and retries must not duplicate it either.
+  IF (SELECT count(*) FROM public.directory_request_notifications
+    WHERE request_id=current_setting('naqada.review_publish')::uuid
+      AND request_kind='cover') <> 1 THEN
+    RAISE EXCEPTION 'missing or duplicate cover reminder';
   END IF;
   IF (SELECT count(*) FROM public.directory_moderator_audit
     WHERE target_id=current_setting('naqada.review_publish')) <> 1 THEN

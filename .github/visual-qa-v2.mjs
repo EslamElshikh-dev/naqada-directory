@@ -1,5 +1,6 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
+import { isolatedPage } from './qa-browser-page.mjs';
 
 const baseURL = 'http://127.0.0.1:3000';
 const routes = [
@@ -57,7 +58,7 @@ async function settlePage(page) {
 }
 
 async function inspectRoute(viewportName, width, height, routeName, path) {
-  const page = await browser.newPage({ viewport: { width, height } });
+  const page = await isolatedPage(browser, { viewport: { width, height } });
   const response = await page.goto(`${baseURL}${path}`, { waitUntil: 'networkidle' });
   await settlePage(page);
 
@@ -136,7 +137,7 @@ for (const [routeName, path] of routes.filter(([name]) => ['news-story', 'news-a
 }
 
 for (const [viewportName, width, height] of viewports) {
-  const page = await browser.newPage({ viewport: { width, height } });
+  const page = await isolatedPage(browser, { viewport: { width, height } });
   await page.goto(`${baseURL}/blog/bashlaw-today-quran-youth-education`, { waitUntil: 'networkidle' });
   await settlePage(page);
   const images = await page.evaluate(() => [...document.querySelectorAll('main#main-content article figure > img')].map((img) => {
@@ -173,7 +174,7 @@ for (const viewportName of ['mobile-390', 'mobile-430']) {
 
 // Sanad: a compact non-modal conversation integrated into the mobile navigation.
 for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390, 844], ['desktop', 1440, 1000]]) {
-  const page = await browser.newPage({ viewport: { width, height } });
+  const page = await isolatedPage(browser, { viewport: { width, height } });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
   const launcher = page.getByRole('button', { name: 'افتح محادثة سند، مساعد دليل نقادة' });
   const icon = await launcher.boundingBox();

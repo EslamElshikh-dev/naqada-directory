@@ -16,6 +16,7 @@ env:
 
 jobs:
   visual-qa:
+    # Playwright 1.55 supports Ubuntu 24.04; ubuntu-latest can move beyond it.
     runs-on: ubuntu-24.04
     timeout-minutes: 35
 
@@ -44,7 +45,7 @@ jobs:
 
       - name: Start production server
         run: |
-          npm run start > /tmp/naqada-next.log 2>&1 &
+          NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' npm run start > /tmp/naqada-next.log 2>&1 &
           echo $! > /tmp/naqada-next.pid
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
