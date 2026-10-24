@@ -48,9 +48,19 @@ try {
     assert.equal(events.length, 2);
     assert.ok(events[1].resultCount > 0);
     assert.equal(events[1].queryText, undefined);
+    await input.fill('كشير بسوبر ماركت');
+    const jobLink = page.getByRole('link', { name: 'افتح بحث الوظائف ←' });
+    await jobLink.waitFor({ state: 'visible' });
+    assert.equal(new URL(await jobLink.getAttribute('href'), baseURL).searchParams.get('q'), 'كاشير');
+    assert.equal(await page.getByRole('link', { name: 'اقترح نتيجة مفقودة' }).count(), 0, `${name}: job requests must not ask for a missing business`);
+    const jobSearch = page.waitForResponse((response) => response.url().includes('/directory-intake') && response.request().postDataJSON()?.eventType === 'search');
+    await input.press('Enter');
+    await jobSearch;
+    assert.equal(events.length, 3);
+    assert.equal(events[2].resultCount, 1);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
     assert.equal(overflow, false, `${name}: search controls must fit the viewport`);
-    report.push({ viewport: name, noKeystrokeEvents: true, submittedEvents: events.length, privateSuccessQuery: true, horizontalOverflow: overflow });
+    report.push({ viewport: name, noKeystrokeEvents: true, submittedEvents: events.length, directoryCashierRoute: true, privateSuccessQuery: true, horizontalOverflow: overflow });
     await page.close();
 
     const filterOnly = await isolatedPage({ width, height });

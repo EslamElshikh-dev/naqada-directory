@@ -8,6 +8,7 @@ import { hasBusinessMedia } from '@/lib/business-media';
 import { normalizeSearchFields, prepareSearchQuery, scoreNormalizedSearchFields } from '@/lib/search-ranking';
 import { trackEvent } from '@/lib/analytics-client';
 import { trackCompletedSearch } from '@/lib/search-tracking';
+import { jobSearchIntent } from '@/lib/job-search';
 import { isFamilySearchQuery, searchFamilyPages, type FamilySearchPage } from '@/lib/family-search';
 import { ListingCard } from './listing-card';
 import styles from './directory-explorer.module.css';
@@ -55,6 +56,7 @@ export function DirectoryExplorer({
   const [hydratedFromUrl, setHydratedFromUrl] = useState(false);
   const initialSearchTracked = useRef(false);
   const deferredQuery = useDeferredValue(query);
+  const jobResult = jobSearchIntent(deferredQuery);
   const familyResults = useMemo(() => !category && !locality ? searchFamilyPages(deferredQuery, familyPages) : [], [category, deferredQuery, familyPages, locality]);
   const pageSize = 12;
 
@@ -92,7 +94,7 @@ export function DirectoryExplorer({
   })), [businesses]);
 
   const rankedQueryMatches = useMemo(() => {
-    if (isFamilySearchQuery(deferredQuery)) return [];
+    if (isFamilySearchQuery(deferredQuery) || jobSearchIntent(deferredQuery)) return [];
     const intent = prepareSearchQuery(deferredQuery, localities.map((item) => item.name));
     const { normalizedQuery, tokens } = intent;
     return indexedBusinesses
@@ -147,6 +149,7 @@ export function DirectoryExplorer({
   }, [deferredQuery, rankedQueryMatches]);
 
   const categoryLabels = useMemo(() => new Map(categories.map((item) => [item.name, item.shortLabel])), [categories]);
+  const resultCount = filtered.length + familyResults.length + (jobResult ? 1 : 0);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(Math.max(page, 1), totalPages);
   const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -170,15 +173,15 @@ export function DirectoryExplorer({
     if (!hydratedFromUrl || initialSearchTracked.current || deferredQuery !== query) return;
     initialSearchTracked.current = true;
     if (query.trim().length >= 2) {
-      trackCompletedSearch({ query, results: filtered.length + familyResults.length, category, locality });
+      trackCompletedSearch({ query, results: resultCount, category, locality });
     }
-  }, [category, deferredQuery, familyResults.length, filtered.length, hydratedFromUrl, locality, query]);
+  }, [category, deferredQuery, hydratedFromUrl, locality, query, resultCount]);
 
   function recordSearch(nextCategory = category, nextLocality = locality) {
     if (query.trim().length < 2) return;
     // A submit can precede the deferred render. Count the submitted text and filters.
     const intent = prepareSearchQuery(query, localities.map((item) => item.name));
-    const count = isFamilySearchQuery(query) ? 0 : indexedBusinesses.filter(({ item, normalized }) =>
+    const count = jobSearchIntent(query) ? 1 : isFamilySearchQuery(query) ? 0 : indexedBusinesses.filter(({ item, normalized }) =>
       (!nextCategory || item.category === nextCategory)
       && (!nextLocality || (item.locality || 'مركز نقادة') === nextLocality)
       && scoreNormalizedSearchFields(normalized, intent.normalizedQuery, intent.tokens, intent) >= 0).length;
@@ -244,7 +247,7 @@ export function DirectoryExplorer({
               <strong>{trimmedQuery ? `«${trimmedQuery}»` : [categoryLabels.get(category) || category, locality].filter(Boolean).join(' · ')}</strong>
               <small>{category ? `القسم: ${categoryLabels.get(category) || category}` : 'كل الأقسام'} · {locality ? `المكان: ${locality}` : 'كل المناطق'} · الترتيب: {sort === 'recommended' ? 'الأكثر صلة' : sort === 'rating' ? 'الأعلى تقييمًا' : 'أبجديًا'}</small>
             </div>
-            <span className={styles.count}><b>{(filtered.length + familyResults.length).toLocaleString('ar-EG')}</b><small>نتيجة</small></span>
+            <span className={styles.count}><b>{resultCount.toLocaleString('ar-EG')}</b><small>نتيجة</small></span>
           </div>
 
           {trimmedQuery && (facets.categories.length > 1 || facets.localities.length > 1) ? (
@@ -271,16 +274,21 @@ export function DirectoryExplorer({
       ) : null}
 
       <div className="results-bar" aria-live="polite">
-        <div><strong>{(filtered.length + familyResults.length).toLocaleString('ar-EG')}</strong><span> نتيجة مطابقة</span></div>
+        <div><strong>{resultCount.toLocaleString('ar-EG')}</strong><span> نتيجة مطابقة</span></div>
         {(query || (!lockedCategory && category) || (!lockedLocality && locality)) && <button type="button" onClick={reset}>مسح الفلاتر</button>}
       </div>
+
+      {jobResult ? <section className={styles.context} aria-label="مسار البحث عن وظائف">
+        <div className={styles.contextCopy}><span>الطلب يخص قسم الوظائف</span><strong>{jobResult.title}</strong><small>{jobResult.subtitle}</small></div>
+        <div className="detail-actions"><Link prefetch={false} href={jobResult.href} className="button button--primary" onClick={() => recordSearch()}>افتح بحث الوظائف ←</Link></div>
+      </section> : null}
 
       {familyResults.length ? <section className={styles.context} aria-label="نتائج سجل العائلات">
         <div className={styles.contextCopy}><span>من سجل العائلات</span><strong>نتائج موثقة بحسب الموضع</strong><small>السجل جزئي؛ افتح النتيجة لمراجعة المصدر وحدود الدليل.</small></div>
         <div className="detail-actions">{familyResults.map((item) => <Link prefetch={false} key={item.href} href={item.href} className="button button--ghost" onClick={() => recordSearch()}>{item.title} ←</Link>)}</div>
       </section> : null}
 
-      {visible.length ? <div className="listing-grid" onClickCapture={(event) => { if ((event.target as Element).closest('a')) recordSearch(); }}>{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : familyResults.length ? null : <div className="empty-state"><strong>{filterConflict ? 'العبارة موجودة لكن الفلاتر ضيّقت النتائج أكثر من اللازم' : 'لا توجد نتيجة مطابقة'}</strong><p>{filterConflict ? 'وسّع المكان أو القسم مع الاحتفاظ بعبارة البحث، وستظهر النتائج المطابقة المتاحة.' : 'جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.'}</p>{filterConflict ? <div className={styles.recovery}>{category && !lockedCategory ? <button type="button" onClick={() => { setCategory(''); setPage(1); }}>إزالة فلتر القسم</button> : null}{locality && !lockedLocality ? <button type="button" onClick={() => { setLocality(''); setPage(1); }}>إزالة فلتر المكان</button> : null}{category && locality && (!lockedCategory || !lockedLocality) ? <button type="button" onClick={clearResultFilters}>عرض كل نتائج العبارة</button> : null}</div> : null}<div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link prefetch={false} className="button button--ghost" href={missingHref} onClick={() => { recordSearch(); trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' }); }}>اقترح نتيجة مفقودة</Link></div></div>}
+      {visible.length ? <div className="listing-grid" onClickCapture={(event) => { if ((event.target as Element).closest('a')) recordSearch(); }}>{visible.map((item) => <ListingCard key={item.id} listing={item} />)}</div> : (familyResults.length || jobResult) ? null : <div className="empty-state"><strong>{filterConflict ? 'العبارة موجودة لكن الفلاتر ضيّقت النتائج أكثر من اللازم' : 'لا توجد نتيجة مطابقة'}</strong><p>{filterConflict ? 'وسّع المكان أو القسم مع الاحتفاظ بعبارة البحث، وستظهر النتائج المطابقة المتاحة.' : 'جرّب اسمًا أقصر أو اختر منطقة وتصنيفًا مختلفين. وإذا كانت الخدمة أو النشاط غير موجودين، أخبرنا بما تبحث عنه.'}</p>{filterConflict ? <div className={styles.recovery}>{category && !lockedCategory ? <button type="button" onClick={() => { setCategory(''); setPage(1); }}>إزالة فلتر القسم</button> : null}{locality && !lockedLocality ? <button type="button" onClick={() => { setLocality(''); setPage(1); }}>إزالة فلتر المكان</button> : null}{category && locality && (!lockedCategory || !lockedLocality) ? <button type="button" onClick={clearResultFilters}>عرض كل نتائج العبارة</button> : null}</div> : null}<div className="detail-actions"><button className="button button--primary" onClick={reset} type="button">إعادة الضبط</button><Link prefetch={false} className="button button--ghost" href={missingHref} onClick={() => { recordSearch(); trackEvent('Missing Result Contribution Intent', { hasQuery: Boolean(query), locality: locality || 'all', category: category || 'all' }); }}>اقترح نتيجة مفقودة</Link></div></div>}
 
       {totalPages > 1 && <nav className="pagination" aria-label="صفحات النتائج">
         {currentPage > 1
