@@ -16,8 +16,10 @@ import { editorialPostsBatch4A } from './editorial-posts-batch-4a';
 import { editorialPostsBatch4B } from './editorial-posts-batch-4b';
 import { enrichEditorialPostImages } from './editorial-post-image-enrichment';
 import { alYounesPost } from './editorial-post-al-younes';
+import { naqadaCivilizationPost } from './editorial-post-naqada-civilization';
 
 const baseEditorialPosts = [
+  naqadaCivilizationPost,
   alYounesPost,
   ...firstEditorialPosts,
   ...editorialPostsBatch2A,
