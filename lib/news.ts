@@ -419,7 +419,7 @@ const expandedNewsBody = unstable_cache(async (url: string, title: string, descr
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'openai/gpt-6-luna',
+      model: 'google/gemini-2.5-flash-lite',
       stream: false,
       max_tokens: 1200,
       // This is a short rewrite, matching the previous non-reasoning model.
@@ -454,7 +454,7 @@ const expandedNewsBody = unstable_cache(async (url: string, title: string, descr
     return null;
   }
   return brief;
-}, ['news-factual-brief-v5'], { revalidate: 60 * 60 * 24 });
+}, ['news-factual-brief-v6'], { revalidate: 60 * 60 * 24 });
 
 export async function getExpandedNewsBody(item: ExternalNewsItem): Promise<string | null> {
   if (item.isOriginal || item.editorialBody || !(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN)) return null;

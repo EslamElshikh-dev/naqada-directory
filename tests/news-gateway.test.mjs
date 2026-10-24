@@ -50,7 +50,7 @@ test('news generation uses the replacement with bounded non-reasoning output and
   assert.equal(await news.getExpandedNewsBody(item), brief);
   assert.equal(calls.length, 2);
   const request = JSON.parse(calls[1].init.body);
-  assert.equal(request.model, 'openai/gpt-6-luna');
+  assert.equal(request.model, 'google/gemini-2.5-flash-lite');
   assert.equal(request.reasoning_effort, 'none');
   assert.equal(request.max_tokens, 1200);
   assert.equal(request.temperature, 0.2);
@@ -82,7 +82,7 @@ test('original stories, unavailable credentials, and insufficient source materia
 });
 
 test('provider failures preserve the existing source preview without retries or secret logging', async () => {
-  for (const status of [400, 401, 402, 404, 429, 503]) {
+  for (const status of [400, 401, 402, 403, 404, 429, 503]) {
     const { news, calls, warnings } = harness({ status });
     assert.equal(await news.getExpandedNewsBody(item), null);
     assert.equal(calls.length, 2);
