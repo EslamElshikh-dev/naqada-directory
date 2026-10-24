@@ -214,13 +214,13 @@ function editDistanceAtMostOne(a: string, b: string) {
   return true;
 }
 
-function displayToken(token: string) {
-  return vocabulary.get(token)?.display || token;
+function displayToken(token: string, activeVocabulary = vocabulary) {
+  return activeVocabulary.get(token)?.display || token;
 }
 
-function spellingCandidate(token: string) {
-  if (token.length < 4 || vocabulary.has(token)) return null;
-  const candidates = [...vocabulary.values()]
+function spellingCandidate(token: string, activeVocabulary = vocabulary) {
+  if (token.length < 4 || activeVocabulary.has(token)) return null;
+  const candidates = [...activeVocabulary.values()]
     .filter((entry) => entry.normalized[0] === token[0] && editDistanceAtMostOne(token, entry.normalized))
     .sort((a, b) => b.frequency - a.frequency || a.display.localeCompare(b.display, 'ar'));
   return candidates[0] || null;
@@ -230,14 +230,7 @@ export function sanitizeSiteSearchQuery(value?: string | null) {
   return (value || '').trim().replace(/\s+/g, ' ').slice(0, 100);
 }
 
-export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[], currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }): SiteSearchResult[] {
-  const query = sanitizeSiteSearchQuery(value);
-  if (query.length < 2) return [];
-
-  const intent = prepareSearchQuery(query, localities.map((item) => item.name));
-  const { normalizedQuery, tokens } = intent;
-  const seen = new Set<string>();
-  const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
+function activeSearchIndex(currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }) {
   let activeIndex = currentBusinesses ? [
     ...searchIndex.filter((item) => item.kind !== 'listing'),
     ...currentBusinesses.map((item) => indexItem({
@@ -256,6 +249,18 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
     ...currentContent.people.map(person => indexItem({ kind: 'role-model', title: person.name, subtitle: person.shortTitle + ' · ' + person.locality, href: '/role-models/' + person.slug, badge: 'نموذج مشرف', fields: { title: person.name, locality: person.locality, category: 'نماذج مشرفة', auxiliary: [person.description, ...(person.alternateNames || [])].join(' ') } })),
     ...currentContent.posts.map(post => indexItem({ kind: 'page', title: post.title, subtitle: post.description, href: '/blog/' + post.slug, badge: 'مقال', fields: { title: post.title, locality: post.locality, category: post.category, auxiliary: post.keywords.join(' ') } })),
   ];
+  return activeIndex;
+}
+
+export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearchKind[], currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }): SiteSearchResult[] {
+  const query = sanitizeSiteSearchQuery(value);
+  if (query.length < 2) return [];
+
+  const intent = prepareSearchQuery(query, localities.map((item) => item.name));
+  const { normalizedQuery, tokens } = intent;
+  const seen = new Set<string>();
+  const allowedKinds = kinds?.length ? new Set<SiteSearchKind>(kinds) : null;
+  const activeIndex = activeSearchIndex(currentBusinesses, currentContent);
   const familyIntent = isFamilySearchQuery(query);
   const searchableIndex = activeIndex.filter((item) =>
     (!allowedKinds || allowedKinds.has(item.kind))
@@ -280,28 +285,29 @@ export function searchSite(value: string, limit = 8, kinds?: readonly SiteSearch
     : rankedResults;
 }
 
-export function recoverSiteSearch(value: string, kinds?: readonly SiteSearchKind[], limit = 4): SearchRecoverySuggestion[] {
+export function recoverSiteSearch(value: string, kinds?: readonly SiteSearchKind[], limit = 4, currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }): SearchRecoverySuggestion[] {
   const query = sanitizeSiteSearchQuery(value);
-  if (query.length < 2 || searchSite(query, 1, kinds).length) return [];
+  if (query.length < 2 || searchSite(query, 1, kinds, currentBusinesses, currentContent).length) return [];
 
   const { tokens } = prepareSearchQuery(query);
   if (!tokens.length) return [];
 
+  const activeVocabulary = currentBusinesses || currentContent ? buildVocabulary(activeSearchIndex(currentBusinesses, currentContent)) : vocabulary;
   const suggestions = new Map<string, SearchRecoverySuggestion>();
   const safeLimit = Math.max(1, Math.min(limit, 6));
 
   const correctedTokens = [...tokens];
   let corrected = false;
   for (let index = 0; index < correctedTokens.length; index += 1) {
-    const candidate = spellingCandidate(correctedTokens[index]);
+    const candidate = spellingCandidate(correctedTokens[index], activeVocabulary);
     if (!candidate) continue;
     correctedTokens[index] = candidate.normalized;
     corrected = true;
   }
 
   if (corrected) {
-    const correctedQuery = correctedTokens.map(displayToken).join(' ');
-    const correctedResults = searchSite(correctedQuery, Number.MAX_SAFE_INTEGER, kinds);
+    const correctedQuery = correctedTokens.map((token) => displayToken(token, activeVocabulary)).join(' ');
+    const correctedResults = searchSite(correctedQuery, Number.MAX_SAFE_INTEGER, kinds, currentBusinesses, currentContent);
     if (correctedResults.length) {
       suggestions.set(normalizeArabic(correctedQuery), {
         query: correctedQuery,
@@ -312,11 +318,14 @@ export function recoverSiteSearch(value: string, kinds?: readonly SiteSearchKind
   }
 
   if (tokens.length > 1) {
+    const optionalDescriptors = new Set(['مركز', 'مراكز', 'سنتر']);
     for (let droppedIndex = 0; droppedIndex < tokens.length; droppedIndex += 1) {
+      // Never drop a name, service, trade, or locality just to produce results.
+      if (!optionalDescriptors.has(tokens[droppedIndex])) continue;
       const relaxedTokens = tokens.filter((_, index) => index !== droppedIndex);
       if (!relaxedTokens.length) continue;
-      const relaxedQuery = relaxedTokens.map(displayToken).join(' ');
-      const relaxedResults = searchSite(relaxedQuery, Number.MAX_SAFE_INTEGER, kinds);
+      const relaxedQuery = relaxedTokens.map((token) => displayToken(token, activeVocabulary)).join(' ');
+      const relaxedResults = searchSite(relaxedQuery, Number.MAX_SAFE_INTEGER, kinds, currentBusinesses, currentContent);
       if (!relaxedResults.length) continue;
       const key = normalizeArabic(relaxedQuery);
       if (!suggestions.has(key)) {

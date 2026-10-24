@@ -10,6 +10,12 @@ test('fresh database preserves explicit grants, contributor isolation and review
  try {
   const files=await replayMigrations(db);assert.ok(files.length>=30);
   await assertRls(db,23);
+  // The server must be able to read the data used by the application's backend,
+  // even when table creation supplies no automatic grants. Browser access and
+  // the intentionally restricted intake role are exercised separately below.
+  for(const table of ['member_profiles','site_reviews','directory_admins','analytics_pageviews','analytics_visitors','directory_member_roles','directory_member_state','directory_moderator_audit','directory_owner_listings','directory_curated_content','directory_request_notifications','naqada_sanad_interactions']) {
+   await asRole(db,'service_role',null,`select * from public.${table} limit 0`);
+  }
   const owner='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002',gold='10000000-0000-4000-8000-000000000003',admin='10000000-0000-4000-8000-000000000004';
   for(const [id,email,name] of [[owner,'owner@example.invalid','Synthetic owner'],[other,'other@example.invalid','Synthetic other'],[gold,'editor@example.invalid','Synthetic editor'],[admin,'admin@example.invalid','Synthetic admin']]) {
    await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,email,JSON.stringify({full_name:name})]);

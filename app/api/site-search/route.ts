@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const quickItems = context
       ? [context, ...items.filter((item) => item.href !== context.href)].slice(0, 8)
       : items;
-    const suggestions = quickItems.length ? [] : recoverSiteSearch(query, undefined, 2);
+    const suggestions = quickItems.length ? [] : recoverSiteSearch(query, undefined, 2, catalog.businesses, { people, posts });
     return NextResponse.json({ items: quickItems, suggestions }, { headers: cacheHeaders });
   } catch {
     console.warn('public_search_unavailable');

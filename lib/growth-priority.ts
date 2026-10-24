@@ -2,9 +2,11 @@ import { businesses, canonicalLocalityName, categories, officialLocalities } fro
 import { searchSite } from '@/lib/site-search';
 import { isFamilySearchQuery } from '@/lib/family-search';
 import { getSearchGapResearch } from '@/lib/search-gap-research';
+import { jobSearchIntent } from '@/lib/job-search';
+import { groupSearchGaps, searchGapKey, type MissedSearch, type SearchGapContext } from '@/lib/search-gaps';
 import type { Business } from '@/lib/types';
 
-export type MissedSearch = { query: string; count: number; variants?: string[] };
+export type { MissedSearch } from '@/lib/search-gaps';
 
 export type GrowthPriority = {
   id: string;
@@ -153,23 +155,13 @@ function searchIntent(query: string) {
 }
 
 function groupOpenSearches(items: MissedSearch[]) {
-  const grouped = new Map<string, MissedSearch>();
-  for (const item of items) {
-    const query = searchIntent(item.query);
-    const key = normalizeArabic(query);
-    const current = grouped.get(key);
-    if (current) {
-      current.count += item.count;
-      current.variants?.push(item.query);
-    } else grouped.set(key, { query, count: item.count, variants: [item.query] });
-  }
-  return [...grouped.values()];
+  return groupSearchGaps(items.map((item) => ({ ...item, locality: item.locality && !['all', 'unspecified'].includes(item.locality) ? item.locality : inferLocality(item.query)?.name, query: searchIntent(item.query), variants: item.variants || [item.query] })));
 }
 
 function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const query = item.query.trim();
-  const locality = inferLocality(query);
-  const category = inferCategory(query);
+  const locality = (item.locality ? localityStats.find((place) => place.name === canonicalLocalityName(item.locality!)) : null) || inferLocality(query);
+  const category = (item.category ? categories.find((category) => category.name === item.category) : null) || inferCategory(query);
   const localityCount = locality?.count || 0;
   const pairCount = locality && category ? localCategoryCount(locality.name, category.name) : null;
   // A real zero-result search must always outrank a coverage-only suggestion.
@@ -178,7 +170,7 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const pairGap = pairCount === null ? 0 : pairCount === 0 ? 22 : pairCount === 1 ? 14 : pairCount === 2 ? 8 : 0;
   const specificity = locality && category ? 8 : locality || category ? 4 : 0;
   const score = Math.min(100, demand + pairGap + (locality ? localityWeakness(localityCount) : 0) + specificity);
-  const signals = [`${item.count.toLocaleString('ar-EG')} بحث دون نتيجة`];
+  const signals = [`${item.count.toLocaleString('ar-EG')} حدث بحث دون نتيجة؛ العدد لا يمثل أشخاصًا مختلفين`];
   if (item.variants && item.variants.length > 1) signals.push(`${item.variants.length.toLocaleString('ar-EG')} صياغات لنفس الطلب: ${item.variants.slice(0, 3).join('، ')}`);
   if (locality) signals.push(`${localityCount.toLocaleString('ar-EG')} سجلًا منشورًا في ${locality.name}`);
   if (category && pairCount !== null) signals.push(`${pairCount.toLocaleString('ar-EG')} من فئة ${category.shortLabel} داخل الموضع`);
@@ -187,7 +179,7 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   if (research) signals.push(`المطلوب للتحقق: ${research.needed}`);
 
   return {
-    id: `search:${normalizeArabic(query)}`,
+    id: `search:${searchGapKey(item)}`,
     source: 'search',
     title: query,
     query,
@@ -247,19 +239,41 @@ function buildCoveragePriorities(): GrowthPriority[] {
     }));
 }
 
-export function isSearchGapOpen(query: string, currentBusinesses?: Business[]) {
+export function searchGapMatches(query: string, currentBusinesses?: Business[], context: SearchGapContext = {}, limit = 6) {
   // Historic zero-result events remain in analytics, even after a listing is published.
   // Families belong to the dedicated registry, rather than the business catalog.
   if (isFamilySearchQuery(query)) {
-    return !searchSite(query, 20, ['page']).some((item) => item.href === '/families' || item.href.startsWith('/families?'));
+    const familyQuery = context.locality && context.locality !== 'all' ? `${query} ${context.locality}` : query;
+    return searchSite(familyQuery, limit, ['page']).filter((item) => item.href === '/families' || item.href.startsWith('/families?'));
   }
-  return searchSite(query, 1, ['listing'], currentBusinesses).length === 0;
+  // A jobs route handles the request; it is not a lead for adding a shop to the directory.
+  // This says nothing about the availability of a matching job advertisement.
+  const jobIntent = jobSearchIntent(query);
+  if (jobIntent) return [jobIntent];
+  const scoped = (currentBusinesses || businesses).filter((item) => {
+    const category = categories.some((category) => category.name === context.category) ? context.category : null;
+    if (category && item.category !== category) return false;
+    if (context.locality && context.locality !== 'all' && context.locality !== 'unspecified'
+      && canonicalLocalityName(item.locality || 'مركز نقادة') !== canonicalLocalityName(context.locality)) return false;
+    return true;
+  });
+  if (context.category === 'places') return searchSite(query, limit, ['locality', 'landmark']);
+  if (context.category === 'knowledge') return searchSite(query, limit, ['knowledge-place', 'knowledge-person', 'knowledge-heritage', 'role-model']);
+  return searchSite(query, limit, ['listing'], scoped);
+}
+
+export function isSearchGapOpen(query: string, currentBusinesses?: Business[], context: SearchGapContext = {}) {
+  return searchGapMatches(query, currentBusinesses, context, 1).length === 0;
+}
+
+export function getOpenSearchGaps<T extends MissedSearch>(items: readonly T[], currentBusinesses?: Business[]) {
+  return groupSearchGaps(items.filter((item) => isSearchGapOpen(item.query, currentBusinesses, item)));
 }
 
 export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18, currentBusinesses?: Business[]) {
   const openSearches = missedSearches
     .filter((item) => item.query.trim() && item.count > 0)
-    .filter((item) => isSearchGapOpen(item.query, currentBusinesses));
+    .filter((item) => isSearchGapOpen(item.query, currentBusinesses, item));
   const searchItems = groupOpenSearches(openSearches).map(buildSearchPriority);
 
   const searchPairs = new Set(searchItems
@@ -277,7 +291,7 @@ export function buildGrowthPriorities(missedSearches: MissedSearch[], limit = 18
       missedSearchTerms: openSearches.length,
       missedSearchVolume: searchItems.reduce((sum, item) => sum + item.demandCount, 0),
       openIntents: searchItems.length,
-      resolvedTerms: missedSearches.filter((item) => item.query.trim() && item.count > 0 && !isSearchGapOpen(item.query, currentBusinesses)).length,
+      resolvedTerms: missedSearches.filter((item) => item.query.trim() && item.count > 0 && !isSearchGapOpen(item.query, currentBusinesses, item)).length,
       demandBacked: items.filter((item) => item.source === 'search').length,
       coverageOnly: items.filter((item) => item.source === 'coverage').length,
       weakLocalities: localityStats.filter((item) => item.count < 3).length,
