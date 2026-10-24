@@ -189,3 +189,24 @@
  .facetList button, .recovery button { min-height: 44px; font-size: .875rem; line-height: 1.8; }
  .facetList small { font-size: .75rem; }
 }
+.searchSubmit {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #2b7277;
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.searchSubmit:focus-visible {
+  outline: 3px solid #b66f34;
+  outline-offset: 3px;
+}
+
+.searchForm:global(.search-field) {
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+}

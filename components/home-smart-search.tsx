@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/lib/analytics-client';
+import { trackCompletedSearch } from '@/lib/search-tracking';
 import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
 import styles from './home-smart-search.module.css';
 
@@ -98,10 +99,10 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
       return () => window.clearTimeout(resetTimer);
     }
 
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
     const timer = window.setTimeout(async () => {
-      requestRef.current?.abort();
-      const controller = new AbortController();
-      requestRef.current = controller;
       setLoading(true);
       setError('');
 
@@ -111,12 +112,13 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
         });
         const payload = await response.json().catch(() => ({})) as SearchResponse;
         if (!response.ok) throw new Error(payload.error || 'تعذر تنفيذ البحث الآن.');
+        if (controller.signal.aborted) return;
         setItems(Array.isArray(payload.items) ? payload.items.slice(0, 5) : []);
         setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
         setActiveIndex(-1);
         setOpen(true);
       } catch (cause) {
-        if ((cause as Error)?.name === 'AbortError') return;
+        if (controller.signal.aborted || (cause as Error)?.name === 'AbortError') return;
         setItems([]);
         setSuggestions([]);
         setError(cause instanceof Error ? cause.message : 'تعذر تنفيذ البحث الآن.');
@@ -126,10 +128,19 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
       }
     }, 220);
 
-    return () => window.clearTimeout(timer);
+    return () => { window.clearTimeout(timer); controller.abort(); };
   }, [canSearch, trimmedQuery]);
 
+  function changeQuery(value: string) {
+    setQuery(value.slice(0, 100));
+    setItems([]);
+    setSuggestions([]);
+    setError('');
+    setActiveIndex(-1);
+  }
+
   function navigate(href: string) {
+    if (items.some((item) => item.href === href)) trackCompletedSearch({ query: trimmedQuery, results: items.length });
     setOpen(false);
     setActiveIndex(-1);
     router.push(href);
@@ -145,7 +156,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
   }
 
   function applySuggestion(suggestion: SearchRecoverySuggestion) {
-    setQuery(suggestion.query);
+    changeQuery(suggestion.query);
     setSuggestions([]);
     setActiveIndex(-1);
     setOpen(true);
@@ -200,7 +211,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           name="q"
           role="combobox"
           value={query}
-          onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setOpen(true); }}
+          onChange={(event) => { changeQuery(event.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="ابحث باسم خدمة أو نشاط أو قرية…"
@@ -212,7 +223,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           aria-activedescendant={canSearch && activeIndex >= 0 ? `home-search-result-${activeIndex}` : undefined}
           aria-autocomplete={canSearch ? 'list' : undefined}
         />
-        {query ? <button type="button" className={styles.clear} onClick={() => { setQuery(''); setOpen(true); }}>مسح</button> : null}
+        {query ? <button type="button" className={styles.clear} onClick={() => { changeQuery(''); setOpen(true); }}>مسح</button> : null}
         <button type="submit"><span>ابحث</span><b aria-hidden="true">←</b></button>
       </form>
 

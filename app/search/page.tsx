@@ -141,7 +141,7 @@ export default async function SearchPage({ searchParams }: Props) {
     .map((group) => ({ ...group, items: results.filter((item) => group.kinds.includes(item.kind)) }))
     .filter((group) => group.items.length > 0);
   const recoverySuggestions = canSearch && !scopedResults.length && !jobIntent
-    ? recoverSiteSearch(query, activeOption.kinds, 4)
+    ? recoverSiteSearch(query, activeOption.kinds, 4, catalog.businesses, { people, posts })
     : [];
   const normalizedQuery = normalizeArabic(query);
   const isWholesaleHomeware = canSearch
@@ -156,7 +156,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <main id="main-content" className="page-main">
-      {canSearch ? <SearchAnalytics query={query} count={allResults.length} scope={activeScope} /> : null}
+      {canSearch ? <SearchAnalytics query={query} count={scopedResults.length} scope={activeScope} /> : null}
       <section className={styles.hero}>
         <div className={`shell ${styles.heroGrid}`}>
           <div>

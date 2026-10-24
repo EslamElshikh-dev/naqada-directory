@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { canModerate, getEditorContent, getModeratorDashboard } from '@/lib/auth/moderator';
 import { isDirectoryAdmin } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { getOpenSearchGaps } from '@/lib/growth-priority';
 import { ModeratorWorkspace } from './workspace';
 import styles from './workspace.module.css';
 
@@ -13,11 +15,13 @@ export const metadata: Metadata = { title: 'مساحة الإشراف | دليل
 export default async function ModeratorPage() {
   const session = await resolveSession(false);
   if (!session || !(await canModerate(session.accessToken))) redirect('/account');
-  const [dashboard, content, isAdmin] = await Promise.all([
+  const [rawDashboard, content, isAdmin, catalog] = await Promise.all([
     getModeratorDashboard(session.accessToken),
     getEditorContent(session.accessToken),
     isDirectoryAdmin(session.accessToken),
+    getPublicBusinessCatalog().catch(() => null),
   ]);
+  const dashboard = { ...rawDashboard, missedSearches: getOpenSearchGaps(rawDashboard.missedSearches, catalog?.businesses) };
   return (
     <main id="main-content" className={styles.page}>
       <div className={styles.shell}>

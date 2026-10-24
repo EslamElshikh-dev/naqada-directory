@@ -2,7 +2,8 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { MemberAvatar } from '@/components/auth/member-avatar';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
-import { isSearchGapOpen } from '@/lib/growth-priority';
+import { getOpenSearchGaps } from '@/lib/growth-priority';
+import { searchGapContextLabel } from '@/lib/search-gaps';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { businesses, categories, localities } from '@/lib/data';
@@ -23,12 +24,13 @@ export const metadata: Metadata = { title: 'لوحة إدارة الدليل', r
 export const dynamic = 'force-dynamic';
 
 const eventLabels: Record<string, string> = {
-  search: 'عمليات البحث', zero_results: 'بحث دون نتائج', listing_call: 'ضغطات الاتصال',
+  search: 'بحث بنتيجة', zero_results: 'بحث دون نتائج', listing_call: 'ضغطات الاتصال',
   listing_whatsapp: 'فتح واتساب', listing_map: 'فتح الخرائط', listing_share: 'مشاركة نشاط',
-  contribution_prepare: 'بدء مساهمة', contribution_copy: 'نسخ مساهمة', contribution_share: 'مشاركة طلب',
+  contribution_prepare: 'تجهيز مساهمة', contribution_copy: 'نسخ مساهمة', contribution_share: 'مشاركة طلب',
   contribution_contact: 'التواصل للإضافة',
+  contribution_submitted: 'مساهمة مُرسلة',
   registration_start: 'بدء كتابة التسجيل', registration_submit: 'إرسال التسجيل', registration_created: 'قبول طلب التسجيل', registration_error: 'خطأ في التسجيل', confirmation_resend: 'إعادة إرسال التأكيد',
-  owner_form_start: 'بدء بيانات النشاط', owner_form_submit: 'إرسال بيانات النشاط', owner_form_saved: 'حفظ النشاط للمراجعة', owner_form_error: 'خطأ في حفظ النشاط', owner_photo_error: 'خطأ في رفع الصور',
+  owner_form_start: 'بدء بيانات النشاط', owner_form_submit: 'محاولة إرسال بيانات النشاط', owner_form_saved: 'حفظ النشاط للمراجعة', owner_form_error: 'خطأ في حفظ النشاط', owner_photo_error: 'خطأ في رفع الصور',
 };
 
 function format(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
@@ -70,8 +72,8 @@ function MetricIcon({ name }: { name: 'people' | 'spark' | 'eye' | 'member' }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
-function RankList({ items, max, type }: { items: Array<{ label: string; value: number; detail: string }>; max: number; type: string }) {
-  return <div className="admin-rank-list">{items.length ? items.map((item, index) => <div className="admin-rank-row" key={`${type}-${item.label}`}><div><span>{(index + 1).toLocaleString('ar-EG')}</span><p><strong>{item.label}</strong><small>{item.detail}</small></p><b>{format(item.value)}</b></div><i><span style={{ width: `${Math.max(7, (item.value / Math.max(1, max)) * 100)}%` }} /></i></div>) : <div className="admin-empty">ستظهر البيانات هنا بعد بدء الزيارات.</div>}</div>;
+function RankList({ items, max, type }: { items: Array<{ id?: string; label: string; value: number; detail: string }>; max: number; type: string }) {
+  return <div className="admin-rank-list">{items.length ? items.map((item, index) => <div className="admin-rank-row" key={`${type}-${item.id || `${item.label}-${item.detail}`}`}><div><span>{(index + 1).toLocaleString('ar-EG')}</span><p><strong>{item.label}</strong><small>{item.detail}</small></p><b>{format(item.value)}</b></div><i><span style={{ width: `${Math.max(7, (item.value / Math.max(1, max)) * 100)}%` }} /></i></div>) : <div className="admin-empty">ستظهر البيانات هنا بعد بدء الزيارات.</div>}</div>;
 }
 
 function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsights, pending: number) {
@@ -79,7 +81,7 @@ function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsig
   const result: Array<{ title: string; text: string; priority: string }> = [];
   if (!totals.lifetimeVisitors) result.push({ title: 'بدأ نظام القياس الآن', text: 'اترك النظام يجمع بيانات فعلية لعدة أيام، ثم قارن الجدد بالعائدين وأعلى الصفحات.', priority: 'بدء' });
   const missedRate = discovery.searchSummary.total ? discovery.searchSummary.missed / discovery.searchSummary.total : 0;
-  if (discovery.searchSummary.total >= 10 && missedRate >= .15) result.push({ title: 'بحث بلا نتيجة متكرر', text: `${percentage(missedRate * 100)} من البحث المكتمل خلال ٣٠ يومًا لم يجد نتيجة. ابدأ بأكثر العبارات تكرارًا، وصنّف الفجوات حسب القرية والخدمة قبل جمع البيانات.`, priority: 'عاجل' });
+  if (discovery.searchSummary.total >= 10 && missedRate >= .15) result.push({ title: 'بحث بلا نتيجة متكرر', text: `${percentage(missedRate * 100)} من أحداث البحث المسجلة خلال ٣٠ يومًا لم يجد نتيجة. ابدأ بأكثر العبارات تكرارًا، وصنّف الفجوات حسب القرية والخدمة قبل جمع البيانات.`, priority: 'عاجل' });
   const pagesPerVisitor = totals.uniqueVisitors30d ? totals.pageViews30d / totals.uniqueVisitors30d : 0;
   if (pagesPerVisitor > 0 && pagesPerVisitor < 1.5) result.push({ title: 'قوِّ الانتقال بين الصفحات', text: 'متوسط الصفحات لكل زائر منخفض؛ أضف روابط أنشطة مشابهة ومسارات تالية أوضح داخل صفحة النشاط.', priority: 'تجربة' });
   const leadingPage = discovery.topPages[0];
@@ -115,7 +117,7 @@ export default async function AdminPage() {
   const rawDiscovery = discoveryResult || emptyDiscoveryInsights;
   const discovery = {
     ...rawDiscovery,
-    missedSearches: rawDiscovery.missedSearches.filter((item) => isSearchGapOpen(item.query, catalog?.businesses)),
+    missedSearches: getOpenSearchGaps(rawDiscovery.missedSearches, catalog?.businesses),
   };
   const totals = analytics.totals;
   const reviewed = businesses.filter((item) => item.checked).length;
@@ -158,7 +160,7 @@ export default async function AdminPage() {
 
         <section className="admin-section" id="recommendations"><header><div><span>قرارات قابلة للتنفيذ</span><h2>مقترحات التحسين</h2><p>تتغير هذه الأولويات تلقائيًا حسب سلوك الزوار وجودة البيانات.</p></div></header><div className="admin-recommendations">{!suggestions.length ? <p className="admin-data-warning">مقترحات التحسين متاحة بعد اكتمال تحميل بيانات القياس.</p> : null}{suggestions.map((item, index) => <article key={item.title}><span>{item.priority}</span><b>{String(index + 1).padStart(2, '0')}</b><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
 
-        <section className="admin-section" id="operations"><header><div><span>نبض التشغيل</span><h2>الأعضاء والتفاعل وجودة الدليل</h2></div><small>{analytics.generatedAt ? `آخر تجميع ${timeLabel(analytics.generatedAt)}` : 'بدأ التجميع الآن'}</small></header><div className="admin-stats admin-stats--expanded"><article><span>الأنشطة المنشورة</span><strong>{publishedCount}</strong><small>داخل {format(categories.length)} قسمًا</small></article><article><span>إجمالي الأعضاء</span><strong>{memberCount}</strong><small>{analyticsResult ? `${format(totals.members7d)} جدد خلال ٧ أيام` : 'من سجلات الأعضاء'}</small></article><article><span>تقييم الموقع</span><strong>{statsResult && stats.siteReviews ? `${stats.siteRating}/5` : '—'}</strong><small>{statsResult ? `${format(stats.siteReviews)} تقييمات` : 'البيانات غير متاحة'}</small></article><article><span>تقييمات الأنشطة</span><strong>{statsResult ? format(stats.listingRatings) : '—'}</strong><small>تقييمات محفوظة</small></article><article><span>طلبات المراجعة</span><strong>{statsResult && ownerResponse?.ok ? format(stats.pendingContributions + pendingOwnerCount) : '—'}</strong><small>قيد المتابعة</small></article><article><span>تفاعل 30 يومًا</span><strong>{statsResult ? format(stats.events30d) : '—'}</strong><small>بحث واتصال وخرائط</small></article></div><div className="admin-operations-grid"><div className="quality-score"><div style={{ '--quality-score': `${completion}%` } as CSSProperties}><strong>{completion}%</strong><span>مراجعة السجلات</span></div><dl><div><dt>السجلات المراجعة</dt><dd>{format(reviewed)}</dd></div><div><dt>المواضع الجغرافية</dt><dd>{format(localities.length)}</dd></div><div><dt>الأقسام النشطة</dt><dd>{format(categories.length)}</dd></div></dl></div><div className="admin-actions"><Link href="/admin/activities"><span>أنشطة الأعضاء الجديدة</span><b>مراجعة الصور والبيانات ←</b></Link><Link href="/admin/activities#contribution-queue-title"><span>طلبات التصحيح</span><b>فتح المساهمات ←</b></Link><Link href="/updates"><span>تحديثات البيانات</span><b>مراجعة آخر السجلات ←</b></Link><Link href="/directory"><span>فحص الدليل العام</span><b>استعراض الأنشطة ←</b></Link><Link href="/account"><span>حساب المدير</span><b>العودة للملف الشخصي ←</b></Link></div></div>{analytics.events.length || discovery.missedSearches.length ? <div className="admin-activity-grid"><article className="admin-ranked-card"><header><span>الأحداث</span><h3>أكثر التفاعلات</h3></header><RankList type="events" max={Math.max(1, ...analytics.events.map((item) => item.count))} items={analytics.events.map((item) => ({ label: eventLabels[item.event] || item.event, value: item.count, detail: 'خلال 30 يومًا' }))} /></article><article className="admin-ranked-card"><header><span>فجوات ما زالت مفتوحة</span><h3>بحث بلا نتيجة حالية</h3></header><RankList type="queries" max={Math.max(1, ...discovery.missedSearches.map((item) => item.count))} items={discovery.missedSearches.map((item) => ({ label: item.query, value: item.count, detail: 'مرات وقت البحث' }))} /></article></div> : null}</section>
+        <section className="admin-section" id="operations"><header><div><span>نبض التشغيل</span><h2>الأعضاء والتفاعل وجودة الدليل</h2></div><small>{analytics.generatedAt ? `آخر تجميع ${timeLabel(analytics.generatedAt)}` : 'بدأ التجميع الآن'}</small></header><div className="admin-stats admin-stats--expanded"><article><span>الأنشطة المنشورة</span><strong>{publishedCount}</strong><small>داخل {format(categories.length)} قسمًا</small></article><article><span>إجمالي الأعضاء</span><strong>{memberCount}</strong><small>{analyticsResult ? `${format(totals.members7d)} جدد خلال ٧ أيام` : 'من سجلات الأعضاء'}</small></article><article><span>تقييم الموقع</span><strong>{statsResult && stats.siteReviews ? `${stats.siteRating}/5` : '—'}</strong><small>{statsResult ? `${format(stats.siteReviews)} تقييمات` : 'البيانات غير متاحة'}</small></article><article><span>تقييمات الأنشطة</span><strong>{statsResult ? format(stats.listingRatings) : '—'}</strong><small>تقييمات محفوظة</small></article><article><span>طلبات المراجعة</span><strong>{statsResult && ownerResponse?.ok ? format(stats.pendingContributions + pendingOwnerCount) : '—'}</strong><small>قيد المتابعة</small></article><article><span>تفاعل 30 يومًا</span><strong>{statsResult ? format(stats.events30d) : '—'}</strong><small>بحث واتصال وخرائط</small></article></div><div className="admin-operations-grid"><div className="quality-score"><div style={{ '--quality-score': `${completion}%` } as CSSProperties}><strong>{completion}%</strong><span>مراجعة السجلات</span></div><dl><div><dt>السجلات المراجعة</dt><dd>{format(reviewed)}</dd></div><div><dt>المواضع الجغرافية</dt><dd>{format(localities.length)}</dd></div><div><dt>الأقسام النشطة</dt><dd>{format(categories.length)}</dd></div></dl></div><div className="admin-actions"><Link href="/admin/activities"><span>أنشطة الأعضاء الجديدة</span><b>مراجعة الصور والبيانات ←</b></Link><Link href="/admin/activities#contribution-queue-title"><span>طلبات التصحيح</span><b>فتح المساهمات ←</b></Link><Link href="/updates"><span>تحديثات البيانات</span><b>مراجعة آخر السجلات ←</b></Link><Link href="/directory"><span>فحص الدليل العام</span><b>استعراض الأنشطة ←</b></Link><Link href="/account"><span>حساب المدير</span><b>العودة للملف الشخصي ←</b></Link></div></div>{analytics.events.length || discovery.missedSearches.length ? <div className="admin-activity-grid"><article className="admin-ranked-card"><header><span>الأحداث</span><h3>أكثر التفاعلات</h3><small>البحث موزع حسب النتيجة؛ الضغطات لا تمثل عملاء فريدين.</small></header><RankList type="events" max={Math.max(1, ...analytics.events.map((item) => item.count))} items={analytics.events.map((item) => ({ label: eventLabels[item.event] || item.event, value: item.count, detail: 'خلال 30 يومًا' }))} /></article><article className="admin-ranked-card"><header><span>فجوات ما زالت مفتوحة</span><h3>بحث بلا نتيجة حالية</h3></header><RankList type="queries" max={Math.max(1, ...discovery.missedSearches.map((item) => item.count))} items={discovery.missedSearches.map((item) => ({ id: item.id, label: item.query, value: item.count, detail: `${searchGapContextLabel(item)} · تسجيلات وقت البحث${(item.variants?.length || 0) > 1 ? ` · ${format(item.variants!.length)} صيغ` : ''}` }))} /></article></div> : null}</section>
       </div>
     </main>
   );

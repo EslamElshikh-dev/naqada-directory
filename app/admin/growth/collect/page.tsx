@@ -5,8 +5,8 @@ import { isDirectoryAdmin } from '@/lib/auth/admin';
 import { resolveSession } from '@/lib/auth/session';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { businesses } from '@/lib/data';
-import { isSearchGapOpen } from '@/lib/growth-priority';
-import { isFamilySearchQuery } from '@/lib/family-search';
+import { isSearchGapOpen, searchGapMatches } from '@/lib/growth-priority';
+import { jobSearchIntent } from '@/lib/job-search';
 import { getSearchGapResearch } from '@/lib/search-gap-research';
 import { normalizeArabic } from '@/lib/site';
 import { sanitizeSiteSearchQuery, searchSite } from '@/lib/site-search';
@@ -38,15 +38,14 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
   const activeBusinesses = catalog?.businesses || businesses;
   const normalized = normalizeArabic(query);
   const homeware = /ادوات|منزليه/.test(normalized);
-  const familyQuery = isFamilySearchQuery(query);
+  const jobIntent = jobSearchIntent(query);
   const research = getSearchGapResearch(query);
-  const exactMatches = query ? searchSite(query, 6, familyQuery ? ['page'] : ['listing'], activeBusinesses)
-    .filter((item) => !familyQuery || item.href === '/families' || item.href.startsWith('/families?')) : [];
+  const exactMatches = query ? searchGapMatches(query, activeBusinesses, { category, locality }) : [];
   const relatedQuery = research?.relatedQuery || (homeware ? 'أدوات منزلية' : null);
   const relatedMatches = relatedQuery && !exactMatches.length
     ? searchSite(relatedQuery, 8, ['listing'], activeBusinesses)
     : [];
-  const open = query ? isSearchGapOpen(query, activeBusinesses) : false;
+  const open = query ? isSearchGapOpen(query, activeBusinesses, { category, locality }) : false;
 
   const contributionParams = new URLSearchParams({ type: 'missing', name: query });
   if (category) contributionParams.set('category', category);
@@ -80,7 +79,8 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
           <div className={styles.columns}>
             <section className={styles.panel}>
               <span className={styles.eyebrow}>01 · بيانات الدليل</span>
-              <h2>{exactMatches.length ? 'سجل منشور يطابق العبارة' : 'لا توجد مطابقة مباشرة'}</h2>
+              <h2>{jobIntent ? 'الطلب يخص قسم الوظائف' : exactMatches.length ? 'سجل منشور يطابق العبارة' : 'لا توجد مطابقة مباشرة'}</h2>
+              {jobIntent ? <p>هذا طلب بحث عن عمل؛ افتح القسم لمراجعة الإعلانات المطابقة. وجود مسار للبحث لا يعني توافر وظيفة حاليًا.</p> : null}
               {exactMatches.length ? <ul className={styles.matches}>{exactMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع السجل ←</b></Link></li>)}</ul> : <p>العبارة لا تطابق سجلًا منشورًا حاليًا. وجود نتائج قريبة لا يثبت الاسم المطلوب أو توفر الخدمة المقصودة.</p>}
               {relatedMatches.length ? <div className={styles.alternatives}><h3>سجلات مرتبطة بالموضوع</h3><p>هذه بدائل للمراجعة؛ ظهورها لا يغلق طلب البحث ولا يثبت الاسم أو الخدمة المقصودين.</p><ul className={styles.matches}>{relatedMatches.map((item) => <li key={item.href}><Link href={item.href} prefetch={false}><strong>{item.title}</strong><small>{item.subtitle}</small><b>راجع البيانات ←</b></Link></li>)}</ul></div> : null}
             </section>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import type { DiscoveryInsights } from '@/lib/auth/admin';
+import { searchGapContextLabel, searchGapKey } from '@/lib/search-gaps';
 import styles from './discovery-panel.module.css';
 
 const count = (value: number) => Number(value || 0).toLocaleString('ar-EG');
@@ -34,7 +35,7 @@ export function DiscoveryPanel({ insights, available, pathLabel }: {
             <article><span>زوار جدد اليوم</span><strong>{count(today?.newVisitors || 0)}</strong><small>أول زيارة مسجلة اليوم</small></article>
             <article><span>زوار اليوم</span><strong>{count(today?.visitors || 0)}</strong><small>متصفحات فريدة خلال اليوم</small></article>
             <article><span>مشاهدات اليوم</span><strong>{count(today?.views || 0)}</strong><small>فتح صفحات داخل الدليل</small></article>
-            <article><span>بحث بلا نتيجة</span><strong>{count(insights.searchSummary.missed)}</strong><small>{count(insights.searchSummary.total)} بحثًا خلال ٣٠ يومًا · {count(missRate)}٪ بلا نتيجة</small></article>
+            <article><span>بحث بلا نتيجة</span><strong>{count(insights.searchSummary.missed)}</strong><small>{count(insights.searchSummary.total)} حدث بحث خلال ٣٠ يومًا · {count(missRate)}٪ بلا نتيجة</small></article>
           </div>
 
           <div className={styles.dailyBlock}>
@@ -65,15 +66,15 @@ export function DiscoveryPanel({ insights, available, pathLabel }: {
             <section className={styles.block} aria-labelledby="missing-heading">
               <div className={styles.blockHead}><div><span>ما طلبه أهل البلد</span><h3 id="missing-heading">عبارات لم تجد نتيجة حتى الآن</h3></div><Link href="/admin/growth">رتّب فرص الإضافة ←</Link></div>
               {insights.missedSearches.length ? <ol className={styles.missed}>{insights.missedSearches.map((item, index) => (
-                <li key={`${item.query}-${item.category}-${item.locality}`}>
+                <li key={item.id || searchGapKey(item)}>
                   <span className={styles.index}>{count(index + 1)}</span>
-                  <div><strong dir="auto">{item.query}</strong><small>{[item.locality, item.category && item.category !== 'all' ? item.category : ''].filter(Boolean).join(' · ') || 'بحث في الدليل'} · آخر مرة {timestamp(item.lastSeenAt)}</small></div>
-                  <b>{count(item.count)} مرات</b>
+                  <div><strong dir="auto">{item.query}</strong><small>{searchGapContextLabel(item)} · آخر مرة {timestamp(item.lastSeenAt)}</small>{(item.variants?.length || 0) > 1 ? <small>الصيغ المجمّعة: {item.variants!.join('، ')}</small> : null}</div>
+                  <b>{count(item.count)} تسجيلات</b>
                 </li>
               ))}</ol> : <p className={styles.empty}>لا توجد فجوات بحث مفتوحة من العبارات المسجلة خلال آخر ٣٠ يومًا.</p>}
             </section>
           </div>
-          <p className={styles.note}>العداد يعتمد على معرّف محفوظ للمتصفح، لذلك تغيير الجهاز أو حذف بيانات التصفح قد يُحسب زيارة جديدة. البيانات السابقة على تحديث القياس في ٢٥ سبتمبر ٢٠٢٦ قد تضم زيارات فحص آلي؛ بدأ استبعاد المتصفحات الآلية المعروفة من التسجيل الجديد، ولا يمكن تمييز كل زيارة تاريخية بيقين. يبقى إجمالي البحث دون نتائج تاريخيًا، لكن قائمة الفجوات تستبعد العبارة بمجرد ظهور نشاط مطابق حاليًا؛ كما تستبعد البيانات غير المقروءة.</p>
+          <p className={styles.note}>العداد يعتمد على معرّف محفوظ للمتصفح، لذلك تغيير الجهاز أو حذف بيانات التصفح قد يُحسب زيارة جديدة. البيانات السابقة على تحديث القياس في ٢٥ سبتمبر ٢٠٢٦ قد تضم زيارات فحص آلي؛ بدأ استبعاد المتصفحات الآلية المعروفة من التسجيل الجديد، ولا يمكن تمييز كل زيارة تاريخية بيقين. الأعداد تمثل أحداثًا مسجلة وقد يتكرر المستخدم نفسه. البيانات السابقة على ٢٤ أكتوبر ٢٠٢٦ قد تضم توقفات أثناء الكتابة أو فتح صفحات مفلترة؛ التسجيل الجديد يعتمد على إرسال البحث أو اختيار نتيجة. تتجمع الصيغ المتقاربة داخل المكان والقسم نفسيهما، وتُستبعد العبارات ذات النتيجة الحالية وطلبات الوظائف التي تصل لقسمها؛ الوصول لقسم الوظائف لا يثبت توافر إعلان مطابق. القائمة تعرض أبرز العبارات المسجلة، وتبقى الإجماليات التاريخية محفوظة.</p>
         </>
       )}
     </section>
