@@ -50,8 +50,8 @@ test('news generation uses the replacement with bounded non-reasoning output and
   assert.equal(await news.getExpandedNewsBody(item), brief);
   assert.equal(calls.length, 2);
   const request = JSON.parse(calls[1].init.body);
-  assert.equal(request.model, 'google/gemini-2.5-flash-lite');
-  assert.equal(request.reasoning_effort, 'none');
+  assert.equal(request.model, 'openai/gpt-4.1-mini');
+  assert.equal(request.reasoning_effort, undefined);
   assert.equal(request.max_tokens, 1200);
   assert.equal(request.temperature, 0.2);
   assert.equal(request.stream, false);
