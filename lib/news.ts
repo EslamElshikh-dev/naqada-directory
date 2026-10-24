@@ -437,6 +437,8 @@ const expandedNewsBody = unstable_cache(async (url: string, title: string, descr
   const result = await response.json() as {
     choices?: Array<{ finish_reason?: string; message?: { content?: string | Array<{ type?: string; text?: string }> } }>;
   };
+  // Partial or filtered text must never be presented as a complete factual brief.
+  if (result.choices?.[0]?.finish_reason !== 'stop') return null;
   const content = result.choices?.[0]?.message?.content;
   const brief = (typeof content === 'string' ? content : Array.isArray(content)
     ? content.filter(part => part.type === 'text').map(part => part.text || '').join('\n') : '').trim();

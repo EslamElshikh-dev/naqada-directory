@@ -21,7 +21,7 @@ const sourceParagraphs = [
 const brief = 'بدأت أعمال إصلاح الطريق بقرية أسمنت التابعة لمركز نقادة في محافظة قنا، بعدما فحصت الفرق الميدانية مواضع الحفر وحددت الأجزاء التي تحتاج إلى معالجة.\n\nوتشمل خطة العمل تهيئة المناطق المتضررة، مع مراعاة استمرار انتقال المواطنين خلال التنفيذ. وتتولى فرق الصيانة متابعة التجهيزات في صباح اليوم التالي.\n\nوتستمر المتابعة بالتنسيق بين الجهات المعنية داخل المركز. وأي تعديلات على مواعيد المرور ستعلن من خلال القنوات الرسمية وفق تقدم العمل.';
 const item = { url: 'https://www.youm7.com/story/2026/10/20/fixture/1', title: 'صيانة طريق في أسمنت', description: 'بدء الصيانة بعد المعاينة الميدانية.' };
 
-function harness({ status = 200, content = brief, token = 'test-gateway-credential', oidc = '', html, failure } = {}) {
+function harness({ status = 200, content = brief, finishReason = 'stop', token = 'test-gateway-credential', oidc = '', html, failure } = {}) {
   const calls = [];
   const warnings = [];
   const article = load('../lib/news-article.ts');
@@ -39,7 +39,7 @@ function harness({ status = 200, content = brief, token = 'test-gateway-credenti
       if (url === item.url) return new Response(html ?? `<article>${sourceParagraphs.map(p => `<p>${p}</p>`).join('')}</article>`);
       assert.equal(url, 'https://ai-gateway.vercel.sh/v1/chat/completions');
       if (failure) throw failure;
-      return Response.json(status === 200 ? { choices: [{ finish_reason: 'stop', message: { content } }] } : { error: { message: 'private-provider-error-body' } }, { status });
+      return Response.json(status === 200 ? { choices: [{ finish_reason: finishReason, message: { content } }] } : { error: { message: 'private-provider-error-body' } }, { status });
     },
   });
   return { news, calls, warnings };
@@ -103,5 +103,13 @@ test('empty, short, refused, and copied model responses retain the source previe
   for (const content of [null, '', 'تفاصيل قصيرة', 'لا أستطيع '.repeat(50), sourceParagraphs.join(' ')]) {
     const { news } = harness({ content });
     assert.equal(await news.getExpandedNewsBody(item), null);
+  }
+});
+
+test('truncated, filtered, and unfinished responses retain the source preview', async () => {
+  for (const finishReason of ['length', 'content_filter', 'tool_calls', null, undefined]) {
+    const { news, calls } = harness({ finishReason: finishReason ?? null });
+    assert.equal(await news.getExpandedNewsBody(item), null);
+    assert.equal(calls.length, 2);
   }
 });
