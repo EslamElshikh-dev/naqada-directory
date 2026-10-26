@@ -24,8 +24,8 @@ const noFamilyPages: FamilySearchPage[] = [];
 export function DirectoryExplorer({
   businesses,
   familyPages = noFamilyPages,
-  categories,
-  localities,
+  categories: sourceCategories,
+  localities: sourceLocalities,
   initialQuery = '',
   initialCategory = '',
   initialLocality = '',
@@ -46,6 +46,8 @@ export function DirectoryExplorer({
   lockedCategory?: boolean;
   lockedLocality?: boolean;
 }) {
+  const categories = useMemo(() => sourceCategories.map(item => ({ ...item, count: businesses.filter(business => business.category === item.name).length })), [businesses, sourceCategories]);
+  const localities = useMemo(() => sourceLocalities.map(item => ({ ...item, businessCount: businesses.filter(business => business.locality === item.name).length })), [businesses, sourceLocalities]);
   const pathname = usePathname();
   const routePath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
   const [query, setQuery] = useState(initialQuery);
@@ -236,7 +238,7 @@ export function DirectoryExplorer({
 
       <div className="category-pills" aria-label="التصنيفات">
         {!lockedCategory && <button className={!category ? 'is-active' : ''} onClick={() => { setCategory(''); setPage(1); recordSearch('', locality); }} type="button">كل الأقسام</button>}
-        {categories.slice(0, 12).map((item) => <button key={item.slug} className={category === item.name ? 'is-active' : ''} onClick={() => { setCategory(item.name); setPage(1); recordSearch(item.name, locality); }} type="button">{item.shortLabel} <small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+        {categories.filter(item => !lockedCategory || item.name === initialCategory).slice(0, 12).map((item) => <button key={item.slug} className={category === item.name ? 'is-active' : ''} onClick={() => { setCategory(item.name); setPage(1); recordSearch(item.name, locality); }} type="button">{item.shortLabel} <small>{item.count.toLocaleString('ar-EG')}</small></button>)}
       </div>
 
       {hydratedFromUrl && hasActiveFilters ? (

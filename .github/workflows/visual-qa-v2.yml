@@ -65,6 +65,9 @@ jobs:
       - name: Verify ticker startup, direction and reading speed
         run: node .github/ticker-motion-qa.mjs
 
+      - name: Verify first-visit usability and consistent public counts
+        run: node .github/usability-qa.mjs
+
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs
 

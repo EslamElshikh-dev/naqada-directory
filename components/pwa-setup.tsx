@@ -17,6 +17,8 @@ let bannerDismissedThisSession = false;
 const promptChanged = 'naqada:install-prompt-changed';
 const bannerDismissedKey = 'naqada_pwa_install_dismissed_until';
 const installedKey = 'naqada_pwa_installed';
+const visitedKey = 'naqada_pwa_last_route';
+const engagedKey = 'naqada_pwa_engaged';
 
 function isStandalone() {
   return window.matchMedia('(display-mode: standalone)').matches ||
@@ -116,7 +118,7 @@ export function InstallAction() {
 
 type BannerMode = 'prompt' | 'ios' | 'android' | 'manual' | null;
 
-export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
+export function InstallBanner() {
   const pathname = usePathname();
   const [mode, setMode] = useState<BannerMode>(null);
 
@@ -124,9 +126,13 @@ export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
     function update() {
       let suppressed = bannerDismissedThisSession || wasInstalled || isStandalone();
       try {
+        const previousRoute = sessionStorage.getItem(visitedKey);
+        if (previousRoute && previousRoute !== pathname) localStorage.setItem(engagedKey, '1');
+        sessionStorage.setItem(visitedKey, pathname);
         suppressed ||= localStorage.getItem(installedKey) === '1' ||
-          Number(localStorage.getItem(bannerDismissedKey)) > Date.now();
-      } catch { /* Keep the banner usable when storage is blocked. */ }
+          Number(localStorage.getItem(bannerDismissedKey)) > Date.now() ||
+          localStorage.getItem(engagedKey) !== '1';
+      } catch { suppressed = true; /* The install page remains available without storage. */ }
 
       if (suppressed || pathname.replace(/\/+$/, '') === '/install') setMode(null);
       else if (pendingInstallPrompt) setMode('prompt');
@@ -158,7 +164,7 @@ export function InstallBanner({ welcomeVisible }: { welcomeVisible: boolean }) {
   if (!mode) return null;
 
   return (
-    <aside className={styles.banner} data-welcome={welcomeVisible} aria-label="تثبيت تطبيق دليل نقادة">
+    <aside className={styles.banner} aria-label="تثبيت تطبيق دليل نقادة">
       <Image className={styles.icon} src="/app-icons/icon-192.png" alt="" width={44} height={44} />
       <div className={styles.copy}>
         <strong>خلّي دليل نقادة على موبايلك</strong>
