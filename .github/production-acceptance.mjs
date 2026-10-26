@@ -14,6 +14,11 @@ async function guardedPage(width) {
   page.setDefaultTimeout(20000);
   await page.route('**/*', async route => {
     const request = route.request();
+    const url = new URL(request.url());
+    // Vercel serves this asset at the platform layer; a local Next server does not.
+    if (['127.0.0.1', 'localhost'].includes(url.hostname) && url.pathname === '/_vercel/speed-insights/script.js') {
+      return route.fulfill({ contentType: 'application/javascript', body: '' });
+    }
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method())) {
       return route.fulfill({ json: { ok: true, summary: { average: 0, count: 0, distribution: {} } } });
     }
