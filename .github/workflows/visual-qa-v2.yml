@@ -62,6 +62,9 @@ jobs:
       - name: Verify search behavior and event measurement
         run: node .github/search-quality-qa.mjs
 
+      - name: Verify ticker startup, direction and reading speed
+        run: node .github/ticker-motion-qa.mjs
+
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs
 
