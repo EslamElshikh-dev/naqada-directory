@@ -25,8 +25,10 @@ try {
     const homeCount = await page.locator('[aria-label="إحصاءات الدليل"] b').first().textContent();
     assert.equal(await page.getByRole('button', { name: 'إغلاق رسالة الترحيب' }).count(), 0);
     assert.equal(await page.locator('aside[aria-label="تثبيت تطبيق دليل نقادة"]').count(), 0);
-    const tickerFont = await page.locator('section[aria-label="آخر أخبار وتحديثات دليل نقادة"] a strong').first().evaluate(node => Number.parseFloat(getComputedStyle(node).fontSize));
+    const tickerFont = await page.locator('section[aria-label="آخر أخبار وتحديثات دليل نقادة"] [class*="_track"] a strong').first().evaluate(node => Number.parseFloat(getComputedStyle(node).fontSize));
     assert.ok(tickerFont >= 13, `Ticker text is too small: ${tickerFont}`);
+    const tickerHeadingFont = await page.locator('section[aria-label="آخر أخبار وتحديثات دليل نقادة"] > a strong').evaluate(node => Number.parseFloat(getComputedStyle(node).fontSize));
+    assert.ok(tickerHeadingFont >= 12, `Ticker heading is too small: ${tickerHeadingFont}`);
     await page.screenshot({ path: `artifacts/usability/home-${width}.png` });
 
     await page.goto(`${baseURL}/directory/`, { waitUntil: 'domcontentloaded' });
