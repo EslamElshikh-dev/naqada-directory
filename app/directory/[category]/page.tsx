@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-import { CategoryVisual } from '@/components/category-visual';
+import { UtilityPageHeader } from '@/components/utility-page-header';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { canonicalLocalityName, categories, getCategoryBySlug, localities } from '@/lib/data';
@@ -85,9 +84,14 @@ export default async function CategoryPage({ params }: Props) {
   };
   return (
     <main id="main-content" className="page-main">
-      <section className="detail-hero category-hero"><div className="shell category-hero__grid"><div><nav className="breadcrumbs"><Link href="/directory">الدليل</Link><span>/</span><span>{category.shortLabel}</span></nav><span className="eyebrow">قسم محلي متخصص</span><h1>{category.shortLabel} <em>في نقادة</em></h1><p>{category.description}</p><div className="hero-inline-stats"><span><b>{scopedDirectory.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span></div></div><CategoryVisual category={category.name} size="lg" /></div></section>
+      <UtilityPageHeader current={category.shortLabel} parent={{ href: '/directory', label: 'الدليل' }}
+        title={<>{category.shortLabel} <em>في نقادة</em></>} description={category.description}
+        metrics={[
+          { value: scopedDirectory.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
+          { value: localityCount.toLocaleString('ar-EG'), label: 'موضع' },
+        ]} />
       <section className="shell page-section">
-        <ServiceLocalityDiscovery
+        <ServiceLocalityDiscovery compact
           title={`${category.shortLabel} حسب القرية والنجع`}
           description={`ابدأ من المكان الأقرب لك للوصول مباشرة إلى نتائج ${category.shortLabel} المنشورة داخله، بدل إعادة ضبط الفلاتر يدويًا.`}
           items={localityDiscoveryItems}

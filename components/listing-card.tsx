@@ -7,6 +7,7 @@ import { CategoryVisual } from './category-visual';
 import { ActionIcon } from './action-icon';
 import { ListingCardActions } from './listing-card-actions';
 import { ListingCover } from './listing-cover';
+import { publicBusinessHref } from '@/lib/business-links';
 
 export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
   const phone = cleanPhone(listing.phone);
@@ -14,7 +15,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
   const locality = canonicalLocalityName(listing.locality);
   const hasMapReference = isSafeExternalUrl(listing.mapsUrl);
   const mapsUrl = hasMapReference ? listing.mapsUrl : null;
-  const detailHref = listing.detailHref || `/listing/${listing.slug}/`;
+  const detailHref = listing.detailHref || publicBusinessHref(listing);
   const categoryHref = `/directory/${slugify(listing.category)}`;
   const localityHref = `/villages/${slugify(locality)}`;
   const similarHref = listing.subcategory
@@ -30,7 +31,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
         <Link prefetch={false} className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
           <CategoryVisual category={listing.category} size="sm" />
         </Link>
-        {hasMapReference && <span className="source-chip"><i /> موثّق على الخريطة</span>}
+        {hasMapReference && <span className="source-chip"><i /> موقع على الخريطة</span>}
       </div>
       <div className="listing-card__head">
         <div className="listing-card__eyebrow">
@@ -42,8 +43,8 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
         <p className="listing-card__location"><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
         <div className="listing-card__meta">
           <Link prefetch={false} href={localityHref}>{locality}</Link>
-          {typeof listing.rating === 'number' && <span className="rating" aria-label={`التقييم ${listing.rating} من 5`}>★ {listing.rating.toLocaleString('ar-EG')}{listing.reviews ? ` (${listing.reviews.toLocaleString('ar-EG')})` : ''}</span>}
-          <span>{verificationLabel(listing.verification)}</span>
+          {typeof listing.rating === 'number' && <span className="rating" title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString('ar-EG')}{listing.reviews ? ` (${listing.reviews.toLocaleString('ar-EG')})` : ''}</span>}
+          <Link prefetch={false} href="/about" title={verificationLabel(listing.verification)}>مصدر البيانات</Link>
         </div>
       </div>
       <ListingCardActions

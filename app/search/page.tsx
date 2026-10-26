@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { UtilityPageHeader } from '@/components/utility-page-header';
 import { SearchJourneyPanel } from '@/components/search-journey';
 import { SearchAnalytics } from '@/components/search-analytics';
 import { buildSearchContext } from '@/lib/search-context';
@@ -157,22 +158,8 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     <main id="main-content" className="page-main">
       {canSearch ? <SearchAnalytics query={query} count={scopedResults.length} scope={activeScope} /> : null}
-      <section className={styles.hero}>
-        <div className={`shell ${styles.heroGrid}`}>
-          <div>
-            <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>البحث</span></nav>
-            <span className="eyebrow">بحث محلي ذكي</span>
-            <h1>بحث واحد… <em>ورحلة محلية أوضح</em></h1>
-            <p>ابحث بخدمة ومكان، وسنرتّب لك المسار المحلي والنتائج المباشرة والخدمات المرتبطة وخيارات أخرى مبنية على بيانات الدليل المنشورة.</p>
-          </div>
-          <aside className={styles.heroNote}>
-            <span>بحث محلي بلا تخمين</span>
-            <strong>مسار موثوق · نتائج مباشرة · بدائل مرتبطة</strong>
-            <p>لا نرتّب الأماكن حسب المسافة من دون إحداثيات موثقة؛ اقتراحات المواضع تعتمد على النطاق الإداري والبيانات المنشورة فقط.</p>
-          </aside>
-        </div>
-      </section>
-
+      <UtilityPageHeader current="البحث" title="بتدوّر على إيه في نقادة؟"
+        description="اكتب اسم الخدمة والمكان، أو ابحث عن قرية أو معلومة من الموسوعة." />
       <section className={`shell ${styles.searchArea}`}>
         <form className={styles.searchForm} action="/search" method="get" role="search">
           <label htmlFor="unified-search-input">ما الذي تبحث عنه؟</label>
@@ -181,7 +168,7 @@ export default async function SearchPage({ searchParams }: Props) {
             {activeScope !== 'all' ? <input type="hidden" name="scope" value={activeScope} /> : null}
             <button type="submit">ابحث في نقادة</button>
           </div>
-          <small>اكتب حرفين على الأقل. نتائج البحث غير مفهرسة في Google، وأي تصحيح إملائي يظل اقتراحًا اختياريًا.</small>
+          <small>اكتب حرفين على الأقل، وأضف اسم القرية لنتائج أدق. تصحيح الكتابة اقتراح اختياري.</small>
         </form>
 
         {canSearch ? (
