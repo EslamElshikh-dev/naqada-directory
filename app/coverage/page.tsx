@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { businesses, canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
-import { MIN_LOCAL_CATEGORY_RESULTS, localCategoryHref, localCategoryResultCount } from '@/lib/discovery-routing';
+import { canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = buildPageMetadata({
@@ -21,7 +22,10 @@ const primaryCategoryNames = [
   'الخدمات المهنية',
 ];
 
-export default function CoveragePage() {
+export const dynamic = 'force-dynamic';
+
+export default async function CoveragePage() {
+  const { businesses } = await getPublicBusinessCatalog();
   const primaryCategories = primaryCategoryNames
     .map((name) => categories.find((item) => item.name === name))
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
@@ -32,11 +36,11 @@ export default function CoveragePage() {
     const missing = primaryCategories.filter((category) => !represented.has(category.name));
     const routes = categories
       .map((category) => {
-        const count = localCategoryResultCount(category.name, locality.name);
+        const count = items.filter((item) => item.category === category.name).length;
         return {
           category,
           count,
-          href: localCategoryHref(category.name, locality.name),
+          href: `/villages/${locality.slug}/${category.slug}`,
         };
       })
       .filter((route) => route.count >= MIN_LOCAL_CATEGORY_RESULTS)

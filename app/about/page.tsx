@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
-import type { CSSProperties } from 'react';
+import { Suspense, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AboutSectionNav } from '@/components/about-section-nav';
+import { PublicBusinessCount } from '@/components/public-business-count';
 import { meta } from '@/lib/data';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './about.module.css';
 
 const pagePath = '/about';
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'عن دليل نقادة — مشروع خدمي تطوعي مجاني',
@@ -33,7 +35,7 @@ const workflow = [
 const experiencePaths = [
   {
     code: '01', href: '/directory', title: 'دليل الخدمات',
-    value: meta.businessCount.toLocaleString('ar-EG'), label: 'خدمة ونشاط',
+    value: <Suspense fallback="…"><PublicBusinessCount /></Suspense>, label: 'خدمة ونشاط',
     description: 'وصول مباشر إلى الأطباء والصيدليات والمدارس والمحلات والخدمات اليومية داخل المركز.',
     image: '/images/businesses/nile-hospital-naqada.webp', alt: 'واجهة مستشفى النيل في نقادة ضمن دليل الخدمات',
   },
@@ -120,7 +122,7 @@ export default function AboutPage() {
       <div className={`shell ${styles.navWrap}`}><AboutSectionNav current="directory" /></div>
 
       <section className={`shell ${styles.metrics}`} aria-label="الدليل في أرقام">
-        <article><b>{meta.businessCount.toLocaleString('ar-EG')}</b><span>خدمة ونشاط</span><small>بيانات منشورة قابلة للتحديث</small></article>
+        <article><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><span>خدمة ونشاط</span><small>بيانات منشورة قابلة للتحديث</small></article>
         <article><b>{meta.localityCount.toLocaleString('ar-EG')}</b><span>قرية وموضعًا</span><small>داخل نطاق مركز نقادة</small></article>
         <article><b>{meta.familyCount.toLocaleString('ar-EG')}</b><span>سجلًا عائليًا</span><small>بحدود توثيق واضحة</small></article>
         <article><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><span>علمًا ومعلمًا</span><small>من ذاكرة المكان</small></article>

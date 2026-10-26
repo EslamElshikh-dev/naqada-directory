@@ -41,7 +41,7 @@ jobs:
       - name: Install Playwright and Chromium
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Start production server
         run: |
@@ -67,6 +67,11 @@ jobs:
 
       - name: Verify first-visit usability and consistent public counts
         run: node .github/usability-qa.mjs
+
+      - name: Verify complete public journeys and content consistency
+        env:
+          QA_BASE_URL: http://127.0.0.1:3000
+        run: node .github/production-acceptance.mjs
 
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs

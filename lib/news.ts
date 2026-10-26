@@ -6,7 +6,7 @@ import { localNewsBriefs } from './news-editorial';
 import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
 import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL } from './public-content-cache';
-import { deduplicateNews, reconcileNewsCopies, selectLatestNews } from './news-feed-quality';
+import { deduplicateNews, missingNewsSnapshotQueries, reconcileNewsCopies, selectLatestNews } from './news-feed-quality';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -529,9 +529,10 @@ async function loadLatestNews(): Promise<NewsFeedResult> {
     getLiveNews(), readArchive('order=published_at.desc&limit=60'), getPublicCurated('news'),
   ]);
   const hidden = new Set(curated.filter(item => item.status === 'hidden').map(item => item.slug));
+  const matchingSnapshots = await Promise.all(missingNewsSnapshotQueries(live.items, archived).map(readArchive));
   return {
     ...live,
-    items: selectLatestNews(reconcileNewsCopies(live.items, archived).filter(item => !hidden.has(item.id))),
+    items: selectLatestNews(reconcileNewsCopies(live.items, [...archived, ...matchingSnapshots.flat()]).filter(item => !hidden.has(item.id))),
   };
 }
 export const getLatestNews = cache(loadLatestNews);

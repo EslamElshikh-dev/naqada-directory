@@ -37,6 +37,35 @@ const robots = loadModule('./app/robots').default;
 const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
+test('live stories outside the newest archive window receive bounded safe snapshot lookups', () => {
+  const latest = Array.from({ length: 60 }, (_, index) => ({ id: `recent-${index}` }));
+  const old = Array.from({ length: 53 }, (_, index) => ({ id: `old-${index}` }));
+  const queries = news.missingNewsSnapshotQueries([...old, old[0], latest[0], { id: 'editorial', isOriginal: true }, { id: 'bad),id.gt.0' }], latest);
+  assert.equal(queries.length, 2);
+  assert.ok(queries[0].endsWith('&limit=50'));
+  assert.ok(queries[1].endsWith('&limit=3'));
+  assert.ok(queries[0].includes('old-0'));
+  assert.ok(queries[1].includes('old-52'));
+  assert.ok(!queries.join('').includes('recent-0'));
+  assert.ok(!queries.join('').includes('editorial'));
+  assert.ok(!queries.join('').includes('bad'));
+  assert.equal(news.missingNewsSnapshotQueries(latest, latest).length, 0);
+});
+
+test('search facets count the current public catalog and drop emptied categories and localities', () => {
+  const sample = data.businesses.find(item => item.locality && item.category);
+  const only = [{ ...sample, id: 'owner:7828410d-1d6b-4ab9-8394-6a266d0bcf2e', slug: 'owner-one' }];
+  const locality = data.canonicalLocalityName(sample.locality);
+  const place = search.searchSite(locality, 100, ['locality'], only).find(item => item.title === locality);
+  assert.ok(place);
+  assert.match(place.subtitle, /١ نشاطًا/);
+  const category = search.searchSite(sample.category, 100, ['category'], only).find(item => item.title === sample.category);
+  assert.equal(category.subtitle, '١ نشاطًا منشورًا');
+  assert.equal(search.searchSite(locality, 100, ['locality'], []).length, 0);
+  assert.equal(search.searchSite(sample.category, 100, ['category'], []).length, 0);
+  assert.equal(search.searchSite(sample.name, 100, ['listing'], only)[0].href, '/activity/7828410d-1d6b-4ab9-8394-6a266d0bcf2e/');
+});
+
 test('live news previews keep the publication date of the matching published archive snapshot', () => {
   const live = { id: 'story', title: 'خبر محلي', url: 'https://www.youm7.com/story/2026/10/18/example/1234', sourceUrl: 'https://www.youm7.com', publishedAt: '2026-10-18T18:00:00Z', imageUrl: 'https://images.example/new.webp', description: 'موجز محدث' };
   const archived = { ...live, url: `${live.url}?utm_source=archive`, publishedAt: '2026-10-18T06:01:00Z', imageUrl: 'https://images.example/old.webp' };
