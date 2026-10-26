@@ -4,6 +4,19 @@ import { normalizeArabic, siteConfig } from './site';
 export const LATEST_NEWS_MAX_AGE_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Live local stories can be older than the newest archive window. Look up their
+// snapshots explicitly so list cards use the same date as their detail route.
+export function missingNewsSnapshotQueries(live: readonly ExternalNewsItem[], archived: readonly ExternalNewsItem[]) {
+  const known = new Set(archived.map(item => item.id));
+  const ids = [...new Set(live.filter(item => !item.isOriginal && !known.has(item.id) && /^[a-z0-9-]{3,90}$/i.test(item.id)).map(item => item.id))];
+  const queries: string[] = [];
+  for (let start = 0; start < ids.length; start += 50) {
+    const batch = ids.slice(start, start + 50);
+    queries.push(`id=in.(${batch.join(',')})&limit=${batch.length}`);
+  }
+  return queries;
+}
+
 // The archive is the published snapshot also used by detail pages. Keep its date
 // on live previews while allowing newly discovered images and descriptions.
 export function reconcileNewsCopies(live: readonly ExternalNewsItem[], archived: readonly ExternalNewsItem[]) {

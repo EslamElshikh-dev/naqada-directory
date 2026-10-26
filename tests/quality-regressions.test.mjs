@@ -37,6 +37,21 @@ const robots = loadModule('./app/robots').default;
 const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
+test('live stories outside the newest archive window receive bounded safe snapshot lookups', () => {
+  const latest = Array.from({ length: 60 }, (_, index) => ({ id: `recent-${index}` }));
+  const old = Array.from({ length: 53 }, (_, index) => ({ id: `old-${index}` }));
+  const queries = news.missingNewsSnapshotQueries([...old, old[0], latest[0], { id: 'editorial', isOriginal: true }, { id: 'bad),id.gt.0' }], latest);
+  assert.equal(queries.length, 2);
+  assert.ok(queries[0].endsWith('&limit=50'));
+  assert.ok(queries[1].endsWith('&limit=3'));
+  assert.ok(queries[0].includes('old-0'));
+  assert.ok(queries[1].includes('old-52'));
+  assert.ok(!queries.join('').includes('recent-0'));
+  assert.ok(!queries.join('').includes('editorial'));
+  assert.ok(!queries.join('').includes('bad'));
+  assert.equal(news.missingNewsSnapshotQueries(latest, latest).length, 0);
+});
+
 test('search facets count the current public catalog and drop emptied categories and localities', () => {
   const sample = data.businesses.find(item => item.locality && item.category);
   const only = [{ ...sample, id: 'owner:7828410d-1d6b-4ab9-8394-6a266d0bcf2e', slug: 'owner-one' }];

@@ -20,9 +20,12 @@ async function guardedPage(width) {
     return route.continue();
   });
   await page.addInitScript(() => {
-    window.qaTiming = { lcp: 0, cls: 0 };
+    window.qaTiming = { lcp: 0, cls: 0, shifts: [] };
     new PerformanceObserver(list => { for (const entry of list.getEntries()) window.qaTiming.lcp = entry.startTime; }).observe({ type: 'largest-contentful-paint', buffered: true });
-    new PerformanceObserver(list => { for (const entry of list.getEntries()) if (!entry.hadRecentInput) window.qaTiming.cls += entry.value; }).observe({ type: 'layout-shift', buffered: true });
+    new PerformanceObserver(list => { for (const entry of list.getEntries()) if (!entry.hadRecentInput) {
+      window.qaTiming.cls += entry.value;
+      window.qaTiming.shifts.push({ value: entry.value, sources: entry.sources.map(source => ({ node: `${source.node?.tagName}.${source.node?.className}`, from: source.previousRect.toJSON(), to: source.currentRect.toJSON() })) });
+    } }).observe({ type: 'layout-shift', buffered: true });
   });
   return page;
 }
