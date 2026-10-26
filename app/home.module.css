@@ -190,7 +190,7 @@
  .serviceMedia { height:125px; }
  .serviceItem h3 { font-size:.875rem; margin-inline:12px; }
  .serviceCount,.serviceArrow { margin-inline:12px; }
- .searchWrap :global(.hero-search) { grid-template-columns:minmax(0,1fr) auto auto; min-height:60px; gap:4px; }
+ .searchWrap :global(.hero-search) { grid-template-columns:minmax(0,1fr) auto auto !important; min-height:60px; gap:4px; }
  .searchWrap :global(.hero-search__brand) { display:none; }
  .searchWrap :global(.hero-search) input { font-size:1rem; }
  .searchWrap :global(.hero-search) button[type='submit'] { min-width:60px; padding-inline:12px; }

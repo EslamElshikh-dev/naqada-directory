@@ -1,10 +1,6 @@
 name: Live production acceptance
 
 on:
-  pull_request:
-    paths:
-      - '.github/production-acceptance.mjs'
-      - '.github/workflows/production-acceptance.yml'
   push:
     branches: [main]
     paths:

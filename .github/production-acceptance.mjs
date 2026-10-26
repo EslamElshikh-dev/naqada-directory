@@ -63,6 +63,7 @@ try {
           await input.click({ trial: true });
           const box = await input.boundingBox();
           assert.ok(box && box.y >= 0 && box.y + box.height < 830, 'First-visit search is outside the usable first screen');
+          assert.ok(box.width >= 140, `Homepage search field is too narrow: ${box.width}px`);
           assert.equal(await page.getByRole('button', { name: 'إغلاق رسالة الترحيب' }).count(), 0);
           assert.equal(await page.locator('aside[aria-label="تثبيت تطبيق دليل نقادة"]').count(), 0);
           if (width === 390) report.counts.home = number(await page.locator('[aria-label="إحصاءات الدليل"] b').first().textContent());
@@ -80,13 +81,14 @@ try {
         const record = { width, name, path, status: response.status(), initial, errors, networkErrors, ...metrics };
         report.routes.push(record);
         for (const href of metrics.links) internalLinks.add(href.split('#')[0]);
-        await page.screenshot({ path: `${folder}/${name}-${width}.png`, fullPage: true });
+        await page.screenshot({ path: `${folder}/${name}-${width}.jpg`, type: 'jpeg', quality: 72, fullPage: true });
         assert.equal(response.status(), 200);
         assert.ok(metrics.scrollWidth <= width + 1, `Horizontal overflow: ${metrics.scrollWidth}`);
         assert.equal(metrics.h1.length, 1);
         assert.deepEqual(errors, [], 'Browser exception');
         assert.deepEqual(networkErrors, [], 'Failed first-party request');
         assert.deepEqual(metrics.brokenLocalImages, [], 'Local image failed');
+        if (name === 'directory') assert.ok(initial.cls < .1, `Directory content jumps during loading: CLS ${initial.cls}`);
         assert.ok(!JSON.stringify(metrics.schemas).includes('/listing/owner-'), 'Structured data links to the wrong owner route');
         if (width === 390 && ['directory', 'villages'].includes(name)) report.counts[name] = number(await page.locator('main dl div').filter({ has: page.getByText('نشاط منشور', { exact: true }) }).locator('dd').textContent());
         if (width === 390 && name === 'coverage') report.counts.coverage = number(await page.locator('main .hero-inline-stats b').first().textContent());
@@ -123,17 +125,18 @@ try {
         assert.equal(await page.locator('details[open]').count(), 0);
         await page.goBack(); await page.locator('#home-search').waitFor();
       }
-      await page.locator('#home-search').fill('صيدلية مؤمن');
+      await page.locator('#home-search').fill('هبة صلاح الدين');
       await page.locator('#home-search').press('Enter');
       await page.waitForURL('**/search/**');
-      const result = page.locator('main a[href*="/listing/صيدليه-مومن-"]');
+      const result = page.locator('main a[href*="/listing/صيدليه-د-هبه-صلاح-الدين-"]');
       await result.first().click();
       await page.waitForURL('**/listing/**');
-      const contacts = page.locator('main a[href^="tel:"],main a[href*="wa.me/"]');
+      const contacts = page.locator('[aria-label="التواصل مع النشاط والوصول إليه"] a[href^="tel:"], [aria-label="التواصل مع النشاط والوصول إليه"] a[href*="wa.me/"]');
       assert.ok(await contacts.count() >= 2, 'Published phone/WhatsApp actions missing');
       for (const contact of await contacts.all()) await contact.click({ trial: true });
-      await page.screenshot({ path: `${folder}/contact-journey-${width}.png` });
-      report.interactions.push({ width, menu: width < 981 ? 'passed' : 'desktop navigation', search: 'passed', contactActions: await contacts.count() });
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.screenshot({ path: `${folder}/contact-journey-${width}.jpg`, type: 'jpeg', quality: 72 });
+      report.interactions.push({ width, menu: width < 981 ? 'passed' : 'desktop navigation', search: 'passed', contactActions: await contacts.count(), hrefs: await contacts.evaluateAll(nodes => nodes.map(node => node.getAttribute('href'))) });
     } finally { await page.close(); }
   });
   for (const item of report.news) await attempt(`news date ${item.href}`, async () => {
@@ -145,7 +148,7 @@ try {
       assert.equal(published, item.publishedAt);
       item.detailDate = published;
       item.status = response.status();
-      await page.screenshot({ path: `${folder}/news-${item.href.split('/').filter(Boolean).at(-1)}.png`, fullPage: true });
+      await page.screenshot({ path: `${folder}/news-${item.href.split('/').filter(Boolean).at(-1)}.jpg`, type: 'jpeg', quality: 72, fullPage: true });
     } finally { await page.close(); }
   });
   const queue = [...internalLinks].filter(Boolean).slice(0, 180);

@@ -82,7 +82,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
           { value: phoned.toLocaleString('ar-EG'), label: 'رقم اتصال' },
         ]} />
       <section className="shell page-section">
-        <Suspense fallback={<div className="loading-state">جارٍ تجهيز الدليل…</div>}>
+        <Suspense fallback={<div className="loading-state" style={{ minHeight: '100svh' }}>جارٍ تجهيز الدليل…</div>}>
           <DirectoryExplorer
             key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
             businesses={directoryBusinesses}
