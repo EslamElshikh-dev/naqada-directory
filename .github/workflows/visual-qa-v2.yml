@@ -68,6 +68,11 @@ jobs:
       - name: Verify first-visit usability and consistent public counts
         run: node .github/usability-qa.mjs
 
+      - name: Verify complete public journeys and content consistency
+        env:
+          QA_BASE_URL: http://127.0.0.1:3000
+        run: node .github/production-acceptance.mjs
+
       - name: Run responsive diagnostics and screenshots
         run: node .github/visual-qa-v2.mjs
 

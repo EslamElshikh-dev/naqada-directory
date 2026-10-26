@@ -1,0 +1,42 @@
+name: Live production acceptance
+
+on:
+  pull_request:
+    paths:
+      - '.github/production-acceptance.mjs'
+      - '.github/workflows/production-acceptance.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/production-acceptance.mjs'
+      - '.github/workflows/production-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install browser test tooling
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Inspect the public production site without writes
+        env:
+          QA_BASE_URL: https://naqada-directory.vercel.app
+          QA_STRICT_COUNTS: '1'
+        run: node .github/production-acceptance.mjs
+      - name: Upload production evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-acceptance
+          path: artifacts/production-acceptance
+          retention-days: 7

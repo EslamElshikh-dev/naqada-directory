@@ -13,6 +13,7 @@ import type { Business } from '@/lib/types';
 import { roleModels, type RoleModel } from '@/lib/role-models';
 import type { EditorialPost } from '@/lib/editorial-posts';
 import { jobSearchIntent } from '@/lib/job-search';
+import { localitiesWithPublicCounts } from '@/lib/public-localities';
 
 export type SiteSearchKind =
   | 'listing'
@@ -231,8 +232,20 @@ export function sanitizeSiteSearchQuery(value?: string | null) {
 }
 
 function activeSearchIndex(currentBusinesses?: Business[], currentContent?: { people: RoleModel[]; posts: EditorialPost[] }) {
+  const categoryCounts = new Map<string, number>();
+  for (const item of currentBusinesses || []) categoryCounts.set(item.category, (categoryCounts.get(item.category) || 0) + 1);
   let activeIndex = currentBusinesses ? [
-    ...searchIndex.filter((item) => item.kind !== 'listing'),
+    ...searchIndex.filter((item) => !['listing', 'category', 'locality'].includes(item.kind)),
+    ...categories.filter(item => categoryCounts.has(item.name)).map(item => indexItem({
+      kind: 'category', title: item.name, subtitle: `${categoryCounts.get(item.name)!.toLocaleString('ar-EG')} نشاطًا منشورًا`,
+      href: `/directory?category=${encodeURIComponent(item.name)}`, badge: 'قسم',
+      fields: { title: item.name, category: item.name, auxiliary: `${item.shortLabel} ${item.description}` },
+    })),
+    ...localitiesWithPublicCounts(localities, currentBusinesses).filter(item => item.businessCount > 0).map(item => indexItem({
+      kind: 'locality', title: item.name, subtitle: `${item.type} · ${item.businessCount.toLocaleString('ar-EG')} نشاطًا`,
+      href: `/villages/${item.slug}`, badge: item.type,
+      fields: { title: item.name, locality: item.name, auxiliary: `${item.type} ${item.scope || ''}` },
+    })),
     ...currentBusinesses.map((item) => indexItem({
       kind: 'listing' as const, title: item.name,
       subtitle: [item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' · '),
