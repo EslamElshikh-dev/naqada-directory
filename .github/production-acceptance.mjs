@@ -41,7 +41,7 @@ try {
   assert.equal(sitemapResponse.status, 200);
   const sitemap = await sitemapResponse.text();
   const owner = sitemap.match(/<loc>[^<]*(\/activity\/[0-9a-f-]{36}\/)\s*<\/loc>/i)?.[1];
-  const routes = [['home', '/'], ['directory', '/directory/'], ['coverage', '/coverage/'], ['villages', '/villages/'], ['bashlaw', '/villages/بشلاو/'], ['dnfiq', '/villages/دنفيق/'], ['services', '/activities/'], ['pharmacies', '/activities/صيدليات/'], ['listing', '/listing/صيدليه-مومن-مدينه-نقاده/'], ['news', '/news/'], ['archive', '/news/archive/']];
+  const routes = [['home', '/'], ['directory', '/directory/'], ['coverage', '/coverage/'], ['about', '/about/'], ['villages', '/villages/'], ['bashlaw', '/villages/بشلاو/'], ['dnfiq', '/villages/دنفيق/'], ['services', '/activities/'], ['pharmacies', '/activities/صيدليات/'], ['listing', '/listing/صيدليه-مومن-مدينه-نقاده/'], ['news', '/news/'], ['archive', '/news/archive/']];
   if (owner) routes.push(['owner', owner]);
   const internalLinks = new Set();
   for (const width of [320, 390, 430, 768, 1024, 1440]) {
@@ -87,6 +87,12 @@ try {
         assert.ok(!JSON.stringify(metrics.schemas).includes('/listing/owner-'), 'Structured data links to the wrong owner route');
         if (width === 390 && ['directory', 'villages'].includes(name)) report.counts[name] = number(await page.locator('main dl div').filter({ has: page.getByText('نشاط منشور', { exact: true }) }).locator('dd').textContent());
         if (width === 390 && name === 'coverage') report.counts.coverage = number(await page.locator('main .hero-inline-stats b').first().textContent());
+        if (width === 390 && name === 'about') report.counts.about = number(await page.locator('[aria-label="الدليل في أرقام"] article b').first().textContent());
+        if (['bashlaw', 'dnfiq'].includes(name)) {
+          const navigationCount = number(await page.locator('nav[aria-label^="استكشاف سريع داخل"] a small').first().textContent());
+          const resultsCount = number(await page.locator('main .results-bar strong').textContent());
+          assert.equal(navigationCount, resultsCount, 'Village navigation and published results disagree');
+        }
         if (width === 390 && name === 'news') report.news = await page.evaluate(() => [...document.querySelectorAll('main article')].flatMap(node => {
           const time = node.querySelector('time'), link = node.querySelector('a[href^="/news/"]');
           return time?.dateTime && link ? [{ href: link.getAttribute('href'), publishedAt: time.dateTime }] : [];
@@ -97,7 +103,7 @@ try {
   }
   await attempt('published catalog counts', async () => {
     const values = Object.values(report.counts);
-    assert.equal(values.length, 4);
+    assert.equal(values.length, 5);
     assert.ok(values[0] > 0);
     if (strictCounts) assert.ok(values.every(count => count === values[0]), `Counts differ: ${JSON.stringify(report.counts)}`);
   });
