@@ -1,5 +1,4 @@
 .root {
-  --ticker-duration: 86s;
   position: relative;
   z-index: 80;
   min-height: 42px;
@@ -75,12 +74,16 @@
   display: flex;
   align-items: stretch;
   direction: ltr;
-  transform: translate3d(calc(100cqi - 50%), 0, 0);
+  transform: translate3d(calc(100cqi - 100%), 0, 0);
   will-change: transform;
-  animation: tickerFlow var(--ticker-duration) linear infinite;
+}
+
+.track[data-ready='true'] {
+  animation: tickerFlow var(--ticker-duration) linear 1s infinite;
 }
 
 .group {
+  min-width: 100cqi;
   height: 100%;
   display: flex;
   flex: 0 0 auto;
@@ -156,8 +159,8 @@
 .viewport:active .track { animation-play-state: paused; }
 
 @keyframes tickerFlow {
-  from { transform: translate3d(calc(100cqi - 50%), 0, 0); }
-  to { transform: translate3d(calc(100cqi - 100%), 0, 0); }
+  from { transform: translate3d(calc(100cqi - 100%), 0, 0); }
+  to { transform: translate3d(calc(100cqi - 50%), 0, 0); }
 }
 
 @keyframes livePulse {
@@ -166,7 +169,7 @@
 }
 
 @media (max-width: 720px) {
-  .root { --ticker-duration: 74s; min-height: 37px; grid-template-columns: auto minmax(0, 1fr) 38px; }
+  .root { min-height: 37px; grid-template-columns: auto minmax(0, 1fr) 38px; }
   .heading { min-width: 82px; gap: 7px; padding: 4px 10px; }
   .heading i { width: 7px; height: 7px; }
   .heading small { display: none; }
@@ -189,7 +192,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .heading i { animation: none; }
-  .track { animation: none; transform: none; }
+  .track, .track[data-ready='true'] { animation: none; transform: none; }
   .clone { display: none; }
   .viewport { overflow-x: auto; direction: rtl; mask-image: none; -webkit-mask-image: none; scrollbar-width: none; }
   .viewport::-webkit-scrollbar { display: none; }

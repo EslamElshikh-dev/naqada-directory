@@ -1,11 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './updates-ticker.module.css';
 import { MAX_JOB_HEADLINES } from '@/lib/job-headlines';
 
 type TickerItem = { href: string; tag: string; text: string };
+
+const TICKER_PIXELS_PER_SECOND = 24;
+const TICKER_START_DELAY_MS = 1000;
 
 const fallbackUpdates: TickerItem[] = [
   { href: '/jobs', tag: 'فرص البلد', text: 'عندك وظيفة أو بتدور على شغل؟ باب الرزق من هنا' },
@@ -21,21 +24,42 @@ const fallbackUpdates: TickerItem[] = [
 export function UpdatesTicker() {
   const [paused, setPaused] = useState(false);
   const [liveItems, setLiveItems] = useState<TickerItem[]>([]);
+  const [feedLoaded, setFeedLoaded] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const groupRef = useRef<HTMLDivElement>(null);
+  const pendingItems = useRef<TickerItem[] | null>(null);
   const tickerItems = liveItems.length ? liveItems : fallbackUpdates;
 
   useEffect(() => {
     const controller = new AbortController();
+    let initialLoad = true;
     const loadUpdates = async () => {
+      const request = new AbortController();
+      const abortRequest = () => request.abort();
+      controller.signal.addEventListener('abort', abortRequest, { once: true });
+      const timeout = setTimeout(abortRequest, 6000);
       const results = await Promise.allSettled(['/api/jobs', '/api/news'].map(async (url) => {
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetch(url, { signal: request.signal });
         if (!response.ok) throw new Error('Feed unavailable');
         return response.json() as Promise<{ items?: TickerItem[] }>;
       }));
+      clearTimeout(timeout);
+      controller.signal.removeEventListener('abort', abortRequest);
       if (controller.signal.aborted) return;
       const [jobResult, newsResult] = results;
       const jobItems = jobResult.status === 'fulfilled' && Array.isArray(jobResult.value.items) ? jobResult.value.items.slice(0, MAX_JOB_HEADLINES) : [];
       const newsItems = newsResult.status === 'fulfilled' && Array.isArray(newsResult.value.items) ? newsResult.value.items.slice(0, 6) : [];
-      setLiveItems([...jobItems, ...newsItems, fallbackUpdates[2], ...(!jobItems.length ? [fallbackUpdates[0]] : [])]);
+      const items = jobItems.length || newsItems.length
+        ? [...jobItems, ...newsItems, fallbackUpdates[2], ...(!jobItems.length ? [fallbackUpdates[0]] : [])]
+        : fallbackUpdates;
+      if (initialLoad || !trackRef.current?.getAnimations().length) {
+        initialLoad = false;
+        setLiveItems(items);
+        setFeedLoaded(true);
+      } else {
+        // Replace refreshed headlines at the loop boundary, never mid-sentence.
+        pendingItems.current = items;
+      }
     };
     // Let the visible page and its image finish first; abort on navigation/unmount.
     let timer: ReturnType<typeof setTimeout>;
@@ -46,6 +70,51 @@ export function UpdatesTicker() {
     return () => { window.removeEventListener('load', schedule); clearTimeout(timer); clearInterval(interval); controller.abort(); };
   }, []);
 
+  useEffect(() => {
+    const track = trackRef.current;
+    const group = groupRef.current;
+    const viewport = track?.parentElement;
+    if (!feedLoaded || !track || !group || !viewport) return;
+
+    let cancelled = false;
+    let distance = 0;
+    const measure = () => {
+      const nextDistance = group.getBoundingClientRect().width;
+      if (!nextDistance || Math.abs(nextDistance - distance) < .5) return;
+      const animation = track.getAnimations()[0];
+      const currentX = animation ? new DOMMatrixReadOnly(getComputedStyle(track).transform).m41 : 0;
+      const inStartDelay = animation && Number(animation.currentTime) < TICKER_START_DELAY_MS;
+      track.style.setProperty('--ticker-duration', `${nextDistance / TICKER_PIXELS_PER_SECOND}s`);
+      track.dataset.ready = 'true';
+      if (animation && !inStartDelay) {
+        // Keep the visible text in place when the viewport or its font size changes.
+        const startX = viewport.getBoundingClientRect().width - 2 * nextDistance;
+        const offset = ((currentX - startX) % nextDistance + nextDistance) % nextDistance;
+        animation.currentTime = TICKER_START_DELAY_MS + offset / TICKER_PIXELS_PER_SECOND * 1000;
+      }
+      distance = nextDistance;
+    };
+    const observer = new ResizeObserver(measure);
+    // The first animation frame uses the final feed width and loaded Arabic font.
+    void document.fonts.ready.then(() => {
+      if (cancelled) return;
+      measure();
+      observer.observe(group);
+      observer.observe(viewport);
+    });
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+      delete track.dataset.ready;
+    };
+  }, [feedLoaded, tickerItems]);
+
+  const applyPendingItems = () => {
+    if (!pendingItems.current) return;
+    setLiveItems(pendingItems.current);
+    pendingItems.current = null;
+  };
+
   return (
     <section className={styles.root} data-paused={paused} dir="rtl" aria-label="آخر أخبار وتحديثات دليل نقادة">
       <Link prefetch={false} href="/news" className={styles.heading}>
@@ -54,8 +123,8 @@ export function UpdatesTicker() {
       </Link>
 
       <div className={styles.viewport}>
-        <div className={styles.track}>
-          <div className={styles.group}>
+        <div className={styles.track} ref={trackRef} onAnimationIteration={applyPendingItems}>
+          <div className={styles.group} ref={groupRef}>
             {tickerItems.map((item) => (
               <Link prefetch={false} className={styles.item} href={item.href} key={`${item.tag}-${item.href}-${item.text}`}>
                 <span>{item.tag}</span>
