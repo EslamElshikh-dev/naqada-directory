@@ -154,3 +154,12 @@
 @media (prefers-reduced-motion: reduce) {
   .places a { transition: none; }
 }
+
+.compact { margin:0 0 22px; border:1px solid #d8e1d6; border-radius:12px; background:#fffdf6; }
+.compact > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 16px; min-height:48px; color:#244f3d; font-size:.9375rem; font-weight:700; cursor:pointer; }
+.compact > summary::after { content:'+'; font:500 22px/1 Arial,sans-serif; }
+.compact[open] > summary::after { content:'−'; }
+.compact > summary > span { margin-inline-start:auto; color:#687367; font-size:.8125rem; font-weight:400; }
+.compact > summary:focus-visible { outline:3px solid #b88639; outline-offset:3px; }
+.compact .places { padding:0 14px 14px; }
+.compact > .allResults { margin:0 14px 14px; }

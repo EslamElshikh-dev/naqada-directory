@@ -51,7 +51,7 @@ function ownerBusinesses(rows: Awaited<ReturnType<typeof getPublishedOwnerListin
     id: `owner:${row.id}`, slug: `owner-${row.id}`, name: row.name,
     normalizedName: normalizeArabic(row.name), category: row.category, subcategory: null,
     locality: row.locality, parentLocality: null, address: row.address, phone: row.phone,
-    rating: null, reviews: null, hours: row.hours, mapsUrl: null, placeId: null,
+    rating: null, reviews: null, hours: row.hours, mapsUrl: row.maps_url || null, placeId: null,
     verification: 'بيانات أضافها صاحب النشاط وراجعها فريق الدليل',
     status: 'published', checked: row.updated_at.slice(0, 10), notes: null,
     description: row.description, ownerPhotoPaths: row.photo_paths,

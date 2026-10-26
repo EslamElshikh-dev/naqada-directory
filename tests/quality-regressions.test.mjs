@@ -37,6 +37,81 @@ const robots = loadModule('./app/robots').default;
 const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
+test('live stories outside the newest archive window receive bounded safe snapshot lookups', () => {
+  const latest = Array.from({ length: 60 }, (_, index) => ({ id: `recent-${index}` }));
+  const old = Array.from({ length: 53 }, (_, index) => ({ id: `old-${index}` }));
+  const queries = news.missingNewsSnapshotQueries([...old, old[0], latest[0], { id: 'editorial', isOriginal: true }, { id: 'bad),id.gt.0' }], latest);
+  assert.equal(queries.length, 2);
+  assert.ok(queries[0].endsWith('&limit=50'));
+  assert.ok(queries[1].endsWith('&limit=3'));
+  assert.ok(queries[0].includes('old-0'));
+  assert.ok(queries[1].includes('old-52'));
+  assert.ok(!queries.join('').includes('recent-0'));
+  assert.ok(!queries.join('').includes('editorial'));
+  assert.ok(!queries.join('').includes('bad'));
+  assert.equal(news.missingNewsSnapshotQueries(latest, latest).length, 0);
+});
+
+test('search facets count the current public catalog and drop emptied categories and localities', () => {
+  const sample = data.businesses.find(item => item.locality && item.category);
+  const only = [{ ...sample, id: 'owner:7828410d-1d6b-4ab9-8394-6a266d0bcf2e', slug: 'owner-one' }];
+  const locality = data.canonicalLocalityName(sample.locality);
+  const place = search.searchSite(locality, 100, ['locality'], only).find(item => item.title === locality);
+  assert.ok(place);
+  assert.match(place.subtitle, /١ نشاطًا/);
+  const category = search.searchSite(sample.category, 100, ['category'], only).find(item => item.title === sample.category);
+  assert.equal(category.subtitle, '١ نشاطًا منشورًا');
+  assert.equal(search.searchSite(locality, 100, ['locality'], []).length, 0);
+  assert.equal(search.searchSite(sample.category, 100, ['category'], []).length, 0);
+  assert.equal(search.searchSite(sample.name, 100, ['listing'], only)[0].href, '/activity/7828410d-1d6b-4ab9-8394-6a266d0bcf2e/');
+});
+
+test('live news previews keep the publication date of the matching published archive snapshot', () => {
+  const live = { id: 'story', title: 'خبر محلي', url: 'https://www.youm7.com/story/2026/10/18/example/1234', sourceUrl: 'https://www.youm7.com', publishedAt: '2026-10-18T18:00:00Z', imageUrl: 'https://images.example/new.webp', description: 'موجز محدث' };
+  const archived = { ...live, url: `${live.url}?utm_source=archive`, publishedAt: '2026-10-18T06:01:00Z', imageUrl: 'https://images.example/old.webp' };
+  const [preview] = news.reconcileNewsCopies([live], [archived]);
+  assert.equal(preview.publishedAt, archived.publishedAt);
+  assert.equal(preview.imageUrl, live.imageUrl);
+  assert.equal(preview.description, live.description);
+  assert.equal(news.reconcileNewsCopies([live], [{ ...archived, publishedAt: '' }])[0].publishedAt, live.publishedAt);
+});
+
+test('event grouping preserves different places, dates, quantities, original reports and accident stories', () => {
+  const title = 'افتتاح معرض المنتجات المحلية للشباب في مدينة نقادة';
+  const story = (id, titleOverride = title, overrides = {}) => ({ id, title: titleOverride, source: id, sourceUrl: `https://${id}.example`, publishedAt: '2026-10-18T12:00:00Z', category: 'مجتمع', isNaqada: true, ...overrides });
+  const a = story('publisher-a');
+  const b = story('publisher-b', 'افتتاح معرض المنتجات المحلية للشباب بمدينة نقادة');
+  assert.equal(news.groupNewsEvents([a, { ...b, title }]).length, 1);
+  assert.equal(news.groupNewsEvents([a, { ...b, title: title.replace('نقادة', 'دنفيق') }]).length, 2);
+  assert.equal(news.groupNewsEvents([a, { ...b, publishedAt: '2026-10-16T12:00:00Z' }]).length, 2);
+  assert.equal(news.groupNewsEvents([a, { ...b, isOriginal: true }]).length, 2);
+  assert.equal(news.groupNewsEvents([story('a', 'افتتاح 4 مدارس جديدة لأهالي مدينة نقادة'), story('b', 'افتتاح 5 مدارس جديدة لأهالي مدينة نقادة')]).length, 2);
+  const accident = 'مصرع شخصين في حادث على طريق مدينة نقادة';
+  assert.equal(news.groupNewsEvents([story('a', accident), story('b', accident)]).length, 2);
+});
+
+test('village counts follow the visible public catalog, including new owner activities and hidden removals', () => {
+  const { localitiesWithPublicCounts } = loadModule('./lib/public-localities');
+  const hidden = data.businesses[0];
+  const hiddenPlace = data.canonicalLocalityName(hidden.locality);
+  const ownerPlace = data.localities.find(item => item.name !== hiddenPlace).name;
+  const visible = data.businesses.filter(item => item.id !== hidden.id);
+  visible.push({ ...hidden, id: 'owner:new', slug: 'owner-new', locality: ownerPlace });
+  const counted = localitiesWithPublicCounts(data.localities, visible);
+  const expected = name => visible.filter(item => data.canonicalLocalityName(item.locality) === name).length;
+  assert.equal(counted.find(item => item.name === hiddenPlace).businessCount, expected(hiddenPlace));
+  assert.equal(counted.find(item => item.name === ownerPlace).businessCount, expected(ownerPlace));
+  assert.equal(visible.length, data.businesses.length);
+});
+
+test('owner activities keep their published canonical URL in cards, homepage updates and structured data', () => {
+  const { publicBusinessHref } = loadModule('./lib/business-links');
+  const id = '7828410d-1d6b-4ab9-8394-6a266d0bcf2e';
+  assert.equal(publicBusinessHref({ id: `owner:${id}`, slug: `owner-${id}` }), `/activity/${id}/`);
+  assert.equal(publicBusinessHref({ id: `owner-${id}`, slug: id }), `/activity/${id}/`);
+  assert.equal(publicBusinessHref({ id: 'static:1', slug: 'صيدلية-مؤمن' }), `/listing/${encodeURIComponent('صيدلية-مؤمن')}/`);
+});
+
 test('school searches match activity type and locality, not a school in another activity address', () => {
   const matches = search.searchSite('مدرسة في بشلاو', 100, ['listing']);
   assert.ok(matches.length > 0);

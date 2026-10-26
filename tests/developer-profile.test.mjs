@@ -13,7 +13,7 @@ const showcase = readFileSync('components/developer-work-showcase.tsx', 'utf8');
 const projectData = readFileSync('lib/developer-profile.ts', 'utf8');
 const nav = readFileSync('components/knowledge-section-nav.tsx', 'utf8');
 const knowledge = readFileSync('app/knowledge/page.tsx', 'utf8');
-const shell = readFileSync('components/site-shell.tsx', 'utf8');
+const shell = readFileSync('components/site-shell.tsx', 'utf8') + readFileSync('components/site-footer.tsx', 'utf8');
 const sitemap = readFileSync('app/sitemap.ts', 'utf8');
 const visualQa = readFileSync('.github/visual-qa-v2.mjs', 'utf8');
 
