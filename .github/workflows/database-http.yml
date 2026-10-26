@@ -2,6 +2,8 @@ name: PostgreSQL 17 Auth and Data API acceptance
 on:
   pull_request:
     paths:
+      - 'package.json'
+      - 'package-lock.json'
       - 'supabase/migrations/**'
       - 'tests/helpers/supabase-postgres.mjs'
       - 'tests/integration/supabase17/**'
@@ -11,6 +13,8 @@ on:
   push:
     branches: [main]
     paths:
+      - 'package.json'
+      - 'package-lock.json'
       - 'supabase/migrations/**'
       - 'tests/helpers/supabase-postgres.mjs'
       - 'tests/integration/supabase17/**'
