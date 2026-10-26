@@ -57,7 +57,7 @@
 
 .heading > span { display: grid; gap: 0; }
 .heading small { color: #c8d9d2; font-size: .56rem; font-weight: 750; line-height: 1.35; }
-.heading strong { color: #fff7e6; font-size: .72rem; font-weight: 900; line-height: 1.55; white-space: nowrap; }
+.heading strong { color: #fff7e6; font-size: .8125rem; font-weight: 900; line-height: 1.55; white-space: nowrap; }
 
 .viewport {
   min-width: 0;
@@ -127,7 +127,7 @@
   line-height: 1.4;
 }
 
-.item strong { font-size: .68rem; font-weight: 650; line-height: 1.7; }
+.item strong { font-size: .875rem; font-weight: 650; line-height: 1.7; }
 .item b { color: #70b69e; font-size: .77rem; transition: transform .2s ease, color .2s ease; }
 .item:hover { color: #fff; }
 .item:hover b { color: #f0cb7a; transform: translateX(-3px); }
@@ -170,24 +170,24 @@
 
 @media (max-width: 720px) {
   .root { min-height: 37px; grid-template-columns: auto minmax(0, 1fr) 38px; }
-  .heading { min-width: 82px; gap: 7px; padding: 4px 10px; }
+  .heading { min-width: 92px; gap: 7px; padding: 4px 8px; }
   .heading i { width: 7px; height: 7px; }
   .heading small { display: none; }
-  .heading strong { font-size: .62rem; }
+  .heading strong { font-size: .75rem; }
   .item { min-height: 35px; gap: 6px; padding-inline: 18px; }
   .item > span { padding: 2px 6px; font-size: .5rem; }
-  .item strong { font-size: .61rem; }
+  .item strong { font-size: .8125rem; }
   .control { width: 38px; min-height: 37px; }
   .viewport { mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
 }
 
 @media (max-width: 390px) {
-  .root { grid-template-columns: 72px minmax(0, 1fr) 34px; }
-  .heading { min-width: 72px; gap: 5px; padding-inline: 7px; }
-  .heading strong { font-size: .56rem; }
+  .root { grid-template-columns: 88px minmax(0, 1fr) 38px; }
+  .heading { min-width: 88px; gap: 5px; padding-inline: 7px; }
+  .heading strong { font-size: .75rem; }
   .item { padding-inline: 15px; }
-  .item strong { font-size: .57rem; }
-  .control { width: 34px; }
+  .item strong { font-size: .8125rem; }
+  .control { width: 38px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

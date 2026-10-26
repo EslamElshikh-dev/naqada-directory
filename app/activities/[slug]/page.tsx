@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { CategoryVisual } from '@/components/category-visual';
+import { UtilityPageHeader } from '@/components/utility-page-header';
 import { ListingCard } from '@/components/listing-card';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
 import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { publicBusinessHref } from '@/lib/business-links';
 import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
@@ -92,7 +92,7 @@ export default async function ActivityPage({ params }: Props) {
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}/`,
+            url: `${siteConfig.url}${publicBusinessHref(item)}`,
           })),
         },
       },
@@ -109,22 +109,14 @@ export default async function ActivityPage({ params }: Props) {
 
   return (
     <main id="main-content" className="page-main">
-      <section className="detail-hero category-hero">
-        <div className="shell category-hero__grid">
-          <div>
-            <nav className="breadcrumbs"><Link href="/activities">الأنشطة</Link><span>/</span><span>{activity.name}</span></nav>
-            <span className="eyebrow">دليل محلي متخصص · مركز نقادة</span>
-            <h1>{activity.name}</h1>
-            <p>{activity.description}</p>
-            <p>هذه الصفحة مخصصة للبحث عن <strong>{activity.name}</strong> داخل مدينة نقادة وقرى ونجوع مركز نقادة، وتجمع الأسماء المنشورة في الدليل في صفحة واحدة بدل البحث المتفرق.</p>
-            <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> اسمًا منشورًا</span><span><b>{places.length.toLocaleString('ar-EG')}</b> قرية أو نجعًا</span></div>
-          </div>
-          <CategoryVisual category={activity.visualCategory} size="lg" />
-        </div>
-      </section>
-
+      <UtilityPageHeader current={activity.name} parent={{ href: '/activities', label: 'الخدمات' }}
+        title={activity.name} description={activity.description}
+        metrics={[
+          { value: scoped.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
+          { value: places.length.toLocaleString('ar-EG'), label: 'قرية أو نجع' },
+        ]} />
       <section className="shell page-section">
-        <ServiceLocalityDiscovery
+        <ServiceLocalityDiscovery compact
           eyebrow="ابحث حسب المكان"
           title={`${activity.name} في قرى ونجوع نقادة`}
           description={`اختر المكان للوصول مباشرة إلى نتائج ${activity.searchLabel} المنشورة داخله، بدون المرور بصفحة القرية العامة أولًا.`}

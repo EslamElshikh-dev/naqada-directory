@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { DirectoryNotice } from '@/lib/notifications';
 import { ensureClientSession, subscribeClientSession } from './auth/client-session';
-import { InstallBanner } from './pwa-setup';
 import styles from './header-notifications.module.css';
 
 const WELCOME_ID = 'welcome-salawat-v1';
-const WELCOME_KEY = 'naqada_notification_welcome_v1';
 const SEEN_KEY = 'naqada_seen_notices_v1';
 const PERSONAL_SEEN_KEY = 'naqada_seen_personal_notices_v1:';
 const DELIVERED_KEY = 'naqada_delivered_decisions_v1:';
@@ -26,7 +24,6 @@ function BellIcon() {
 export function HeaderNotifications() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
-  const [welcomeVisible, setWelcomeVisible] = useState(false);
   const [greetingInPanel, setGreetingInPanel] = useState(false);
   const [items, setItems] = useState<DirectoryNotice[]>([]);
   const [viewerId, setViewerId] = useState<string | null>(null);
@@ -44,11 +41,7 @@ export function HeaderNotifications() {
       try {
         const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '[]') as unknown;
         setSeenIds(Array.isArray(seen) ? seen.filter((id): id is string => typeof id === 'string').slice(-100) : []);
-        if (!localStorage.getItem(WELCOME_KEY)) {
-          localStorage.setItem(WELCOME_KEY, '1');
-          setWelcomeVisible(true);
-        }
-      } catch { setWelcomeVisible(true); setSeenIds([]); }
+      } catch { setSeenIds([]); }
       setLoaded(true);
     }, 0);
 
@@ -129,12 +122,6 @@ export function HeaderNotifications() {
   }, [decisionToast]);
 
   useEffect(() => {
-    if (!welcomeVisible) return;
-    const timeout = window.setTimeout(() => setWelcomeVisible(false), 9000);
-    return () => window.clearTimeout(timeout);
-  }, [welcomeVisible]);
-
-  useEffect(() => {
     if (!open) return;
     function closeOnOutsidePress(event: PointerEvent) {
       if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false);
@@ -177,7 +164,6 @@ export function HeaderNotifications() {
     if (!open) {
       setGreetingInPanel(!seenIds.includes(WELCOME_ID));
       markRead();
-      setWelcomeVisible(false);
     } else {
       setGreetingInPanel(false);
     }
@@ -191,18 +177,11 @@ export function HeaderNotifications() {
         {unreadCount ? <span className={styles.unread}>{unreadCount > 9 ? '٩+' : unreadCount.toLocaleString('ar-EG')}</span> : null}
       </button>
 
-      {welcomeVisible && !open ? <div className={styles.welcome} role="status">
-        <span aria-hidden="true">✦</span><div><small>نورت دليل نقادة</small><strong>{SALAWAT}</strong></div>
-        <button type="button" aria-label="إغلاق رسالة الترحيب" onClick={() => setWelcomeVisible(false)}>×</button>
-      </div> : null}
-
       {decisionToast?.userId === viewerId && <div className={styles.decisionToast} role="status" aria-live="polite">
         <span className={styles.decisionMark} aria-hidden="true">✓</span>
         <Link href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>{decisionToast.notice.label}</small><strong>{decisionToast.notice.title}</strong><span>{decisionToast.notice.detail}</span></Link>
         <button type="button" onClick={() => setDecisionToast(null)} aria-label="إغلاق إشعار القبول">×</button>
       </div>}
-
-      {!open ? <InstallBanner welcomeVisible={welcomeVisible || !loaded} /> : null}
 
       {open ? <section id="header-notifications-panel" className={styles.panel} role="dialog" aria-labelledby="header-notifications-title">
         <header className={styles.head}>

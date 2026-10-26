@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { UtilityPageHeader } from '@/components/utility-page-header';
 import { CategoryCover } from '@/components/category-cover';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
-import { canonicalLocalityName, localities } from '@/lib/data';
+import { canonicalLocalityName } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
@@ -38,33 +39,14 @@ export default async function ActivitiesPage() {
 
   return (
     <main id="main-content" className="page-main">
-      <section className="catalog-hero">
-        <div className="shell catalog-hero__grid">
-          <div>
-            <nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>دليل الخدمات والأنشطة</span></nav>
-            <span className="eyebrow">دليل الخدمات المحلية في مركز نقادة</span>
-            <h1>دليل خدمات وأنشطة <em>نقادة</em></h1>
-            <p>ابحث حسب نوع الخدمة للوصول إلى الأسماء المنشورة والعناوين والهواتف وروابط الخرائط في مدينة نقادة وقراها ونجوعها، من الصيدليات والأطباء والمدارس إلى المطاعم والمحلات والخدمات اليومية.</p>
-          </div>
-          <aside className="catalog-hero__summary">
-            <span>تغطية دليل الخدمات</span>
-            <div className="catalog-hero__metrics">
-              <span><b>{activityLandings.length.toLocaleString('ar-EG')}</b><small>نوع نشاط مطلوب</small></span>
-              <span><b>{totalBusinesses.toLocaleString('ar-EG')}</b><small>اسمًا مرتبطًا</small></span>
-              <span><b>{localities.length.toLocaleString('ar-EG')}</b><small>موضعًا داخل نقادة</small></span>
-            </div>
-          </aside>
-        </div>
-      </section>
-
+      <UtilityPageHeader current="الخدمات والأنشطة" eyebrow="خدمات مركز نقادة"
+        title={<>دليل خدمات وأنشطة <em>نقادة</em></>}
+        description="صيدليات وأطباء ومدارس ومحلات؛ افتح الخدمة للاطلاع على الأنشطة وأرقامها ومواقعها المتاحة."
+        metrics={[
+          { value: activityLandings.length.toLocaleString('ar-EG'), label: 'نوع خدمة' },
+          { value: totalBusinesses.toLocaleString('ar-EG'), label: 'نشاط مرتبط' },
+        ]} />
       <section className="shell page-section">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow eyebrow--dark">ابحث بنوع الخدمة</span>
-            <h2>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة</h2>
-            <p>كل بطاقة تقود إلى صفحة مستقلة تعرض الأسماء الحقيقية المنشورة ومناطق وجودها، لتكون لكل نية بحث خدمية صفحة واضحة داخل دليل نقادة.</p>
-          </div>
-        </div>
         <div className="category-grid">
           {activityLandings.map((activity, index) => {
             const items = getBusinessesForActivity(activity, catalog.businesses);

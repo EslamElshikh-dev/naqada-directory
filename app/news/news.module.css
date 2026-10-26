@@ -220,3 +220,10 @@
   .newsroom { margin-top: 0; }
   .card,.leadStory { break-inside: avoid; box-shadow: none; }
 }
+
+.relatedCoverage { margin:14px 0; padding:10px 13px; border:1px solid #d8e1d6; border-radius:10px; background:#f4f6ef; color:#254d3e; font-size:.875rem; line-height:1.85; }
+.relatedCoverage summary { cursor:pointer; font-weight:700; min-height:28px; }
+.relatedCoverage summary:focus-visible { outline:3px solid #b88639; outline-offset:3px; }
+.relatedCoverage ul { margin:10px 0 0; padding-inline-start:18px; }
+.relatedCoverage li + li { margin-top:9px; }
+.relatedCoverage a { display:block; color:#27583f; text-decoration:underline; text-underline-offset:3px; }

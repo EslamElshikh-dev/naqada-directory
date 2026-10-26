@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import localFont from 'next/font/local';
-import { Footer, SiteHeader } from '@/components/site-shell';
+import { SiteHeader } from '@/components/site-shell';
+import { Footer } from '@/components/site-footer';
 import { MobileNav } from '@/components/mobile-nav';
 import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { VisitorTracker } from '@/components/visitor-tracker';

@@ -94,7 +94,7 @@ test('failed public reads are not cached as empty catalogs and can recover on th
   await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
   fail = false;
   assert.equal((await owners.getPublishedOwnerListings())[0].id, 'published');
-  assert.equal(calls, 2);
+  assert.equal(calls, 3);
 });
 
 test('job expiry is checked on each read rather than frozen in the short shared cache', async () => {
@@ -125,4 +125,66 @@ test('cancelled job reads preserve the unavailable state and do not populate the
   const controller = new AbortController(); controller.abort();
   assert.equal((await jobs.getJobs(controller.signal)).available, false);
   assert.equal((await jobs.getJobs()).available, true);
+});
+
+test('a transient public read retries once and a failed pair does not revive static or hidden content', async () => {
+  const cache = cacheHarness();
+  let calls = 0;
+  const moderator = load('../lib/auth/moderator.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}), SupabaseAuthError: Error },
+  }, { fetch: async () => {
+    calls++;
+    if (calls <= 2) throw Object.assign(new Error('timed out'), { name: 'TimeoutError' });
+    return Response.json([{ slug: 'withdrawn', status: 'hidden', payload: {} }]);
+  } });
+  await assert.rejects(moderator.getPublicCurated('article'), /timed out/);
+  assert.equal(calls, 2);
+  const recovered = await moderator.getPublicCurated('article');
+  assert.equal(recovered[0].status, 'hidden');
+  assert.equal(calls, 3);
+});
+
+test('public authorization failures are not retried as transient outages', async () => {
+  const cache = cacheHarness();
+  let calls = 0;
+  const moderator = load('../lib/auth/moderator.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}), SupabaseAuthError: Error },
+  }, { fetch: async () => { calls++; return Response.json({ message: 'forbidden' }, { status: 403 }); } });
+  await assert.rejects(moderator.getPublicCurated('business'), /403/);
+  assert.equal(calls, 1);
+});
+
+test('owner reads retry a timeout once with a fresh signal and retain published-only scope', async () => {
+  const cache = cacheHarness();
+  const signals = [];
+  const owners = load('../lib/owner-listings.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+    '@/lib/owner-listing-photo': {},
+  }, { fetch: async (url, init) => {
+    assert.match(url, /status=eq\.published/);
+    signals.push(init.signal);
+    if (signals.length === 1) throw Object.assign(new Error('timeout'), { name: 'TimeoutError' });
+    return Response.json([{ id: 'published' }]);
+  } });
+  assert.equal((await owners.getPublishedOwnerListing('published')).id, 'published');
+  assert.equal(signals.length, 2);
+  assert.notEqual(signals[0], signals[1]);
+  assert.equal(signals[1].aborted, false);
+});
+
+test('owner permission failures are neither retried nor cached as empty results', async () => {
+  const cache = cacheHarness();
+  let calls = 0;
+  const owners = load('../lib/owner-listings.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+    '@/lib/owner-listing-photo': {},
+  }, { fetch: async () => { calls++; return new Response(null, { status: 403 }); } });
+  await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
+  assert.equal(calls, 1);
+  await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
+  assert.equal(calls, 2);
 });
