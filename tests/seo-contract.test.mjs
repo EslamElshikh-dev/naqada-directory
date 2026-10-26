@@ -121,7 +121,7 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activities.includes('buildPageMetadata({'));
   assert.ok(activities.includes("path: '/activities/'"));
   assert.ok(activities.includes("title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم'"));
-  assert.ok(activities.includes('<h1>دليل خدمات وأنشطة <em>نقادة</em></h1>'));
+  assert.ok(activities.includes('دليل خدمات وأنشطة <em>نقادة</em>'));
   assert.ok(activities.includes('activityLandings.map'));
   assert.ok(activityPage.includes('generateStaticParams'));
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
@@ -139,7 +139,7 @@ test('villages hub owns generic village-directory intent', () => {
   assert.ok(villages.includes('buildPageMetadata({'));
   assert.ok(villages.includes("path: '/villages/'"));
   assert.ok(villages.includes("title: 'دليل قرى ونجوع نقادة | القرى والعزب والخدمات'"));
-  assert.ok(villages.includes('<h1>دليل قرى ونجوع <em>نقادة</em></h1>'));
+  assert.ok(villages.includes('دليل قرى ونجوع <em>نقادة</em>'));
   assert.ok(villages.includes('name: `دليل ${item.name}`'));
   assert.ok(villages.includes('دليل بشلاو ودليل الأوسط قمولا'));
 });

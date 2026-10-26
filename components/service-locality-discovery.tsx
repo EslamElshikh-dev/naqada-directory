@@ -13,14 +13,26 @@ export function ServiceLocalityDiscovery({
   description,
   items,
   resultsHref,
+  compact = false,
 }: {
   eyebrow?: string;
   title: string;
   description: string;
   items: ServiceLocalityDiscoveryItem[];
   resultsHref: string;
+  compact?: boolean;
 }) {
   if (!items.length) return null;
+
+  if (compact) return <details className={styles.compact}>
+    <summary>{title}<span>{items.length.toLocaleString('ar-EG')} مواضع</span></summary>
+    <nav className={styles.places} aria-label={`اختيار المكان لـ ${title}`}>
+      {items.map(item => <Link key={`${item.name}-${item.href}`} href={item.href} prefetch={false}>
+        <span className={styles.copy}><strong>{item.name}</strong><small>{item.count.toLocaleString('ar-EG')} نتيجة</small></span><span className={styles.arrow} aria-hidden="true">←</span>
+      </Link>)}
+    </nav>
+    <a href={resultsHref} className={styles.allResults}>كل النتائج ↓</a>
+  </details>;
 
   return (
     <section className={styles.discovery} aria-label={title}>

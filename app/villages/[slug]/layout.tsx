@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { businesses, canonicalLocalityName, categories, getLocalityBySlug } from '@/lib/data';
-import { localCategoryHref } from '@/lib/discovery-routing';
+import { canonicalLocalityName, categories, getLocalityBySlug } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import styles from './locality-discovery.module.css';
 
 type Props = {
@@ -15,6 +15,7 @@ export default async function LocalityLayout({ children, params }: Props) {
 
   if (!locality) return children;
 
+  const { businesses } = await getPublicBusinessCatalog();
   const categoryCounts = new Map<string, number>();
   let businessCount = 0;
 
@@ -48,7 +49,7 @@ export default async function LocalityLayout({ children, params }: Props) {
               <span aria-hidden="true">↓</span>
             </Link>
             {quickCategories.map(({ category, count }) => (
-              <Link key={category.slug} href={localCategoryHref(category.name, locality.name)} prefetch={false}>
+              <Link key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory?category=${encodeURIComponent(category.name)}&locality=${encodeURIComponent(locality.name)}`} prefetch={false}>
                 {category.shortLabel}
                 <small>{count.toLocaleString('ar-EG')}</small>
               </Link>

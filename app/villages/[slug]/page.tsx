@@ -5,6 +5,7 @@ import { DirectoryExplorer } from '@/components/directory-explorer';
 import { BrandMark } from '@/components/site-shell';
 import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { publicBusinessHref } from '@/lib/business-links';
 import { aliasesForPlace, childrenForPlace, knowledgePeopleForLocality, knowledgePlaceForLocality, primaryKnowledgeContributor, sourceById } from '@/lib/knowledge';
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
@@ -86,7 +87,7 @@ export default async function LocalityPage({ params }: Props) {
         '@type': 'ListItem',
         position: index + 1,
         name: item.name,
-        url: `${siteConfig.url}/listing/${encodeURIComponent(item.slug)}`,
+        url: `${siteConfig.url}${publicBusinessHref(item)}`,
       })),
     },
     {

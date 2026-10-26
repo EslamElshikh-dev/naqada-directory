@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { NewsImage } from '@/components/news-image';
 import { getLatestNews, newsSourceDirectory, type ExternalNewsItem, type NewsCategory } from '@/lib/news';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
+import { groupNewsEvents } from '@/lib/news-feed-quality';
 import styles from './news.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -75,7 +76,15 @@ function StoryButton({ item, compact = false }: { item: ExternalNewsItem; compac
   </Link>;
 }
 
-function NewsCard({ item }: { item: ExternalNewsItem }) {
+function RelatedCoverage({ items }: { items: ExternalNewsItem[] }) {
+  if (!items.length) return null;
+  return <details className={styles.relatedCoverage}>
+    <summary>تغطيات أخرى للحدث ({items.length.toLocaleString('ar-EG')})</summary>
+    <ul>{items.map(item => <li key={item.id}><Link prefetch={false} href={`/news/${item.id}`}><strong>{item.source}</strong> · {item.title}</Link></li>)}</ul>
+  </details>;
+}
+
+function NewsCard({ item, related }: { item: ExternalNewsItem; related: ExternalNewsItem[] }) {
   return (
     <article className={styles.card} id={`story-${item.id}`}>
       <Link prefetch={false} className={styles.cardMedia} href={`/news/${item.id}`} tabIndex={-1} aria-hidden="true">
@@ -87,6 +96,7 @@ function NewsCard({ item }: { item: ExternalNewsItem }) {
         <div className={styles.cardTop}><StoryMeta item={item} /><span className={styles.category}>{item.category}</span></div>
         <h2><Link prefetch={false} href={`/news/${item.id}`}>{item.title}</Link></h2>
         {item.description ? <p>{item.description}</p> : <p className={styles.descriptionFallback}>افتَح تفاصيل الخبر وروابط الناشر.</p>}
+        <RelatedCoverage items={related} />
         <div className={styles.cardFooter}>
           <span>{item.isOriginal ? 'خبر من فريق الدليل' : 'نشر خارجي · الحقوق للمصدر'}</span>
           <StoryButton item={item} compact />
@@ -104,8 +114,9 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
     : selected === 'نقادة'
       ? feed.items.filter((item) => item.isNaqada)
       : feed.items.filter((item) => item.category === selected);
-  const featured = filteredItems[0];
-  const latest = filteredItems.slice(1);
+  const groupedItems = groupNewsEvents(filteredItems);
+  const featured = groupedItems[0]?.item;
+  const latest = groupedItems.slice(1);
   const sourceCount = new Set(feed.items.map((item) => item.source)).size;
   const newsUrl = `${siteConfig.url}/news/`;
   const structuredData = {
@@ -204,6 +215,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                   <StoryMeta item={featured} />
                   <h2><Link prefetch={false} href={`/news/${featured.id}`}>{featured.title}</Link></h2>
                   {featured.description ? <p>{featured.description}</p> : <p className={styles.descriptionFallback}>تعرّف على التفاصيل وروابط المصدر في صفحة الخبر.</p>}
+                  <RelatedCoverage items={groupedItems[0].related} />
                   <div className={styles.leadFooter}><StoryButton item={featured} /><span>{featured.isOriginal ? 'خبر محلي من الدليل' : `المصدر: ${featured.source}`}</span></div>
                 </div>
               </article>
@@ -212,7 +224,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             {latest.length > 0 ? (
               <section className={styles.latestSection} aria-labelledby="latest-news-title">
                 <div className={styles.sectionTitle}><div><span>آخر ما وصل</span><h2 id="latest-news-title">أحدث الأخبار من المصادر</h2></div><small>{latest.length.toLocaleString('ar-EG')} خبرًا في هذا العرض</small></div>
-                <div className={styles.grid}>{latest.map((item) => <NewsCard item={item} key={item.id} />)}</div>
+                <div className={styles.grid}>{latest.map(({ item, related }) => <NewsCard item={item} related={related} key={item.id} />)}</div>
               </section>
             ) : null}
           </>
