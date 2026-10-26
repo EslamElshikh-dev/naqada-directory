@@ -23,7 +23,7 @@ jobs:
       - name: Install browser test tooling
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
       - name: Inspect the public production site without writes
         env:
           QA_BASE_URL: https://naqada-directory.vercel.app

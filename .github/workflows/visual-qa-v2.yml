@@ -41,7 +41,7 @@ jobs:
       - name: Install Playwright and Chromium
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Start production server
         run: |
