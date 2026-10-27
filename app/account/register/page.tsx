@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/account-register.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BrandMark } from '@/components/site-shell';

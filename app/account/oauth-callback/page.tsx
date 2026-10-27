@@ -1,5 +1,5 @@
 'use client';
-import '@/app/content-styles.css';
+import '@/app/route-styles/account-oauth-callback.css';
 
 
 import Link from 'next/link';

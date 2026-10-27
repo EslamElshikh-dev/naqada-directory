@@ -1,3 +1,4 @@
+import '@/app/route-styles/design-typography.css';
 import type { Metadata } from 'next';
 import { plexFont, readexFont } from '@/app/fonts';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';

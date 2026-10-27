@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/account.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { MemberDashboard } from '@/components/auth/member-dashboard';

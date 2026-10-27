@@ -20,6 +20,8 @@ const readMotion = page => page.evaluate(() => {
     animation: style.animationName,
     paused: style.animationPlayState,
     fonts: document.fonts.status,
+    textSize: Number.parseFloat(getComputedStyle(root.querySelector('a strong')).fontSize),
+    headlineSize: Number.parseFloat(getComputedStyle(track.querySelector('a strong')).fontSize),
     overflow: document.documentElement.scrollWidth > innerWidth + 1,
   };
 });
@@ -52,7 +54,10 @@ try {
       else await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
       assert.equal((await readMotion(page)).animation, 'none', `${name}: waits for the initial feed`);
       await page.waitForFunction(() => document.querySelector('[class*="_track"]')?.dataset.ready === 'true');
-      assert.equal((await readMotion(page)).fonts, 'loaded', `${name}: waits for the Arabic font`);
+      const ready = await readMotion(page);
+      assert.equal(ready.fonts, 'loaded', `${name}: waits for the Arabic font`);
+      assert.ok(ready.headlineSize >= 14, `${name}: readable ticker headlines (${ready.headlineSize}px)`);
+      assert.ok(ready.textSize >= 12, `${name}: readable ticker heading (${ready.textSize}px)`);
       await page.waitForTimeout(1200);
       const samples = [];
       for (let i = 0; i < 4; i++) {

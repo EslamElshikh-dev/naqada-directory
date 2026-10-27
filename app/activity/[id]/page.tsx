@@ -1,6 +1,6 @@
 import { ownerActivityHref, ownerActivityId, ownerActivityNeedsRedirect } from '@/lib/activity-path';
 import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
-import '@/app/content-styles.css';
+import '@/app/route-styles/activity-id.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { OwnerPhoto } from '@/components/owner-photo';

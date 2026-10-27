@@ -9,7 +9,7 @@ function load(path, modules, globals = {}) {
   const code = ts.transpileModule(readFileSync(new URL(path, import.meta.url), 'utf8'), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
   }).outputText;
-  vm.runInNewContext(code, { module: record, exports: record.exports, require: name => modules[name],
+  vm.runInNewContext(code, { module: record, exports: record.exports, require: name => name === 'react' ? { cache: fn => fn } : modules[name],
     AbortSignal, Response, Date, console, ...globals });
   return record.exports;
 }
@@ -38,7 +38,7 @@ function cacheHarness() {
   return { nextCache, publicCache, registrations, invalidations };
 }
 
-test('public reads are shared briefly while authenticated moderator reads remain separate', async () => {
+test('moderation visibility is read on each request and authenticated reads remain separate', async () => {
   const cache = cacheHarness();
   const calls = [];
   const moderator = load('../lib/auth/moderator.ts', {
@@ -47,17 +47,18 @@ test('public reads are shared briefly while authenticated moderator reads remain
   }, { fetch: async (url, init) => { calls.push({ url, ...init }); return Response.json([]); } });
   await moderator.getPublicCurated('business');
   await moderator.getPublicCurated('business');
-  assert.equal(calls.length, 1);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].cache, 'no-store');
   assert.equal(calls[0].headers.Authorization, 'Bearer public');
   assert.ok(calls[0].signal instanceof AbortSignal);
   await moderator.getPublicCurated('news');
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 3);
   await moderator.getEditorContent('editor-a');
   await moderator.getEditorContent('editor-b');
-  assert.equal(calls.length, 4);
-  assert.equal(calls[2].headers.Authorization, 'Bearer editor-a');
-  assert.equal(calls[3].headers.Authorization, 'Bearer editor-b');
-  assert.equal(cache.registrations[0].options.revalidate, 60);
+  assert.equal(calls.length, 5);
+  assert.equal(calls[3].headers.Authorization, 'Bearer editor-a');
+  assert.equal(calls[4].headers.Authorization, 'Bearer editor-b');
+  assert.equal(cache.registrations.length, 0);
 });
 
 test('a successful moderation decision expires old public rows without serving the old visible record', async () => {
@@ -76,6 +77,28 @@ test('a successful moderation decision expires old public rows without serving t
   assert.equal(cache.invalidations.length, 1);
   assert.equal(cache.invalidations[0].tag, cache.publicCache.PUBLIC_CONTENT_TAG);
   assert.equal(cache.invalidations[0].profile.expire, 0);
+});
+
+test('an older owner read finishing after withdrawal cannot repopulate later requests', async () => {
+  const cache = cacheHarness();
+  let release;
+  let reads = 0;
+  const owners = load('../lib/owner-listings.ts', {
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+    '@/lib/owner-listing-photo': {},
+  }, { fetch: async () => {
+    reads++;
+    if (reads === 1) return new Promise(resolve => { release = () => resolve(Response.json([{ id: 'withdrawn' }])); });
+    return Response.json([]);
+  } });
+  const oldRead = owners.getPublishedOwnerListing('withdrawn');
+  cache.publicCache.invalidatePublicContent();
+  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
+  release();
+  assert.equal((await oldRead).id, 'withdrawn');
+  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
+  assert.equal(reads, 3);
 });
 
 test('failed public reads are not cached as empty catalogs and can recover on the next request', async () => {
@@ -98,7 +121,7 @@ test('failed public reads are not cached as empty catalogs and can recover on th
   assert.equal(calls, 3);
 });
 
-test('job expiry is checked on each read rather than frozen in the short shared cache', async () => {
+test('job visibility and expiry are checked again on the next request', async () => {
   const cache = cacheHarness();
   let now = Date.parse('2026-10-13T03:00:00Z');
   let calls = 0;
@@ -114,7 +137,8 @@ test('job expiry is checked on each read rather than frozen in the short shared 
   assert.equal((await jobs.getJobs()).jobs.length, 1);
   now += 20_000;
   assert.equal((await jobs.getJobs()).jobs.length, 0);
-  assert.equal(calls, 3);
+  assert.equal(calls, 6);
+  assert.equal(cache.registrations.length, 0);
 });
 
 test('cancelled job reads preserve the unavailable state and do not populate the shared cache', async () => {

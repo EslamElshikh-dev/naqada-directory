@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/knowledge-people-slug.css';
 import type { Metadata } from 'next';
 import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';

@@ -1,5 +1,5 @@
 import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
-import '@/app/content-styles.css';
+import '@/app/route-styles/listing-slug.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';

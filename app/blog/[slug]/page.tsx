@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/blog-slug.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPublicCurated } from '@/lib/auth/moderator';

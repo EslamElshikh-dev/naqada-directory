@@ -1,3 +1,4 @@
+import '@/app/route-styles/home.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { cache, Suspense, type CSSProperties, type ReactNode } from 'react';

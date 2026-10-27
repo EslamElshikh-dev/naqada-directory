@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { BODY_FONT, bodyFontVariable, displayFont } from '@/app/fonts';
 import Link from 'next/link';
-import './site-styles.css';
+import './not-found-styles.css';
 
 
 export const metadata: Metadata = {

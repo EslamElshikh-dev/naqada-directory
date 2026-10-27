@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/moderator-preview.css';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { resolveSession } from '@/lib/auth/session';

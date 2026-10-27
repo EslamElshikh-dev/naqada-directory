@@ -7,7 +7,7 @@ export const displayFont = localFont({
     { path: './fonts/noto-kufi-arabic-700.woff2', weight: '700', style: 'normal' },
   ],
   declarations: [{ prop: 'font-family', value: 'Noto Kufi Arabic' }],
-  variable: '--font-display', display: 'swap', preload: false, adjustFontFallback: 'Arial',
+  variable: '--font-display', display: 'swap', preload: true, adjustFontFallback: 'Arial',
 });
 export const plexFont = localFont({
   src: [
@@ -17,7 +17,7 @@ export const plexFont = localFont({
     { path: './fonts/ibm-plex-sans-arabic-700.woff2', weight: '700', style: 'normal' },
   ],
   declarations: [{ prop: 'font-family', value: 'IBM Plex Sans Arabic' }],
-  variable: '--font-plex', display: 'swap', adjustFontFallback: 'Arial', preload: false,
+  variable: '--font-plex', display: 'swap', adjustFontFallback: 'Arial', preload: true,
 });
 export const readexFont = localFont({
   src: [{ path: './fonts/readex-pro-variable.woff2', weight: '160 700', style: 'normal' }],

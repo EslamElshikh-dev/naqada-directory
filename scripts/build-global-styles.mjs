@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, unlinkSync } from 'node:fs';
 import { cleanGlobalStyles } from './global-style-cleanup.mjs';
-import { partitionGlobalStyles } from './global-style-partition.mjs';
+import { createStyleUsageCollector, extractRouteStyles } from './route-style-usage.mjs';
 import { fileURLToPath } from 'node:url';
 
 // Preserve the established cascade; CSS Modules stay separate by route.
@@ -55,7 +55,33 @@ const css = sources.map((name) => {
 }).join('\n\n');
 const cleaned = cleanGlobalStyles(css, retiredClasses);
 writeFileSync(new URL('site-styles.css', app), cleaned.css + '\n');
-const partition = partitionGlobalStyles(cleaned.css, fileURLToPath(new URL('../', import.meta.url)));
-writeFileSync(new URL('shell-styles.css', app), partition.shell + '\n');
-writeFileSync(new URL('content-styles.css', app), partition.content + '\n');
-console.log(JSON.stringify({ shellBytes: Buffer.byteLength(partition.shell), contentBytes: Buffer.byteLength(partition.content), sourceBytes: Buffer.byteLength(css), outputBytes: Buffer.byteLength(cleaned.css), removedSelectors: cleaned.removedSelectors, removedDeclarations: cleaned.removedDeclarations }));
+const root = fileURLToPath(new URL('../', import.meta.url));
+const collect = createStyleUsageCollector(root);
+const sharedEntries = ['app/layout.tsx', 'app/not-found.tsx', 'app/error.tsx'].filter(name => existsSync(new URL('../' + name, import.meta.url)));
+const shared = collect(sharedEntries);
+const shell = extractRouteStyles(cleaned.css, shared);
+writeFileSync(new URL('shell-styles.css', app), shell.trimEnd() + '\n');
+// Compatibility sheet for third-party embeds; app routes import their own subset.
+writeFileSync(new URL('content-styles.css', app), extractRouteStyles(cleaned.css, collect(['app/layout.tsx', ...pageFiles(app)]), shared) + '\n');
+mkdirSync(new URL('route-styles/', app), { recursive: true });
+const staleSheets = new Set(readdirSync(new URL('route-styles/', app)).filter(name => name.endsWith('.css')));
+function pageFiles(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory);
+    return entry.isDirectory() ? entry.name.startsWith('qa-') ? [] : pageFiles(url) : entry.name === 'page.tsx' ? [fileURLToPath(url)] : [];
+  });
+}
+const sizes = {};
+for (const file of pageFiles(app)) {
+  const relative = file.slice(fileURLToPath(app).length);
+  const name = relative === 'page.tsx' ? 'home' : relative.replace(/\/page\.tsx$/, '').replace(/[^a-zA-Z0-9-]+/g, '-').replace(/-+$/, '');
+  if (sizes[name] !== undefined) throw Error('Duplicate route style name: ' + name);
+  const parents = relative.split('/').slice(0, -1).map((_, index, parts) => 'app/' + parts.slice(0, index + 1).join('/') + '/layout.tsx').filter(path => existsSync(new URL('../' + path, import.meta.url)));
+  const styles = extractRouteStyles(cleaned.css, collect([...sharedEntries, ...parents, file]), shared);
+  writeFileSync(new URL('route-styles/' + name + '.css', app), styles.trimEnd() + (styles.trim() ? '\n' : ''));
+  staleSheets.delete(name + '.css');
+  sizes[name] = Buffer.byteLength(styles);
+}
+for (const name of staleSheets) unlinkSync(new URL('route-styles/' + name, app));
+writeFileSync(new URL('not-found-styles.css', app), extractRouteStyles(cleaned.css, collect(['app/global-not-found.tsx'])).trimEnd() + '\n');
+console.log(JSON.stringify({ shellBytes: Buffer.byteLength(shell), routes: sizes, sourceBytes: Buffer.byteLength(css), outputBytes: Buffer.byteLength(cleaned.css), removedSelectors: cleaned.removedSelectors, removedDeclarations: cleaned.removedDeclarations }));

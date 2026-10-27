@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/claim-slug.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';

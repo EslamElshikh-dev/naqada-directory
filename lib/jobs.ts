@@ -1,6 +1,6 @@
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
-import { unstable_cache } from 'next/cache';
-import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
+import { cache } from 'react';
+import { PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 
 export type LocalJob = {
   id: string;
@@ -39,12 +39,11 @@ async function loadJobs(signal: AbortSignal): Promise<{ jobs: LocalJob[]; state:
   return { jobs, state };
 }
 
-const cachedJobs = unstable_cache(() => loadJobs(AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)),
-  ['naqada-published-jobs-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
+const requestJobs = cache(() => loadJobs(AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)));
 
 export async function getJobs(signal?: AbortSignal): Promise<{ jobs: LocalJob[]; state: JobFeedState | null; available: boolean }> {
   try {
-    const data = await (signal ? loadJobs(AbortSignal.any([signal, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)])) : cachedJobs());
+    const data = await (signal ? loadJobs(AbortSignal.any([signal, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)])) : requestJobs());
     // Apply expiry at read time, even when the source rows came from the short cache.
     return { ...data, jobs: data.jobs.filter((job) => Date.parse(job.expires_at) > Date.now()), available: true };
   } catch {

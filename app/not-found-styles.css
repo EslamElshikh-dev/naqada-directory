@@ -1,0 +1,873 @@
+/* Source: ./globals.css */
+:root {
+  --green-1000: #0a201a;
+  --green-950: #102a24;
+  --green-900: #173a30;
+  --green-800: #235745;
+  --green-700: #327258;
+  --green-100: #e6efe9;
+  --green-50: #f0f5f1;
+  --gold: #e3b655;
+  --gold-dark: #9a7424;
+  --cream: #f7f5ef;
+  --paper: #fffefb;
+  --ink: #17241f;
+  --muted: #66736e;
+  --line: #dfe4df;
+  --danger: #9a3939;
+  --danger-dark: #461d1d;
+  --shadow: 0 22px 60px rgba(20, 49, 40, .1);
+  --shell: min(1180px, calc(100% - 40px));
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button, input, select { font: inherit; }
+button, select { cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid rgba(227, 182, 85, .75); outline-offset: 3px; }
+.shell { width: var(--shell); margin-inline: auto; }
+.button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; transition: background .2s ease, color .2s ease, border-color .2s ease; }
+.button--primary { background: var(--green-950); color: var(--text-on-dark); }
+.button--primary:hover { background: var(--green-800); }
+.button--ghost { border-color: var(--line); color: var(--text-muted); }
+
+.not-found { min-height: 68vh; display: grid; align-content: center; justify-items: center; text-align: center; padding-block: 80px; }
+.not-found > span { color: var(--text-accent); font-size: var(--fs-sm); font-weight: 700; letter-spacing: normal; }
+.not-found h1 { margin: 15px 0 6px; font-size: var(--fs-3xl); }
+.not-found p { color: var(--text-muted); font-size: var(--fs-xs); }
+.not-found > div { display: flex; gap: 7px; margin-top: 16px; }
+
+@media (max-width: 840px) {
+  :root { --shell: min(100% - 26px, 1180px); }
+  body { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 620px) {
+  .not-found h1 { font-size: var(--fs-3xl); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* Keep all interactive labels comfortably readable at normal zoom. */
+.button { font-size: var(--fs-sm); }
+
+
+/* Source: ./naqada-theme.css */
+/*
+ * Naqada heritage identity
+ * Inspired by Predynastic black-topped red ware: warm clay, charcoal, sand,
+ * with a restrained Nile-blue accent. Imported after globals.css so the
+ * existing component system inherits the new identity without layout churn.
+ */
+
+:root {
+  --naqada-charcoal: #211713;
+  --naqada-charcoal-2: #2d1e18;
+  --naqada-ink: #2a1e19;
+  --naqada-clay-deep: #71351f;
+  --naqada-clay: #a94f34;
+  --naqada-terracotta: #c96949;
+  --naqada-copper: #c99559;
+  --naqada-sand: #ead8c1;
+  --naqada-sand-soft: #f5ebdf;
+  --naqada-papyrus: #fffaf3;
+  --naqada-nile: #3e7480;
+  --naqada-nile-soft: #deebec;
+
+  /* Compatibility aliases for the existing design system. */
+  --green-1000: #211713;
+  --green-950: #2d1e18;
+  --green-900: #472a20;
+  --green-800: #7d3d29;
+  --green-700: #a45137;
+  --green-100: #efddd1;
+  --green-50: #f8eee6;
+  --gold: #d1a265;
+  --gold-dark: #8c6137;
+  --cream: #f6efe6;
+  --paper: #fffaf3;
+  --ink: #2a1e19;
+  --muted: #796b62;
+  --line: #e5d7ca;
+  --shadow: 0 24px 65px rgba(66, 35, 24, .11);
+}
+
+html { background: var(--naqada-charcoal); }
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(201, 105, 73, .055), transparent 28rem),
+    var(--cream);
+}
+:focus-visible { outline-color: rgba(169, 79, 52, .72); }
+
+/* ---------- Header ---------- */
+
+/* Pottery-inspired brand mark: black top, red-clay body. */
+
+/* ---------- Main hero ---------- */
+
+/* ---------- Site-wide palette cleanup ---------- */
+.button--ghost { background: #fffaf4; }
+
+/* ---------- Footer ---------- */
+
+/* ---------- Mobile ---------- */
+
+/* ---------- Motion: light, professional and accessible ---------- */
+
+@keyframes naqadaBand {
+  to { background-position: 180% 0; }
+}
+@keyframes naqadaPatternDrift {
+  from { transform: translate3d(0,0,0); }
+  to { transform: translate3d(18px,-10px,0); }
+}
+@keyframes naqadaPotteryFloat {
+  0%, 100% { transform: rotate(7deg) translateY(0); }
+  50% { transform: rotate(5deg) translateY(-12px); }
+}
+@keyframes naqadaPanelFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes naqadaDotGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(241,213,174,.13); }
+  50% { box-shadow: 0 0 0 6px rgba(241,213,174,.08); }
+}
+@keyframes naqadaRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes naqadaReveal {
+  from { opacity: .15; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ---------- Premium mobile navigation ---------- */
+@media (max-width: 840px) {
+  body { padding-block-end: calc(92px + env(safe-area-inset-bottom)); }
+}
+
+@keyframes naqadaActiveNav {
+  0%, 100% { transform: translateY(-1px) scale(1.04); }
+  50% { transform: translateY(-3px) scale(1.06); }
+}
+
+
+/* Source: ./member-system.css */
+/* Member, authentication, review, and administration system */
+
+@keyframes memberSpin{to{transform:rotate(360deg)}}
+
+
+/* Source: ./premium-refresh.css */
+/* 2026 interface refresh: clearer hierarchy, tactile cards, and restrained motion. */
+:root {
+  --premium-ink: #2b1c17;
+  --premium-clay: #a84f35;
+  --premium-clay-dark: #713422;
+  --premium-sand: #e5b878;
+  --premium-blue: #3e7480;
+  --premium-surface: #fffaf4;
+  --premium-line: rgba(99, 53, 37, .12);
+  --premium-ease: cubic-bezier(.2, .75, .2, 1);
+}
+
+/* Header and primary routes */
+
+/* Homepage guidance */
+
+/* Category cards */
+
+/* Service cards */
+
+/* Google authentication */
+
+/* Footer information architecture */
+
+@keyframes premiumSpin { to { transform: rotate(360deg); } }
+@keyframes premiumReveal { from { opacity: .18; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+
+/* Source: ./experience-polish.css */
+/* Final experience layer: mobile-first navigation, tactile actions, and landmark gallery. */
+:root {
+  --ui-radius: 18px;
+  --ui-shadow: 0 18px 48px rgba(66, 34, 24, .10);
+  --ui-shadow-raised: 0 28px 68px rgba(56, 28, 19, .16);
+  --ui-ease: cubic-bezier(.22, .8, .25, 1);
+}
+body { overflow-x: clip; }
+
+/* Brand and header */
+
+/* Shared professional actions */
+.button {
+  gap: 9px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 19px rgba(61, 32, 23, .08), inset 0 1px rgba(255,255,255,.35);
+  transition: transform .22s var(--ui-ease), box-shadow .22s ease, background .22s ease, border-color .22s ease;
+}
+.button svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.button--primary { background: linear-gradient(145deg, #512d22, #2d1b16); box-shadow: 0 11px 24px rgba(54,27,20,.2), inset 0 1px rgba(255,255,255,.12); }
+.button--ghost { background: linear-gradient(145deg, #fff, #f7eee6); }
+
+/* Category and service cards */
+
+/* Footer with clearer information architecture */
+
+/* Landmark visual guide */
+
+/* Pointer-only elevation keeps touch layouts stable. */
+@media (hover: hover) and (pointer: fine) {
+  .button:hover { transform: translateY(-2px); box-shadow: 0 14px 27px rgba(64,31,22,.14), inset 0 1px rgba(255,255,255,.3); }
+}
+
+@media (max-width: 840px) {
+  :root { --shell: min(100% - 28px, 1180px); }
+  html { scroll-padding-top: 78px; }
+  body { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 620px) {
+  :root { --shell: min(100% - 24px, 1180px); }
+}
+
+@keyframes landmarkHeroIn { from { opacity: .55; transform: scale(1.09); } to { opacity: 1; transform: scale(1.025); } }
+@keyframes landmarkCopyIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+
+/* Source: ./design-rework.css */
+/* Visual rework: a calmer editorial system with strong mobile hierarchy. */
+:root {
+  --brand-espresso: #241612;
+  --brand-brown: #6f3525;
+  --brand-copper: #c66b48;
+  --brand-sand: #f1c98f;
+  --brand-teal: #347a80;
+  --brand-cream: #fffaf5;
+  --surface-warm: #f7efe8;
+  --shadow-soft: 0 16px 48px rgba(56, 28, 19, .09);
+  --shadow-card: 0 22px 55px rgba(61, 31, 22, .11), 0 2px 0 rgba(255, 255, 255, .9) inset;
+}
+
+body {
+  background:
+    radial-gradient(circle at 5% 18%, rgba(52, 122, 128, .055), transparent 25rem),
+    linear-gradient(#fffdf9, #fbf6f0);
+}
+
+/* Header */
+
+/* Homepage hero */
+
+/* High-value action dock */
+
+/* Sections and cards */
+
+/* Buttons */
+.button {
+  position: relative;
+  overflow: hidden;
+  padding-inline: 18px;
+  font-weight: 700;
+}
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.button--primary { background: linear-gradient(145deg,#5a3025,#2d1b16); }
+.button:active { transform: translateY(1px) scale(.985); }
+.button:focus-visible { outline: 3px solid rgba(52,122,128,.36); outline-offset: 3px; }
+
+/* Footer */
+
+@media (max-width: 680px) {
+  :root { --shell: min(100% - 24px,1180px); }
+}
+
+@keyframes homeActionIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes cardRise { from { opacity: .55; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+
+/* Source: ./global-search.css */
+/* Public global-search layer extracted from dashboard-rework.css.
+ * Keep this file globally loaded; account/admin refinements are route-scoped.
+ */
+@keyframes searchPanelIn { from { opacity:0; transform:translateY(-8px) scale(.985); } to { opacity:1; transform:none; } }
+@keyframes searchDot { 0%,100% { opacity:.35; transform:translateY(0); } 50% { opacity:1; transform:translateY(-4px); } }
+
+
+/* Source: ./responsive-mobile.css */
+/* Consolidated mobile responsive layer.
+   Order is preserved from the former mobile-polish, screenshot-fix, final-pass,
+   and header-nav-fix files so the cascade remains behaviorally identical. */
+
+/* Mobile-first polish layer loaded after the main visual system. */
+@media (max-width: 760px) {
+  html { scroll-padding-bottom: 96px; }
+  body { overflow-x: hidden; }
+  .shell { width: min(100% - 20px, 1180px); }
+}
+
+@media (max-width: 380px) {
+  .shell { width: min(100% - 16px, 1180px); }
+}
+
+/* Device-screenshot refinements: rebalance the homepage for 360–430px phones. */
+@media (max-width: 430px) {
+  :root { --shell: min(100% - 16px, 1180px); }
+}
+
+/* Final phone pass based on live device screenshots. */
+
+/* Final mobile header/nav cleanup. */
+
+
+/* Source: ./interface-refresh.css */
+/* 2026 interface refresh — one authoritative responsive layer for public pages. */
+:root {
+  --ui-ink: #2d201b;
+  --ui-muted: #74665f;
+  --ui-copper: #a84f32;
+  --ui-copper-dark: #71301f;
+  --ui-teal: #226d72;
+  --ui-paper: #fffdfa;
+  --ui-soft: #f7f0e9;
+  --ui-line: rgba(91, 54, 39, .12);
+  --ui-radius: 24px;
+  --ui-shadow: 0 18px 55px rgba(61, 32, 22, .09);
+}
+
+html { overflow-x: clip; }
+.shell { width: min(1220px, calc(100% - 48px)); }
+
+/* A clearer desktop header with comfortable, stable targets. */
+
+/* Homepage: stronger hierarchy and less decorative weight above the fold. */
+
+/* All interactive controls keep a usable touch size. */
+
+@media (max-width: 1180px) {
+  .shell { width: min(100% - 36px, 1120px); }
+}
+
+@media (max-width: 680px) {
+  :root { --ui-radius: 20px; }
+  .shell { width: min(100% - 24px, 620px); }
+  body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 390px) {
+  .shell { width: min(100% - 20px, 370px); }
+}
+
+/* Precision pass: header, discovery cards, listing actions and footer. */
+
+
+/* Source: ./design-system-v2.css */
+/*
+ * Naqada Design System V2
+ * A restrained local-editorial visual layer for the public directory.
+ * Imported last so this preview can be evaluated without disturbing the data model.
+ */
+
+:root {
+  --nq-ink: #251915;
+  --nq-ink-soft: #5d4c45;
+  --nq-paper: #fffdf9;
+  --nq-surface: #f8f2eb;
+  --nq-surface-2: #f2e7dc;
+  --nq-line: rgba(84, 49, 36, .12);
+  --nq-copper: #a95337;
+  --nq-copper-dark: #713321;
+  --nq-sand: #ddb170;
+  --nq-teal: #2b7277;
+  --nq-teal-soft: #e4f0ee;
+  --nq-success: #34735b;
+  --nq-radius-sm: 14px;
+  --nq-radius: 22px;
+  --nq-radius-lg: 32px;
+  --nq-shadow-sm: 0 8px 26px rgba(55, 30, 21, .055);
+  --nq-shadow: 0 18px 52px rgba(55, 30, 21, .085);
+  --nq-shadow-strong: 0 28px 72px rgba(37, 21, 16, .16);
+}
+
+html { scroll-padding-top: 96px; }
+body {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(43, 114, 119, .045), transparent 28rem),
+    radial-gradient(circle at 92% 22%, rgba(169, 83, 55, .045), transparent 28rem),
+    #fffdf9;
+}
+::selection { background: rgba(169, 83, 55, .2); color: var(--text-strong); }
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid rgba(43, 114, 119, .28);
+  outline-offset: 3px;
+}
+.shell { width: min(1240px, calc(100% - 48px)); }
+
+/* Header — compact, editorial and predictable. */
+
+/* Homepage hero — fewer competing shapes, stronger search-first hierarchy. */
+
+/* Core entry points — treat these as the product navigation, not decorative cards. */
+
+/* Section rhythm and content hierarchy. */
+
+/* Service category cards — consistent proportions and less visual noise. */
+
+/* Listing cards — image-first, trustworthy, actionable. */
+
+/* Catalog / directory pages. */
+
+/* Global call-to-action and footer. */
+
+@media (max-width: 1040px) {
+  .shell { width: min(100% - 36px, 980px); }
+}
+
+@media (max-width: 680px) {
+  :root {
+    --nq-radius: 18px;
+    --nq-radius-lg: 24px;
+  }
+  .shell { width: min(100% - 22px, 640px); }
+}
+
+@media (max-width: 390px) {
+  .shell { width: min(100% - 18px, 370px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* Source: ./detail-experience-v2.css */
+/* Detail Experience V2 — business, village and reference page composition. */
+
+/* Detail content shell */
+
+/* Village content */
+
+/* Make secondary public page cards share the same material language. */
+
+
+/* Source: ./discovery-experience-v2.css */
+/* Discovery Experience V2 — villages, about, coverage and contribution flows. */
+
+/* Locality explorer */
+
+/* About / policy / coverage content */
+
+/* Contribution / correction flow */
+
+
+/* Source: ./ui-quality-v13.css */
+/* UI Quality V13 — final cross-device readability, touch, and browser-compatibility layer. */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-width: 320px;
+}
+
+.button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(169, 83, 55, .12);
+}
+
+.button {
+  min-height: 44px;
+}
+
+@media (pointer: coarse) {
+  button, input[type='button'], input[type='submit'], a.button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 680px) {
+  body {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom));
+  }
+
+  input[type='search'], input[type='text'], input[type='email'], input[type='tel'], input[type='url'], input[type='password'], select, textarea {
+    font-size: var(--fs-base) !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .button {
+    border-color: currentColor;
+  }
+}
+
+/* Visual System V14 — shared hierarchy for the public-facing product surfaces. */
+:root {
+  --nq-control-height: 44px;
+  --nq-card-border: rgba(84, 49, 36, .105);
+  --nq-card-shadow: 0 10px 30px rgba(55, 30, 21, .05);
+  --nq-card-shadow-hover: 0 18px 42px rgba(55, 30, 21, .09);
+  --nq-card-radius: 20px;
+}
+
+
+/* Source: ./stability-overrides.css */
+/* Final detail/content hierarchy and cross-device stability overrides.
+   Consolidated from the former V15 detail + visual QA closure layers. */
+
+/* Knowledge detail pages share one module; these selectors stay scoped to that module's generated classes. */
+
+/* Keep the directory category rail inside its own layout box. Scrolling stays local
+   to the pills instead of widening the document viewport. */
+
+/* Keep the compact two-column activity grid consistent at 390/430px. */
+
+
+/* Source: ./design-v18.css */
+/* Design V18 — public directory visual foundation.
+   Additive layer only: visual hierarchy, spacing and responsive polish.
+   No data, routing, SEO or business-logic changes. */
+
+:root {
+  --nq-v18-bg: #f4f0e8;
+  --nq-v18-paper: #fffdf8;
+  --nq-v18-paper-strong: #ffffff;
+  --nq-v18-ink: #13241e;
+  --nq-v18-muted: #6b746f;
+  --nq-v18-green: #143b31;
+  --nq-v18-green-2: #1e5a48;
+  --nq-v18-gold: #dfb758;
+  --nq-v18-line: rgba(28, 59, 49, .1);
+  --nq-v18-line-strong: rgba(28, 59, 49, .16);
+  --nq-v18-shadow-sm: 0 10px 30px rgba(38, 45, 40, .06);
+  --nq-v18-shadow-md: 0 20px 55px rgba(35, 47, 41, .09);
+  --nq-v18-shadow-lg: 0 28px 80px rgba(10, 31, 25, .18);
+  --nq-v18-radius-sm: 14px;
+  --nq-v18-radius-md: 20px;
+  --nq-v18-radius-lg: 28px;
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(223,183,88,.08), transparent 28rem),
+    linear-gradient(180deg, #f8f5ee 0, var(--nq-v18-bg) 42rem);
+  color: var(--text-strong);
+}
+
+/* Header */
+
+/* Homepage hero */
+
+/* Fast navigation */
+
+/* Sections */
+
+/* Category cards */
+
+/* Listing cards */
+
+/* Directory / village / detail shells */
+
+/* Forms, controls and chips */
+input, select, textarea {
+  accent-color: var(--nq-v18-green-2);
+}
+
+button, .button, input, select, textarea {
+  border-radius: 12px;
+}
+
+.button--primary {
+  background: linear-gradient(135deg, #173f34, #235e4a) !important;
+  box-shadow: 0 8px 20px rgba(23,63,52,.16);
+}
+
+/* Footer */
+
+/* Tablet */
+
+/* Mobile */
+@media (max-width: 680px) {
+  :root {
+    --shell: min(100% - 28px, 1180px);
+  }
+}
+
+@media (max-width: 430px) {
+  :root { --shell: min(100% - 22px, 1180px); }
+}
+
+
+/* Source: ./design-v18-responsive.css */
+/* Design V18 responsive hardening discovered during screenshot review. */
+
+
+/* Source: ./design-v18-directory.css */
+/* Design V18 — directory/search experience refinement.
+   Visual only: the existing search, filters, sorting and tracking behavior stays unchanged. */
+
+/* Mobile navigation: visually lighter so it does not dominate the content. */
+
+
+/* Source: ./design-v19-detail.css */
+/* Design V19 — Detail & Discovery Experience
+   Focus: listing cards, village discovery, activity cards and detail-page hierarchy.
+   Loaded after V18 so changes stay isolated and reversible. */
+
+:root {
+  --v19-surface: rgba(255, 253, 250, .94);
+  --v19-surface-strong: #fffdfa;
+  --v19-line: rgba(76, 45, 34, .105);
+  --v19-line-strong: rgba(76, 45, 34, .16);
+  --v19-copper: #9b4f37;
+  --v19-copper-dark: #713725;
+  --v19-teal: #286c70;
+  --v19-teal-dark: #1f5558;
+  --v19-gold: #d9a95d;
+  --v19-ink: #2f211c;
+  --v19-muted: #75645b;
+  --v19-shadow: 0 18px 48px rgba(48, 27, 20, .075);
+  --v19-shadow-soft: 0 10px 28px rgba(48, 27, 20, .05);
+}
+
+/* Results cards — stronger scanning hierarchy */
+
+/* Village explorer — more useful than decorative */
+
+/* Activities page — clearer service discovery cards */
+
+/* Business detail hero — immediate action and trust hierarchy */
+
+/* Detail body — reduce cognitive load */
+
+/* Village detail composition */
+
+/* Keyboard focus, important for dense directory navigation */
+
+
+/* Source: ./design-v20-editorial.css */
+/* Design V20 — Editorial & Knowledge Surfaces
+   Brings blog and knowledge hubs into the V18/V19 visual system without changing content or data. */
+
+:root {
+  --v20-ink: #30211c;
+  --v20-muted: #75645b;
+  --v20-line: rgba(76,45,34,.105);
+  --v20-copper: #984c34;
+  --v20-copper-dark: #6f3525;
+  --v20-teal: #286c70;
+  --v20-gold: #d7a65a;
+  --v20-paper: #fffdfa;
+  --v20-warm: #f8f2ec;
+  --v20-shadow: 0 18px 50px rgba(48,27,20,.075);
+  --v20-shadow-hover: 0 26px 64px rgba(48,27,20,.11);
+}
+
+/* -------------------------------------------
+   Blog landing — editorial, not directory cards
+-------------------------------------------- */
+
+/* Archive rhythm */
+
+/* Featured first story + consistent remaining cards */
+
+/* First article behaves like a magazine lead on wide screens. */
+
+/* Author band becomes a quiet credibility strip. */
+
+/* -------------------------------------------
+   Knowledge hub — visual reference library
+-------------------------------------------- */
+
+/* Attribution feels like editorial provenance, not an alert box. */
+
+/* Hub cards: stronger imagery and less empty vertical space. */
+
+/* Method cards and reference rows */
+
+/* -------------------------------------------
+   Shared responsive editorial behavior
+-------------------------------------------- */
+
+
+/* Source: ./mobile-editorial.css */
+/* Shared mobile reading rhythm. Component-specific explorers retain their own modules. */
+:where(a, button, input, select, summary):focus-visible { outline: 3px solid #b18424; outline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  main { animation: nq-arrive .28s ease-out; }
+}
+@keyframes nq-arrive { from { opacity: .65; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 980px) {
+  body.mobile-editorial { --mobile-nav-clearance: calc(88px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 700px) {
+  :root { --shell: min(100% - 32px, 1180px); }
+  body.mobile-editorial { background: #f7f8f5; font-size: var(--fs-base); line-height: 1.85; }
+  body.mobile-editorial .shell { width: var(--shell) !important; }
+  body.mobile-editorial main { min-width: 0; }
+  body.mobile-editorial main :is(h1,h2,h3) { letter-spacing: normal !important; overflow-wrap: break-word; text-wrap: pretty; }
+  body.mobile-editorial main h1 { font-size: var(--fs-3xl) !important; line-height: 1.55 !important; }
+  body.mobile-editorial main h2 { font-size: var(--fs-xl) !important; line-height: 1.65 !important; }
+  body.mobile-editorial main h3 { font-size: var(--fs-md) !important; line-height: 1.8 !important; }
+  body.mobile-editorial main p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
+  body.mobile-editorial main :is(input,select,textarea) { font-size: var(--fs-base) !important; min-height: 48px; }
+  body.mobile-editorial main :is(.button,.text-link) { font-size: var(--fs-sm) !important; min-height: 44px; line-height: 1.7; }
+  :is(section,article,[id]) { scroll-margin-top: 132px; }
+}
+@media (max-width: 359px) {
+  :root { --shell: min(100% - 24px,1180px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  body.mobile-editorial *, body.mobile-editorial *::before, body.mobile-editorial *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+
+/* Source: ./encyclopedia-refresh.css */
+/* Final navigation and reading shell: fewer primary paths, calmer chrome. */
+body.encyclopedia-ui {
+  --shell: min(1160px, calc(100% - 48px));
+}
+
+/* Living cards across discovery pages */
+
+body.encyclopedia-ui a:focus-visible, body.encyclopedia-ui button:focus-visible, body.encyclopedia-ui summary:focus-visible, body.encyclopedia-ui input:focus-visible, body.encyclopedia-ui textarea:focus-visible {
+  outline: 3px solid rgba(183, 132, 46, .48);
+  outline-offset: 3px;
+}
+
+@media (max-width: 980px) {
+  body.encyclopedia-ui { --shell: min(100% - 32px, 1160px); --mobile-nav-clearance: calc(88px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 720px) {
+  body.encyclopedia-ui { --shell: calc(100% - 32px); }
+}
+
+@media (max-width: 390px) {
+  body.encyclopedia-ui { --shell: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.encyclopedia-ui *, body.encyclopedia-ui *::before, body.encyclopedia-ui *::after { scroll-behavior: auto !important; }
+}
+
+/* Refined editorial shell: compact glass header and centered information footer. */
+
+
+/* Source: ./usayrat-parity.css */
+/* Visual parity layer inspired by the calmer, editorial system used on دليل العسيرات. */
+body.encyclopedia-ui {
+  --shell: min(1180px, calc(100% - 48px));
+  --mobile-nav-clearance: calc(96px + env(safe-area-inset-bottom));
+  background: #f7f4ed;
+  color: var(--text-strong);
+}
+
+@media (max-width: 980px) {
+  body.encyclopedia-ui { --shell: min(100% - 28px, 1180px); }
+}
+
+@media (max-width: 720px) {
+  body.encyclopedia-ui { --shell: calc(100% - 24px); }
+}
+
+/* Premium member portrait: a deliberate identity mark rather than a generic icon. */
+
+
+/* Source: ./listing-card-resilience.css */
+/*
+ * Premium listing-card system.
+ *
+ * Imported last from the root layout so these rules form one dependable
+ * contract above the project's historical design layers.
+ */
+
+:root {
+  --listing-ink: #183b31;
+  --listing-muted: #71665f;
+  --listing-line: rgba(50, 78, 66, .12);
+  --listing-green: #165d49;
+  --listing-green-deep: #0d4738;
+  --listing-copper: #9c5139;
+}
+
+/* Directory discovery tools: useful polish above decoration. */
+
+
+/* Source: ./navigation-refresh.css */
+/* Shared breadcrumb language for the legacy routes that do not own a CSS module. */
+
+
+/* Source: ./typography.css */
+:root {
+  --fs-xs:12px;
+  --fs-sm:14px;
+  --fs-base:16px;
+  --fs-md:17px;
+  --fs-lg:18px;
+  --fs-xl:20px;
+  --fs-2xl:24px;
+  --fs-3xl:clamp(28px,2.4vw + 18px,34px);
+  --fs-display:clamp(32px,4.5vw + 14px,52px);
+  --text-strong:#173a30;
+  --text-body:#264b3e;
+  --text-muted:#566656;
+  --text-on-dark:#fffefb;
+  --text-on-dark-muted:#ceded3;
+  --text-accent:#8c631e;
+  --text-on-dark-accent:#edc574;
+  --text-link:#17664d;
+  --text-danger:#9a3939;
+  --ink:var(--text-strong);
+  --muted:var(--text-muted);
+}
+/* Explicit family keeps local font naming consistent between both Next bundlers. */
+html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
+html[data-body-font='plex'] { --font-body:var(--font-plex); }
+html[data-body-font='readex'] { --font-body:var(--font-readex); }
+body, body.encyclopedia-ui {
+  font-family:var(--font-body),sans-serif;
+  font-size:var(--fs-base);
+  line-height:1.8;
+  letter-spacing:normal;
+  font-synthesis:none;
+}
+button, input, select, textarea { font:inherit; line-height:1.5; }
+code, pre, kbd, samp { font-family:inherit; }
+:is(h1,h2,h3,h4,h5,h6), [data-counter] {
+  font-family:var(--font-display),sans-serif;
+  font-weight:700;
+  line-height:1.35;
+  text-wrap:balance;
+}
+h1 { font-size:var(--fs-display); }
+h2 { font-size:var(--fs-2xl); }
+h3 { font-size:var(--fs-xl); }
+h4 { font-size:var(--fs-lg); }
+p { text-wrap:pretty; }
+b, strong { font-weight:700; }
+small { font-size:var(--fs-xs); }
+table, time, [data-counter] { font-variant-numeric:tabular-nums; }

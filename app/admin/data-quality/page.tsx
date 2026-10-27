@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/admin-data-quality.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

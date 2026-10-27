@@ -48,7 +48,7 @@ try {
   const sitemapResponse = await fetch(`${base}/sitemap.xml`);
   assert.equal(sitemapResponse.status, 200);
   const sitemap = await sitemapResponse.text();
-  const owner = sitemap.match(/<loc>[^<]*(\/activity\/[0-9a-f-]{36}\/)\s*<\/loc>/i)?.[1];
+  const owner = sitemap.match(/<loc>[^<]*(\/activity\/[^/<]+\/)\s*<\/loc>/i)?.[1];
   const routes = [['home', '/'], ['directory', '/directory/'], ['coverage', '/coverage/'], ['about', '/about/'], ['villages', '/villages/'], ['bashlaw', '/villages/بشلاو/'], ['dnfiq', '/villages/دنفيق/'], ['services', '/activities/'], ['pharmacies', '/activities/صيدليات/'], ['listing', '/listing/صيدليه-مومن-مدينه-نقاده/'], ['news', '/news/'], ['archive', '/news/archive/']];
   if (owner) routes.push(['owner', owner]);
   const internalLinks = new Set();

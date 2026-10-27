@@ -25,7 +25,7 @@ const routes = [
 const sitemapResponse = await fetch(`${baseURL}/sitemap.xml`);
 if (!sitemapResponse.ok) throw new Error(`Sitemap discovery failed: HTTP ${sitemapResponse.status}`);
 const sitemap = await sitemapResponse.text();
-const ownerPath = sitemap.match(/<loc>https:\/\/naqada-directory\.vercel\.app(\/activity\/[0-9a-f-]{36}\/)\s*<\/loc>/i)?.[1];
+const ownerPath = sitemap.match(/<loc>https:\/\/naqada-directory\.vercel\.app(\/activity\/[^/<]+\/)\s*<\/loc>/i)?.[1];
 if (ownerPath) routes.push(['owner-activity', ownerPath]);
 const archiveResponse = await fetch(`${baseURL}/news/archive/`);
 if (!archiveResponse.ok) throw new Error(`News discovery failed: HTTP ${archiveResponse.status}`);

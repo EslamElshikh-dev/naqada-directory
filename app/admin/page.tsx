@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/admin.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';

@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/emergency.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CategoryVisual } from '@/components/category-visual';

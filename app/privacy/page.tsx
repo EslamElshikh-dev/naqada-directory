@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/privacy.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';

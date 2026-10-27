@@ -1,0 +1,144 @@
+
+.section-heading { display: flex; align-items: end; justify-content: space-between; }
+.section-heading h2 { margin: 0; letter-spacing: normal; }
+.section-heading p { margin: 9px 0 0; }
+
+@media (max-width: 620px) {
+  .section-heading { align-items: start; }
+  .page-section { padding-block: 24px 55px; }
+}
+.section--muted { background: #efe5d9; }
+.section-heading--light p { color: var(--text-on-dark-muted); }
+@media (prefers-reduced-motion: no-preference) {
+
+  @supports (animation-timeline: view()) {
+    .section-heading {
+      animation: naqadaReveal linear both;
+      animation-timeline: view();
+      animation-range: entry 3% cover 22%;
+    }
+  }
+}
+.section-heading h2 { text-wrap: balance; }
+
+@media (max-width: 840px) {
+  .section-heading { margin-bottom: 21px; }
+  .section-heading p { font-size: var(--fs-xs); }
+}
+
+@media (max-width: 620px) {
+  .section-heading h2 { font-size: var(--fs-3xl); }
+}
+.section-heading { align-items: center; }
+.section--muted {
+  margin-inline: max(10px, calc((100vw - 1460px) / 2));
+  border: 1px solid rgba(112,64,45,.06);
+  background: linear-gradient(145deg,rgba(245,235,226,.88),rgba(251,247,242,.96));
+  box-shadow: inset 0 1px #fff;
+}
+
+@media (max-width: 840px) {
+  .section--muted { margin-inline: 8px; border-radius: 30px; }
+}
+@media (max-width: 760px) {
+  .section-heading { margin-bottom: 20px !important; gap: 10px !important; }
+  .section-heading h2 { font-size: var(--fs-2xl) !important; line-height: 1.42 !important; letter-spacing: normal !important; }
+  .section-heading p { font-size: var(--fs-xs) !important; line-height: 1.8 !important; }
+  .section--muted { margin-inline: 6px !important; border-radius: 22px !important; }
+}
+.section-heading p { font-size: var(--fs-sm); }
+
+.section--muted { background: linear-gradient(145deg, #f5eee7, #fbf7f2); }
+
+@media (max-width: 680px) {
+  .section-heading { display: grid; }
+}
+.section-heading { gap: 28px; }
+.section-heading > div { max-width: 760px; }
+.section-heading h2 {
+  font-size: var(--fs-3xl);
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-wrap: balance;
+}
+.section--muted {
+  margin-inline: max(8px, calc((100vw - 1440px) / 2));
+  border: 1px solid rgba(94, 54, 39, .07);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(169,83,55,.045), transparent 23rem),
+    linear-gradient(145deg, #f6eee7, #fbf7f2);
+}
+.page-section { padding-block: 34px 70px; }
+
+@media (max-width: 680px) {
+  .section--muted { margin-inline: 5px; border-radius: 24px; }
+  .page-section { padding-block: 24px 54px; }
+}
+
+.section-heading p {
+  text-wrap: pretty;
+}
+
+@media (max-width: 680px) {
+
+  .section-heading p {
+    font-size: var(--fs-xs) !important;
+    line-height: 1.85 !important;
+  }
+}
+
+.section-heading h2 {
+  text-wrap: balance;
+}
+
+@media (max-width: 680px) {
+  .page-section {
+    padding-bottom: 48px;
+  }
+}
+
+.section--muted {
+  background:
+    linear-gradient(180deg, rgba(235,239,233,.9), rgba(239,241,236,.76));
+  border-block: 1px solid rgba(34,67,56,.04);
+}
+
+.section-heading {
+  margin-bottom: 31px;
+}
+
+.section-heading h2 {
+  color: var(--text-strong);
+  letter-spacing: normal;
+  text-wrap: balance;
+}
+
+.section-heading p {
+  max-width: 760px;
+  color: var(--text-muted);
+  line-height: 1.95;
+}
+@media (max-width: 680px) {
+
+  .section-heading {
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 24px;
+  }
+
+  .section-heading h2 {
+    font-size: var(--fs-3xl);
+    line-height: 1.5;
+  }
+}
+@media (max-width: 700px) {
+  body.mobile-editorial .section-heading { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 20px !important; }
+  body.mobile-editorial .section-heading h2 { margin-top: 5px; margin-bottom: 8px; }
+  body.mobile-editorial .section-heading p { margin: 0; color: var(--text-muted); }
+}
+@media (max-width: 700px) {
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'], body.mobile-editorial main > section[class*='blog'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1, body.mobile-editorial main > section[class*='blog'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p, body.mobile-editorial main > section[class*='blog'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
+}

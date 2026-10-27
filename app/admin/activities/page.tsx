@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/admin-activities.css';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { resolveSession } from '@/lib/auth/session';

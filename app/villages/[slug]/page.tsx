@@ -1,5 +1,5 @@
 import { ShareActions } from '@/components/share-actions';
-import '@/app/content-styles.css';
+import '@/app/route-styles/villages-slug.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';

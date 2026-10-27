@@ -1,0 +1,365 @@
+
+.page-main { min-height: 70vh; }
+.page-main { background: transparent; }
+
+.page-main h1, .page-main h2, .page-main h3 {
+  text-wrap: balance;
+}
+
+.page-main p {
+  text-wrap: pretty;
+}
+[class*="knowledge-module"][class*="detail"] {
+  max-width: 900px;
+}
+
+[class*="knowledge-module"][class*="detailCard"] {
+  border-color: var(--nq-card-border, rgba(84,49,36,.1));
+  box-shadow: var(--nq-card-shadow, 0 10px 30px rgba(55,30,21,.05));
+}
+
+[class*="knowledge-module"][class*="detailCard"] h1, [class*="knowledge-module"][class*="sectionHeader"] h2 {
+  text-wrap: balance;
+}
+
+[class*="knowledge-module"][class*="detailCard"] p, [class*="knowledge-module"][class*="reference"], [class*="knowledge-module"][class*="sourceBox"] {
+  text-wrap: pretty;
+}
+
+[class*="knowledge-module"][class*="tag"], [class*="knowledge-module"][class*="back"], [class*="knowledge-module"][class*="sectionHeader"] a, [class*="knowledge-module"][class*="row"] a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+
+  [class*="knowledge-module"][class*="sectionHeader"] {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 680px) {
+
+  [class*="knowledge-module"][class*="hero"] p {
+    font-size: var(--fs-sm) !important;
+    line-height: 1.9 !important;
+  }
+
+  [class*="knowledge-module"][class*="detailCard"] {
+    padding: 17px !important;
+    border-radius: 18px !important;
+  }
+
+  [class*="knowledge-module"][class*="detailCard"] h1 {
+    font-size: var(--fs-3xl) !important;
+    line-height: 1.45 !important;
+  }
+
+  [class*="knowledge-module"][class*="detailCard"] p, [class*="knowledge-module"][class*="reference"], [class*="knowledge-module"][class*="sourceBox"] {
+    font-size: var(--fs-xs) !important;
+    line-height: 1.95 !important;
+  }
+
+  [class*="knowledge-module"][class*="facts"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  [class*="knowledge-module"][class*="fact"] {
+    padding: 12px !important;
+  }
+
+  [class*="knowledge-module"][class*="fact"] small {
+    font-size: var(--fs-xs) !important;
+  }
+
+  [class*="knowledge-module"][class*="fact"] b {
+    font-size: var(--fs-xs) !important;
+    line-height: 1.7 !important;
+  }
+
+  [class*="knowledge-module"][class*="tags"] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+  }
+
+  [class*="knowledge-module"][class*="tags"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  [class*="knowledge-module"][class*="tag"] {
+    flex: 0 0 auto;
+    min-height: 40px;
+    font-size: var(--fs-xs) !important;
+  }
+
+  [class*="knowledge-module"][class*="sectionHeader"] {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 10px !important;
+  }
+
+  [class*="knowledge-module"][class*="sectionHeader"] a, [class*="knowledge-module"][class*="back"] {
+    min-height: 44px;
+    width: fit-content;
+    font-size: var(--fs-xs) !important;
+  }
+
+  [class*="knowledge-module"][class*="row"] {
+    padding: 13px !important;
+  }
+
+  [class*="knowledge-module"][class*="row"] small, [class*="knowledge-module"][class*="row"] a {
+    font-size: var(--fs-xs) !important;
+  }
+}
+
+@media (max-width: 430px) {
+
+  [class*="knowledge-module"][class*="detailCard"] {
+    padding: 15px !important;
+  }
+}
+main.page-main > section[class*="knowledge-module"][class*="hero"] {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  padding-block: 56px 52px !important;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(215,166,90,.21), transparent 31rem),
+    radial-gradient(circle at 87% 82%, rgba(40,108,112,.17), transparent 28rem),
+    linear-gradient(132deg,#1d1411,#302019 58%,#4b2b23) !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg,transparent 0 58%,rgba(255,255,255,.018) 58% 59%,transparent 59% 100%);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="heroGrid"] {
+  gap: clamp(28px,4vw,50px) !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
+  max-width: 800px !important;
+  font-size: var(--fs-display) !important;
+  line-height: 1.23 !important;
+  letter-spacing: normal !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] p {
+  color: var(--text-on-dark-muted) !important;
+  font-size: var(--fs-sm) !important;
+  text-wrap: pretty;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+  gap: 8px !important;
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] > span {
+  min-height: 96px !important;
+  padding: 14px !important;
+  border-color: rgba(255,255,255,.12) !important;
+  border-radius: 19px !important;
+  background: rgba(255,255,255,.058) !important;
+  backdrop-filter: blur(11px) saturate(110%);
+}
+
+main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
+  color: var(--text-on-dark-accent) !important;
+  font-size: var(--fs-2xl) !important;
+}
+section[class*="knowledge-module"][class*="attribution"] {
+  position: relative;
+  overflow: hidden;
+  padding: 19px 20px !important;
+  border-color: rgba(152,76,52,.13) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(215,166,90,.09), transparent 40%),
+    linear-gradient(135deg,#fff9f1,#fffdfa) !important;
+  box-shadow: 0 11px 32px rgba(48,27,20,.05) !important;
+}
+
+section[class*="knowledge-module"][class*="attribution"]::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: -55px;
+  inset-block-end: -62px;
+  width: 145px;
+  height: 145px;
+  border: 1px solid rgba(152,76,52,.07);
+  border-radius: 50%;
+  box-shadow: 0 0 0 32px rgba(152,76,52,.02);
+  pointer-events: none;
+}
+
+section[class*="knowledge-module"][class*="attribution"] [class*="seal"] {
+  border: 1px solid rgba(215,166,90,.23);
+  box-shadow: 0 9px 24px rgba(48,27,20,.14);
+}
+section[class*="knowledge-v3-module"][class*="hubGrid"] {
+  gap: 13px !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] {
+  min-height: 315px !important;
+  border-color: var(--v20-line) !important;
+  border-radius: 24px !important;
+  background: var(--v20-paper) !important;
+  box-shadow: var(--v20-shadow) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(1), article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(2) {
+  min-height: 360px !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"] {
+  background: #e8ddd2 !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"]::after {
+  background: linear-gradient(0deg,rgba(31,18,14,.48),rgba(31,18,14,.03) 68%) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] h2 {
+  color: var(--text-strong) !important;
+  letter-spacing: normal;
+  text-wrap: balance;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] p {
+  color: var(--text-muted) !important;
+  line-height: 1.9 !important;
+  text-wrap: pretty;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] a {
+  margin-top: auto;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(76,45,34,.07);
+  color: var(--text-danger) !important;
+}
+
+article[class*="knowledge-v3-module"][class*="hubCard"] [class*="cardBadge"] {
+  border: 1px solid rgba(152,76,52,.07);
+  background: rgba(152,76,52,.09) !important;
+  color: var(--text-danger) !important;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  article[class*="knowledge-v3-module"][class*="hubCard"] {
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+  }
+
+  article[class*="knowledge-v3-module"][class*="hubCard"]:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(40,108,112,.18) !important;
+    box-shadow: var(--v20-shadow-hover) !important;
+  }
+}
+section[class*="knowledge-module"][class*="section"] > div[class*="grid"] > article[class*="card"] {
+  min-height: 190px !important;
+  border-color: var(--v20-line) !important;
+  background: linear-gradient(150deg,#fff,#fbf6f1) !important;
+  box-shadow: 0 9px 28px rgba(48,27,20,.045) !important;
+}
+
+[class*="knowledge-v3-module"][class*="jumpRail"] > *, [class*="knowledge-v3-module"][class*="summaryRail"] > span {
+  border-color: var(--v20-line) !important;
+  box-shadow: 0 4px 14px rgba(48,27,20,.025);
+}
+@media (max-width: 900px) {
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="heroGrid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 680px) {
+  main.page-main > section[class*="knowledge-module"][class*="hero"] {
+    min-height: 0;
+    padding-block: 35px 32px !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"]::before {
+    opacity: .5;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
+    max-width: 100% !important;
+    font-size: var(--fs-display) !important;
+    line-height: 1.34 !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] p {
+    font-size: var(--fs-xs) !important;
+    line-height: 1.9 !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    grid-template-columns: repeat(4,minmax(118px,1fr)) !important;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] > span {
+    min-height: 78px !important;
+    scroll-snap-align: start;
+  }
+
+  section[class*="knowledge-module"][class*="attribution"] {
+    padding: 15px !important;
+    border-radius: 18px !important;
+  }
+
+  article[class*="knowledge-v3-module"][class*="hubCard"], article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(1), article[class*="knowledge-v3-module"][class*="hubCard"]:nth-child(2) {
+    min-height: 300px !important;
+    border-radius: 19px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] {
+    grid-template-columns: repeat(4,112px) !important;
+  }
+
+  main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
+    font-size: var(--fs-xl) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  article[class*="knowledge-v3-module"][class*="hubCard"], article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"] img {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+@media (max-width: 700px) {
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
+ body.mobile-editorial main [class*='knowledge'][class*='attribution'] { padding: 18px !important; gap: 12px !important; border-radius: 16px !important; }
+ body.mobile-editorial main [class*='knowledge'][class*='attribution'] h2 { font-size: var(--fs-md) !important; }
+ body.mobile-editorial main [class*='knowledge'][class*='attribution'] p { font-size: var(--fs-sm) !important; }
+ body.mobile-editorial main [class*='knowledge'][class*='seal'] { width: 38px !important; height: 42px !important; border-radius: 10px !important; }
+ body.mobile-editorial main [class*='knowledge'][class*='cardBadge'] { font-size: var(--fs-xs) !important; padding: 4px 8px !important; }
+}

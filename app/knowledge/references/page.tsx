@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/knowledge-references.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';

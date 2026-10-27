@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/about.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense, type CSSProperties } from 'react';

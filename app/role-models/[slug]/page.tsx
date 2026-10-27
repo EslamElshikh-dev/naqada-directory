@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/role-models-slug.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { absoluteUrl, siteConfig, pageTitle, pageDescription } from '@/lib/site';

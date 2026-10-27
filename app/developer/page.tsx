@@ -1,4 +1,4 @@
-import '@/app/content-styles.css';
+import '@/app/route-styles/developer.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';

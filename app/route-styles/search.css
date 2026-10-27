@@ -1,0 +1,16 @@
+
+.page-main { min-height: 70vh; }
+.page-main { background: transparent; }
+
+.page-main h1, .page-main h2, .page-main h3 {
+  text-wrap: balance;
+}
+
+.page-main p {
+  text-wrap: pretty;
+}
+@media (max-width: 700px) {
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
+ body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
+}
