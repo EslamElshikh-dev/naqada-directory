@@ -16,7 +16,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/activities/',
 });
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function ActivitiesPage() {
   const catalog = await getPublicBusinessCatalog();

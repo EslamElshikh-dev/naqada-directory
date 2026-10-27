@@ -13,7 +13,7 @@ import styles from './blog.module.css';
 import editorialStyles from './editorial.module.css';
 import curatedStyles from './curated-posts.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'مدونة دليل نقادة | حكايات ومقالات مصورة من نقادة',

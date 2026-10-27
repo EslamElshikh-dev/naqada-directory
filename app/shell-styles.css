@@ -1229,4 +1229,3 @@ p { text-wrap:pretty; }
 b, strong { font-weight:700; }
 small { font-size:var(--fs-xs); }
 table, time, [data-counter] { font-variant-numeric:tabular-nums; }
-

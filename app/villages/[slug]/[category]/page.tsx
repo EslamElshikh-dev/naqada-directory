@@ -13,7 +13,7 @@ import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return []; }
 

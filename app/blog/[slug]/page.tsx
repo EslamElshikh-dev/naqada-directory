@@ -10,7 +10,7 @@ import { villageArticleAuthor } from '@/lib/village-articles';
 import { EditorialPostArticle } from './article-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return []; }
 

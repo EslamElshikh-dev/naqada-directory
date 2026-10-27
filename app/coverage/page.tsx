@@ -24,7 +24,7 @@ const primaryCategoryNames = [
   'الخدمات المهنية',
 ];
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function CoveragePage() {
   const { businesses } = await getPublicBusinessCatalog();

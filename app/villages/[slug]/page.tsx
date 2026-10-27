@@ -16,7 +16,7 @@ import styles from './article.module.css';
 import knowledgeStyles from '../../knowledge/knowledge.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return []; }
 

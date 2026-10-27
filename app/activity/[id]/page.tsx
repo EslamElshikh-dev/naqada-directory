@@ -17,7 +17,7 @@ import { buildPageMetadata, cleanPhone, jsonLdStringify, siteConfig, slugify, tr
 import styles from './activity.module.css';
 
 type Props = { params: Promise<{ id: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

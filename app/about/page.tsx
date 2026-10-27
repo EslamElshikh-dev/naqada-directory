@@ -11,7 +11,7 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './about.module.css';
 
 const pagePath = '/about';
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'عن دليل نقادة — مشروع خدمي تطوعي مجاني',

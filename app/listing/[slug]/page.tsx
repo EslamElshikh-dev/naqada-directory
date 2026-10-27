@@ -17,7 +17,7 @@ import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 function resolveSeoKeywordSearch(keyword: string) {
   const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);

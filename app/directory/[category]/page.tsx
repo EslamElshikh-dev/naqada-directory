@@ -12,7 +12,7 @@ import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return []; }
 

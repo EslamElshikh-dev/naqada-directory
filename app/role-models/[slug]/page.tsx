@@ -8,7 +8,7 @@ import { readArticleDocument } from '@/lib/article-document';
 import { RoleModelStory } from './story-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export function generateStaticParams() { return []; }
 
