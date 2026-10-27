@@ -8,7 +8,7 @@
 .source i { width:6px; height:6px; border-radius:50%; background:#17664d; }
 .head { padding:14px 16px 0; }
 .eyebrow>div { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px; }
-.eyebrow a { color:var(--text-link); font-size:var(--fs-xs); font-weight:700; }
+.eyebrow a { display:inline-flex; align-items:center; min-width:44px; min-height:44px; padding-inline:4px; color:var(--text-link); font-size:var(--fs-sm); font-weight:700; }
 .eyebrow small { color:var(--text-muted); font-size:var(--fs-xs); }
 .body { flex:1; display:grid; align-content:start; gap:10px; min-width:0; padding:10px 16px 16px; }
 .body h3 { display:-webkit-box; min-height:2.9em; margin:0; overflow:hidden; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:var(--text-strong); font-size:var(--fs-lg); line-height:1.5; }

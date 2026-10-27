@@ -78,6 +78,16 @@ try {
   const listing = directory.match(/href="(\/listing\/[^"?]+)"/)?.[1];
   assert.ok(listing, 'A published activity is required for the sharing journey');
   await page.goto(base + listing, { waitUntil: 'networkidle' });
+  for (const width of [390, 430, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const sizes = await page.locator('[data-ui="card-category"]').evaluateAll(nodes => nodes.map(node => {
+      const rect = node.getBoundingClientRect(); return { width: rect.width, height: rect.height };
+    }));
+    assert.ok(sizes.length > 0, 'Related activity category links must be exercised');
+    assert.ok(sizes.every(size => size.width >= 44 && size.height >= 44), `Undersized category touch target at ${width}px`);
+    results.push({ width, cardCategoryTouchTargetsAtLeast44px: true });
+  }
+  await page.setViewportSize({ width: 390, height: 900 });
   const directions = page.getByRole('link', { name: 'افتح الاتجاهات إلى النشاط على خرائط Google', exact: true }).first();
   if (await directions.count()) {
     const glyph = directions.locator('[aria-hidden="true"]').first();
@@ -114,6 +124,27 @@ try {
     results.push({ path, shareImage: { width: metadata.width, height: metadata.height, bytes: bytes.length } });
   }
   await page.close();
+
+  // Public rating read failures must not be reported as zero real ratings.
+  const ratingsPage = await isolatedPage(browser, { viewport: { width: 390, height: 900 }, serviceWorkers: 'block' });
+  let unavailable = true;
+  await ratingsPage.route('**/functions/v1/directory-intake?*', async route => {
+    const request = route.request();
+    if (request.method() === 'GET' && new URL(request.url()).searchParams.get('action') === 'rating') {
+      await route.fulfill({ status: unavailable ? 503 : 200,
+        headers: { 'access-control-allow-origin': '*' },
+        json: unavailable ? { ok: false } : { ok: true, summary: { average: 0, count: 0, distribution: {} } },
+      });
+    } else await route.continue();
+  });
+  await ratingsPage.goto(base + listing, { waitUntil: 'networkidle' });
+  await ratingsPage.getByText('التقييمات غير متاحة الآن', { exact: true }).waitFor();
+  assert.equal(await ratingsPage.getByText('لا توجد تقييمات بعد', { exact: true }).count(), 0);
+  unavailable = false;
+  await ratingsPage.reload({ waitUntil: 'networkidle' });
+  await ratingsPage.getByText('لا توجد تقييمات بعد', { exact: true }).waitFor();
+  results.push({ ratingReadFailureDistinctFromConfirmedZero: true, externalWrites: 0 });
+  await ratingsPage.close();
 
   const offlinePage = await isolatedPage(browser, { viewport: { width: 390, height: 900 }, serviceWorkers: 'allow' });
   await offlinePage.goto(base, { waitUntil: 'networkidle' });

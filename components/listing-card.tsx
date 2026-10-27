@@ -37,7 +37,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
       </div>
       <div className={styles.head}>
         <div className={styles.eyebrow}>
-          <div><Link prefetch={false} href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
+          <div><Link prefetch={false} data-ui="card-category" href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
         </div>
       </div>
       <div className={styles.body}>
