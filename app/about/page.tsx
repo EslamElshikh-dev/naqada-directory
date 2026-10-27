@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense, type CSSProperties } from 'react';
@@ -10,7 +11,7 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './about.module.css';
 
 const pagePath = '/about';
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'عن دليل نقادة — مشروع خدمي تطوعي مجاني',

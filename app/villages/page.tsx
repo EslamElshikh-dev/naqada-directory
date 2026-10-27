@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { LocalityExplorer } from '@/components/locality-explorer';
@@ -13,7 +14,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/villages/',
 });
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function VillagesPage() {
   const catalog = await getPublicBusinessCatalog();

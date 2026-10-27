@@ -30,12 +30,12 @@ try {
           return { text: element.textContent.trim().slice(0, 80), family: s.fontFamily, size: parseFloat(s.fontSize),
             weight: parseFloat(s.fontWeight), spacing: parseFloat(s.letterSpacing) || 0, color: s.color };
         }).filter(row => row.size !== 0 || /[\p{L}\p{N}]/u.test(row.text));
-        return { sizes: [...new Set(rows.map(row => row.size))], colors: [...new Set(rows.map(row => row.color))],
+        return { bodyChoice: document.documentElement.dataset.bodyFont, sizes: [...new Set(rows.map(row => row.size))], colors: [...new Set(rows.map(row => row.color))],
           violations: rows.filter(row => row.size < 12 || row.weight > 700 || row.spacing < 0 || !/noto|plex|readex/i.test(row.family)),
           fonts: [...document.fonts].filter(font => font.status === 'loaded').map(font => font.family),
           overflow: document.documentElement.scrollWidth > innerWidth };
       });
-      const loaded = result.fonts.includes('Noto Kufi Arabic') && result.fonts.includes('IBM Plex Sans Arabic');
+      const loaded = result.fonts.includes('Noto Kufi Arabic') && result.fonts.includes(result.bodyChoice === 'readex' ? 'Readex Pro' : 'IBM Plex Sans Arabic');
       const ok = response.ok() && loaded && result.sizes.length <= 10 && result.colors.length <= 12 && !result.violations.length && !result.overflow;
       console.log(JSON.stringify({ path, width, status: response.status(), ok, ...result }));
       if (!ok) failures.push({ path, width });

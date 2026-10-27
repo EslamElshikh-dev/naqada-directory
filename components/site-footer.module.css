@@ -45,7 +45,7 @@
 }
 .identityCopy { min-width: 0; }
 .kicker { display: block; margin-bottom: 5px; color: var(--text-on-dark-accent); font-size: var(--fs-xs); font-weight: 700; }
-.identityCopy h2 { margin: 0 0 8px; color: var(--text-on-dark); font-size: var(--fs-3xl); line-height: 1.45; }
+.identityCopy .brandTitle { font-family: "Noto Kufi Arabic", sans-serif; font-weight: 700; margin: 0 0 8px; color: var(--text-on-dark); font-size: var(--fs-3xl); line-height: 1.45; }
 .identityCopy p { max-width: 56ch; margin: 0; color: var(--text-on-dark-muted); font-size: var(--fs-sm); line-height: 1.9; }
 .actions { display: grid; gap: 10px; min-width: 224px; }
 .actions a {
@@ -208,7 +208,7 @@
   .masthead { justify-items: center; gap: 20px; padding: 25px 18px; border-radius: 21px; text-align: center; }
   .identity { flex-direction: column; align-items: center; gap: 12px; }
   .emblem { width: 52px; height: 52px; border-radius: 16px; }
-  .identityCopy h2 { font-size: var(--fs-xl); }
+  .identityCopy .brandTitle { font-size: var(--fs-xl); }
   .identityCopy p { max-width: 36ch; margin-inline: auto; font-size: var(--fs-sm); }
   .actions { grid-template-columns: 1fr; width: min(100%, 340px); gap: 9px; }
   .actions a { justify-content: center; min-height: 50px; }

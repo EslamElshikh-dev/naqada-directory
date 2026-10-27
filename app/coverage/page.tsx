@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -23,7 +24,7 @@ const primaryCategoryNames = [
   'الخدمات المهنية',
 ];
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function CoveragePage() {
   const { businesses } = await getPublicBusinessCatalog();

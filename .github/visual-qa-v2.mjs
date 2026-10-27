@@ -172,7 +172,7 @@ for (const viewportName of ['mobile-390', 'mobile-430']) {
   }
 }
 
-// Sanad: a compact non-modal conversation integrated into the mobile navigation.
+// Sanad: a compact modal conversation integrated into the mobile navigation.
 for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390, 844], ['desktop', 1440, 1000]]) {
   const page = await isolatedPage(browser, { viewport: { width, height } });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
@@ -190,6 +190,7 @@ for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390,
   await page.screenshot({ path: `artifacts/sanad-${name}-closed.png` });
   await launcher.click();
   const dialog = page.getByRole('dialog', { name: 'محادثة سند' });
+  if (await dialog.getAttribute('aria-modal') !== 'true') out.failures.push('Sanad must expose modal semantics');
   const panel = await dialog.boundingBox();
   if (!panel || panel.x < 0 || panel.y < 0 || panel.x + panel.width > width || panel.y + panel.height > height || panel.height > height * .65) out.failures.push(`sanad-${name}: chat is outside the viewport or too tall`);
   if (panel && nav && nav.height && panel.y + panel.height >= nav.y) out.failures.push(`sanad-${name}: chat overlaps bottom navigation`);

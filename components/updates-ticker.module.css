@@ -176,7 +176,7 @@
   .heading strong { font-size: var(--fs-xs); }
   .item { min-height: 35px; gap: 6px; padding-inline: 18px; }
   .item > span { padding: 2px 6px; font-size: var(--fs-xs); }
-  .item strong { font-size: var(--fs-xs); }
+  .item strong { font-size: var(--fs-sm); }
   .control { width: 38px; min-height: 37px; }
   .viewport { mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
 }
@@ -186,7 +186,7 @@
   .heading { min-width: 88px; gap: 5px; padding-inline: 7px; }
   .heading strong { font-size: var(--fs-xs); }
   .item { padding-inline: 15px; }
-  .item strong { font-size: var(--fs-xs); }
+  .item strong { font-size: var(--fs-sm); }
   .control { width: 38px; }
 }
 

@@ -1,3 +1,5 @@
+import { ShareActions } from '@/components/share-actions';
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -14,9 +16,9 @@ import styles from './article.module.css';
 import knowledgeStyles from '../../knowledge/knowledge.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() { return localities.map((item) => ({ slug: item.slug })); }
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -24,12 +26,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!locality) return {};
   const article = getVillageArticle(locality.name);
   const path = `/villages/${locality.slug}`;
+  const socialImage = { url: siteConfig.url + '/villages/' + encodeURIComponent(locality.slug) + '/opengraph-image/', alt: locality.name, width: 1200, height: 630, type: 'image/jpeg' };
 
   if (article) {
     return buildPageMetadata({
       title: article.seoTitle,
       description: article.description,
-      path,
+      path, socialImage,
     });
   }
 
@@ -37,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildPageMetadata({
     title: `دليل ${locality.name} — مركز نقادة`,
     description,
-    path,
+    path, socialImage,
     robots: locality.businessCount > 0 ? { index: true, follow: true } : { index: false, follow: true },
   });
 }
@@ -134,15 +137,6 @@ export default async function LocalityPage({ params }: Props) {
           url: siteConfig.url,
           logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
         },
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonicalUrl}#faq`,
-        mainEntity: article.faqs.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
       },
     );
   }
@@ -298,6 +292,7 @@ export default async function LocalityPage({ params }: Props) {
         )}
       </section>
 
+      <div className="shell page-section"><ShareActions title={locality.name} url={canonicalUrl} scope="content" /></div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );

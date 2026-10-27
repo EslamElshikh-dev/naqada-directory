@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import bundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
@@ -8,7 +9,7 @@ const nextConfig: NextConfig = {
     // Ephemeral QA filesystems can opt out without changing the hosted build default.
     turbopackFileSystemCacheForBuild: process.env.NAQADA_DISABLE_BUILD_CACHE !== '1',
     // Share styles by route instead of pulling unrelated component styles into large common chunks.
-    cssChunking: { type: 'graph', requestCost: 100_000 },
+    cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 10_000 },
   },
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -37,4 +38,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default bundleAnalyzer({ enabled: process.env.ANALYZE === 'true', openAnalyzer: false })(nextConfig);

@@ -63,7 +63,7 @@ test('search facets count the current public catalog and drop emptied categories
   assert.equal(category.subtitle, '1 نشاطًا منشورًا');
   assert.equal(search.searchSite(locality, 100, ['locality'], []).length, 0);
   assert.equal(search.searchSite(sample.category, 100, ['category'], []).length, 0);
-  assert.equal(search.searchSite(sample.name, 100, ['listing'], only)[0].href, '/activity/7828410d-1d6b-4ab9-8394-6a266d0bcf2e/');
+  assert.equal(search.searchSite(sample.name, 100, ['listing'], only)[0].href, loadModule('./lib/activity-path').ownerActivityHref(only[0]));
 });
 
 test('live news previews keep the publication date of the matching published archive snapshot', () => {

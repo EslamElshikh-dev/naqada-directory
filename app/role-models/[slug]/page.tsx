@@ -1,18 +1,16 @@
+import '@/app/content-styles.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { roleModels } from '@/lib/role-models';
-import { absoluteUrl, siteConfig } from '@/lib/site';
+import { absoluteUrl, siteConfig, pageTitle, pageDescription } from '@/lib/site';
 import { getPublicRoleModels } from '@/lib/article-content';
 import { getPublicCurated } from '@/lib/auth/moderator';
 import { readArticleDocument } from '@/lib/article-document';
 import { RoleModelStory } from './story-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return roleModels.map((person) => ({ slug: person.slug }));
-}
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -35,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? { width: 1200, height: 630, alt: 'صور الشهيد محمود أحمد عبد الصبور سعد الثلاث مع عبارة شهيد دنفيق _ فخر نقادة' }
     : { ...(socialPhoto ? { width: socialPhoto.width, height: socialPhoto.height } : {}), alt: socialPhoto?.alt || 'دليل نقادة' };
   return {
-    title,
-    description: person.description,
+    title: { absolute: pageTitle(title) },
+    description: pageDescription(person.description),
     keywords: [...(person.keywords || []), person.name, ...(person.alternateNames || []), 'نماذج مشرفة في نقادة', person.locality, 'مركز نقادة'],
     alternates: { canonical: '/role-models/' + person.slug },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
@@ -44,14 +42,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       locale: siteConfig.locale,
       url,
-      title: sharing?.title || person.articleTitle || person.name,
-      description: sharing?.description || person.description,
+      title: pageTitle(sharing?.title || person.articleTitle || person.name),
+      description: pageDescription(sharing?.description || person.description),
       siteName: siteConfig.shortName,
       publishedTime: person.publishedAt,
       modifiedTime: person.modifiedAt,
       images: [{ url: socialImage, ...socialImageDetails }],
     },
-    twitter: { card: 'summary_large_image', title: sharing?.title || person.articleTitle || person.name, description: sharing?.description || person.description, images: [{ url: socialImage, alt: socialImageDetails.alt }] },
+    twitter: { card: 'summary_large_image', title: pageTitle(sharing?.title || person.articleTitle || person.name), description: pageDescription(sharing?.description || person.description), images: [{ url: socialImage, alt: socialImageDetails.alt }] },
   };
 }
 

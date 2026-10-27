@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -88,3 +89,5 @@ export default function UpdatesPage() {
     </main>
   );
 }
+
+export const revalidate = 60;

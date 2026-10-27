@@ -1,0 +1,4 @@
+{
+  "maxInitialCssTransferBytes": 25000,
+  "requireValidLcp": true
+}

@@ -1,10 +1,11 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { UtilityPageHeader } from '@/components/utility-page-header';
 import { ListingCard } from '@/components/listing-card';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
-import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
+import { getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { publicBusinessHref } from '@/lib/business-links';
@@ -12,11 +13,9 @@ import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return activityLandings.map((activity) => ({ slug: activity.slug }));
-}
+export function generateStaticParams() { return []; }
 
 function activityKeywords(name: string, searchLabel: string) {
   const core = name.replace(/\s+في\s+نقادة$/, ' نقادة');

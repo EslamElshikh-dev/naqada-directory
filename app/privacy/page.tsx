@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -22,7 +23,7 @@ export default function PrivacyPage() {
     url: pageUrl,
     description: 'سياسة مبسطة توضح بيانات الاستخدام والمساهمات التي يعالجها دليل نقادة وحدود استخدامها.',
     isPartOf: { '@id': `${siteConfig.url}#website` },
-    dateModified: '2026-09-28',
+    dateModified: '2026-10-27',
   };
 
   return (
@@ -59,7 +60,7 @@ export default function PrivacyPage() {
             <div className="source-panel" style={{ marginTop: 24 }}>
               <span>حماية إضافية ضد الإساءة</span>
               <strong>لا نخزن عنوان IP الخام ضمن سجلات الاستخدام العامة للدليل.</strong>
-              <p>يستخدم مسار الاستقبال قيمة مشتقة مشفّرة ومتغيرة يوميًا فقط لتطبيق حدود معدل الطلبات ومقاومة السبام.</p>
+              <p>يستخدم مسار استقبال المساهمات قيمة مشتقة ومتغيرة يوميًا لمقاومة السبام. ويستخدم البحث وسند قيودًا مؤقتة داخل كل نسخة من الخادم، بمفاتيح مشتقة دون الاحتفاظ بعنوان IP الخام؛ تنتهي العدادات بعد نافذة الطلبات ولا تتزامن بين نسخ الخادم.</p>
             </div>
           </article>
 
@@ -130,7 +131,7 @@ export default function PrivacyPage() {
           <div className="methodology__grid">
             <article><b>أ</b><h3>الدليل مستقل</h3><p>دليل نقادة منصة معلوماتية مستقلة وليست جهة حكومية أو ممثلًا للأنشطة المدرجة.</p></article>
             <article><b>ب</b><h3>تقليل البيانات</h3><p>نفضل المصادر العامة والمعلومات اللازمة للمراجعة، ولا نطلب بيانات حساسة لإضافة نشاط أو تصحيح سجل.</p></article>
-            <article><b>ج</b><h3>آخر تحديث</h3><p>تم تحديث هذه الصفحة في 2 أكتوبر 2026.</p></article>
+            <article><b>ج</b><h3>آخر تحديث</h3><p>تم تحديث هذه الصفحة في 27 أكتوبر 2026.</p></article>
           </div>
         </div>
       </section>
@@ -138,9 +139,9 @@ export default function PrivacyPage() {
       <section className="shell page-section">
         <div className="detail-card">
           <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">قياس الإعلانات</span><h2>Meta Pixel</h2></div>
-          <p>نستخدم Meta Pixel لتسجيل مشاهدات الصفحات وقياس نتائج الحملات الإعلانية على فيسبوك وإنستغرام. قد تتلقى Meta عنوان الصفحة وعنوان IP ومعلومات المتصفح ومعرّفات ملفات الارتباط، وقد تربط الزيارة بحسابك لديها وفق إعداداتك وسياساتها.</p>
+          <p>بعد اختيار «السماح بقياس Meta» من تذييل الصفحة، نحمّل Meta Pixel لتسجيل مشاهدات الصفحات وقياس نتائج الحملات الإعلانية على فيسبوك وإنستغرام. قد تتلقى Meta عنوان الصفحة وعنوان IP ومعلومات المتصفح ومعرّفات ملفات الارتباط، وقد تربط الزيارة بحسابك لديها وفق إعداداتك وسياساتها.</p>
           <p>لا نرسل بيانات نماذج المساهمات أو أسئلة سند ضمن أحداث البيكسل، ولا نفعّل المطابقة المتقدمة أو تتبّع النقرات التلقائي في هذا التكامل. مدد الاحتفاظ المذكورة أعلاه تخص سجلات الدليل الداخلية؛ تخضع بيانات Meta لسياساتها.</p>
-          <p>يمكنك التحكم في ملفات الارتباط من إعدادات متصفحك وتعديل تفضيلات الإعلانات في حساب Meta. راجع <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">سياسة خصوصية Meta</a> لمزيد من التفاصيل.</p>
+          <p>يمكنك إيقاف الأحداث التالية باختيار «رفض القياس» في التذييل. لا يحذف الرفض بيانات سبق أن تلقتها Meta. ويمكنك التحكم في ملفات الارتباط من إعدادات متصفحك وتعديل تفضيلات الإعلانات في حساب Meta. راجع <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">سياسة خصوصية Meta</a> لمزيد من التفاصيل.</p>
         </div>
       </section>
 

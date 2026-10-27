@@ -32,16 +32,16 @@ function errorText(error?: string) {
   return 'تعذر حفظ الطلب الآن. لم تُفقد البيانات المكتوبة ويمكنك إعادة المحاولة.';
 }
 
-export function ContributionBuilder({ categories, localities }: { categories: Category[]; localities: LocalityPage[] }) {
+export function ContributionBuilder({ categories, localities, defaults = {} }: { categories: Category[]; localities: LocalityPage[]; defaults?: { type?: ContributionType; name?: string; category?: string; locality?: string; listing?: string; details?: string } }) {
   const searchParams = useSearchParams();
-  const [type, setType] = useState<ContributionType>(() => normalizeType(searchParams.get('type')));
-  const [name, setName] = useState(() => searchParams.get('name') || searchParams.get('q') || '');
-  const [category, setCategory] = useState(() => searchParams.get('category') || '');
-  const [locality, setLocality] = useState(() => searchParams.get('locality') || '');
-  const [details, setDetails] = useState('');
+  const [type, setType] = useState<ContributionType>(() => normalizeType(defaults.type || searchParams.get('type')));
+  const [name, setName] = useState(() => defaults.name || searchParams.get('name') || searchParams.get('q') || '');
+  const [category, setCategory] = useState(() => defaults.category || searchParams.get('category') || '');
+  const [locality, setLocality] = useState(() => defaults.locality || searchParams.get('locality') || '');
+  const [details, setDetails] = useState(() => defaults.details || searchParams.get('details') || '');
   const [source, setSource] = useState('');
   const [contact, setContact] = useState('');
-  const [listingSlug] = useState(() => searchParams.get('listing') || '');
+  const [listingSlug] = useState(() => defaults.listing || searchParams.get('listing') || '');
   const [website, setWebsite] = useState('');
   const [formStartedAt] = useState(() => Date.now());
   const [prepared, setPrepared] = useState(false);

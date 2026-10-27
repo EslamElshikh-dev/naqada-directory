@@ -1,8 +1,11 @@
+import { ownerActivityHref, ownerActivityId, ownerActivityNeedsRedirect } from '@/lib/activity-path';
+import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { OwnerPhoto } from '@/components/owner-photo';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { ActionIcon } from '@/components/action-icon';
 import { ListingCover } from '@/components/listing-cover';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
@@ -14,37 +17,41 @@ import { buildPageMetadata, cleanPhone, jsonLdStringify, siteConfig, slugify, tr
 import styles from './activity.module.css';
 
 type Props = { params: Promise<{ id: string }> };
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const listing = uuidPattern.test(id) ? await getPublishedOwnerListing(id) : null;
+  const { id: requestedId } = await params;
+  const id = ownerActivityId(requestedId);
+  const listing = id ? await getPublishedOwnerListing(id) : null;
   if (!listing) return { title: 'النشاط غير متاح | دليل نقادة', robots: { index: false, follow: false } };
-  const cover = ownerListingCoverPath(listing);
   return buildPageMetadata({
     title: `${listing.name} في ${listing.locality}`,
-    description: truncateMetaDescription(listing.description), path: `/activity/${id}`,
-    socialImage: cover ? { url: `${siteConfig.url}${ownerPhotoUrl(cover)}`, alt: `غلاف ${listing.name}` } : undefined,
+    description: truncateMetaDescription(listing.description), path: ownerActivityHref(listing),
+    socialImage: { url: siteConfig.url + ownerActivityHref(listing) + 'opengraph-image/', alt: listing.name, width: 1200, height: 630, type: 'image/jpeg' },
   });
 }
 
 export default async function ActivityPage({ params }: Props) {
-  const { id } = await params;
-  const listing = uuidPattern.test(id) ? await getPublishedOwnerListing(id) : null;
-  if (!listing) notFound();
+  const { id: requestedId } = await params;
+  const id = ownerActivityId(requestedId);
+  const listing = id ? await getPublishedOwnerListing(id) : null;
+  if (!id || !listing) notFound();
+  const canonical = ownerActivityHref(listing);
+  if (ownerActivityNeedsRedirect(requestedId, canonical)) permanentRedirect(canonical);
   const coverPath = ownerListingCoverPath(listing);
   const photoPaths = ownerListingPhotoPaths(listing);
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const map = activityMapLink(listing);
-  const pageUrl = `${siteConfig.url}/activity/${id}/`;
+  const pageUrl = siteConfig.url + canonical;
   const categoryHref = `/directory/${slugify(listing.category)}`;
   const localityHref = `/villages/${slugify(listing.locality)}`;
   const structuredData = {
     '@context': 'https://schema.org', '@graph': [{
       '@type': 'LocalBusiness', '@id': `${pageUrl}#activity`, name: listing.name,
-      description: listing.description, url: pageUrl, telephone: listing.phone,
+      description: listing.description, url: pageUrl, telephone: cleanPhone(listing.phone),
+      openingHoursSpecification: fullTimeHours(listing.hours), geo: verifiedMapCoordinates(listing.maps_url),
       address: { '@type': 'PostalAddress', streetAddress: listing.address,
         addressLocality: listing.locality, addressRegion: 'قنا', addressCountry: 'EG' },
       ...(photoPaths.length ? { image: photoPaths.map((path) => `${siteConfig.url}${ownerPhotoUrl(path)}`) } : {}),
@@ -66,7 +73,7 @@ export default async function ActivityPage({ params }: Props) {
           <div className={styles.identity}>
             <div className={styles.identityTop}>
               <div className={styles.tags}><Link prefetch={false} href={categoryHref}>{listing.category}</Link><Link prefetch={false} href={localityHref}>{listing.locality}</Link></div>
-              <span className={styles.badge}><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" opacity=".1"/><path d="m5.5 10 3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>منشور في الدليل</span>
+              <span className={styles.badge}><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" opacity=".1"/><path d="m5.5 10 3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>يديره صاحبه</span>
             </div>
             <h1>{listing.name}</h1>
             <p className={styles.location}><ActionIcon name="pin" /><span>{listing.address}، {listing.locality}</span></p>
@@ -94,7 +101,7 @@ export default async function ActivityPage({ params }: Props) {
         </section>}
         <section className={styles.share} aria-labelledby="activity-share-title">
           <h2 id="activity-share-title">دلّ غيرك على المكان</h2><p className={styles.shareIntro}>ابعته للي محتاج الخدمة من أهل البلد.</p>
-          <ShareActions title={listing.name} locality={listing.locality} listingSlug={id} />
+          <ShareActions url={pageUrl} title={listing.name} locality={listing.locality} listingSlug={id} />
           <nav className={styles.explore} aria-label="استكشف أنشطة قريبة"><Link prefetch={false} href={`/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(listing.locality)}`}><span>أنشطة مشابهة في {listing.locality}</span><ActionIcon name="arrow" /></Link><Link prefetch={false} href={localityHref}><span>كل خدمات {listing.locality}</span><ActionIcon name="arrow" /></Link></nav>
           <Link prefetch={false} className={styles.edit} href={`/contribute?edit=${id}`}>ده نشاطك؟ عدّل بياناته من حسابك <ActionIcon name="arrow" /></Link>
         </section>

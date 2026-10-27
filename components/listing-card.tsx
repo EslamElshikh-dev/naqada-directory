@@ -1,6 +1,6 @@
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
-import { canonicalLocalityName } from '@/lib/data';
+import { canonicalLocalityName } from '@/lib/locality-name';
 import type { DirectoryItem } from '@/lib/types';
 import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
 import { BusinessMedia } from './business-media';

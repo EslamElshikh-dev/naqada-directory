@@ -1,3 +1,5 @@
+import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -9,13 +11,13 @@ import { ListingPrimaryActions } from '@/components/listing-primary-actions';
 import { ListingRating } from '@/components/listing-rating';
 import { ShareActions } from '@/components/share-actions';
 import { getBusinessMedia } from '@/lib/business-media';
-import { businesses, canonicalLocalityName, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
+import { canonicalLocalityName, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
 import { getEffectiveBusiness } from '@/lib/curated-content';
 import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 function resolveSeoKeywordSearch(keyword: string) {
   const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);
@@ -30,24 +32,19 @@ function resolveSeoKeywordSearch(keyword: string) {
   return { searchTerm, isLocal };
 }
 
-export function generateStaticParams() {
-  return businesses.map((item) => ({ slug: item.slug }));
-}
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const listing = await getEffectiveBusiness(slug);
   if (!listing) return { title: { absolute: 'الصفحة غير موجودة | دليل نقادة' }, robots: { index: false, follow: true }, alternates: { canonical: null } };
-  const media = getBusinessMedia(listing.id);
-  const ownerPhoto = listing.ownerPhotoPaths?.[0];
   const locality = canonicalLocalityName(listing.locality);
   const description = truncateMetaDescription(listing.description || businessSummary({ ...listing, locality }));
   return buildPageMetadata({
     title: `${listing.name} في ${locality}`,
     description,
     path: `/listing/${listing.slug}`,
-    socialImage: media ? { url: media.imageUrl, alt: media.imageAlt }
-      : ownerPhoto ? { url: `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhoto)}`, alt: `صورة ${listing.name}` } : undefined,
+    socialImage: { url: absoluteUrl('/listing/' + encodeURIComponent(listing.slug)) + 'opengraph-image/', alt: listing.name, width: 1200, height: 630, type: 'image/jpeg' },
   });
 }
 
@@ -117,8 +114,10 @@ export default async function ListingPage({ params }: Props) {
         '@id': `${canonicalUrl}#entity`,
         name: listing.name,
         url: canonicalUrl,
-        image: media?.imageUrl || (ownerPhotoPaths[0] ? `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}` : undefined),
+        image: (media ? new URL(media.imageUrl, siteConfig.url).href : undefined) || (ownerPhotoPaths[0] ? `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}` : undefined),
         telephone: phone || undefined,
+        openingHoursSpecification: fullTimeHours(listing.hours),
+        geo: verifiedMapCoordinates(listing.mapsUrl),
         address: {
           '@type': 'PostalAddress',
           streetAddress: listing.address || undefined,
@@ -139,15 +138,6 @@ export default async function ListingPage({ params }: Props) {
           { '@type': 'ListItem', position: 2, name: listing.category, item: categoryUrl },
           { '@type': 'ListItem', position: 3, name: listing.name, item: canonicalUrl },
         ],
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonicalUrl}#faq`,
-        mainEntity: faqItems.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
       },
     ],
   };
@@ -172,6 +162,8 @@ export default async function ListingPage({ params }: Props) {
       <section className="shell detail-layout">
         <article className="detail-card">
           <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">تفاصيل المكان</span><h2>المعلومات المتاحة</h2></div>
+          <div className="detail-actions"><Link className="button button--ghost" href={'/claim/' + encodeURIComponent(listing.slug) + '/'}>ده نشاطك؟</Link>
+            {!phone && <Link className="button button--ghost" href={correctionUrl + '&details=' + encodeURIComponent('رقم الهاتف المقترح: ')}>تعرف رقمه؟</Link>}</div>
           <div className="detail-grid">
             <div><span>التصنيف</span><strong>{listing.category}</strong></div>
             <div><span>نوع الخدمة</span><strong>{listing.subcategory || 'خدمة محلية'}</strong></div>

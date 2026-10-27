@@ -32,8 +32,10 @@ const villageArticleIndex = read('lib/village-articles/index.ts');
 const officialOrigin = 'https://naqada-directory.vercel.app';
 const verificationToken = 'a5AfDDI67VsUYxqSvx00gPy5bqSb1V9YoZ1DX8-GkxY';
 
-test('official Vercel origin and Search Console verification stay pinned', () => {
-  assert.ok(site.includes(`url: '${officialOrigin}'`));
+test('official default origin and Search Console verification stay pinned', () => {
+  assert.ok(site.includes(` : '${officialOrigin}'`));
+  assert.ok(site.includes('url: siteOrigin'));
+  assert.ok(site.includes('NEXT_PUBLIC_SITE_URL'));
   assert.ok(layout.includes(verificationToken));
   assert.ok(layout.includes('<html lang="ar-EG"'));
 });

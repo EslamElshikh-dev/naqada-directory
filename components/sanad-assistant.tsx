@@ -27,14 +27,47 @@ export function SanadAssistant() {
   const field = useRef<HTMLInputElement>(null);
   const log = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const showTimer = setTimeout(() => {
-      if (!hintDismissed.current) setHint(true);
-    }, 650);
-    const hideTimer = setTimeout(() => setHint(false), 4650);
-    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); abort.current?.abort(); };
+    const key = 'naqada-sanad-hint';
+    try { if (sessionStorage.getItem(key)) return; } catch {}
+    if (!matchMedia('(min-width: 981px)').matches) return;
+    let showTimer: ReturnType<typeof setTimeout>, hideTimer: ReturnType<typeof setTimeout>;
+    const reveal = () => {
+      if (hintDismissed.current || document.readyState !== 'complete') return;
+      hintDismissed.current = true;
+      try { sessionStorage.setItem(key, '1'); } catch {}
+      setHint(true); hideTimer = setTimeout(() => setHint(false), 4000);
+    };
+    const schedule = () => { clearTimeout(showTimer); showTimer = setTimeout(reveal, 4000); };
+    const scroll = () => { if (!hintDismissed.current && scrollY > 180) reveal(); };
+    const hide = () => { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem(key, '1'); } catch {} };
+    let observer: PerformanceObserver | undefined;
+    try { observer = new PerformanceObserver(schedule); observer.observe({ type: 'largest-contentful-paint', buffered: true }); } catch {}
+    if (document.readyState === 'complete') schedule();
+    window.addEventListener('load', schedule, { once: true });
+    window.addEventListener('scroll', scroll, { passive: true });
+    window.addEventListener('pointerdown', hide); window.addEventListener('keydown', hide);
+    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); observer?.disconnect(); window.removeEventListener('load', schedule); window.removeEventListener('scroll', scroll); window.removeEventListener('pointerdown', hide); window.removeEventListener('keydown', hide); };
+  }, []);
+  useEffect(() => {
+    const hash = () => { if (location.hash === '#sanad') { hintDismissed.current = true; setHint(false); setOpen(true); } };
+    const timer = setTimeout(hash, 0); window.addEventListener('hashchange', hash);
+    return () => { clearTimeout(timer); window.removeEventListener('hashchange', hash); abort.current?.abort(); };
   }, []);
   useEffect(() => {
     if (!open) return;
+    const launchElement = launcher.current;
+    const trigger = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : launchElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const inert: [HTMLElement, boolean][] = [];
+    let branch: HTMLElement | null = root.current;
+    while (branch?.parentElement) {
+      for (const sibling of branch.parentElement.children) if (sibling !== branch && sibling instanceof HTMLElement) {
+        inert.push([sibling, sibling.inert]); sibling.inert = true;
+      }
+      branch = branch.parentElement;
+    }
+    if (launcher.current) { inert.push([launcher.current, launcher.current.inert]); launcher.current.inert = true; }
     if (window.matchMedia('(min-width: 981px)').matches) field.current?.focus({ preventScroll: true });
     else panel.current?.focus({ preventScroll: true });
     const viewport = window.visualViewport;
@@ -46,7 +79,7 @@ export function SanadAssistant() {
     const outside = (event: PointerEvent) => { if (event.target instanceof Node && !root.current?.contains(event.target)) setOpen(false); };
     document.addEventListener('pointerdown', outside);
     resize(); viewport?.addEventListener('resize', resize); viewport?.addEventListener('scroll', resize);
-    return () => { document.removeEventListener('pointerdown', outside); viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); };
+    return () => { document.body.style.overflow = previousOverflow; for (const [element, value] of inert) element.inert = value; (trigger?.isConnected ? trigger : launchElement)?.focus({ preventScroll: true }); document.removeEventListener('pointerdown', outside); viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); };
   }, [open]);
   useEffect(() => {
     if (!open || !log.current) return;
@@ -54,8 +87,8 @@ export function SanadAssistant() {
     if (pending || !last) log.current.scrollTop = log.current.scrollHeight;
     else log.current.scrollTop += last.getBoundingClientRect().top - log.current.getBoundingClientRect().top - 12;
   }, [messages, pending, open]);
-  function dismissHint() { hintDismissed.current = true; setHint(false); }
-  function close() { setOpen(false); launcher.current?.focus(); }
+  function dismissHint() { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem('naqada-sanad-hint', '1'); } catch {} }
+  function close() { setOpen(false); }
   async function send(value: string, retry = false) {
     const text = value.trim();
     if (!text || busy.current) return;
@@ -79,7 +112,14 @@ export function SanadAssistant() {
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
       <span className={styles.mobileLabel} aria-hidden="true">سند</span>
     </button>
-    {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
+    {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" aria-modal="true" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => {
+      if (event.key === 'Tab') {
+        const targets = [...(panel.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]') || [])].filter(item => item.getClientRects().length);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+      if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
       <header className={styles.header}>
         <Image src="/images/assistant/sanad.webp" alt="" width={38} height={38} sizes="38px" />
         <div><h2>سند <span>ابن البلد</span></h2><p>دليل نقادة… وأنا معاك</p></div>

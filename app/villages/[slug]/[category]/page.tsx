@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -6,26 +7,15 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
-import { businesses, canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  const counts = new Map<string, { slug: string; category: string; count: number }>();
-  for (const business of businesses) {
-    const locality = localities.find((item) => item.name === canonicalLocalityName(business.locality));
-    const category = categories.find((item) => item.name === business.category);
-    if (!locality || !category) continue;
-    const key = `${locality.slug}::${category.slug}`;
-    const current = counts.get(key);
-    counts.set(key, { slug: locality.slug, category: category.slug, count: (current?.count || 0) + 1 });
-  }
-  return [...counts.values()].filter((item) => item.count >= MIN_LOCAL_CATEGORY_RESULTS).map(({ slug, category }) => ({ slug, category }));
-}
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, category: categorySlug } = await params;

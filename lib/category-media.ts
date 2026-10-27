@@ -3,6 +3,11 @@ export type CategoryMedia = {
   imageAlt: string;
 };
 
+export function getActivityMedia(activity: { slug: string; visualCategory: string }): CategoryMedia {
+  if (activity.slug === 'صيدليات') return { imageUrl: '/images/categories/pharmacies-v1.webp', imageAlt: 'مشهد توضيحي لصيدلية محلية؛ ليس صورة لنشاط بعينه' };
+  return getCategoryMedia(activity.visualCategory);
+}
+
 const media: Record<string, CategoryMedia> = {
   health: { imageUrl: '/images/categories/health.webp', imageAlt: 'مشهد توضيحي لخدمات الطب والصحة في بيئة محلية بصعيد مصر' },
   retail: { imageUrl: '/images/categories/retail.webp', imageAlt: 'مشهد توضيحي لمتجر محلي واحتياجات التسوق اليومية في نقادة' },

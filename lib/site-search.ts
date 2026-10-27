@@ -1,3 +1,4 @@
+import { ownerActivityHref } from './activity-path';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import { businesses, categories, familySearchPages, landmarks, localities } from '@/lib/data';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces } from '@/lib/knowledge';
@@ -74,7 +75,7 @@ const searchIndex: IndexedSearchItem[] = [
     kind: 'listing',
     title: item.name,
     subtitle: [item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' · '),
-    href: item.id.startsWith('owner:') ? `/activity/${item.id.slice(6)}/` : `/listing/${item.slug}`,
+    href: /^owner[:-]/.test(item.id) ? ownerActivityHref(item) : `/listing/${item.slug}`,
     badge: item.id.startsWith('owner:') ? 'نشاط من صاحبه' : 'نشاط',
     fields: {
       title: item.name,
@@ -250,7 +251,7 @@ function activeSearchIndex(currentBusinesses?: Business[], currentContent?: { pe
     ...currentBusinesses.map((item) => indexItem({
       kind: 'listing' as const, title: item.name,
       subtitle: [item.category, item.subcategory, item.locality, item.address].filter(Boolean).join(' · '),
-      href: item.id.startsWith('owner:') ? `/activity/${item.id.slice(6)}/` : `/listing/${item.slug}`,
+      href: /^owner[:-]/.test(item.id) ? ownerActivityHref(item) : `/listing/${item.slug}`,
       badge: item.id.startsWith('owner:') ? 'نشاط من صاحبه' : 'نشاط',
       fields: {
         title: item.name, category: item.category, subcategory: item.subcategory || '',

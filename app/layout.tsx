@@ -10,7 +10,7 @@ import { SanadAssistant } from '@/components/sanad-assistant';
 import { UpdatesTicker } from '@/components/updates-ticker';
 import { PwaSetup } from '@/components/pwa-setup';
 import { MetaPixel } from '@/components/meta-pixel';
-import './site-styles.css';
+import './shell-styles.css';
 
 
 export const metadata: Metadata = {
@@ -85,14 +85,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         name: siteConfig.shortName,
         alternateName: ['الموسوعة المحلية لمركز نقادة', ...siteConfig.alternateNames],
         url: homeUrl,
-        logo: { '@type': 'ImageObject', url: siteConfig.logoImage },
+        logo: { '@type': 'ImageObject', url: siteConfig.logoImage, width: 192, height: 192 },
+        contactPoint: { '@type': 'ContactPoint', contactType: 'تصحيح بيانات الدليل', url: absoluteUrl('/contribute'), availableLanguage: 'ar' },
         areaServed: { '@type': 'AdministrativeArea', name: 'مركز نقادة، محافظة قنا، مصر' },
       },
     ],
   };
-  const speedInsightsBootstrap = `window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };`;
+
   return (
     <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFont.variable + ' ' + bodyFontVariable}>
+      <head><link rel="preconnect" href="https://ceyjfguoomdlrtsujskj.supabase.co" crossOrigin="anonymous" /></head>
       <body className="mobile-editorial encyclopedia-ui">
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
@@ -100,19 +102,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <VisitorTracker />
         <PwaSetup />
         <Suspense fallback={null}><MetaPixel /></Suspense>
-        <noscript>
-          {/* A tracking beacon must load directly from Meta, without image optimization. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img height="1" width="1" style={{ display: 'none' }} alt=""
-            src="https://www.facebook.com/tr?id=28666614406293709&ev=PageView&noscript=1" />
-        </noscript>
+
         {children}
         <Footer />
         <MobileNav />
         <SanadAssistant />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />
-        <script dangerouslySetInnerHTML={{ __html: speedInsightsBootstrap }} />
-        <script defer src="/_vercel/speed-insights/script.js" />
+        {process.env.VERCEL === '1' && <><script defer src="/scripts/speed-insights-bootstrap.js" /><script defer src="/_vercel/speed-insights/script.js" /></>}
       </body>
     </html>
   );

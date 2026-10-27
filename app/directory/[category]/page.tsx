@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -11,11 +12,9 @@ import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return categories.map((category) => ({ category: category.slug }));
-}
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: slug } = await params;

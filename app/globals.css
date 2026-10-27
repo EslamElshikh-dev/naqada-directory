@@ -500,3 +500,10 @@ img, svg { display: block; max-width: 100%; }
 .hero-search input,
 .search-field input { font-size: var(--fs-base); }
 .mobile-nav a { font-size: var(--fs-xs); }
+
+.privacy-preferences { margin-block: 28px; padding: 20px; background: #fff; border-radius: 16px; color: var(--text-body); }
+.privacy-preferences h2 { margin: 0 0 8px; font-size: var(--fs-lg); color: var(--text-strong); }
+.privacy-preferences p { font-size: var(--fs-sm); }
+.privacy-preferences [aria-pressed='true'] { outline: 2px solid var(--text-strong); }
+
+.offline-status { padding: 12px 20px; background: #fff0c2; color: var(--text-strong); font-size: var(--fs-sm); text-align: center; }

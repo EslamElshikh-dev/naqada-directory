@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+import { AUTH_RETURN_COOKIE, safeAuthReturn } from '@/lib/auth/return-path';
 import { NextResponse } from 'next/server';
 import {
   AUTH_ACCESS_COOKIE,
@@ -27,7 +29,9 @@ export async function POST(request: Request) {
 
     const user = await getUser(accessToken);
     await assertMemberAllowed(accessToken);
-    const response = NextResponse.json({ user: mapMember(user) });
+    const redirectTo = safeAuthReturn((await cookies()).get(AUTH_RETURN_COOKIE)?.value);
+    const response = NextResponse.json({ user: mapMember(user), redirectTo });
+    response.cookies.set(AUTH_RETURN_COOKIE, '', { ...authCookieBase, maxAge: 0 });
     response.cookies.set(AUTH_ACCESS_COOKIE, accessToken, {
       ...authCookieBase,
       maxAge: Math.max(300, Math.min(expiresIn, 3600) - 60),

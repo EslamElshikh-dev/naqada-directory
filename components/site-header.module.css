@@ -38,3 +38,5 @@
 @media print { .header { display:none; } }
 
 @media (prefers-reduced-motion:reduce) { .emblem { transition:none; } }
+
+@media (max-width:980px) { .inner { min-height:56px; } }

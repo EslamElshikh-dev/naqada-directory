@@ -371,6 +371,13 @@ img, svg { display: block; max-width: 100%; }
 .search-field input { font-size: var(--fs-base); }
 .mobile-nav a { font-size: var(--fs-xs); }
 
+.privacy-preferences { margin-block: 28px; padding: 20px; background: #fff; border-radius: 16px; color: var(--text-body); }
+.privacy-preferences h2 { margin: 0 0 8px; font-size: var(--fs-lg); color: var(--text-strong); }
+.privacy-preferences p { font-size: var(--fs-sm); }
+.privacy-preferences [aria-pressed='true'] { outline: 2px solid var(--text-strong); }
+
+.offline-status { padding: 12px 20px; background: #fff0c2; color: var(--text-strong); font-size: var(--fs-sm); text-align: center; }
+
 
 /* Source: ./naqada-theme.css */
 /*
@@ -7240,7 +7247,7 @@ body.encyclopedia-ui nav.breadcrumbs > :first-child:not(a) { color: var(--text-o
   --muted:var(--text-muted);
 }
 /* Explicit family keeps local font naming consistent between both Next bundlers. */
-html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; }
+html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
 html[data-body-font='plex'] { --font-body:var(--font-plex); }
 html[data-body-font='readex'] { --font-body:var(--font-readex); }
 body, body.encyclopedia-ui {
@@ -7252,7 +7259,7 @@ body, body.encyclopedia-ui {
 }
 button,input,select,textarea { font:inherit; line-height:1.5; }
 code,pre,kbd,samp { font-family:inherit; }
-:is(h1,h2),.display,[data-counter] {
+:is(h1,h2,h3,h4,h5,h6),.display,[data-counter] {
   font-family:var(--font-display),sans-serif;
   font-weight:700;
   line-height:1.35;

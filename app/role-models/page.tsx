@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function RoleModelsPage() {
   const roleModels = await getPublicRoleModels();

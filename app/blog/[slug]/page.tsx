@@ -1,53 +1,46 @@
+import '@/app/content-styles.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { allEditorialPosts } from '@/lib/editorial-posts-all';
-import { editorialImagePath } from '@/lib/editorial-image-path';
 import { getPublicCurated } from '@/lib/auth/moderator';
 import { getPublicEditorialPosts } from '@/lib/article-content';
 import { readArticleDocument } from '@/lib/article-document';
 import { CuratedArticle } from './curated-article';
-import { siteConfig } from '@/lib/site';
+import { siteConfig, pageTitle, pageDescription } from '@/lib/site';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import { EditorialPostArticle } from './article-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return allEditorialPosts.map((post) => ({ slug: post.slug }));
-}
+export function generateStaticParams() { return []; }
 
-function imageUrl(asset: string) {
-  return `${siteConfig.url}${editorialImagePath(asset)}`;
-}
 
-function metadataTitle(title: string) {
-  return title.replace(/\s*\|\s*دليل نقادة\s*$/u, '').trim();
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const cardUrl = siteConfig.url + '/blog/' + encodeURIComponent(slug) + '/opengraph-image/';
   const revision = (await getPublicCurated('article')).find((item) => item.slug === slug);
   if (revision?.status === 'hidden') return { robots: { index: false, follow: false } };
   if (revision?.origin === 'original' && revision.status === 'published' && !readArticleDocument(revision.payload)) {
     return {
-      title: revision.payload.title, description: revision.payload.summary,
+      title: { absolute: pageTitle(revision.payload.title) }, description: pageDescription(revision.payload.summary),
       alternates: { canonical: `/blog/${slug}` },
-      openGraph: { type: 'article', title: revision.payload.title,
-        description: revision.payload.summary, publishedTime: revision.updatedAt },
+      openGraph: { type: 'article', title: pageTitle(revision.payload.title),
+        description: pageDescription(revision.payload.summary), publishedTime: revision.updatedAt, url: siteConfig.url + '/blog/' + encodeURIComponent(slug) + '/', images: [{ url: cardUrl, width: 1200, height: 630, alt: revision.payload.title }] },
+      twitter: { card: 'summary_large_image', title: pageTitle(revision.payload.title), description: pageDescription(revision.payload.summary), images: [cardUrl] },
     };
   }
   const post = (await getPublicEditorialPosts()).find(item => item.slug === slug);
   if (!post) return {};
   const url = `${siteConfig.url}/blog/${post.slug}`;
   const sharing = revision && readArticleDocument(revision.payload)?.sharing;
-  const hero = sharing?.image ? new URL(sharing.image.src, siteConfig.url).toString() : imageUrl(post.hero.asset);
+  const hero = sharing?.image ? new URL(sharing.image.src, siteConfig.url).toString() : cardUrl;
   const sharedTitle = sharing?.title || post.title;
   const sharedDescription = sharing?.description || post.description;
 
   return {
-    title: metadataTitle(post.seoTitle || post.title),
-    description: post.description,
+    title: { absolute: pageTitle(post.seoTitle || post.title) },
+    description: pageDescription(post.description),
     keywords: post.keywords,
     authors: [{ name: post.authorName || villageArticleAuthor.name, ...((post.authorUrl || !post.authorName || post.authorName === villageArticleAuthor.name) ? { url: new URL(post.authorUrl || villageArticleAuthor.href, siteConfig.url).toString() } : {}) }],
     alternates: { canonical: `/blog/${post.slug}` },
@@ -66,18 +59,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       locale: siteConfig.locale,
       url,
-      title: sharedTitle,
-      description: sharedDescription,
+      title: pageTitle(sharedTitle),
+      description: pageDescription(sharedDescription),
       siteName: siteConfig.shortName,
       publishedTime: post.publishedAt,
       modifiedTime: post.modifiedAt,
       authors: [(post.authorName || villageArticleAuthor.name)],
-      images: [{ url: hero, width: sharing?.image?.width || post.hero.width, height: sharing?.image?.height || post.hero.height, alt: sharing?.image?.alt || post.hero.alt }],
+      images: [{ url: hero, width: sharing?.image?.width || 1200, height: sharing?.image?.height || 630, alt: sharing?.image?.alt || post.title }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: sharedTitle,
-      description: sharedDescription,
+      title: pageTitle(sharedTitle),
+      description: pageDescription(sharedDescription),
       images: [hero],
     },
   };

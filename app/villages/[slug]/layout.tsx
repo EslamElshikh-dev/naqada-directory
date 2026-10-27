@@ -62,3 +62,5 @@ export default async function LocalityLayout({ children, params }: Props) {
     </>
   );
 }
+
+export const revalidate = 60;

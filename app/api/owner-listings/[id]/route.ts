@@ -1,3 +1,6 @@
+import { duplicateBusiness } from '@/lib/duplicate-business';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { publicBusinessHref } from '@/lib/business-links';
 import { NextResponse } from 'next/server';
 import { resolveSession, sessionJson } from '@/lib/auth/session';
 import { SUPABASE_URL, restHeaders, sameOrigin } from '@/lib/auth/supabase-rest';
@@ -37,6 +40,8 @@ export async function PATCH(request: Request, { params }: Props) {
   const validation = validateOwnerListing(await request.json().catch(() => null));
   if ('error' in validation) return sessionJson({ error: validation.error }, session, 400);
   try {
+    const duplicate = duplicateBusiness((await getPublicBusinessCatalog()).businesses, validation.data, id);
+    if (duplicate) return sessionJson({ error: 'يوجد نشاط منشور بنفس الاسم والرقم والموضع. راجع السجل قبل إضافة نسخة.', href: publicBusinessHref(duplicate) }, session, 409);
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/directory_owner_listings?id=eq.${id}&owner_user_id=eq.${session.user.id}&select=${ownerListingSelect}`,
       {

@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import { UtilityPageHeader } from '@/components/utility-page-header';
 import { CategoryCover } from '@/components/category-cover';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName } from '@/lib/data';
+import { getActivityMedia } from '@/lib/category-media';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
@@ -14,7 +16,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/activities/',
 });
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function ActivitiesPage() {
   const catalog = await getPublicBusinessCatalog();
@@ -54,7 +56,7 @@ export default async function ActivitiesPage() {
             const localityCount = new Set(items.map((item) => canonicalLocalityName(item.locality))).size;
             return (
               <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card">
-                <CategoryCover category={activity.visualCategory} index={index} />
+                <CategoryCover category={activity.visualCategory} index={index} media={getActivityMedia(activity)} />
                 <h3>{activity.name}</h3>
                 <p>{activity.description}</p>
                 <div className="category-card__footer"><b>{items.length.toLocaleString(NUMBER_LOCALE)} اسمًا · {localityCount.toLocaleString(NUMBER_LOCALE)} موضعًا</b><span>عرض الأسماء ←</span></div>

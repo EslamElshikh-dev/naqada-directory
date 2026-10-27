@@ -1,3 +1,4 @@
+import { ownerActivityHref } from '@/lib/activity-path';
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import type { DirectoryItem } from '@/lib/types';
@@ -60,7 +61,7 @@ export function ownerListingDirectoryItem(listing: OwnerListing): DirectoryItem 
     reviews: null,
     mapsUrl: listing.maps_url || null,
     verification: null,
-    detailHref: `/activity/${listing.id}/`,
+    detailHref: ownerActivityHref(listing),
     imageUrl: coverPath ? ownerPhotoUrl(coverPath) : null,
   };
 }

@@ -1,3 +1,4 @@
+import { ShareActions } from '@/components/share-actions';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -77,15 +78,6 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
           { '@type': 'ListItem', position: 2, name: 'المدونة', item: `${siteConfig.url}/blog` },
           { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
         ],
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonicalUrl}#faq`,
-        mainEntity: post.faqs.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
       },
     ],
   };
@@ -226,6 +218,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
           </aside>
         </div>
       </article>
+      <div className="shell page-section"><ShareActions title={post.title} url={canonicalUrl} scope="content" /></div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );

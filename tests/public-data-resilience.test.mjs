@@ -32,6 +32,7 @@ function cacheHarness() {
       };
     },
     revalidateTag(tag, profile) { invalidations.push({ tag, profile }); values.clear(); },
+    revalidatePath() { values.clear(); },
   };
   const publicCache = load('../lib/public-content-cache.ts', { 'next/cache': nextCache });
   return { nextCache, publicCache, registrations, invalidations };

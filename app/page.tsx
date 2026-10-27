@@ -14,7 +14,7 @@ import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landi
 import { localities, meta, officialLocalities } from '@/lib/data';
 import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
 import { editorialImagePath } from '@/lib/editorial-image-path';
-import { getCategoryMedia } from '@/lib/category-media';
+import { getActivityMedia } from '@/lib/category-media';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { publicBusinessHref } from '@/lib/business-links';
 import { localitiesWithPublicCounts } from '@/lib/public-localities';
@@ -57,7 +57,7 @@ const faq = [
   { question: 'الموسوعة فيها كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
 ];
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default function HomePage() {
   const priorityActivities = priorityActivityNames
@@ -120,7 +120,8 @@ export default function HomePage() {
               src="/images/naqada-home.jpg"
               alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"
               fill
-              preload
+              loading="eager"
+              fetchPriority="high"
               sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 40vw, 480px"
             />
             <span className={styles.placeShade} aria-hidden="true" />
@@ -205,7 +206,7 @@ async function HomeServiceGrid({ activities: featuredActivities }: { activities:
         <div className={styles.serviceGrid}>
           {featuredActivities.map((activity, index) => {
             const count = catalog ? getBusinessesForActivity(activity, catalog.businesses).length : null;
-            const media = getCategoryMedia(activity.visualCategory);
+            const media = getActivityMedia(activity);
             return (
               <Link
                 key={activity.slug}

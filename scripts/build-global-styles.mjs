@@ -1,5 +1,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { cleanGlobalStyles } from './global-style-cleanup.mjs';
+import { partitionGlobalStyles } from './global-style-partition.mjs';
+import { fileURLToPath } from 'node:url';
 
 // Preserve the established cascade; CSS Modules stay separate by route.
 const sources = [
@@ -53,4 +55,7 @@ const css = sources.map((name) => {
 }).join('\n\n');
 const cleaned = cleanGlobalStyles(css, retiredClasses);
 writeFileSync(new URL('site-styles.css', app), cleaned.css + '\n');
-console.log(JSON.stringify({ sourceBytes: Buffer.byteLength(css), outputBytes: Buffer.byteLength(cleaned.css), removedSelectors: cleaned.removedSelectors, removedDeclarations: cleaned.removedDeclarations }));
+const partition = partitionGlobalStyles(cleaned.css, fileURLToPath(new URL('../', import.meta.url)));
+writeFileSync(new URL('shell-styles.css', app), partition.shell + '\n');
+writeFileSync(new URL('content-styles.css', app), partition.content + '\n');
+console.log(JSON.stringify({ shellBytes: Buffer.byteLength(partition.shell), contentBytes: Buffer.byteLength(partition.content), sourceBytes: Buffer.byteLength(css), outputBytes: Buffer.byteLength(cleaned.css), removedSelectors: cleaned.removedSelectors, removedDeclarations: cleaned.removedDeclarations }));

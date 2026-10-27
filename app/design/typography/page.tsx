@@ -15,9 +15,9 @@ export default async function TypographyPage() {
     <h1>خط واضح، وحكاية أسهل في القراءة.</h1>
     <p>قارن IBM Plex Sans Arabic الافتراضي مع Readex Pro، والعناوين بخط Noto Kufi Arabic.</p>
     <div className={styles.grid}>{[
-      { label: 'A — المقترح الأساسي', font: plexFont.className },
-      { label: 'B — البديل', font: readexFont.className },
-    ].map(sample => <article key={sample.label} className={styles.sample + ' ' + sample.font}>
+      { label: 'A — المقترح الأساسي', font: plexFont.className, family: 'IBM Plex Sans Arabic' },
+      { label: 'B — البديل', font: readexFont.className, family: 'Readex Pro' },
+    ].map(sample => <article key={sample.label} className={styles.sample + ' ' + sample.font} style={{ fontFamily: sample.family }}>
       <div className={styles.hero}><span>{sample.label}</span><h2>محتاج إيه <em>في نقادة؟</em></h2><p>دوّر على خدمة، شوف فرصة شغل، أو اعرف أخبار بلدك وحكاياتها.</p></div>
       <div className={styles.content}>{listing ? <><h3>{listing.name}</h3><p>{listing.description || businessSummary(listing)}</p>
         {cleanPhone(listing.phone) && <a href={'tel:' + cleanPhone(listing.phone)}>اتصال الآن</a>}

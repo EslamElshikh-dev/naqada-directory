@@ -1,3 +1,4 @@
+import '@/app/content-styles.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -12,7 +13,7 @@ import styles from './blog.module.css';
 import editorialStyles from './editorial.module.css';
 import curatedStyles from './curated-posts.module.css';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'مدونة دليل نقادة | حكايات ومقالات مصورة من نقادة',

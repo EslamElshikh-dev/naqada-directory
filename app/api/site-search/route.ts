@@ -1,3 +1,4 @@
+import { RequestLimiter } from '@/lib/request-limiter';
 import { NextRequest, NextResponse } from 'next/server';
 import { buildSearchContext } from '@/lib/search-context';
 import { recoverSiteSearch, sanitizeSiteSearchQuery, searchSite } from '@/lib/site-search';
@@ -8,7 +9,12 @@ export const dynamic = 'force-dynamic';
 
 const cacheHeaders = { 'Cache-Control': 'no-store' };
 
+const requestLimiter = new RequestLimiter(90, 60_000);
+
 export async function GET(request: NextRequest) {
+  const rate = requestLimiter.take(request.headers);
+  if (!rate.allowed) return Response.json({ error: 'طلبات كثيرة. حاول بعد قليل.' }, { status: 429,
+    headers: { 'Cache-Control': 'no-store', 'Retry-After': String(rate.retryAfter) } });
   const query = sanitizeSiteSearchQuery(request.nextUrl.searchParams.get('q'));
   if (query.length < 2) return NextResponse.json({ items: [], suggestions: [] }, { headers: cacheHeaders });
   try {

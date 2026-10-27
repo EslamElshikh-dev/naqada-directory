@@ -1,6 +1,9 @@
 'use client';
+import '@/app/content-styles.css';
+
 
 import Link from 'next/link';
+import { safeAuthReturn } from '@/lib/auth/return-path';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BrandMark } from '@/components/site-shell';
@@ -38,10 +41,10 @@ export default function OAuthCallbackPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ accessToken, refreshToken, expiresIn }),
         });
-        const data = await response.json().catch(() => ({})) as { user?: ClientSessionUser; error?: string };
+        const data = await response.json().catch(() => ({})) as { user?: ClientSessionUser; error?: string; redirectTo?: string };
         if (!response.ok || !data.user) throw new Error(data.error || 'تعذر حفظ جلسة الدخول.');
         setClientSessionUser(data.user);
-        router.replace('/account');
+        router.replace(safeAuthReturn(data.redirectTo));
         router.refresh();
       } catch (error) {
         if (!active) return;

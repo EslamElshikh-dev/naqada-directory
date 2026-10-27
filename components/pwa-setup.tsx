@@ -49,6 +49,14 @@ async function requestInstall() {
 }
 
 export function PwaSetup() {
+  const [offline, setOffline] = useState(false);
+  useEffect(() => {
+    const show = () => setOffline(true), hide = () => setOffline(false);
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const timer = setTimeout(() => setOffline(!navigator.onLine || Boolean(navigation?.serverTiming?.some(item => item.name === 'naqada_offline'))), 0);
+    window.addEventListener('offline', show); window.addEventListener('online', hide);
+    return () => { clearTimeout(timer); window.removeEventListener('offline', show); window.removeEventListener('online', hide); };
+  }, []);
   useEffect(() => {
     function onInstallPrompt(event: Event) {
       event.preventDefault();
@@ -84,7 +92,7 @@ export function PwaSetup() {
     };
   }, []);
 
-  return null;
+  return offline ? <div className="offline-status" role="status">أنت غير متصل — هذه نسخة محفوظة، وقد تكون البيانات تغيّرت. اتصل قبل الزيارة.</div> : null;
 }
 
 export function InstallAction() {

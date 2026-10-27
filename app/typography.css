@@ -21,7 +21,7 @@
   --muted:var(--text-muted);
 }
 /* Explicit family keeps local font naming consistent between both Next bundlers. */
-html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; }
+html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
 html[data-body-font='plex'] { --font-body:var(--font-plex); }
 html[data-body-font='readex'] { --font-body:var(--font-readex); }
 body, body.encyclopedia-ui {
@@ -33,7 +33,7 @@ body, body.encyclopedia-ui {
 }
 button,input,select,textarea { font:inherit; line-height:1.5; }
 code,pre,kbd,samp { font-family:inherit; }
-:is(h1,h2), .display, .brand__copy strong, [data-counter] {
+:is(h1,h2,h3,h4,h5,h6), .display, .brand__copy strong, [data-counter] {
   font-family:var(--font-display),sans-serif;
   font-weight:700;
   line-height:1.35;

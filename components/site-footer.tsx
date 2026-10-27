@@ -1,3 +1,4 @@
+import { PrivacyPreferences } from './privacy-preferences';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -39,7 +40,7 @@ export function Footer() {
             <span className={footerStyles.emblem}><BrandMark /></span>
             <div className={footerStyles.identityCopy}>
               <span className={footerStyles.kicker}>من أهل البلد، لأهل البلد</span>
-              <h2 id="site-footer-title">دليل نقادة</h2>
+              <p className={footerStyles.brandTitle} id="site-footer-title">دليل نقادة</p>
               <p>خدمات بلدنا وقراها وحكاوي ناسها في مكان واحد. بندوّر على المعلومة ونراجعها، والدليل يكبر بمشاركة أهل البلد.</p>
             </div>
           </div>
@@ -93,6 +94,7 @@ export function Footer() {
           </aside>
         </div>
 
+        <PrivacyPreferences />
         <div className={footerStyles.bottom}>
           <div className={footerStyles.bottomInfo}>
             <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
