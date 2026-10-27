@@ -141,7 +141,7 @@ test('registry discovery excludes unpublished or weak research records', () => {
   ]).length, 0);
   assert.equal(family.buildFamilySearchPages([{ ...sample, grade: 'A/B' }]).length, 2);
   assert.equal(family.buildFamilySearchPages([{ ...sample, grade: 'A/B', status: 'historical_ready' }]).length, 2);
-  assert.match(data.familySearchPages.find((item) => item.href === '/families').subtitle, /٣٠/);
+  assert.match(data.familySearchPages.find((item) => item.href === '/families').subtitle, /30/);
   assert.match(data.families.find((item) => item.locality === 'طوخ').scope, /جزئي/);
 });
 

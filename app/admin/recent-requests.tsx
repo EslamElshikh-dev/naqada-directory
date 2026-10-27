@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import type { RecentRequest } from '@/lib/contribution-review';
 import styles from './recent-requests.module.css';
@@ -8,7 +9,7 @@ const statuses: Record<string, string> = {
 };
 const types: Record<string, string> = { business: 'نشاط عضو', add: 'إضافة نشاط', correction: 'تصحيح بيانات', missing: 'نشاط ناقص' };
 function dateLabel(date: string) {
-  return new Date(date).toLocaleString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' });
+  return new Date(date).toLocaleString(NUMBER_LOCALE, { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' });
 }
 
 export function RecentRequests({ items, compact = false }: { items: RecentRequest[] | null; compact?: boolean }) {

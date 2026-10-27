@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { activityLandings, getBusinessesForActivity } from './activity-landings';
 import { canonicalLocalityName, categories, localities } from './data';
 import { MIN_LOCAL_CATEGORY_RESULTS, localCategoryHref, localCategoryResultCount } from './discovery-routing';
@@ -77,7 +78,7 @@ export function buildSearchContext(value: string): SearchContextResult | null {
   return {
     kind: 'category',
     title: `${activityLabel(best.activity.name)} في ${matchedLocality.name}`,
-    subtitle: `${count.toLocaleString('ar-EG')} نتيجة مطابقة · افتح صفحة ${category.shortLabel} المحلية`,
+    subtitle: `${count.toLocaleString(NUMBER_LOCALE)} نتيجة مطابقة · افتح صفحة ${category.shortLabel} المحلية`,
     href: localCategoryHref(category.name, matchedLocality.name),
     badge: 'مسار محلي',
     count,

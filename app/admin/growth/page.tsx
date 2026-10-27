@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 function format(value: number) {
-  return Number(value || 0).toLocaleString('ar-EG');
+  return Number(value || 0).toLocaleString(NUMBER_LOCALE);
 }
 
 export default async function GrowthPriorityPage() {

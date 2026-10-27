@@ -15,15 +15,15 @@
 .heading span {
   display: block;
   margin-bottom: 4px;
-  color: #976245;
-  font-size: .68rem;
-  font-weight: 850;
+  color: var(--text-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .heading h2 {
   margin: 0;
-  color: var(--nq-ink);
-  font-size: clamp(1.25rem,2.4vw,1.8rem);
+  color: var(--text-strong);
+  font-size: var(--fs-2xl);
   line-height: 1.45;
 }
 
@@ -53,21 +53,21 @@
 .card small {
   display: block;
   margin-bottom: 5px;
-  color: #966044;
-  font-size: .64rem;
-  font-weight: 850;
+  color: var(--text-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .card strong {
   display: block;
-  color: #34241e;
+  color: var(--text-strong);
   line-height: 1.55;
 }
 
 .card p {
   margin: 7px 0 0;
-  color: #75675f;
-  font-size: .69rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.75;
 }
 
@@ -81,10 +81,10 @@
   border-color: rgba(239,192,128,.16);
 }
 
-.live small { color: #efc080; }
-.live strong { color: #fffaf4; }
-.live p { color: #d6c5bd; }
-.live b { color: #efc080; font-size: .76rem; white-space: nowrap; }
+.live small { color: var(--text-on-dark-accent); }
+.live strong { color: var(--text-on-dark); }
+.live p { color: var(--text-on-dark-muted); }
+.live b { color: var(--text-on-dark-accent); font-size: var(--fs-xs); white-space: nowrap; }
 
 @media(max-width:640px){
   .grid { grid-template-columns: 1fr; }

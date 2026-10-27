@@ -28,22 +28,22 @@
 }
 
 .call {
-  color: var(--contact-icon-color, #205c43);
+  color: var(--text-link);
   background: var(--contact-icon-background, linear-gradient(145deg, #fff, #e4f1e9));
   box-shadow: inset 0 1px 0 #ffffff45, 0 2px 5px #174a3210;
 }
 
 .whatsapp {
-  color: #fff;
+  color: var(--text-on-dark);
   background: #25d366;
   border-color: #20c15e;
   box-shadow: 0 2px 5px #16833d1c;
 }
 
-.whatsapp::after { color: #25d366; }
+.whatsapp::after { color: var(--text-link); }
 
 .map {
-  color: var(--contact-icon-color, #365f78);
+  color: var(--text-muted);
   background: var(--contact-icon-background, linear-gradient(145deg, #fff, #e7eff6));
   border-color: var(--contact-icon-border, #d6e3ec);
   box-shadow: inset 0 1px 0 #ffffff60, 0 2px 5px #365f7810;

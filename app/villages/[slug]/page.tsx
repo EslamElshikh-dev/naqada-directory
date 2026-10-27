@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
@@ -180,8 +181,8 @@ export default async function LocalityPage({ params }: Props) {
           <aside className="village-hero__summary">
             <span>ملخص الموضع</span>
             <div className="catalog-hero__metrics">
-              <span><b>{scoped.length.toLocaleString('ar-EG')}</b><small>سجلًا منشورًا</small></span>
-              <span><b>{categoryCount.toLocaleString('ar-EG')}</b><small>قسمًا متاحًا</small></span>
+              <span><b>{scoped.length.toLocaleString(NUMBER_LOCALE)}</b><small>سجلًا منشورًا</small></span>
+              <span><b>{categoryCount.toLocaleString(NUMBER_LOCALE)}</b><small>قسمًا متاحًا</small></span>
               <span><b>{locality.verification || 'مراجع'}</b><small>حالة الإدراج</small></span>
             </div>
             {isSafeExternalUrl(locality.source) && <a href={locality.source || '#'} target="_blank" rel="noreferrer">مصدر الموضع ↗</a>}
@@ -204,10 +205,10 @@ export default async function LocalityPage({ params }: Props) {
               <div><h3>المصدر والمساهم</h3><p>وردت هذه الطبقة المعرفية في {knowledgeSource?.title ? `«${knowledgeSource.title}»` : `«${primaryKnowledgeContributor.primaryWork}»`}، للمؤلف الأستاذ <strong>{primaryKnowledgeContributor.name}</strong> — {primaryKnowledgeContributor.role}. <Link prefetch={false} href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المساهم ←</Link></p></div>
             </div>
             <div className={knowledgeStyles.grid}>
-              {hasHistoricStats && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>بيانات تاريخية</span><h3>أرقام وردت في المصدر</h3><p>{knowledgePlace.population1897 ? `سكان 1897: ${knowledgePlace.population1897.toLocaleString('ar-EG')}. ` : ''}{knowledgePlace.houses1897 ? `منازل 1897: ${knowledgePlace.houses1897.toLocaleString('ar-EG')}. ` : ''}{knowledgePlace.population2014 ? `سكان 2014: ${knowledgePlace.population2014.toLocaleString('ar-EG')}.` : ''}</p><small style={{ marginTop: 'auto', paddingTop: 14, color: '#7d6d64' }}>هذه أرقام تاريخية من سنواتها وليست إحصاءً حاليًا.</small></article>}
+              {hasHistoricStats && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>بيانات تاريخية</span><h3>أرقام وردت في المصدر</h3><p>{knowledgePlace.population1897 ? `سكان 1897: ${knowledgePlace.population1897.toLocaleString(NUMBER_LOCALE)}. ` : ''}{knowledgePlace.houses1897 ? `منازل 1897: ${knowledgePlace.houses1897.toLocaleString(NUMBER_LOCALE)}. ` : ''}{knowledgePlace.population2014 ? `سكان 2014: ${knowledgePlace.population2014.toLocaleString(NUMBER_LOCALE)}.` : ''}</p><small style={{ marginTop: 'auto', paddingTop: 14, color: 'var(--text-muted)' }}>هذه أرقام تاريخية من سنواتها وليست إحصاءً حاليًا.</small></article>}
               {knowledgeAliases.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أسماء وتهجئات</span><h3>أسماء مرتبطة بالموضع</h3><p>{knowledgeAliases.map((item) => item.alias).join('، ')}.</p><Link prefetch={false} href={`/knowledge/places/${knowledgePlace.slug}`}>تفاصيل الأسماء ←</Link></article>}
               {knowledgeChildren.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>تقسيمات مرتبطة</span><h3>مواضع وردت تحت هذا النطاق</h3><p>{knowledgeChildren.map((item) => item.shortName || item.name).join('، ')}.</p><Link prefetch={false} href="/knowledge/places">خريطة الأماكن ←</Link></article>}
-              {knowledgePeople.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أعلام مرتبطة بالمكان</span><h3>{knowledgePeople.length.toLocaleString('ar-EG')} أسماء في العرض المختصر</h3><p>{knowledgePeople.map((item) => item.name).join('، ')}.</p><Link prefetch={false} href="/knowledge/people">أعلام نقادة ←</Link></article>}
+              {knowledgePeople.length > 0 && <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>أعلام مرتبطة بالمكان</span><h3>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)} أسماء في العرض المختصر</h3><p>{knowledgePeople.map((item) => item.name).join('، ')}.</p><Link prefetch={false} href="/knowledge/people">أعلام نقادة ←</Link></article>}
               <article className={knowledgeStyles.card}><span className={knowledgeStyles.cardBadge}>حالة المعلومة</span><h3>مؤكد من المصدر</h3><p>يعني أن المعلومة وردت في المادة المرجعية المنسوبة للمؤلف، ولا يعني تلقائيًا أنها تحقق ميداني حديث لعام 2026.</p><Link prefetch={false} href="/knowledge">منهج الموسوعة ←</Link></article>
             </div>
           </section>
@@ -283,7 +284,7 @@ export default async function LocalityPage({ params }: Props) {
       <section id="locality-listings" className="shell page-section">
         {topCategories.length > 0 && (
           <div className="category-pills" aria-label={`أشهر أقسام ${locality.name}`}>
-            {topCategories.map(({ category, count }) => <Link prefetch={false} key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel} <small>{count.toLocaleString('ar-EG')}</small></Link>)}
+            {topCategories.map(({ category, count }) => <Link prefetch={false} key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel} <small>{count.toLocaleString(NUMBER_LOCALE)}</small></Link>)}
           </div>
         )}
         {scoped.length ? (

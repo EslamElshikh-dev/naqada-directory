@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Link from 'next/link';
@@ -15,7 +16,7 @@ type StoryPageProps = { params: Promise<{ id: string }> };
 
 function formatNewsDate(value: string) {
   if (!value) return 'وقت النشر غير متاح';
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

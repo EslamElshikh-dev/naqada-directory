@@ -1,7 +1,8 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { SanadInsights } from '@/lib/auth/admin';
 import styles from './sanad-panel.module.css';
 
-function number(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
+function number(value: number) { return Number(value || 0).toLocaleString(NUMBER_LOCALE); }
 
 export function SanadPanel({ insights }: { insights: SanadInsights | null }) {
   return <section className={`admin-section ${styles.section}`} id="sanad-insights">
@@ -16,7 +17,7 @@ export function SanadPanel({ insights }: { insights: SanadInsights | null }) {
       </div>
       <div className={styles.columns}>
         <div className={styles.list}><h3>الأسئلة والإجابات الأخيرة</h3>{insights.recent.length ? insights.recent.map((item, index) => <details key={`${item.at}-${index}`}>
-          <summary><span>{item.outcome === 'no_result' ? 'بلا نتيجة' : 'ردّ سند'}</span><strong>{item.question}</strong><time dateTime={item.at}>{new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Africa/Cairo' }).format(new Date(item.at))}</time></summary>
+          <summary><span>{item.outcome === 'no_result' ? 'بلا نتيجة' : 'ردّ سند'}</span><strong>{item.question}</strong><time dateTime={item.at}>{new Intl.DateTimeFormat(NUMBER_LOCALE, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Africa/Cairo' }).format(new Date(item.at))}</time></summary>
           <div><b>إجابة سند المسجلة</b><p>{item.answer}</p></div>
         </details>) : <p className={styles.empty}>ستظهر هنا أول الأسئلة بعد تفعيل القياس؛ لا توجد محادثات سابقة يمكن استعادتها.</p>}</div>
         <aside className={styles.frequent}><h3>أكثر الأسئلة تكرارًا</h3>{insights.frequent.length ? <ol>{insights.frequent.map(item => <li key={item.question}><span>{item.question}</span><b>{number(item.count)}</b></li>)}</ol> : <p className={styles.empty}>لا توجد أسئلة مسجلة بعد.</p>}<p className={styles.privacy}>التفاصيل للإدارة فقط. تُحجب أرقام التواصل والبريد قبل التخزين، وتُحذف السجلات بعد ٩٠ يومًا.</p></aside>

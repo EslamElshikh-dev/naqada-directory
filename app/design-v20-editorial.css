@@ -62,21 +62,21 @@ main > section[class*="blog-module"][class*="hero"] [class*="kicker"] {
   padding: 7px 12px !important;
   border-color: rgba(255,255,255,.16) !important;
   background: rgba(255,255,255,.055) !important;
-  color: #edc58d !important;
+  color: var(--text-on-dark-accent) !important;
   backdrop-filter: blur(8px);
 }
 
 main > section[class*="blog-module"][class*="hero"] h1 {
   max-width: 850px !important;
-  font-size: clamp(2.55rem,5.8vw,4.35rem) !important;
+  font-size: var(--fs-display) !important;
   line-height: 1.22 !important;
-  letter-spacing: -.04em !important;
+  letter-spacing: normal !important;
 }
 
 main > section[class*="blog-module"][class*="hero"] p {
   max-width: 800px !important;
-  color: #ded0c9 !important;
-  font-size: .9rem !important;
+  color: var(--text-on-dark-muted) !important;
+  font-size: var(--fs-sm) !important;
   line-height: 2 !important;
 }
 
@@ -104,8 +104,8 @@ section[class*="blog-module"][class*="archive"] [class*="heading"] {
 }
 
 section[class*="blog-module"][class*="archive"] [class*="heading"] h2 {
-  color: var(--v20-ink) !important;
-  letter-spacing: -.025em;
+  color: var(--text-strong) !important;
+  letter-spacing: normal;
 }
 
 /* Featured first story + consistent remaining cards */
@@ -147,14 +147,14 @@ div[class*="editorial-module"][class*="editorialCardBody"] {
 }
 
 div[class*="editorial-module"][class*="editorialCardBody"] h2 {
-  color: var(--v20-ink) !important;
-  font-size: clamp(1.16rem,2vw,1.48rem) !important;
+  color: var(--text-strong) !important;
+  font-size: var(--fs-2xl) !important;
   line-height: 1.65 !important;
   text-wrap: balance;
 }
 
 div[class*="editorial-module"][class*="editorialCardBody"] p {
-  color: var(--v20-muted) !important;
+  color: var(--text-muted) !important;
   line-height: 1.95 !important;
   text-wrap: pretty;
 }
@@ -183,12 +183,12 @@ a[class*="editorial-module"][class*="editorialCard"]:first-child > div[class*="e
 }
 
 a[class*="editorial-module"][class*="editorialCard"]:first-child h2 {
-  font-size: clamp(1.55rem,3vw,2.25rem) !important;
+  font-size: var(--fs-3xl) !important;
   line-height: 1.52 !important;
 }
 
 a[class*="editorial-module"][class*="editorialCard"]:first-child p {
-  font-size: .82rem !important;
+  font-size: var(--fs-sm) !important;
 }
 
 [class*="blog-module"][class*="cardTop"] {
@@ -203,7 +203,7 @@ a[class*="editorial-module"][class*="editorialCard"]:first-child p {
 
 [class*="blog-module"][class*="cardTop"] > span:first-child {
   background: rgba(152,76,52,.1) !important;
-  color: var(--v20-copper-dark) !important;
+  color: var(--text-danger) !important;
 }
 
 [class*="blog-module"][class*="cardFooter"] {
@@ -211,7 +211,7 @@ a[class*="editorial-module"][class*="editorialCard"]:first-child p {
 }
 
 [class*="blog-module"][class*="cardFooter"] b {
-  color: var(--v20-copper-dark) !important;
+  color: var(--text-danger) !important;
 }
 
 @media (hover:hover) and (pointer:fine) {
@@ -281,14 +281,14 @@ main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="hero
 
 main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
   max-width: 800px !important;
-  font-size: clamp(2.55rem,5vw,4.2rem) !important;
+  font-size: var(--fs-display) !important;
   line-height: 1.23 !important;
-  letter-spacing: -.04em !important;
+  letter-spacing: normal !important;
 }
 
 main.page-main > section[class*="knowledge-module"][class*="hero"] p {
-  color: #ded0c8 !important;
-  font-size: .9rem !important;
+  color: var(--text-on-dark-muted) !important;
+  font-size: var(--fs-sm) !important;
   text-wrap: pretty;
 }
 
@@ -306,8 +306,8 @@ main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stat
 }
 
 main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
-  color: #edc47f !important;
-  font-size: 1.55rem !important;
+  color: var(--text-on-dark-accent) !important;
+  font-size: var(--fs-2xl) !important;
 }
 
 /* Attribution feels like editorial provenance, not an alert box. */
@@ -368,13 +368,13 @@ article[class*="knowledge-v3-module"][class*="hubCard"] [class*="visual"]::after
 }
 
 article[class*="knowledge-v3-module"][class*="hubCard"] h2 {
-  color: var(--v20-ink) !important;
-  letter-spacing: -.018em;
+  color: var(--text-strong) !important;
+  letter-spacing: normal;
   text-wrap: balance;
 }
 
 article[class*="knowledge-v3-module"][class*="hubCard"] p {
-  color: var(--v20-muted) !important;
+  color: var(--text-muted) !important;
   line-height: 1.9 !important;
   text-wrap: pretty;
 }
@@ -383,13 +383,13 @@ article[class*="knowledge-v3-module"][class*="hubCard"] a {
   margin-top: auto;
   padding-top: 14px !important;
   border-top: 1px solid rgba(76,45,34,.07);
-  color: var(--v20-copper-dark) !important;
+  color: var(--text-danger) !important;
 }
 
 article[class*="knowledge-v3-module"][class*="hubCard"] [class*="cardBadge"] {
   border: 1px solid rgba(152,76,52,.07);
   background: rgba(152,76,52,.09) !important;
-  color: var(--v20-copper-dark) !important;
+  color: var(--text-danger) !important;
 }
 
 @media (hover:hover) and (pointer:fine) {
@@ -450,13 +450,13 @@ section[class*="knowledge-module"][class*="section"] > div[class*="grid"] > arti
   main > section[class*="blog-module"][class*="hero"] h1,
   main.page-main > section[class*="knowledge-module"][class*="hero"] h1 {
     max-width: 100% !important;
-    font-size: clamp(2rem,9vw,2.75rem) !important;
+    font-size: var(--fs-display) !important;
     line-height: 1.34 !important;
   }
 
   main > section[class*="blog-module"][class*="hero"] p,
   main.page-main > section[class*="knowledge-module"][class*="hero"] p {
-    font-size: 13px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.9 !important;
   }
 
@@ -505,7 +505,7 @@ section[class*="knowledge-module"][class*="section"] > div[class*="grid"] > arti
   }
 
   a[class*="editorial-module"][class*="editorialCard"]:first-child h2 {
-    font-size: 1.25rem !important;
+    font-size: var(--fs-xl) !important;
     line-height: 1.65 !important;
   }
 
@@ -532,7 +532,7 @@ section[class*="knowledge-module"][class*="section"] > div[class*="grid"] > arti
   }
 
   main.page-main > section[class*="knowledge-module"][class*="hero"] [class*="stats"] b {
-    font-size: 1.35rem !important;
+    font-size: var(--fs-xl) !important;
   }
 
   section[class*="blog-module"][class*="archive"] {

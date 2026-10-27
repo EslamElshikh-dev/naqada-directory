@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -87,8 +88,8 @@ export default async function CategoryPage({ params }: Props) {
       <UtilityPageHeader current={category.shortLabel} parent={{ href: '/directory', label: 'الدليل' }}
         title={<>{category.shortLabel} <em>في نقادة</em></>} description={category.description}
         metrics={[
-          { value: scopedDirectory.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
-          { value: localityCount.toLocaleString('ar-EG'), label: 'موضع' },
+          { value: scopedDirectory.length.toLocaleString(NUMBER_LOCALE), label: 'نشاط منشور' },
+          { value: localityCount.toLocaleString(NUMBER_LOCALE), label: 'موضع' },
         ]} />
       <section className="shell page-section">
         <ServiceLocalityDiscovery compact

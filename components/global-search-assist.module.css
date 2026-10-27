@@ -19,7 +19,7 @@
   border: 1px solid rgba(84,49,36,.11);
   border-radius: 13px;
   background: #fff;
-  color: #3f2b23;
+  color: var(--text-strong);
   text-align: start;
   font: inherit;
   cursor: pointer;
@@ -36,9 +36,9 @@
 
 .assist span {
   grid-area: reason;
-  color: #9a5a3f;
-  font-size: .64rem;
-  font-weight: 900;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .assist strong {
@@ -46,7 +46,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .76rem;
+  font-size: var(--fs-xs);
   line-height: 1.55;
 }
 
@@ -59,16 +59,16 @@
   padding: 6px 8px;
   border-radius: 10px;
   background: #eef7f6;
-  color: #2b7277;
-  font-size: .62rem;
-  font-weight: 900;
+  color: var(--text-link);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 @media (max-width: 680px) {
   .assist > button { min-height: 62px; padding: 11px; }
-  .assist span { font-size: .63rem; }
-  .assist strong { font-size: .75rem; }
-  .assist small { min-width: 68px; font-size: .61rem; }
+  .assist span { font-size: var(--fs-xs); }
+  .assist strong { font-size: var(--fs-xs); }
+  .assist small { min-width: 68px; font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { businesses, categories, familySearchPages, landmarks, localities } from '@/lib/data';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces } from '@/lib/knowledge';
 import {
@@ -87,7 +88,7 @@ const searchIndex: IndexedSearchItem[] = [
   ...categories.map((item): SearchItem => ({
     kind: 'category',
     title: item.name,
-    subtitle: `${item.count.toLocaleString('ar-EG')} نشاطًا منشورًا`,
+    subtitle: `${item.count.toLocaleString(NUMBER_LOCALE)} نشاطًا منشورًا`,
     href: `/directory?category=${encodeURIComponent(item.name)}`,
     badge: 'قسم',
     fields: { title: item.name, category: item.name, auxiliary: `${item.shortLabel} ${item.description}` },
@@ -95,7 +96,7 @@ const searchIndex: IndexedSearchItem[] = [
   ...localities.filter((item) => item.businessCount > 0).map((item): SearchItem => ({
     kind: 'locality',
     title: item.name,
-    subtitle: `${item.type} · ${item.businessCount.toLocaleString('ar-EG')} نشاطًا`,
+    subtitle: `${item.type} · ${item.businessCount.toLocaleString(NUMBER_LOCALE)} نشاطًا`,
     href: `/villages/${item.slug}`,
     badge: item.type,
     fields: { title: item.name, locality: item.name, auxiliary: `${item.type} ${item.scope || ''}` },
@@ -237,12 +238,12 @@ function activeSearchIndex(currentBusinesses?: Business[], currentContent?: { pe
   let activeIndex = currentBusinesses ? [
     ...searchIndex.filter((item) => !['listing', 'category', 'locality'].includes(item.kind)),
     ...categories.filter(item => categoryCounts.has(item.name)).map(item => indexItem({
-      kind: 'category', title: item.name, subtitle: `${categoryCounts.get(item.name)!.toLocaleString('ar-EG')} نشاطًا منشورًا`,
+      kind: 'category', title: item.name, subtitle: `${categoryCounts.get(item.name)!.toLocaleString(NUMBER_LOCALE)} نشاطًا منشورًا`,
       href: `/directory?category=${encodeURIComponent(item.name)}`, badge: 'قسم',
       fields: { title: item.name, category: item.name, auxiliary: `${item.shortLabel} ${item.description}` },
     })),
     ...localitiesWithPublicCounts(localities, currentBusinesses).filter(item => item.businessCount > 0).map(item => indexItem({
-      kind: 'locality', title: item.name, subtitle: `${item.type} · ${item.businessCount.toLocaleString('ar-EG')} نشاطًا`,
+      kind: 'locality', title: item.name, subtitle: `${item.type} · ${item.businessCount.toLocaleString(NUMBER_LOCALE)} نشاطًا`,
       href: `/villages/${item.slug}`, badge: item.type,
       fields: { title: item.name, locality: item.name, auxiliary: `${item.type} ${item.scope || ''}` },
     })),

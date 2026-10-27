@@ -19,5 +19,5 @@ export default async function ArticlePreview({ searchParams }: { searchParams: P
   const result = await getEditorArticle(session.accessToken, params.kind as ArticleKind, params.slug);
   if (!result) notFound();
   const doc = result.document;
-  return <><div role="status" style={{ padding: '16px', background: '#fff1cc', color: '#49380f', textAlign: 'center' }}>معاينة خاصة للمسودة المحفوظة — لا تظهر للزوار قبل النشر.</div>{doc.format === 'editorial' ? <EditorialPostArticle post={doc.content} /> : <RoleModelStory person={doc.content} />}</>;
+  return <><div role="status" style={{ padding: '16px', background: '#fff1cc', color: 'var(--text-strong)', textAlign: 'center' }}>معاينة خاصة للمسودة المحفوظة — لا تظهر للزوار قبل النشر.</div>{doc.format === 'editorial' ? <EditorialPostArticle post={doc.content} /> : <RoleModelStory person={doc.content} />}</>;
 }

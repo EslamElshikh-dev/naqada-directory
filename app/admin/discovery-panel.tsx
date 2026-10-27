@@ -1,12 +1,13 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import type { DiscoveryInsights } from '@/lib/auth/admin';
 import { searchGapContextLabel, searchGapKey } from '@/lib/search-gaps';
 import styles from './discovery-panel.module.css';
 
-const count = (value: number) => Number(value || 0).toLocaleString('ar-EG');
-const dayLabel = (date: string) => new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', weekday: 'short' }).format(new Date(`${date}T12:00:00Z`));
-const timestamp = (date: string) => new Intl.DateTimeFormat('ar-EG', { timeZone: 'Africa/Cairo', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(date));
+const count = (value: number) => Number(value || 0).toLocaleString(NUMBER_LOCALE);
+const dayLabel = (date: string) => new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short', weekday: 'short' }).format(new Date(`${date}T12:00:00Z`));
+const timestamp = (date: string) => new Intl.DateTimeFormat(NUMBER_LOCALE, { timeZone: 'Africa/Cairo', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(date));
 
 export function DiscoveryPanel({ insights, available, pathLabel }: {
   insights: DiscoveryInsights;

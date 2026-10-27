@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -178,7 +179,7 @@ export default async function ListingPage({ params }: Props) {
             <div><span>العنوان</span><strong>{listing.address || 'لا يتوفر عنوان تفصيلي'}</strong></div>
             <div><span>الهاتف</span><strong dir="ltr">{listing.phone || 'غير منشور'}</strong></div>
             <div><span>ساعات العمل</span><strong>{listing.hours || 'غير متاحة'}</strong></div>
-            <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString('ar-EG')} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString('ar-EG')} مراجعة` : ''}` : 'غير متاح'}</strong></div>
+            <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString(NUMBER_LOCALE)} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString(NUMBER_LOCALE)} مراجعة` : ''}` : 'غير متاح'}</strong></div>
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
           <section className="listing-description" aria-labelledby="listing-description-title">
@@ -194,7 +195,7 @@ export default async function ListingPage({ params }: Props) {
                 <span className="eyebrow eyebrow--dark">شفافية السجل</span>
                 <h2 id="listing-completeness-title">اكتمال البيانات المنشورة</h2>
               </div>
-              <div className={styles.score}><strong>{completenessPercent.toLocaleString('ar-EG')}٪</strong><span>{availableSignals.toLocaleString('ar-EG')} من {completenessSignals.length.toLocaleString('ar-EG')} عناصر أساسية</span></div>
+              <div className={styles.score}><strong>{completenessPercent.toLocaleString(NUMBER_LOCALE)}٪</strong><span>{availableSignals.toLocaleString(NUMBER_LOCALE)} من {completenessSignals.length.toLocaleString(NUMBER_LOCALE)} عناصر أساسية</span></div>
             </div>
             <div className={styles.completenessBar} role="progressbar" aria-label="نسبة اكتمال البيانات المنشورة" aria-valuemin={0} aria-valuemax={100} aria-valuenow={completenessPercent}>
               <span style={{ width: `${completenessPercent}%` }} />

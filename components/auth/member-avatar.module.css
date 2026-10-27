@@ -51,9 +51,9 @@
   border: 3px solid #fff;
   border-radius: inherit;
   background: linear-gradient(145deg, #faf8f5, #ece7e1);
-  color: #2d1e18;
-  font-weight: 900;
-  font-size: calc(var(--avatar-size) * .34);
+  color: var(--text-strong);
+  font-weight: 700;
+  font-size: var(--fs-base);
   line-height: 1;
 }
 
@@ -116,19 +116,19 @@
   border-radius: 999px;
   background: #fff;
   box-shadow: 0 4px 14px rgb(45 30 24 / 8%);
-  color: #59473e;
-  font-size: 10px;
-  font-weight: 800;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   line-height: 1.5;
   text-align: center;
   white-space: nowrap;
 }
 
-.bronze .badge { color: #8a4f27; background: #fff8f1; border-color: #e4bf9d; }
-.silver .badge { color: #59636d; background: #f7f9fa; border-color: #cbd2d8; }
-.gold .badge { color: #7d5814; background: #fffaf0; border-color: #e7c86f; }
+.bronze .badge { color: var(--text-accent); background: #fff8f1; border-color: #e4bf9d; }
+.silver .badge { color: var(--text-muted); background: #f7f9fa; border-color: #cbd2d8; }
+.gold .badge { color: var(--text-accent); background: #fffaf0; border-color: #e7c86f; }
 .diamond .badge {
-  color: #365b72;
+  color: var(--text-muted);
   background: linear-gradient(120deg, #f8ffff, #f4f0ff, #fff);
   border-color: #b9e7fa;
   box-shadow: 0 4px 16px rgb(112 188 225 / 16%);

@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useEffect, useState } from 'react';
 import { getListingRating, submitListingRating, type RatingSummary } from '@/lib/analytics-client';
@@ -55,8 +57,8 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
         <p>شارك تقييمك لمساعدة أهالي نقادة في الوصول إلى الخدمة المناسبة.</p>
       </div>
       <div className="listing-rating__summary" aria-live="polite">
-        <strong>{summary?.count ? summary.average.toLocaleString('ar-EG', { maximumFractionDigits: 1 }) : '—'}</strong>
-        <span>{summary?.count ? `من 5 · ${summary.count.toLocaleString('ar-EG')} تقييم` : 'لا توجد تقييمات بعد'}</span>
+        <strong>{summary?.count ? summary.average.toLocaleString(NUMBER_LOCALE, { maximumFractionDigits: 1 }) : '—'}</strong>
+        <span>{summary?.count ? `من 5 · ${summary.count.toLocaleString(NUMBER_LOCALE)} تقييم` : 'لا توجد تقييمات بعد'}</span>
       </div>
       <div className="listing-rating__form">
         <div className="listing-rating__stars" role="group" aria-label="اختر تقييمًا من خمس نجوم">
@@ -70,7 +72,7 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
           >★</button>)}
         </div>
         <button className="button button--primary" type="button" disabled={!selected || submitting} onClick={submit}>
-          {submitting ? 'جارٍ الحفظ…' : selected ? `إرسال تقييم ${selected.toLocaleString('ar-EG')}/5` : 'اختر عدد النجوم'}
+          {submitting ? 'جارٍ الحفظ…' : selected ? `إرسال تقييم ${selected.toLocaleString(NUMBER_LOCALE)}/5` : 'اختر عدد النجوم'}
         </button>
       </div>
       {message && <p className="listing-rating__message" role="status">{message}</p>}

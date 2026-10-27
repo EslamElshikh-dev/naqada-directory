@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { OwnerPhoto } from '@/components/owner-photo';
 import Image from 'next/image';
@@ -245,7 +247,7 @@ export function OwnerBusinessForm({
             <label className={styles.field}><span>مواعيد العمل <i>*</i></span><input required minLength={3} maxLength={180} value={fields.hours} onChange={(event) => update('hours', event.target.value)} placeholder="السبت–الخميس، ٩ صباحًا–٩ مساءً" /></label>
             <label className={styles.field}><span>العنوان <i>*</i></span><input required minLength={5} maxLength={240} value={fields.address} onChange={(event) => update('address', event.target.value)} placeholder="الشارع، أقرب علامة واضحة، القرية" autoComplete="street-address" /></label>
             <label className={`${styles.field} ${styles.wide}`}><span>رابط الموقع على خرائط Google <small>اختياري</small></span><input type="url" dir="ltr" maxLength={600} value={fields.maps_url} onChange={(event) => update('maps_url', event.target.value)} placeholder="https://maps.app.goo.gl/…" /><small>الصق رابط مكان نشاطك عشان زر الاتجاهات يوصّل الزوار له مباشرة.</small></label>
-            <label className={`${styles.field} ${styles.wide}`}><span>وصف النشاط <i>*</i></span><textarea required minLength={20} maxLength={2000} rows={5} value={fields.description} onChange={(event) => update('description', event.target.value)} placeholder="بتقدم إيه؟ وإيه اللي يميز خدمتك؟ اكتب وصفًا حقيقيًا يفيد اللي بيدوّر عليك." /><small>{fields.description.length.toLocaleString('ar-EG')} / ٢٠٠٠ حرف</small></label>
+            <label className={`${styles.field} ${styles.wide}`}><span>وصف النشاط <i>*</i></span><textarea required minLength={20} maxLength={2000} rows={5} value={fields.description} onChange={(event) => update('description', event.target.value)} placeholder="بتقدم إيه؟ وإيه اللي يميز خدمتك؟ اكتب وصفًا حقيقيًا يفيد اللي بيدوّر عليك." /><small>{fields.description.length.toLocaleString(NUMBER_LOCALE)} / ٢٠٠٠ حرف</small></label>
           </div>
 
           <div className={styles.sectionTitle} id="activity-cover"><b>٣</b><div><h3>صورة غلاف النشاط <small>اختياري</small></h3><p>الصورة الرئيسية اللي تظهر في بطاقة نشاطك وأول صفحته. اختار صورة واضحة للواجهة أو لشغلك.</p></div></div>

@@ -10,22 +10,22 @@
   border: 1px solid #c9d9c9;
   border-radius: 18px;
   background: #fffef9;
-  color: #244b39;
+  color: var(--text-body);
   box-shadow: 0 6px 20px rgba(9, 46, 32, .06);
 }
 .icon { border-radius: 11px; }
 .copy { display: grid; gap: 3px; min-width: 0; }
-.copy strong { color: #174e3b; font-size: .9375rem; line-height: 1.6; }
-.copy span { color: #526b5a; font-size: .8125rem; line-height: 1.65; }
-.dismiss { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 10px; background: #edf3eb; color: #315944; font: 400 1.5rem/1 sans-serif; cursor: pointer; }
+.copy strong { color: var(--text-body); font-size: var(--fs-sm); line-height: 1.6; }
+.copy span { color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.65; }
+.dismiss { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 10px; background: #edf3eb; color: var(--text-body); font: 400 1.5rem/1 sans-serif; cursor: pointer; }
 .dismiss:hover { background: #dcebdc; }
 .actions { grid-column: 2 / -1; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
-.install { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 8px 14px; border: 0; border-radius: 10px; background: #174e3b; color: #fff; font: inherit; font-size: .8125rem; font-weight: 750; text-decoration: none; cursor: pointer; }
+.install { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 8px 14px; border: 0; border-radius: 10px; background: #174e3b; color: var(--text-on-dark); font: inherit; font-size: var(--fs-xs); font-weight: 700; text-decoration: none; cursor: pointer; }
 .install:hover { background: #23694d; }
-.actions span { color: #7b7258; font-size: .75rem; }
+.actions span { color: var(--text-muted); font-size: var(--fs-xs); }
 .banner :is(button, a):focus-visible { outline: 3px solid #b88639; outline-offset: 2px; }
 @media (max-width: 390px) {
   .banner { padding: 11px; gap: 7px; }
-  .copy strong { font-size: .875rem; }
+  .copy strong { font-size: var(--fs-sm); }
 }
 @media print { .banner { display: none; } }

@@ -58,9 +58,9 @@ test('search facets count the current public catalog and drop emptied categories
   const locality = data.canonicalLocalityName(sample.locality);
   const place = search.searchSite(locality, 100, ['locality'], only).find(item => item.title === locality);
   assert.ok(place);
-  assert.match(place.subtitle, /١ نشاطًا/);
+  assert.match(place.subtitle, /1 نشاطًا/);
   const category = search.searchSite(sample.category, 100, ['category'], only).find(item => item.title === sample.category);
-  assert.equal(category.subtitle, '١ نشاطًا منشورًا');
+  assert.equal(category.subtitle, '1 نشاطًا منشورًا');
   assert.equal(search.searchSite(locality, 100, ['locality'], []).length, 0);
   assert.equal(search.searchSite(sample.category, 100, ['category'], []).length, 0);
   assert.equal(search.searchSite(sample.name, 100, ['listing'], only)[0].href, '/activity/7828410d-1d6b-4ab9-8394-6a266d0bcf2e/');

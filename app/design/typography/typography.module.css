@@ -1,0 +1,13 @@
+.page { padding-block:36px; }
+.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+.sample { overflow:hidden; border:1px solid #dce6dc; border-radius:20px; background:#fff; }
+.hero { padding:30px; background:#103c30; color:var(--text-on-dark); }
+.hero span { color:var(--text-on-dark-accent); font-size:var(--fs-sm); }
+.hero h2 { font-size:var(--fs-display); margin-block:16px; }
+.hero h2 em { color:var(--text-on-dark-accent); font-style:normal; }
+.hero p { margin:0; }
+.content { padding:24px; }
+.content h3 { font-size:var(--fs-xl); }
+.content a { display:inline-flex; min-height:44px; align-items:center; margin-inline-end:10px; color:var(--text-link); }
+.content small { display:block; color:var(--text-muted); }
+@media(max-width:760px) { .grid { grid-template-columns:1fr; } }

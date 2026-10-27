@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
@@ -75,7 +77,7 @@ export function SiteReviews() {
             )}
             <div className="review-feedback" aria-live="polite">{feedback && <span className="is-success">{feedback}</span>}{error && <span className="is-error">{error}</span>}</div>
           </div>
-          <div className="review-list-wrap"><div className="review-list-head"><div><span>آراء المجتمع</span><h3>ماذا يقول أعضاء دليل نقادة؟</h3></div></div>{payload?.reviews.length ? <div className="review-list">{payload.reviews.map((item) => <article key={item.id}><header><MemberAvatar name={item.authorName} src={item.avatarUrl} frame={item.frameCode} size={44} compact/><div><strong>{item.authorName}</strong>{item.authorBio ? <p className="review-author-bio">{item.authorBio}</p> : null}<small>{item.own ? 'تقييمك' : item.roleLabel} · {new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div></header><Stars value={item.rating}/><p>{item.body}</p></article>)}</div> : <div className="review-empty"><span>★★★★★</span><strong>كن أول من يشارك رأيه</strong><p>أضف تقييمك وساعدنا في بناء دليل أفضل لأهالي نقادة.</p></div>}</div>
+          <div className="review-list-wrap"><div className="review-list-head"><div><span>آراء المجتمع</span><h3>ماذا يقول أعضاء دليل نقادة؟</h3></div></div>{payload?.reviews.length ? <div className="review-list">{payload.reviews.map((item) => <article key={item.id}><header><MemberAvatar name={item.authorName} src={item.avatarUrl} frame={item.frameCode} size={44} compact/><div><strong>{item.authorName}</strong>{item.authorBio ? <p className="review-author-bio">{item.authorBio}</p> : null}<small>{item.own ? 'تقييمك' : item.roleLabel} · {new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div></header><Stars value={item.rating}/><p>{item.body}</p></article>)}</div> : <div className="review-empty"><span>★★★★★</span><strong>كن أول من يشارك رأيه</strong><p>أضف تقييمك وساعدنا في بناء دليل أفضل لأهالي نقادة.</p></div>}</div>
         </div>
       </div>
     </section>

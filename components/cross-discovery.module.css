@@ -17,15 +17,15 @@
 
 .heading span {
   display: block;
-  color: #9a6547;
-  font-size: .7rem;
-  font-weight: 900;
+  color: var(--text-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .heading h2 {
   margin: 4px 0 0;
-  color: #251915;
-  font-size: 1.12rem;
+  color: var(--text-strong);
+  font-size: var(--fs-lg);
   line-height: 1.65;
   text-wrap: balance;
 }
@@ -33,8 +33,8 @@
 .heading p {
   max-width: 590px;
   margin: 0;
-  color: #7b6a62;
-  font-size: .78rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.85;
   text-wrap: pretty;
 }
@@ -54,22 +54,22 @@
 }
 
 .card > span {
-  color: #a95337;
-  font-size: .68rem;
-  font-weight: 900;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .card h3 {
   margin: 7px 0 5px;
-  color: #251915;
-  font-size: .92rem;
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
   line-height: 1.65;
 }
 
 .card p {
   margin: 0;
-  color: #7d6d64;
-  font-size: .74rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.85;
 }
 
@@ -89,9 +89,9 @@
   border: 1px solid rgba(43, 114, 119, .12);
   border-radius: 999px;
   background: #eef6f4;
-  color: #2b7277;
-  font-size: .69rem;
-  font-weight: 850;
+  color: var(--text-link);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   line-height: 1.4;
   touch-action: manipulation;
 }
@@ -100,7 +100,7 @@
 .links a:focus-visible {
   border-color: rgba(169, 83, 55, .22);
   background: #fbf0e9;
-  color: #713321;
+  color: var(--text-danger);
 }
 
 @media (max-width: 860px) {
@@ -119,8 +119,8 @@
     display: block;
   }
 
-  .heading h2 { font-size: 1.02rem; }
-  .heading p { margin-top: 7px; font-size: .75rem; }
+  .heading h2 { font-size: var(--fs-base); }
+  .heading p { margin-top: 7px; font-size: var(--fs-xs); }
 
   .grid {
     display: flex;
@@ -141,8 +141,8 @@
     padding: 15px;
   }
 
-  .card > span { font-size: .67rem; }
-  .card h3 { font-size: .9rem; }
-  .card p { font-size: .73rem; }
-  .links a { min-height: 44px; font-size: .68rem; }
+  .card > span { font-size: var(--fs-xs); }
+  .card h3 { font-size: var(--fs-sm); }
+  .card p { font-size: var(--fs-xs); }
+  .links a { min-height: 44px; font-size: var(--fs-xs); }
 }

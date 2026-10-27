@@ -52,7 +52,7 @@ export default async function ContributePage({ searchParams }: Props) {
             initialCategory={query.category || ''}
             initialLocality={query.locality || ''}
           />}
-        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 14, lineHeight: 1.9 }}>
+        <p style={{ marginTop: 18, color: 'var(--muted)', fontSize: 'var(--fs-sm)', lineHeight: 1.9 }}>
           {correction ? <>عايز تضيف نشاطك ويكون باسم حسابك؟ <Link href="/contribute" className="text-link">ابدأ إضافة نشاطك ←</Link></> : <>عندك تصحيح لنشاط منشور؟ <Link href="/contribute?type=correction" className="text-link">ابعت طلب تصحيح ←</Link></>} · التفاصيل في <Link href="/privacy" className="text-link">سياسة الخصوصية</Link>.
         </p>
       </section>

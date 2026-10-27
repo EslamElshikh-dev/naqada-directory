@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { MemberAvatar } from '@/components/auth/member-avatar';
@@ -33,8 +34,8 @@ const eventLabels: Record<string, string> = {
   owner_form_start: 'بدء بيانات النشاط', owner_form_submit: 'محاولة إرسال بيانات النشاط', owner_form_saved: 'حفظ النشاط للمراجعة', owner_form_error: 'خطأ في حفظ النشاط', owner_photo_error: 'خطأ في رفع الصور',
 };
 
-function format(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
-function percentage(value: number) { return `${value.toLocaleString('ar-EG', { maximumFractionDigits: 1 })}%`; }
+function format(value: number) { return Number(value || 0).toLocaleString(NUMBER_LOCALE); }
+function percentage(value: number) { return `${value.toLocaleString(NUMBER_LOCALE, { maximumFractionDigits: 1 })}%`; }
 function pathLabel(path: string) {
   const normalizedPath = path.length > 1 ? path.replace(/\/+$/, '') : path;
   const labels: Record<string, string> = {
@@ -54,8 +55,8 @@ function sourceLabel(source: string) {
   if (source.includes('whatsapp.')) return 'WhatsApp';
   return source;
 }
-function dateLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' }).format(new Date(`${date}T12:00:00Z`)); }
-function timeLabel(date: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(date)); }
+function dateLabel(date: string) { return new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short' }).format(new Date(`${date}T12:00:00Z`)); }
+function timeLabel(date: string) { return new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(date)); }
 function growth(current: number, previous: number) {
   if (!previous) return current ? { label: 'بداية قياس جديدة', tone: 'up' } : { label: 'بانتظار أول زائر', tone: 'flat' };
   const value = ((current - previous) / previous) * 100;
@@ -73,7 +74,7 @@ function MetricIcon({ name }: { name: 'people' | 'spark' | 'eye' | 'member' }) {
 }
 
 function RankList({ items, max, type }: { items: Array<{ id?: string; label: string; value: number; detail: string }>; max: number; type: string }) {
-  return <div className="admin-rank-list">{items.length ? items.map((item, index) => <div className="admin-rank-row" key={`${type}-${item.id || `${item.label}-${item.detail}`}`}><div><span>{(index + 1).toLocaleString('ar-EG')}</span><p><strong>{item.label}</strong><small>{item.detail}</small></p><b>{format(item.value)}</b></div><i><span style={{ width: `${Math.max(7, (item.value / Math.max(1, max)) * 100)}%` }} /></i></div>) : <div className="admin-empty">ستظهر البيانات هنا بعد بدء الزيارات.</div>}</div>;
+  return <div className="admin-rank-list">{items.length ? items.map((item, index) => <div className="admin-rank-row" key={`${type}-${item.id || `${item.label}-${item.detail}`}`}><div><span>{(index + 1).toLocaleString(NUMBER_LOCALE)}</span><p><strong>{item.label}</strong><small>{item.detail}</small></p><b>{format(item.value)}</b></div><i><span style={{ width: `${Math.max(7, (item.value / Math.max(1, max)) * 100)}%` }} /></i></div>) : <div className="admin-empty">ستظهر البيانات هنا بعد بدء الزيارات.</div>}</div>;
 }
 
 function buildSuggestions(analytics: VisitorAnalytics, discovery: DiscoveryInsights, pending: number) {
@@ -142,7 +143,7 @@ export default async function AdminPage() {
         {!analyticsResult || !discoveryResult || !statsResult || !catalog || !ownerResponse?.ok ? <div role="status" className="admin-data-warning">تعذّر تحميل جزء من بيانات اللوحة. الخانات غير المتاحة معروضة بعلامة «—»، ويمكن إعادة المحاولة من زر التحديث.</div> : null}
 
         <section className="admin-section admin-audience" id="audience"><header><div><span>آخر 30 يومًا</span><h2>الزيارات المسجلة للدليل</h2><p>كل متصفح يُحسب مرة واحدة كزائر فريد، بينما مشاهدة الصفحات تُحسب بشكل مستقل. الأرقام السابقة قد تشمل فحوصات آلية للموقع.</p></div><div className={`admin-growth is-${visitorGrowth.tone}`}><small>مقارنة بالفترة السابقة</small><strong>{visitorGrowth.label}</strong></div></header>
-          <div className="admin-primary-metrics"><article><i><MetricIcon name="people" /></i><span>الزوار الفريدون</span><strong>{format(totals.uniqueVisitors30d)}</strong><small>{format(totals.visitorsToday)} زائرًا اليوم</small></article><article><i><MetricIcon name="spark" /></i><span>زوار جدد</span><strong>{format(totals.newVisitors30d)}</strong><small>أول زيارة من هذا المتصفح</small></article><article><i><MetricIcon name="eye" /></i><span>مشاهدات الصفحات</span><strong>{format(totals.pageViews30d)}</strong><small>{pagesPerVisitor.toLocaleString('ar-EG', { maximumFractionDigits: 1 })} صفحة لكل زائر</small></article><article><i><MetricIcon name="member" /></i><span>زوار بأسماء معروفة</span><strong>{format(totals.identifiedVisitors30d)}</strong><small>أعضاء دخلوا بحساباتهم فقط</small></article></div>
+          <div className="admin-primary-metrics"><article><i><MetricIcon name="people" /></i><span>الزوار الفريدون</span><strong>{format(totals.uniqueVisitors30d)}</strong><small>{format(totals.visitorsToday)} زائرًا اليوم</small></article><article><i><MetricIcon name="spark" /></i><span>زوار جدد</span><strong>{format(totals.newVisitors30d)}</strong><small>أول زيارة من هذا المتصفح</small></article><article><i><MetricIcon name="eye" /></i><span>مشاهدات الصفحات</span><strong>{format(totals.pageViews30d)}</strong><small>{pagesPerVisitor.toLocaleString(NUMBER_LOCALE, { maximumFractionDigits: 1 })} صفحة لكل زائر</small></article><article><i><MetricIcon name="member" /></i><span>زوار بأسماء معروفة</span><strong>{format(totals.identifiedVisitors30d)}</strong><small>أعضاء دخلوا بحساباتهم فقط</small></article></div>
           <div className="admin-trend-card"><header><div><span>آخر 14 يومًا</span><h3>اتجاه الزوار والمشاهدات</h3></div><dl><div><dt>العائدون</dt><dd>{format(totals.returningVisitors30d)}</dd></div><div><dt>معدل العودة</dt><dd>{percentage(returnRate)}</dd></div><div><dt>إجمالي الزوار المسجلين</dt><dd>{format(totals.lifetimeVisitors)}</dd></div></dl></header><div className="admin-trend" aria-label="رسم الزيارات اليومية">{analytics.dailySeries.length ? analytics.dailySeries.map((item) => <div key={item.date} title={`${dateLabel(item.date)}: ${format(item.visitors)} زائر و${format(item.views)} مشاهدة`}><span className="admin-trend__bar" style={{ '--bar-height': `${Math.max(item.views ? 8 : 2, (item.views / chartMax) * 100)}%` } as CSSProperties}><i style={{ '--visitor-height': `${Math.max(item.visitors ? 15 : 3, (item.visitors / Math.max(1, item.views)) * 100)}%` } as CSSProperties} /></span><small>{dateLabel(item.date)}</small></div>) : <div className="admin-chart-empty">تبدأ الأعمدة بالظهور مع أول زيارة منشورة.</div>}</div><footer><span><i className="is-views" />المشاهدات</span><span><i className="is-visitors" />الزوار الفريدون</span></footer></div>
         </section>
 

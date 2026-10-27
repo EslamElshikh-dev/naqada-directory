@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,12 +27,12 @@ export default function KnowledgePage() {
   return <main id="main-content" className="page-main">
     <section className={styles.hero}><div className={`shell ${styles.heroGrid}`}>
       <div><span className={styles.eyebrow}>قاعدة المعرفة المرجعية لدليل نقادة</span><h1>موسوعة نقادة <em>بالمصدر والإسناد</em></h1><p>تعرّف إلى قرى نقادة وأعلامها وتراثها. لكل معلومة مصدر واضح، مع تمييز الرواية التاريخية عن البيانات الحديثة.</p></div>
-      <aside className={styles.stats}><span><b>{knowledgeSummary.counts.places.toLocaleString('ar-EG')}</b><small>مكانًا</small></span><span><b>{knowledgeSummary.counts.people.toLocaleString('ar-EG')}</b><small>شخصية</small></span><span><b>{knowledgeSummary.counts.heritage.toLocaleString('ar-EG')}</b><small>موضوعًا تراثيًا</small></span><span><b>{knowledgeSummary.counts.references.toLocaleString('ar-EG')}</b><small>مرجعًا</small></span></aside>
+      <aside className={styles.stats}><span><b>{knowledgeSummary.counts.places.toLocaleString(NUMBER_LOCALE)}</b><small>مكانًا</small></span><span><b>{knowledgeSummary.counts.people.toLocaleString(NUMBER_LOCALE)}</b><small>شخصية</small></span><span><b>{knowledgeSummary.counts.heritage.toLocaleString(NUMBER_LOCALE)}</b><small>موضوعًا تراثيًا</small></span><span><b>{knowledgeSummary.counts.references.toLocaleString(NUMBER_LOCALE)}</b><small>مرجعًا</small></span></aside>
     </div></section>
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="overview" /></div>
     <div className={`shell ${styles.wrap}`}>
       <section className={styles.attribution}><div className={styles.seal}>أد</div><div><h2>المؤلف والمصادر</h2><p>{primaryKnowledgeContributor.attributionFull}. <Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المؤلف والمساهم ←</Link></p></div></section>
-      <section className={v3Styles.hubGrid}>{sections.map((item) => <article className={`${styles.card} ${v3Styles.hubCard}`} key={item.href}><div className={v3Styles.visual}><Image src={item.image} alt={item.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 42vw" /></div><div><div className={styles.cardTop}><span className={styles.cardBadge}>{item.count.toLocaleString('ar-EG')} سجل</span></div><h2>{item.title}</h2><p>{item.text}</p></div><Link href={item.href} prefetch={false}>استكشف القسم ←</Link></article>)}</section>
+      <section className={v3Styles.hubGrid}>{sections.map((item) => <article className={`${styles.card} ${v3Styles.hubCard}`} key={item.href}><div className={v3Styles.visual}><Image src={item.image} alt={item.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 42vw" /></div><div><div className={styles.cardTop}><span className={styles.cardBadge}>{item.count.toLocaleString(NUMBER_LOCALE)} سجل</span></div><h2>{item.title}</h2><p>{item.text}</p></div><Link href={item.href} prefetch={false}>استكشف القسم ←</Link></article>)}</section>
       <section className={styles.section}><div className={styles.sectionHeader}><div><span>منهج النشر</span><h2>المعلومة لا تنفصل عن أصلها</h2></div></div><div className={styles.grid}>
         <article className={styles.card}><span className={styles.cardBadge}>01</span><h3>مصدر محدد</h3><p>كل معلومة منشورة مرتبطة بمصدرها ومؤلفها، مع احترام حقوق أصحاب المواد الأصلية.</p></article>
         <article className={styles.card}><span className={styles.cardBadge}>02</span><h3>حالة تحقق واضحة</h3><p>«مؤكد من المصدر» تعني أن المعلومة وردت في المرجع، ولا تعني تلقائيًا أنها تحقق حديث مستقل لعام 2026.</p></article>

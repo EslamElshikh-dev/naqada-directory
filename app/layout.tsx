@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import localFont from 'next/font/local';
+import { BODY_FONT, bodyFontVariable, displayFont } from '@/app/fonts';
 import { SiteHeader } from '@/components/site-shell';
 import { Footer } from '@/components/site-footer';
 import { MobileNav } from '@/components/mobile-nav';
@@ -12,12 +12,6 @@ import { PwaSetup } from '@/components/pwa-setup';
 import { MetaPixel } from '@/components/meta-pixel';
 import './site-styles.css';
 
-const notoKufi = localFont({
-  src: './fonts/noto-kufi-arabic.woff2',
-  display: 'swap',
-  variable: '--font-arabic',
-  weight: '100 900',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -98,7 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   };
   const speedInsightsBootstrap = `window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };`;
   return (
-    <html lang="ar-EG" dir="rtl" className={notoKufi.variable}>
+    <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFont.variable + ' ' + bodyFontVariable}>
       <body className="mobile-editorial encyclopedia-ui">
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />

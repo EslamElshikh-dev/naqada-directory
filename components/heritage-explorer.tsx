@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useMemo, useState } from 'react';
 import type { Landmark, PersonRecord } from '@/lib/types';
@@ -19,12 +21,12 @@ export function HeritageExplorer({ landmarks, people }: { landmarks: Landmark[];
     <div>
       <div className="heritage-toolbar">
         <div className="tabs" role="tablist" aria-label="نوع السجل">
-          <button type="button" role="tab" aria-selected={tab === 'landmarks'} onClick={() => setTab('landmarks')}>المعالم <b>{landmarks.length.toLocaleString('ar-EG')}</b></button>
-          <button type="button" role="tab" aria-selected={tab === 'people'} onClick={() => setTab('people')}>الشخصيات <b>{people.length.toLocaleString('ar-EG')}</b></button>
+          <button type="button" role="tab" aria-selected={tab === 'landmarks'} onClick={() => setTab('landmarks')}>المعالم <b>{landmarks.length.toLocaleString(NUMBER_LOCALE)}</b></button>
+          <button type="button" role="tab" aria-selected={tab === 'people'} onClick={() => setTab('people')}>الشخصيات <b>{people.length.toLocaleString(NUMBER_LOCALE)}</b></button>
         </div>
         <label className="search-field"><span aria-hidden="true">⌕</span><span className="sr-only">ابحث في السجل التراثي</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بالاسم أو الموضع…" /></label>
       </div>
-      <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> سجلًا</span></div></div>
+      <div className="results-bar"><div><strong>{filtered.length.toLocaleString(NUMBER_LOCALE)}</strong><span> سجلًا</span></div></div>
       <div className="record-grid">{filtered.map((record) => {
         const isLandmark = 'type' in record;
         const name = record.name;

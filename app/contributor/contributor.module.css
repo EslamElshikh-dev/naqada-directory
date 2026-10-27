@@ -10,7 +10,7 @@
   background:
     radial-gradient(circle at 82% 12%, rgb(221 183 89 / 18%), transparent 30%),
     linear-gradient(135deg, #2d1e18 0%, #4a3025 55%, #241914 100%);
-  color: #fff;
+  color: var(--text-on-dark);
 }
 
 .hero::after {
@@ -40,27 +40,27 @@
 .identityCopy > span {
   display: block;
   margin-bottom: 8px;
-  color: #e5c777;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .03em;
+  color: var(--text-on-dark-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: normal;
 }
 
 .identityCopy h1 {
   margin: 0;
-  font-size: clamp(30px, 4.5vw, 52px);
+  font-size: var(--fs-display);
   line-height: 1.2;
 }
 
 .identityCopy h1 em {
-  color: #f4d77f;
+  color: var(--text-on-dark-accent);
   font-style: normal;
 }
 
 .identityCopy p {
   max-width: 720px;
   margin: 12px 0 0;
-  color: rgb(255 255 255 / 75%);
+  color: var(--text-on-dark);
   line-height: 1.95;
 }
 
@@ -76,9 +76,9 @@
   border: 1px solid rgb(240 210 126 / 32%);
   border-radius: 999px;
   background: rgb(255 255 255 / 8%);
-  color: #f5dc96;
-  font-size: 11px;
-  font-weight: 900;
+  color: var(--text-on-dark-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .heroStats {
@@ -97,16 +97,16 @@
 
 .heroStats strong {
   display: block;
-  color: #fff;
-  font-size: 26px;
+  color: var(--text-on-dark);
+  font-size: var(--fs-2xl);
   line-height: 1.15;
 }
 
 .heroStats span {
   display: block;
   margin-top: 5px;
-  color: rgb(255 255 255 / 62%);
-  font-size: 11px;
+  color: var(--text-on-dark);
+  font-size: var(--fs-xs);
 }
 
 .wrap {
@@ -133,29 +133,29 @@
 }
 
 .sectionHeader span {
-  color: #ad8130;
-  font-size: 11px;
-  font-weight: 900;
+  color: var(--text-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .sectionHeader h2 {
   margin: 4px 0 0;
-  color: #2d1e18;
-  font-size: 24px;
+  color: var(--text-strong);
+  font-size: var(--fs-2xl);
 }
 
 .sectionHeader p {
   max-width: 640px;
   margin: 6px 0 0;
-  color: #7b6d65;
+  color: var(--text-muted);
   line-height: 1.8;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 .sectionHeader a {
-  color: #7b5717;
-  font-weight: 900;
-  font-size: 12px;
+  color: var(--text-accent);
+  font-weight: 700;
+  font-size: var(--fs-xs);
 }
 
 .actionGrid {
@@ -174,7 +174,7 @@
   border: 1px solid #e6ded6;
   border-radius: 17px;
   background: linear-gradient(145deg, #fff, #fbf7f2);
-  color: #2d1e18;
+  color: var(--text-strong);
   transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 
@@ -191,19 +191,19 @@
   height: 34px;
   border-radius: 12px;
   background: #2d1e18;
-  color: #fff;
-  font-size: 15px;
+  color: var(--text-on-dark);
+  font-size: var(--fs-sm);
 }
 
 .action strong {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .action small {
   display: block;
   margin-top: 4px;
-  color: #84766e;
+  color: var(--text-muted);
   line-height: 1.7;
 }
 
@@ -222,16 +222,16 @@
 
 .metric strong {
   display: block;
-  color: #2d1e18;
-  font-size: 25px;
+  color: var(--text-strong);
+  font-size: var(--fs-2xl);
   line-height: 1.15;
 }
 
 .metric span {
   display: block;
   margin-top: 5px;
-  color: #7c6d64;
-  font-size: 11px;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.6;
 }
 
@@ -256,13 +256,13 @@
 
 .statusCard b {
   display: block;
-  font-size: 22px;
-  color: #2d1e18;
+  font-size: var(--fs-xl);
+  color: var(--text-strong);
 }
 
 .statusCard span {
-  color: #7d6f67;
-  font-size: 11px;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
 }
 
 .permissionGrid {
@@ -279,9 +279,9 @@
   border: 1px solid #e9e1d9;
   border-radius: 13px;
   background: #fcfaf8;
-  color: #4a3931;
-  font-size: 12px;
-  font-weight: 800;
+  color: var(--text-body);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .permission i {
@@ -310,24 +310,24 @@
 
 .activityItem strong {
   display: block;
-  color: #34241d;
-  font-size: 13px;
+  color: var(--text-strong);
+  font-size: var(--fs-xs);
 }
 
 .activityItem small {
   display: block;
   margin-top: 4px;
-  color: #8a7b72;
-  font-size: 11px;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
 }
 
 .status {
   padding: 5px 8px;
   border-radius: 999px;
   background: #f3eee8;
-  color: #66574f;
-  font-size: 10px;
-  font-weight: 900;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .empty {
@@ -335,7 +335,7 @@
   border: 1px dashed #dbcfc3;
   border-radius: 15px;
   background: #fbf8f5;
-  color: #7d6d64;
+  color: var(--text-muted);
   text-align: center;
   line-height: 1.9;
 }
@@ -358,21 +358,21 @@
     gap: 14px;
     text-align: center;
   }
-  .identityCopy > span { margin-bottom: 5px; font-size: 9px; }
-  .identityCopy h1 { font-size: clamp(25px, 8vw, 33px); line-height: 1.3; }
-  .identityCopy p { margin-top: 8px; font-size: 10px; line-height: 1.8; }
+  .identityCopy > span { margin-bottom: 5px; font-size: var(--fs-xs); }
+  .identityCopy h1 { font-size: var(--fs-3xl); line-height: 1.3; }
+  .identityCopy p { margin-top: 8px; font-size: var(--fs-xs); line-height: 1.8; }
   .badges { justify-content: center; gap: 5px; margin-top: 10px; }
-  .badges span { padding: 4px 7px; font-size: 8px; }
+  .badges span { padding: 4px 7px; font-size: var(--fs-xs); }
   .heroStats { grid-template-columns: repeat(2, 1fr); gap: 7px; }
   .heroStats div { padding: 12px 10px; border-radius: 14px; text-align: center; }
-  .heroStats strong { font-size: 20px; }
-  .heroStats span { font-size: 8px; line-height: 1.5; }
+  .heroStats strong { font-size: var(--fs-xl); }
+  .heroStats span { font-size: var(--fs-xs); line-height: 1.5; }
   .wrap { gap: 14px; padding-top: 16px; padding-bottom: 30px; }
   .section { padding: 15px; border-radius: 17px; box-shadow: 0 10px 26px rgb(45 30 24 / 5%); }
   .sectionHeader { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 13px; }
-  .sectionHeader span { font-size: 8px; }
-  .sectionHeader h2 { margin-top: 2px; font-size: 19px; line-height: 1.45; }
-  .sectionHeader p { margin-top: 4px; font-size: 10px; line-height: 1.75; }
+  .sectionHeader span { font-size: var(--fs-xs); }
+  .sectionHeader h2 { margin-top: 2px; font-size: var(--fs-lg); line-height: 1.45; }
+  .sectionHeader p { margin-top: 4px; font-size: var(--fs-xs); line-height: 1.75; }
   .sectionHeader a {
     display: inline-flex;
     align-items: center;
@@ -381,7 +381,7 @@
     border: 1px solid #e6ddd4;
     border-radius: 10px;
     background: #fbf8f4;
-    font-size: 9px;
+    font-size: var(--fs-xs);
   }
   .actionGrid { grid-template-columns: 1fr; gap: 8px; }
   .action {
@@ -396,24 +396,24 @@
   }
   .action b { grid-row: 1 / span 2; width: 38px; height: 38px; border-radius: 11px; }
   .action > div { min-width: 0; }
-  .action strong { font-size: 12px; }
-  .action small { margin-top: 2px; font-size: 9px; line-height: 1.55; }
+  .action strong { font-size: var(--fs-xs); }
+  .action small { margin-top: 2px; font-size: var(--fs-xs); line-height: 1.55; }
   .metricGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
   .metric { padding: 12px 10px; border-radius: 13px; }
-  .metric strong { font-size: 20px; }
-  .metric span { margin-top: 3px; font-size: 8px; line-height: 1.45; }
+  .metric strong { font-size: var(--fs-xl); }
+  .metric span { margin-top: 3px; font-size: var(--fs-xs); line-height: 1.45; }
   .statusGrid { grid-template-columns: repeat(2, 1fr); gap: 7px; }
   .statusCard { padding: 11px; border-radius: 12px; }
-  .statusCard b { font-size: 18px; }
-  .statusCard span { font-size: 8px; }
+  .statusCard b { font-size: var(--fs-lg); }
+  .statusCard span { font-size: var(--fs-xs); }
   .permissionGrid { grid-template-columns: 1fr; gap: 7px; }
-  .permission { padding: 10px 11px; border-radius: 11px; font-size: 9.5px; }
+  .permission { padding: 10px 11px; border-radius: 11px; font-size: var(--fs-xs); }
   .activityList { gap: 4px; }
   .activityItem { grid-template-columns: 1fr; gap: 6px; padding: 10px 0; }
-  .activityItem strong { font-size: 11px; line-height: 1.6; }
-  .activityItem small { font-size: 8.5px; }
-  .status { justify-self: start; padding: 4px 7px; font-size: 8px; }
-  .empty { padding: 15px; border-radius: 12px; font-size: 10px; }
+  .activityItem strong { font-size: var(--fs-xs); line-height: 1.6; }
+  .activityItem small { font-size: var(--fs-xs); }
+  .status { justify-self: start; padding: 4px 7px; font-size: var(--fs-xs); }
+  .empty { padding: 15px; border-radius: 12px; font-size: var(--fs-xs); }
 }
 
 @media (max-width: 390px) {
@@ -421,6 +421,6 @@
   .section { padding-inline: 13px; }
   .metricGrid { gap: 6px; }
   .metric { padding-inline: 8px; }
-  .metric strong { font-size: 18px; }
-  .metric span { font-size: 7.5px; }
+  .metric strong { font-size: var(--fs-lg); }
+  .metric span { font-size: var(--fs-xs); }
 }

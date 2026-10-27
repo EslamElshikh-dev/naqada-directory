@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
@@ -53,13 +55,13 @@ export function DeveloperWorkShowcase() {
                   onClick={() => setActiveFilter(filter.id)}
                 >
                   <span>{filter.label}</span>
-                  <small>{count.toLocaleString('ar-EG')}</small>
+                  <small>{count.toLocaleString(NUMBER_LOCALE)}</small>
                 </button>
               );
             })}
           </div>
           <p className={styles.workCount} aria-live="polite">
-            <span>{visibleProjects.length.toLocaleString('ar-EG')}</span>
+            <span>{visibleProjects.length.toLocaleString(NUMBER_LOCALE)}</span>
             {visibleProjects.length === 1 ? ' مشروع مختار' : ' مشروعات مختارة'}
           </p>
         </div>

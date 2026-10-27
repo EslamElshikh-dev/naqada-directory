@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { canonicalLocalityName, categories, getLocalityBySlug } from '@/lib/data';
@@ -40,7 +41,7 @@ export default async function LocalityLayout({ children, params }: Props) {
           <Link className={styles.identity} href={`/villages/${locality.slug}`} prefetch={false}>
             <span>داخل</span>
             <strong>{locality.name}</strong>
-            <small>{businessCount.toLocaleString('ar-EG')} نشاطًا</small>
+            <small>{businessCount.toLocaleString(NUMBER_LOCALE)} نشاطًا</small>
           </Link>
 
           <div className={styles.links}>
@@ -51,7 +52,7 @@ export default async function LocalityLayout({ children, params }: Props) {
             {quickCategories.map(({ category, count }) => (
               <Link key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory?category=${encodeURIComponent(category.name)}&locality=${encodeURIComponent(locality.name)}`} prefetch={false}>
                 {category.shortLabel}
-                <small>{count.toLocaleString('ar-EG')}</small>
+                <small>{count.toLocaleString(NUMBER_LOCALE)}</small>
               </Link>
             ))}
           </div>

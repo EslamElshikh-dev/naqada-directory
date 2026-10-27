@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { cache, Suspense, type CSSProperties, type ReactNode } from 'react';
 import { NavigationIcon, type NavigationIconName } from '@/components/navigation-icon';
@@ -109,8 +110,8 @@ export default function HomePage() {
 
             <div className={styles.trust} aria-label="إحصاءات الدليل">
               <span><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><small>خدمة ونشاط</small></span>
-              <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية وموضعًا</small></span>
-              <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><small>علمًا ومعلمًا</small></span>
+              <span><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><small>قرية وموضعًا</small></span>
+              <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><small>علمًا ومعلمًا</small></span>
             </div>
           </div>
 
@@ -156,9 +157,9 @@ export default function HomePage() {
           <article className={styles.knowledgePanel}>
             <header><span>موسوعة نقادة</span><h2>اعرف بلدك زين</h2><p>أماكن وناس وتراث من بلدنا، وكل معلومة معاها مصدرها. عشان الحكاية تبقى على بيّنة.</p></header>
             <div className={styles.knowledgeTopics}>
-              <Link prefetch={false} href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString('ar-EG')}</strong><small>موضعًا</small></Link>
-              <Link prefetch={false} href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString('ar-EG')}</strong><small>شخصية</small></Link>
-              <Link prefetch={false} href="/knowledge/heritage"><span>التراث</span><strong>{knowledgeHeritage.length.toLocaleString('ar-EG')}</strong><small>موضوعًا</small></Link>
+              <Link prefetch={false} href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString(NUMBER_LOCALE)}</strong><small>موضعًا</small></Link>
+              <Link prefetch={false} href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)}</strong><small>شخصية</small></Link>
+              <Link prefetch={false} href="/knowledge/heritage"><span>التراث</span><strong>{knowledgeHeritage.length.toLocaleString(NUMBER_LOCALE)}</strong><small>موضوعًا</small></Link>
             </div>
             <div className={styles.attribution}><b>أد</b><p>بمساهمة <strong>{primaryKnowledgeContributor.name}</strong><small>{primaryKnowledgeContributor.role}</small></p></div>
             <Link prefetch={false} href="/knowledge" className={styles.panelLink}>تصفّح الموسوعة <ActionIcon name="arrow" /></Link>
@@ -219,7 +220,7 @@ async function HomeServiceGrid({ activities: featuredActivities }: { activities:
                   <i aria-hidden="true" />
                   <CategoryVisual category={activity.visualCategory} size="sm" />
                 </span>
-                <span className={styles.serviceCount}>{count === null ? 'عرض الأنشطة' : `${count.toLocaleString('ar-EG')} نتيجة`}</span>
+                <span className={styles.serviceCount}>{count === null ? 'عرض الأنشطة' : `${count.toLocaleString(NUMBER_LOCALE)} نتيجة`}</span>
                 <h3>{activity.name}</h3>
                 <span className={styles.serviceArrow}>شوف الموجود <ActionIcon name="arrow" /></span>
               </Link>
@@ -242,7 +243,7 @@ async function HomePlaces() {
                 <Link prefetch={false} key={item.slug} href={`/villages/${item.slug}`}>
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <div><strong>دليل {item.name}</strong><small>{item.type}</small></div>
-                  <b>{catalog ? item.businessCount.toLocaleString('ar-EG') : '←'}</b>
+                  <b>{catalog ? item.businessCount.toLocaleString(NUMBER_LOCALE) : '←'}</b>
                 </Link>
               ))}
             </div>

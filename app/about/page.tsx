@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense, type CSSProperties } from 'react';
 import Image from 'next/image';
@@ -41,13 +42,13 @@ const experiencePaths = [
   },
   {
     code: '02', href: '/villages', title: 'خريطة المكان',
-    value: meta.localityCount.toLocaleString('ar-EG'), label: 'قرية وموضعًا',
+    value: meta.localityCount.toLocaleString(NUMBER_LOCALE), label: 'قرية وموضعًا',
     description: 'صفحات تجمع كل قرية ونجع بما يرتبط بهما من خدمات ومحتوى محلي قابل للتوسع.',
     image: '/images/landmarks/naqada-city.webp', alt: 'مشهد من مدينة نقادة ضمن صفحات القرى والأماكن',
   },
   {
     code: '03', href: '/knowledge', title: 'الذاكرة المحلية',
-    value: (meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG'), label: 'علمًا ومعلمًا',
+    value: (meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE), label: 'علمًا ومعلمًا',
     description: 'أماكن وأعلام وتراث ومراجع محفوظة في موسوعة توضح المصدر وحدود المعلومة.',
     image: '/images/landmarks/naqada-royal-tomb.webp', alt: 'المقبرة الملكية في نقادة ضمن الموسوعة المحلية',
   },
@@ -123,9 +124,9 @@ export default function AboutPage() {
 
       <section className={`shell ${styles.metrics}`} aria-label="الدليل في أرقام">
         <article><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><span>خدمة ونشاط</span><small>بيانات منشورة قابلة للتحديث</small></article>
-        <article><b>{meta.localityCount.toLocaleString('ar-EG')}</b><span>قرية وموضعًا</span><small>داخل نطاق مركز نقادة</small></article>
-        <article><b>{meta.familyCount.toLocaleString('ar-EG')}</b><span>سجلًا عائليًا</span><small>بحدود توثيق واضحة</small></article>
-        <article><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><span>علمًا ومعلمًا</span><small>من ذاكرة المكان</small></article>
+        <article><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><span>قرية وموضعًا</span><small>داخل نطاق مركز نقادة</small></article>
+        <article><b>{meta.familyCount.toLocaleString(NUMBER_LOCALE)}</b><span>سجلًا عائليًا</span><small>بحدود توثيق واضحة</small></article>
+        <article><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><span>علمًا ومعلمًا</span><small>من ذاكرة المكان</small></article>
       </section>
 
       <section className={`shell ${styles.storySection}`}>

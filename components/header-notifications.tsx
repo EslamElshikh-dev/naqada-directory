@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -174,7 +176,7 @@ export function HeaderNotifications() {
     <div ref={rootRef} className={styles.root}>
       <button type="button" className={styles.trigger} aria-label={unreadCount ? `عرض الإشعارات، ${unreadCount} جديدة` : 'عرض الإشعارات'} aria-expanded={open} aria-controls="header-notifications-panel" onClick={togglePanel}>
         <BellIcon />
-        {unreadCount ? <span className={styles.unread}>{unreadCount > 9 ? '٩+' : unreadCount.toLocaleString('ar-EG')}</span> : null}
+        {unreadCount ? <span className={styles.unread}>{unreadCount > 9 ? '٩+' : unreadCount.toLocaleString(NUMBER_LOCALE)}</span> : null}
       </button>
 
       {decisionToast?.userId === viewerId && <div className={styles.decisionToast} role="status" aria-live="polite">

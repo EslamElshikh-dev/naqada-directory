@@ -23,21 +23,21 @@
 }
 
 .contextCopy span {
-  color: #8b7468;
-  font-size: .72rem;
-  font-weight: 800;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .contextCopy strong {
-  color: #39271f;
-  font-size: clamp(1.08rem, 2vw, 1.38rem);
+  color: var(--text-strong);
+  font-size: var(--fs-2xl);
   line-height: 1.55;
   text-wrap: balance;
 }
 
 .contextCopy small {
-  color: #7f7068;
-  font-size: .7rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.8;
 }
 
@@ -52,17 +52,17 @@
   padding: 10px 13px;
   border-radius: 15px;
   background: #2b7277;
-  color: #fff;
+  color: var(--text-on-dark);
   box-shadow: 0 8px 20px rgba(43, 114, 119, .12);
 }
 
 .count b {
-  font-size: 1.25rem;
+  font-size: var(--fs-xl);
   line-height: 1;
 }
 
 .count small {
-  font-size: .64rem;
+  font-size: var(--fs-xs);
   opacity: .9;
 }
 
@@ -79,9 +79,9 @@
 }
 
 .facetGroup > span {
-  color: #705c53;
-  font-size: .69rem;
-  font-weight: 900;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .facetList {
@@ -96,8 +96,8 @@
   padding: 8px 12px;
   border-radius: 999px;
   font: inherit;
-  font-size: .68rem;
-  font-weight: 850;
+  font-size: var(--fs-xs);
+  font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
   transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
@@ -106,7 +106,7 @@
 .facetList button {
   border: 1px solid #e4d3c8;
   background: #fff;
-  color: #5f4439;
+  color: var(--text-muted);
 }
 
 .facetList button:hover,
@@ -120,14 +120,14 @@
 .facetList button[data-active='true'] {
   border-color: #9f4f35;
   background: #f4e4dc;
-  color: #713321;
+  color: var(--text-danger);
   box-shadow: inset 0 0 0 1px rgba(169,83,55,.08);
 }
 
 .facetList small {
   margin-inline-start: 5px;
-  color: #8f776b;
-  font-size: .61rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
 }
 
 .recovery {
@@ -142,7 +142,7 @@
   min-height: 42px;
   border: 1px solid #dfc9bd;
   background: #fffaf6;
-  color: #7b4432;
+  color: var(--text-danger);
 }
 
 .recovery button:hover,
@@ -160,7 +160,7 @@
   .context { padding: 16px; border-radius: 18px; }
   .contextHead { align-items: center; }
   .facets { grid-template-columns: 1fr; }
-  .contextCopy small { font-size: .72rem; }
+  .contextCopy small { font-size: var(--fs-xs); }
 }
 
 @media (max-width: 520px) {
@@ -185,9 +185,9 @@
 }
 
 @media (max-width: 700px) {
- .contextCopy span, .contextCopy small, .count small, .facetGroup > span { font-size: .8125rem; line-height: 1.85; }
- .facetList button, .recovery button { min-height: 44px; font-size: .875rem; line-height: 1.8; }
- .facetList small { font-size: .75rem; }
+ .contextCopy span, .contextCopy small, .count small, .facetGroup > span { font-size: var(--fs-xs); line-height: 1.85; }
+ .facetList button, .recovery button { min-height: 44px; font-size: var(--fs-sm); line-height: 1.8; }
+ .facetList small { font-size: var(--fs-xs); }
 }
 .searchSubmit {
   flex: 0 0 auto;
@@ -196,9 +196,9 @@
   border: 0;
   border-radius: 12px;
   background: #2b7277;
-  color: #fff;
+  color: var(--text-on-dark);
   font: inherit;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 

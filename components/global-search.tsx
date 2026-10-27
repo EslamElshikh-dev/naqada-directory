@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useRouter } from 'next/navigation';
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -55,7 +57,7 @@ export function GlobalSearch() {
     if (error) return error;
     if (!items.length && suggestions.length) return 'لم نجد تطابقًا مباشرًا، لكن وجدنا اقتراحًا قريبًا.';
     if (!items.length) return 'لا توجد نتيجة سريعة؛ افتح البحث الموحد لنتائج أوسع.';
-    return `${items.length.toLocaleString('ar-EG')} نتائج سريعة مرتبة حسب الصلة`;
+    return `${items.length.toLocaleString(NUMBER_LOCALE)} نتائج سريعة مرتبة حسب الصلة`;
   }, [canSearch, error, items.length, loading, suggestions.length]);
 
   useEffect(() => {
@@ -206,7 +208,7 @@ export function GlobalSearch() {
                       <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
                         <span>{suggestion.reason}</span>
                         <strong>«{suggestion.query}»</strong>
-                        <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة</small>
+                        <small>{suggestion.count.toLocaleString(NUMBER_LOCALE)} نتيجة</small>
                       </button>
                     ))}
                   </div>

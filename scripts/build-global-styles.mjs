@@ -26,7 +26,8 @@ const sources = [
   "./encyclopedia-refresh.css",
   "./usayrat-parity.css",
   "./listing-card-resilience.css",
-  "./navigation-refresh.css"
+  "./navigation-refresh.css",
+  "./typography.css"
 ];
 const app = new URL('../app/', import.meta.url);
 const retiredClasses = new Set(JSON.parse(readFileSync(new URL('./retired-global-classes.json', import.meta.url), 'utf8')));

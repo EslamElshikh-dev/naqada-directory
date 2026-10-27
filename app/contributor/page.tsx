@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -71,10 +72,10 @@ export default async function ContributorDashboard() {
             </div>
           </div>
           <aside className={styles.heroStats}>
-            <div><strong>{knowledgeTotal.toLocaleString('ar-EG')}</strong><span>مدخلًا معرفيًا مرتبطًا بالمادة المرجعية</span></div>
-            <div><strong>{access.permissions.length.toLocaleString('ar-EG')}</strong><span>صلاحيات فعالة</span></div>
-            <div><strong>{activity.total.toLocaleString('ar-EG')}</strong><span>مقترحات أرسلتها من حسابك</span></div>
-            <div><strong>{(activity.approved + activity.published).toLocaleString('ar-EG')}</strong><span>مقترحات معتمدة أو منشورة</span></div>
+            <div><strong>{knowledgeTotal.toLocaleString(NUMBER_LOCALE)}</strong><span>مدخلًا معرفيًا مرتبطًا بالمادة المرجعية</span></div>
+            <div><strong>{access.permissions.length.toLocaleString(NUMBER_LOCALE)}</strong><span>صلاحيات فعالة</span></div>
+            <div><strong>{activity.total.toLocaleString(NUMBER_LOCALE)}</strong><span>مقترحات أرسلتها من حسابك</span></div>
+            <div><strong>{(activity.approved + activity.published).toLocaleString(NUMBER_LOCALE)}</strong><span>مقترحات معتمدة أو منشورة</span></div>
           </aside>
         </div>
       </section>
@@ -88,12 +89,12 @@ export default async function ContributorDashboard() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}><div><span>إحصائيات المحتوى</span><h2>أثر مساهمتك داخل دليل نقادة</h2><p>الأرقام هنا تحسب الطبقات المرجعية المنسوبة إلى المواد التي قدمتها للدليل.</p></div><Link href={`/contributors/${access.slug}`}>فتح الملف العام ←</Link></div>
           <div className={styles.metricGrid}>
-            <div className={styles.metric}><strong>{knowledgePlaces.length.toLocaleString('ar-EG')}</strong><span>مكانًا وموضعًا</span></div>
-            <div className={styles.metric}><strong>{knowledgePeople.length.toLocaleString('ar-EG')}</strong><span>شخصية وعلمًا</span></div>
-            <div className={styles.metric}><strong>{knowledgeHeritage.length.toLocaleString('ar-EG')}</strong><span>موضوعًا تراثيًا</span></div>
-            <div className={styles.metric}><strong>{knowledgeReferences.length.toLocaleString('ar-EG')}</strong><span>مرجعًا</span></div>
-            <div className={styles.metric}><strong>{fieldInformants.length.toLocaleString('ar-EG')}</strong><span>اسمًا من العمل الميداني</span></div>
-            <div className={styles.metric}><strong>{knowledgeSources.length.toLocaleString('ar-EG')}</strong><span>مصادر وملفات مرتبطة</span></div>
+            <div className={styles.metric}><strong>{knowledgePlaces.length.toLocaleString(NUMBER_LOCALE)}</strong><span>مكانًا وموضعًا</span></div>
+            <div className={styles.metric}><strong>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)}</strong><span>شخصية وعلمًا</span></div>
+            <div className={styles.metric}><strong>{knowledgeHeritage.length.toLocaleString(NUMBER_LOCALE)}</strong><span>موضوعًا تراثيًا</span></div>
+            <div className={styles.metric}><strong>{knowledgeReferences.length.toLocaleString(NUMBER_LOCALE)}</strong><span>مرجعًا</span></div>
+            <div className={styles.metric}><strong>{fieldInformants.length.toLocaleString(NUMBER_LOCALE)}</strong><span>اسمًا من العمل الميداني</span></div>
+            <div className={styles.metric}><strong>{knowledgeSources.length.toLocaleString(NUMBER_LOCALE)}</strong><span>مصادر وملفات مرتبطة</span></div>
           </div>
         </section>
 
@@ -101,13 +102,13 @@ export default async function ContributorDashboard() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}><div><span>مساهمات الحساب</span><h2>حالة المقترحات</h2><p>أي مقترح جديد ترسله وأنت مسجل الدخول يُنسب لحسابك تلقائيًا.</p></div><Link href="/contribute">إضافة مساهمة ←</Link></div>
             <div className={styles.statusGrid}>
-              <div className={styles.statusCard}><b>{activity.pending.toLocaleString('ar-EG')}</b><span>بانتظار المراجعة</span></div>
-              <div className={styles.statusCard}><b>{activity.reviewing.toLocaleString('ar-EG')}</b><span>قيد المراجعة</span></div>
-              <div className={styles.statusCard}><b>{activity.approved.toLocaleString('ar-EG')}</b><span>معتمد</span></div>
-              <div className={styles.statusCard}><b>{activity.published.toLocaleString('ar-EG')}</b><span>منشور</span></div>
+              <div className={styles.statusCard}><b>{activity.pending.toLocaleString(NUMBER_LOCALE)}</b><span>بانتظار المراجعة</span></div>
+              <div className={styles.statusCard}><b>{activity.reviewing.toLocaleString(NUMBER_LOCALE)}</b><span>قيد المراجعة</span></div>
+              <div className={styles.statusCard}><b>{activity.approved.toLocaleString(NUMBER_LOCALE)}</b><span>معتمد</span></div>
+              <div className={styles.statusCard}><b>{activity.published.toLocaleString(NUMBER_LOCALE)}</b><span>منشور</span></div>
             </div>
             <div className={styles.activityList} style={{ marginTop: 16 }}>
-              {activity.recent.length ? activity.recent.map((item) => <div className={styles.activityItem} key={item.id}><div><strong>{requestLabels[item.requestType] || item.requestType}: {item.name}</strong><small>{item.locality || 'نطاق عام'} · {new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div><span className={styles.status}>{statusLabels[item.status] || item.status}</span></div>) : <div className={styles.empty}>لا توجد مقترحات شخصية مسجلة من الحساب حتى الآن. المواد المرجعية المستوردة والمنسوبة لك ظاهرة في إحصائيات المحتوى بالأعلى.</div>}
+              {activity.recent.length ? activity.recent.map((item) => <div className={styles.activityItem} key={item.id}><div><strong>{requestLabels[item.requestType] || item.requestType}: {item.name}</strong><small>{item.locality || 'نطاق عام'} · {new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(item.createdAt))}</small></div><span className={styles.status}>{statusLabels[item.status] || item.status}</span></div>) : <div className={styles.empty}>لا توجد مقترحات شخصية مسجلة من الحساب حتى الآن. المواد المرجعية المستوردة والمنسوبة لك ظاهرة في إحصائيات المحتوى بالأعلى.</div>}
             </div>
           </section>
 

@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { meta } from '@/lib/data';
@@ -72,8 +73,8 @@ export function Footer() {
               </div>
               <div className={footerStyles.stats}>
                 <span><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><small>خدمة ونشاط</small></span>
-                <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية وموضعًا</small></span>
-                <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><small>علمًا ومعلمًا</small></span>
+                <span><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><small>قرية وموضعًا</small></span>
+                <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><small>علمًا ومعلمًا</small></span>
               </div>
             </section>
 

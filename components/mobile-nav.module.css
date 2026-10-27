@@ -71,7 +71,7 @@
     min-width: 0;
     min-height: 55px;
     padding: 3px 2px;
-    color: #60766d;
+    color: var(--text-muted);
     border: 1px solid transparent;
     border-radius: 17px 17px 7px 17px;
     text-decoration: none;
@@ -84,9 +84,9 @@
   .nav a:nth-of-type(3) { grid-column: 4; }
   .nav a:nth-of-type(4) { grid-column: 5; }
 
-  .nav a:hover { background: rgba(255,255,255,.72); color: #164c3a; }
+  .nav a:hover { background: rgba(255,255,255,.72); color: var(--text-body); }
   .nav a[aria-current='page'] {
-    color: #fffaf0;
+    color: var(--text-on-dark);
     border-color: rgba(255,255,255,.08);
     background: radial-gradient(circle at 16% 12%, rgba(143,208,189,.22), transparent 32%), linear-gradient(145deg, #13513f, #0a3329);
     box-shadow: 0 8px 20px rgba(12,61,47,.2), inset 0 1px rgba(255,255,255,.08);
@@ -95,8 +95,8 @@
   .nav a[aria-current='page']::after { content: ''; position: absolute; width: 16px; height: 2px; inset-block-end: 4px; border-radius: 99px; background: #efc66f; box-shadow: 0 0 7px rgba(239,198,111,.35); }
   .icon { width: 31px; height: 29px; display: grid; place-items: center; border-radius: 11px; transition: transform .22s ease, background .22s ease; }
   .icon svg { width: 20px; height: 20px; }
-  .nav a[aria-current='page'] .icon { transform: translateY(-1px); background: rgba(239,198,111,.13); color: #f5d185; }
-  .label { font-size: .74rem; line-height: 1.35; font-weight: 850; text-align: center; white-space: nowrap; }
+  .nav a[aria-current='page'] .icon { transform: translateY(-1px); background: rgba(239,198,111,.13); color: var(--text-on-dark-accent); }
+  .label { font-size: var(--fs-xs); line-height: 1.35; font-weight: 700; text-align: center; white-space: nowrap; }
   .nav a:focus-visible { outline: 3px solid #d49e3d; outline-offset: 0; }
   .nav a:active { transform: scale(.96); }
 }
@@ -115,7 +115,7 @@
   .nav a { max-width: 70px; min-height: 53px; border-radius: 15px 15px 6px 15px; }
   .icon { width: 28px; height: 27px; }
   .icon svg { width: 19px; height: 19px; }
-  .label { font-size: .66rem; }
+  .label { font-size: var(--fs-xs); }
 }
 
 @media (max-width: 360px) {
@@ -124,7 +124,7 @@
   .nav::after { width: 54px; height: 54px; }
   .nav a { min-height: 51px; }
   .icon { width: 26px; height: 25px; }
-  .label { font-size: .61rem; }
+  .label { font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) { .nav a, .icon { transition: none; } }

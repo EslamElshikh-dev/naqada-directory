@@ -30,20 +30,20 @@
 }
 
 .kicker {
-  color: #2b7277;
-  font-size: .63rem;
-  font-weight: 900;
+  color: var(--text-link);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .copy strong {
-  color: #30221c;
-  font-size: clamp(.95rem, 2vw, 1.12rem);
+  color: var(--text-strong);
+  font-size: var(--fs-lg);
   line-height: 1.55;
 }
 
 .copy small {
-  color: #74675f;
-  font-size: .69rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.7;
 }
 
@@ -56,9 +56,9 @@
   padding: 8px 11px;
   border-radius: 999px;
   background: #2b7277;
-  color: #fff;
-  font-size: .66rem;
-  font-weight: 900;
+  color: var(--text-on-dark);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   white-space: nowrap;
 }
 

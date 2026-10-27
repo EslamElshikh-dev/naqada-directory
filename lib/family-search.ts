@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { prepareSearchQuery, rankSearchFields, type SearchRankingFields } from './search-ranking';
 import type { Family } from './types';
 
@@ -25,7 +26,7 @@ export function buildFamilySearchPages(records: Family[]): FamilySearchPage[] {
   const localityPages: FamilySearchPage[] = [...byLocality].map(([locality, group]) => ({
     kind: 'page',
     title: `عائلات ${locality}`,
-    subtitle: `${group.length.toLocaleString('ar-EG')} سجلًا موثقًا · قائمة جزئية بالمصادر وحدود الدليل`,
+    subtitle: `${group.length.toLocaleString(NUMBER_LOCALE)} سجلًا موثقًا · قائمة جزئية بالمصادر وحدود الدليل`,
     href: `/families?${new URLSearchParams({ locality })}`,
     badge: 'سجل العائلات',
     fields: {
@@ -37,7 +38,7 @@ export function buildFamilySearchPages(records: Family[]): FamilySearchPage[] {
   const count = [...byLocality.values()].reduce((sum, group) => sum + group.length, 0);
   return [{
     kind: 'page', title: 'عائلات نقادة',
-    subtitle: `${count.toLocaleString('ar-EG')} سجلًا منشورًا مع الموضع والدليل · سجل جزئي`,
+    subtitle: `${count.toLocaleString(NUMBER_LOCALE)} سجلًا منشورًا مع الموضع والدليل · سجل جزئي`,
     href: '/families', badge: 'سجل العائلات',
     fields: { title: 'عائلات نقادة', auxiliary: 'عايلات نقاده عائلات نقادة عايلات نجوع قرى اسر' },
   }, ...localityPages];

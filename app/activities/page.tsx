@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { UtilityPageHeader } from '@/components/utility-page-header';
@@ -43,8 +44,8 @@ export default async function ActivitiesPage() {
         title={<>دليل خدمات وأنشطة <em>نقادة</em></>}
         description="صيدليات وأطباء ومدارس ومحلات؛ افتح الخدمة للاطلاع على الأنشطة وأرقامها ومواقعها المتاحة."
         metrics={[
-          { value: activityLandings.length.toLocaleString('ar-EG'), label: 'نوع خدمة' },
-          { value: totalBusinesses.toLocaleString('ar-EG'), label: 'نشاط مرتبط' },
+          { value: activityLandings.length.toLocaleString(NUMBER_LOCALE), label: 'نوع خدمة' },
+          { value: totalBusinesses.toLocaleString(NUMBER_LOCALE), label: 'نشاط مرتبط' },
         ]} />
       <section className="shell page-section">
         <div className="category-grid">
@@ -56,7 +57,7 @@ export default async function ActivitiesPage() {
                 <CategoryCover category={activity.visualCategory} index={index} />
                 <h3>{activity.name}</h3>
                 <p>{activity.description}</p>
-                <div className="category-card__footer"><b>{items.length.toLocaleString('ar-EG')} اسمًا · {localityCount.toLocaleString('ar-EG')} موضعًا</b><span>عرض الأسماء ←</span></div>
+                <div className="category-card__footer"><b>{items.length.toLocaleString(NUMBER_LOCALE)} اسمًا · {localityCount.toLocaleString(NUMBER_LOCALE)} موضعًا</b><span>عرض الأسماء ←</span></div>
               </Link>
             );
           })}

@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
@@ -99,10 +100,10 @@ export default async function CoveragePage() {
           <h1>أين يغطي الدليل جيدًا… وكيف تصل إلى <em>الخدمة داخل المكان؟</em></h1>
           <p>هذه الصفحة تقيس ما هو ممثل داخل قاعدة دليل نقادة فقط، وتفتح مسارات مباشرة للخدمات التي لديها تغطية كافية. غياب فئة عن موضع هنا لا يعني أنها غير موجودة على أرض الواقع؛ بل يعني أننا لم ننشر لها سجلًا مؤكدًا بعد.</p>
           <div className="hero-inline-stats">
-            <span><b>{businesses.length.toLocaleString('ar-EG')}</b> سجلًا منشورًا</span>
-            <span><b>{active.length.toLocaleString('ar-EG')}</b> موضعًا به بيانات</span>
-            <span><b>{canonicalRouteCount.toLocaleString('ar-EG')}</b> مسار خدمة ثابتًا</span>
-            <span><b>{mapLinked.toLocaleString('ar-EG')}</b> سجلًا له رابط خريطة</span>
+            <span><b>{businesses.length.toLocaleString(NUMBER_LOCALE)}</b> سجلًا منشورًا</span>
+            <span><b>{active.length.toLocaleString(NUMBER_LOCALE)}</b> موضعًا به بيانات</span>
+            <span><b>{canonicalRouteCount.toLocaleString(NUMBER_LOCALE)}</b> مسار خدمة ثابتًا</span>
+            <span><b>{mapLinked.toLocaleString(NUMBER_LOCALE)}</b> سجلًا له رابط خريطة</span>
           </div>
         </div>
       </section>
@@ -114,20 +115,20 @@ export default async function CoveragePage() {
               <div>
                 <span className="eyebrow eyebrow--dark">مسارات مباشرة</span>
                 <h2>الخدمة والمكان في صفحة ثابتة واحدة</h2>
-                <p>نُظهر هنا فقط التركيبات التي لديها {MIN_LOCAL_CATEGORY_RESULTS.toLocaleString('ar-EG')} سجلات منشورة على الأقل، لذلك كل رابط يقود إلى صفحة محلية ثابتة بدل رابط بحث مؤقت.</p>
+                <p>نُظهر هنا فقط التركيبات التي لديها {MIN_LOCAL_CATEGORY_RESULTS.toLocaleString(NUMBER_LOCALE)} سجلات منشورة على الأقل، لذلك كل رابط يقود إلى صفحة محلية ثابتة بدل رابط بحث مؤقت.</p>
               </div>
               <Link href="/directory" className="text-link">استكشف كل الخدمات ←</Link>
             </div>
             <div className="principles-grid">
               {crawlable.slice(0, 24).map(({ locality, items, routes }) => (
                 <article key={locality.slug} style={{ minWidth: 0 }}>
-                  <b>{routes.length.toLocaleString('ar-EG')}</b>
+                  <b>{routes.length.toLocaleString(NUMBER_LOCALE)}</b>
                   <h3><Link href={`/villages/${locality.slug}`}>{locality.name}</Link></h3>
-                  <p>{items.length.toLocaleString('ar-EG')} سجلًا منشورًا · {routes.length.toLocaleString('ar-EG')} مسار خدمة ثابتًا.</p>
+                  <p>{items.length.toLocaleString(NUMBER_LOCALE)} سجلًا منشورًا · {routes.length.toLocaleString(NUMBER_LOCALE)} مسار خدمة ثابتًا.</p>
                   <div className="category-pills" aria-label={`مسارات خدمات ثابتة في ${locality.name}`}>
                     {routes.slice(0, 6).map((route) => (
                       <Link key={route.category.slug} href={route.href}>
-                        {route.category.shortLabel} · {route.count.toLocaleString('ar-EG')}
+                        {route.category.shortLabel} · {route.count.toLocaleString(NUMBER_LOCALE)}
                       </Link>
                     ))}
                   </div>
@@ -141,7 +142,7 @@ export default async function CoveragePage() {
       <section className="section shell">
         <div className="section-heading"><div><span className="eyebrow eyebrow--dark">أقوى التغطيات الحالية</span><h2>المواضع الأكثر تمثيلًا في قاعدة الدليل</h2><p>الترتيب هنا حسب عدد السجلات المنشورة، وليس حسب حجم القرية أو عدد الأنشطة الحقيقي.</p></div><Link href="/villages" className="text-link">كل القرى والنجوع ←</Link></div>
         <div className="place-list">
-          {strongest.map((item, index) => <Link key={item.locality.slug} href={`/villages/${item.locality.slug}`}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{item.locality.name}</strong><small>{item.represented.size.toLocaleString('ar-EG')} قسمًا ممثلًا</small></div><b>{item.items.length.toLocaleString('ar-EG')} سجلًا</b></Link>)}
+          {strongest.map((item, index) => <Link key={item.locality.slug} href={`/villages/${item.locality.slug}`}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{item.locality.name}</strong><small>{item.represented.size.toLocaleString(NUMBER_LOCALE)} قسمًا ممثلًا</small></div><b>{item.items.length.toLocaleString(NUMBER_LOCALE)} سجلًا</b></Link>)}
         </div>
       </section>
 
@@ -151,9 +152,9 @@ export default async function CoveragePage() {
           <div className="principles-grid">
             {needsCoverage.map(({ locality, items, missing }) => (
               <article key={locality.slug} style={{ minWidth: 0 }}>
-                <b>{items.length.toLocaleString('ar-EG')}</b>
+                <b>{items.length.toLocaleString(NUMBER_LOCALE)}</b>
                 <h3>{locality.name}</h3>
-                <p>{items.length ? `يوجد ${items.length.toLocaleString('ar-EG')} سجلًا منشورًا حاليًا.` : 'لا توجد أنشطة منشورة لهذا الموضع حتى الآن.'}</p>
+                <p>{items.length ? `يوجد ${items.length.toLocaleString(NUMBER_LOCALE)} سجلًا منشورًا حاليًا.` : 'لا توجد أنشطة منشورة لهذا الموضع حتى الآن.'}</p>
                 <div className="category-pills" aria-label={`فئات تحتاج استكمالًا في ${locality.name}`}>
                   {missing.slice(0, 4).map((category) => <Link key={category.slug} href={`/contribute?type=missing&name=${encodeURIComponent(category.shortLabel)}&category=${encodeURIComponent(category.name)}&locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel}</Link>)}
                 </div>

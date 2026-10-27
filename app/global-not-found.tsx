@@ -1,14 +1,8 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import { BODY_FONT, bodyFontVariable, displayFont } from '@/app/fonts';
 import Link from 'next/link';
-import './globals.css';
+import './site-styles.css';
 
-const notoKufi = localFont({
-  src: './fonts/noto-kufi-arabic.woff2',
-  display: 'swap',
-  variable: '--font-arabic',
-  weight: '100 900',
-});
 
 export const metadata: Metadata = {
   title: { absolute: 'الصفحة غير موجودة | دليل نقادة' },
@@ -19,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function GlobalNotFound() {
   return (
-    <html lang="ar-EG" dir="rtl" className={notoKufi.variable}>
+    <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFont.variable + ' ' + bodyFontVariable}>
       <body>
         <main id="main-content" className="not-found shell">
           <span>خطأ 404</span>

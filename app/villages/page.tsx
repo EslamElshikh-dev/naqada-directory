@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { LocalityExplorer } from '@/components/locality-explorer';
 import { UtilityPageHeader } from '@/components/utility-page-header';
@@ -43,9 +44,9 @@ export default async function VillagesPage() {
         title={<>دليل قرى ونجوع <em>نقادة</em></>}
         description="من دليل بشلاو ودليل الأوسط قمولا إلى بقية قرى نقادة؛ اختَر بلدك للوصول إلى خدماتها ومعلوماتها."
         metrics={[
-          { value: places.length.toLocaleString('ar-EG'), label: 'موضع' },
-          { value: kinds.toLocaleString('ar-EG'), label: 'أنواع جغرافية' },
-          { value: catalog.businesses.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
+          { value: places.length.toLocaleString(NUMBER_LOCALE), label: 'موضع' },
+          { value: kinds.toLocaleString(NUMBER_LOCALE), label: 'أنواع جغرافية' },
+          { value: catalog.businesses.length.toLocaleString(NUMBER_LOCALE), label: 'نشاط منشور' },
         ]} />
       <section id="places" className="shell page-section">
         <LocalityExplorer localities={places} />

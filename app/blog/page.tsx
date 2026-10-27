@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ function editorialImage(asset: string) {
 function formatArticleDate(date: string) {
   const [year, month, day] = date.split('-').map(Number);
   if (!year || !month || !day) return date;
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -106,7 +107,7 @@ export default async function BlogPage() {
           <h1>نقادة كما يعرفها أهلها… <em>مش كما تختصرها الخريطة.</em></h1>
           <p>هذه مساحة المقالات التحريرية في دليل نقادة: موضوعات عن الناس والذاكرة والمدارس والدواوين والمعالم والحياة اليومية. أمّا البحث عن قرية أو خدمة بعينها فله صفحات دليل مستقلة حتى لا تتنافس نيات البحث مع بعضها.</p>
           <div className={styles.stats}>
-            <span><b>{totalPosts.toLocaleString('ar-EG')}</b> مقالات تحريرية منشورة</span>
+            <span><b>{totalPosts.toLocaleString(NUMBER_LOCALE)}</b> مقالات تحريرية منشورة</span>
             <span><b>{villageArticleAuthor.name}</b> الكاتب والمحرر</span>
             <span><Link href="/villages">دليل القرى والنجوع ←</Link></span>
           </div>

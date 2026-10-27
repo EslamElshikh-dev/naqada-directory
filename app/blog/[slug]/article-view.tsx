@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { EditorialPost } from '@/lib/editorial-posts';
@@ -18,7 +19,7 @@ function localImageUrl(asset: string) {
 function formatArticleDate(date: string) {
   const [year, month, day] = date.split('-').map(Number);
   if (!year || !month || !day) return date;
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

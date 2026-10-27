@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ListingCard } from '@/components/listing-card';
@@ -58,9 +59,9 @@ export default function UpdatesPage() {
           <h1>آخر تحديثات <em>دليل نقادة</em></h1>
           <p>صفحة تجمع السجلات التي تمت مراجعتها مؤخرًا، حتى تعرف ما الذي أضيف أو أُعيد التحقق منه بدل الاعتماد على قائمة ثابتة بلا تاريخ.</p>
           <div className="hero-inline-stats">
-            <span><b>{recent.length.toLocaleString('ar-EG')}</b> سجلًا حديث المراجعة</span>
-            <span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span>
-            <span><b>{categoryCount.toLocaleString('ar-EG')}</b> قسمًا</span>
+            <span><b>{recent.length.toLocaleString(NUMBER_LOCALE)}</b> سجلًا حديث المراجعة</span>
+            <span><b>{localityCount.toLocaleString(NUMBER_LOCALE)}</b> موضعًا</span>
+            <span><b>{categoryCount.toLocaleString(NUMBER_LOCALE)}</b> قسمًا</span>
           </div>
         </div>
       </section>

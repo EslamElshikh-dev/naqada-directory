@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { canonicalLocalityName } from '@/lib/data';
 import type { DirectoryItem } from '@/lib/types';
@@ -43,7 +44,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
         <p className="listing-card__location"><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
         <div className="listing-card__meta">
           <Link prefetch={false} href={localityHref}>{locality}</Link>
-          {typeof listing.rating === 'number' && <span className="rating" title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString('ar-EG')}{listing.reviews ? ` (${listing.reviews.toLocaleString('ar-EG')})` : ''}</span>}
+          {typeof listing.rating === 'number' && <span className="rating" title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString(NUMBER_LOCALE)}{listing.reviews ? ` (${listing.reviews.toLocaleString(NUMBER_LOCALE)})` : ''}</span>}
           <Link prefetch={false} href="/about" title={verificationLabel(listing.verification)}>مصدر البيانات</Link>
         </div>
       </div>

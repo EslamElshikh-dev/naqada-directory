@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { businesses, canonicalLocalityName, categories, officialLocalities } from '@/lib/data';
 import { searchSite } from '@/lib/site-search';
 import { isFamilySearchQuery } from '@/lib/family-search';
@@ -170,10 +171,10 @@ function buildSearchPriority(item: MissedSearch): GrowthPriority {
   const pairGap = pairCount === null ? 0 : pairCount === 0 ? 22 : pairCount === 1 ? 14 : pairCount === 2 ? 8 : 0;
   const specificity = locality && category ? 8 : locality || category ? 4 : 0;
   const score = Math.min(100, demand + pairGap + (locality ? localityWeakness(localityCount) : 0) + specificity);
-  const signals = [`${item.count.toLocaleString('ar-EG')} حدث بحث دون نتيجة؛ العدد لا يمثل أشخاصًا مختلفين`];
-  if (item.variants && item.variants.length > 1) signals.push(`${item.variants.length.toLocaleString('ar-EG')} صياغات لنفس الطلب: ${item.variants.slice(0, 3).join('، ')}`);
-  if (locality) signals.push(`${localityCount.toLocaleString('ar-EG')} سجلًا منشورًا في ${locality.name}`);
-  if (category && pairCount !== null) signals.push(`${pairCount.toLocaleString('ar-EG')} من فئة ${category.shortLabel} داخل الموضع`);
+  const signals = [`${item.count.toLocaleString(NUMBER_LOCALE)} حدث بحث دون نتيجة؛ العدد لا يمثل أشخاصًا مختلفين`];
+  if (item.variants && item.variants.length > 1) signals.push(`${item.variants.length.toLocaleString(NUMBER_LOCALE)} صياغات لنفس الطلب: ${item.variants.slice(0, 3).join('، ')}`);
+  if (locality) signals.push(`${localityCount.toLocaleString(NUMBER_LOCALE)} سجلًا منشورًا في ${locality.name}`);
+  if (category && pairCount !== null) signals.push(`${pairCount.toLocaleString(NUMBER_LOCALE)} من فئة ${category.shortLabel} داخل الموضع`);
   if (!locality && !category) signals.push('نية بحث حقيقية تحتاج تصنيفًا يدويًا قبل الجمع');
   const research = getSearchGapResearch(query);
   if (research) signals.push(`المطلوب للتحقق: ${research.needed}`);
@@ -229,8 +230,8 @@ function buildCoveragePriorities(): GrowthPriority[] {
         score,
         priority: band(score),
         signals: [
-          `${locality.count.toLocaleString('ar-EG')} سجلًا فقط في الموضع`,
-          `${pairCount.toLocaleString('ar-EG')} من فئة ${category.shortLabel}`,
+          `${locality.count.toLocaleString(NUMBER_LOCALE)} سجلًا فقط في الموضع`,
+          `${pairCount.toLocaleString(NUMBER_LOCALE)} من فئة ${category.shortLabel}`,
           'فرصة تغطية استباقية بلا طلب بحث مسجل',
         ],
         actionHref: contributionHref(`${category.shortLabel} في ${locality.name}`, category.name, locality.name),
