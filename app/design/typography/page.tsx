@@ -8,7 +8,7 @@ import styles from './typography.module.css';
 export const metadata: Metadata = {
   title: 'مقارنة خطوط الدليل', robots: { index: false, follow: false }, alternates: { canonical: null },
 };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 export default async function TypographyPage() {
   const { businesses } = await getPublicBusinessCatalog();
   const listing = businesses.find(item => item.name.includes('مستشفى النيل')) || businesses[0];

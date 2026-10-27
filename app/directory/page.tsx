@@ -101,7 +101,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
       </section>
       <section className="shell directory-activity-cta" aria-label="تصفح أنواع الأنشطة">
         <div><span className="eyebrow eyebrow--dark">تصفّح حسب نوع الخدمة</span><h2>تفضّل تختار القسم؟</h2><p>صيدليات وأطباء ومدارس ومطاعم وبقية الخدمات المحلية.</p></div>
-        <Link href="/activities" className="button button--primary">كل أنواع الخدمات</Link>
+        <Link prefetch={false} href="/activities" className="button button--primary">كل أنواع الخدمات</Link>
       </section>
     </main>
   );

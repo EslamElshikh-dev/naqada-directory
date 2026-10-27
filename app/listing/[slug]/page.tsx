@@ -1,5 +1,5 @@
-import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
 import '@/app/route-styles/listing-slug.css';
+import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -32,7 +32,6 @@ function resolveSeoKeywordSearch(keyword: string) {
   return { searchTerm, isLocal };
 }
 
-export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -143,28 +142,28 @@ export default async function ListingPage({ params }: Props) {
   };
   return (
     <main id="main-content" className={`page-main ${styles.page}`}>
-      <section className="detail-hero">
-        <div className="shell detail-hero__grid">
+      <section className={styles.hero}>
+        <div className={`shell ${styles.heroGrid}`}>
           <div>
-            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/directory">الدليل</Link><span>/</span><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
-            <div className="detail-hero__badges"><span>{listing.subcategory || listing.category}</span><Link prefetch={false} href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
+            <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/directory">الدليل</Link><span>/</span><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
+            <div className={styles.badges}><span>{listing.subcategory || listing.category}</span><Link prefetch={false} href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
             <h1>{listing.name}</h1>
             <p>{listing.address || `${locality}، مركز نقادة، محافظة قنا`}</p>
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
           </div>
-          <aside className="detail-hero__summary">
+          <aside className={styles.summary}>
             {ownerPhotoPaths[0] ? <div className={styles.ownerMedia}><Image src={`/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}`} alt={`صورة ${listing.name}`} fill sizes="(max-width: 800px) 95vw, 440px" /></div> : <BusinessMedia businessId={listing.id} variant="detail" fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
             <span>ملخص التحقق</span><strong>{verificationLabel(listing.verification)}</strong><p>آخر مراجعة: {formatDate(listing.checked)}</p>
           </aside>
         </div>
       </section>
 
-      <section className="shell detail-layout">
-        <article className="detail-card">
-          <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">تفاصيل المكان</span><h2>المعلومات المتاحة</h2></div>
-          <div className="detail-actions"><Link className="button button--ghost" href={'/claim/' + encodeURIComponent(listing.slug) + '/'}>ده نشاطك؟</Link>
-            {!phone && <Link className="button button--ghost" href={correctionUrl + '&details=' + encodeURIComponent('رقم الهاتف المقترح: ')}>تعرف رقمه؟</Link>}</div>
-          <div className="detail-grid">
+      <section className={`shell ${styles.layout}`}>
+        <article className={styles.card}>
+          <div className={styles.cardHeading}><span className={styles.eyebrow}>تفاصيل المكان</span><h2>المعلومات المتاحة</h2></div>
+          <div className="detail-actions"><Link prefetch={false} className="button button--ghost" href={'/claim/' + encodeURIComponent(listing.slug) + '/'}>ده نشاطك؟</Link>
+            {!phone && <Link prefetch={false} className="button button--ghost" href={correctionUrl + '&details=' + encodeURIComponent('رقم الهاتف المقترح: ')}>تعرف رقمه؟</Link>}</div>
+          <div className={styles.grid}>
             <div><span>التصنيف</span><strong>{listing.category}</strong></div>
             <div><span>نوع الخدمة</span><strong>{listing.subcategory || 'خدمة محلية'}</strong></div>
             <div><span>الموضع</span><strong>{locality}{parentLocality ? ` — ${parentLocality}` : ''}</strong></div>
@@ -174,8 +173,8 @@ export default async function ListingPage({ params }: Props) {
             <div><span>التقييم لدى المصدر</span><strong>{typeof listing.rating === 'number' ? `${listing.rating.toLocaleString(NUMBER_LOCALE)} من 5${listing.reviews ? ` · ${listing.reviews.toLocaleString(NUMBER_LOCALE)} مراجعة` : ''}` : 'غير متاح'}</strong></div>
             <div><span>آخر مراجعة للبيانات</span><strong>{formatDate(listing.checked)}</strong></div>
           </div>
-          <section className="listing-description" aria-labelledby="listing-description-title">
-            <span className="eyebrow eyebrow--dark">عن النشاط</span>
+          <section className={styles.description} aria-labelledby="listing-description-title">
+            <span className={styles.eyebrow}>عن النشاط</span>
             <h2 id="listing-description-title">{listing.name}</h2>
             <p>{summary}</p>
           </section>
@@ -184,7 +183,7 @@ export default async function ListingPage({ params }: Props) {
           <section className={styles.trustSection} aria-labelledby="listing-completeness-title">
             <div className={styles.trustHeading}>
               <div>
-                <span className="eyebrow eyebrow--dark">شفافية السجل</span>
+                <span className={styles.eyebrow}>شفافية السجل</span>
                 <h2 id="listing-completeness-title">اكتمال البيانات المنشورة</h2>
               </div>
               <div className={styles.score}><strong>{completenessPercent.toLocaleString(NUMBER_LOCALE)}٪</strong><span>{availableSignals.toLocaleString(NUMBER_LOCALE)} من {completenessSignals.length.toLocaleString(NUMBER_LOCALE)} عناصر أساسية</span></div>
@@ -198,10 +197,10 @@ export default async function ListingPage({ params }: Props) {
             <p className={styles.missingNote}>{missingLabels.length ? `غير منشور حتى الآن: ${missingLabels.join('، ')}. لا يضيف الدليل بيانات غير مؤكدة فقط لرفع نسبة الاكتمال.` : 'العناصر الأساسية الخمسة متاحة في السجل الحالي، مع بقاء ضرورة التحقق من أي تغيّر قبل الزيارة.'}</p>
           </section>
 
-          <div className="source-panel"><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p><div className={styles.sourceLinks}>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}{recordReferences.length ? recordReferences.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>) : safeRecordSourceUrl && <a href={safeRecordSourceUrl} target="_blank" rel="noopener noreferrer">المصدر المنشور للبيانات ↗</a>}{safeMediaSourceUrl && <a href={safeMediaSourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media?.sourceName} ↗</a>}</div></div>
+          <div className={styles.source}><span>مصدر الوصول</span><strong>{listing.placeId ? 'سجل مرتبط بمعرّف مكان على خرائط Google' : 'سجل محلي منشور'}</strong><p>{listing.notes || 'تم تنظيم البيانات من المصدر المتاح، وقد تتغير أوقات العمل أو وسائل الاتصال.'}</p><div className={styles.sourceLinks}>{safeMapsUrl && <a href={safeMapsUrl} target="_blank" rel="noreferrer">مراجعة المصدر على الخريطة ↗</a>}{recordReferences.length ? recordReferences.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>) : safeRecordSourceUrl && <a href={safeRecordSourceUrl} target="_blank" rel="noopener noreferrer">المصدر المنشور للبيانات ↗</a>}{safeMediaSourceUrl && <a href={safeMediaSourceUrl} target="_blank" rel="noreferrer">مصدر الصورة: {media?.sourceName} ↗</a>}</div></div>
 
           <section className={styles.faqSection} aria-labelledby="listing-faq-title">
-            <span className="eyebrow eyebrow--dark">أسئلة مباشرة</span>
+            <span className={styles.eyebrow}>أسئلة مباشرة</span>
             <h2 id="listing-faq-title">أسئلة شائعة عن {listing.name}</h2>
             <p className={styles.faqIntro}>الإجابات التالية مبنية على البيانات المنشورة في السجل نفسه، وتوضح بوضوح ما هو متاح وما هو غير منشور.</p>
             <div className={styles.faqList}>
@@ -211,20 +210,20 @@ export default async function ListingPage({ params }: Props) {
 
           <ListingRating listingSlug={listing.slug} listingName={listing.name} />
           <ShareActions title={listing.name} locality={locality} listingSlug={listing.slug} />
-          <div className="update-panel" id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link prefetch={false} href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
+          <div className={styles.update} id="update-data"><div><span>هل وجدت معلومة تحتاج تصحيحًا؟</span><p>أرسل طلبًا منظمًا مع مصدر عام داعم لتسريع المراجعة.</p></div><Link prefetch={false} href={correctionUrl} className="button button--ghost">تصحيح البيانات</Link></div>
         </article>
-        <aside className="detail-aside">
-          <span className="eyebrow eyebrow--dark">وصول سريع</span><h2>خدمات مرتبطة</h2>
-          <div className="detail-aside__links"><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link prefetch={false} href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link prefetch={false} href="/updates">آخر تحديثات الدليل</Link><Link prefetch={false} href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link prefetch={false} href="/directory">البحث في كل الدليل</Link></div>
-          <p className="detail-aside__note">الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
+        <aside className={styles.aside}>
+          <span className={styles.eyebrow}>وصول سريع</span><h2>خدمات مرتبطة</h2>
+          <div className={styles.asideLinks}><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>كل {listing.category}</Link><Link prefetch={false} href={`/villages/${slugify(locality)}`}>دليل {locality}</Link><Link prefetch={false} href="/updates">آخر تحديثات الدليل</Link><Link prefetch={false} href="/contribute">أضف نشاطًا أو صحح بيانات</Link><Link prefetch={false} href="/directory">البحث في كل الدليل</Link></div>
+          <p className={styles.asideNote}>الدليل معلوماتي مستقل. تحقّق من السعر والمواعيد وتوفر الخدمة مباشرة مع مقدمها.</p>
         </aside>
       </section>
 
-      {related.length > 0 && <section className="section section--muted"><div className="shell"><div className="section-heading"><div><span className="eyebrow eyebrow--dark">قد يفيدك أيضًا</span><h2>خدمات وأنشطة من المجال نفسه</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
-      {listing.seoKeywords?.length ? <section className="listing-keywords" aria-labelledby="listing-keywords-title"><div className="shell">
-        <span className="eyebrow eyebrow--dark">استكشف خدمات مشابهة</span>
+      {related.length > 0 && <section className={styles.relatedSection}><div className="shell"><div className="section-heading"><div><span className={styles.eyebrow}>قد يفيدك أيضًا</span><h2>خدمات وأنشطة من المجال نفسه</h2></div></div><div className="listing-grid">{related.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div></div></section>}
+      {listing.seoKeywords?.length ? <section className={styles.keywords} aria-labelledby="listing-keywords-title"><div className="shell">
+        <span className={styles.eyebrow}>استكشف خدمات مشابهة</span>
         <h2 id="listing-keywords-title">كلمات مرتبطة بالنشاط</h2>
-        <div className="listing-keywords__links">
+        <div className={styles.keywordLinks}>
           {listing.seoKeywords.map((keyword) => {
             const { searchTerm, isLocal } = resolveSeoKeywordSearch(keyword);
             const href = `/directory?q=${encodeURIComponent(searchTerm)}${isLocal ? `&locality=${encodeURIComponent(locality)}` : ''}`;

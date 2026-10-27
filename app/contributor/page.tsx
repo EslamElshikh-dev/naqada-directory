@@ -44,7 +44,7 @@ export default async function ContributorDashboard() {
   if (!session) redirect('/account/login?next=/contributor');
   const access = await getContributorAccess(session.accessToken, session.user.id).catch(() => null);
   if (!access) {
-    return <main id="main-content" className={styles.page}><div className="shell" style={{ padding: '48px 0' }}><section className={styles.section}><span>منطقة المساهمين</span><h1>الحساب غير مربوط بصلاحية مساهم</h1><p>هذا الحساب عضو عادي في دليل نقادة حاليًا.</p><Link href="/account">العودة إلى حسابي ←</Link></section></div></main>;
+    return <main id="main-content" className={styles.page}><div className="shell" style={{ padding: '48px 0' }}><section className={styles.section}><span>منطقة المساهمين</span><h1>الحساب غير مربوط بصلاحية مساهم</h1><p>هذا الحساب عضو عادي في دليل نقادة حاليًا.</p><Link prefetch={false} href="/account">العودة إلى حسابي ←</Link></section></div></main>;
   }
 
   const activity = await getContributorActivity(session.accessToken, session.user.id).catch(() => ({ total: 0, pending: 0, reviewing: 0, approved: 0, published: 0, rejected: 0, recent: [] }));
@@ -84,11 +84,11 @@ export default async function ContributorDashboard() {
       <div className={`shell ${styles.wrap}`}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}><div><span>إجراءات سريعة</span><h2>ابدأ من هنا</h2><p>أهم المسارات التي تحتاجها مرتبة في مكان واحد.</p></div></div>
-          <div className={styles.actionGrid}>{actions.map((action) => <Link key={action.href} href={action.href} className={styles.action}><b>{action.icon}</b><div><strong>{action.title}</strong><small>{action.note}</small></div></Link>)}</div>
+          <div className={styles.actionGrid}>{actions.map((action) => <Link prefetch={false} key={action.href} href={action.href} className={styles.action}><b>{action.icon}</b><div><strong>{action.title}</strong><small>{action.note}</small></div></Link>)}</div>
         </section>
 
         <section className={styles.section}>
-          <div className={styles.sectionHeader}><div><span>إحصائيات المحتوى</span><h2>أثر مساهمتك داخل دليل نقادة</h2><p>الأرقام هنا تحسب الطبقات المرجعية المنسوبة إلى المواد التي قدمتها للدليل.</p></div><Link href={`/contributors/${access.slug}`}>فتح الملف العام ←</Link></div>
+          <div className={styles.sectionHeader}><div><span>إحصائيات المحتوى</span><h2>أثر مساهمتك داخل دليل نقادة</h2><p>الأرقام هنا تحسب الطبقات المرجعية المنسوبة إلى المواد التي قدمتها للدليل.</p></div><Link prefetch={false} href={`/contributors/${access.slug}`}>فتح الملف العام ←</Link></div>
           <div className={styles.metricGrid}>
             <div className={styles.metric}><strong>{knowledgePlaces.length.toLocaleString(NUMBER_LOCALE)}</strong><span>مكانًا وموضعًا</span></div>
             <div className={styles.metric}><strong>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)}</strong><span>شخصية وعلمًا</span></div>
@@ -101,7 +101,7 @@ export default async function ContributorDashboard() {
 
         <div className={styles.twoCol}>
           <section className={styles.section}>
-            <div className={styles.sectionHeader}><div><span>مساهمات الحساب</span><h2>حالة المقترحات</h2><p>أي مقترح جديد ترسله وأنت مسجل الدخول يُنسب لحسابك تلقائيًا.</p></div><Link href="/contribute">إضافة مساهمة ←</Link></div>
+            <div className={styles.sectionHeader}><div><span>مساهمات الحساب</span><h2>حالة المقترحات</h2><p>أي مقترح جديد ترسله وأنت مسجل الدخول يُنسب لحسابك تلقائيًا.</p></div><Link prefetch={false} href="/contribute">إضافة مساهمة ←</Link></div>
             <div className={styles.statusGrid}>
               <div className={styles.statusCard}><b>{activity.pending.toLocaleString(NUMBER_LOCALE)}</b><span>بانتظار المراجعة</span></div>
               <div className={styles.statusCard}><b>{activity.reviewing.toLocaleString(NUMBER_LOCALE)}</b><span>قيد المراجعة</span></div>

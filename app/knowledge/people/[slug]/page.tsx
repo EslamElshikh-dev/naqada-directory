@@ -32,7 +32,7 @@ export default async function PersonPage({params}:Props){
   return <main id="main-content" className="page-main">
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="people" /></div>
     <div className={`shell ${styles.wrap} ${styles.detail}`}>
-      <Link className={styles.back} href="/knowledge/people">← أعلام نقادة</Link>
+      <Link prefetch={false} className={styles.back} href="/knowledge/people">← أعلام نقادة</Link>
       <article className={styles.detailCard}>
         <span className={styles.eyebrow}>{person.group} · مؤكد من المصدر</span>
         <h1>{person.name}</h1>

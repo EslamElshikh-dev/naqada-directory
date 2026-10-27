@@ -1,6 +1,6 @@
 
 .eyebrow { display: inline-block; font-size: var(--fs-xs); font-weight: 700; letter-spacing: normal; margin-bottom: 11px; }
-.button--light { background: #fff; color: var(--text-strong); }
+.button--light { color: var(--text-strong); }
 .button--outline-light { border-color: rgba(255,255,255,.35); background: transparent; color: var(--text-on-dark); }
 
 .breadcrumbs { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 25px; font-size: var(--fs-xs); }
@@ -80,7 +80,9 @@
   .landmark-hero__content, .landmarks-intro, .landmark-route__grid { grid-template-columns: 1fr; }
   .landmark-hero__content aside { max-width: 570px; }
   .landmark-gallery { grid-template-columns: 1fr 1fr; }
-  .landmark-card, .landmark-card--featured, .landmark-card:nth-child(4) { grid-column: auto; grid-row: auto; grid-template-columns: 1fr; grid-template-rows: 280px auto; }
+  .landmark-card { grid-column: auto; grid-row: auto; grid-template-columns: 1fr; grid-template-rows: 280px auto; }
+  .landmark-card--featured { grid-row: auto; grid-template-columns: 1fr; }
+  .landmark-card:nth-child(4) { grid-column: auto; grid-row: auto; grid-template-columns: 1fr; grid-template-rows: 280px auto; }
   .landmark-card--featured { grid-column: 1 / -1; grid-template-rows: 420px auto; }
 }
 
@@ -127,13 +129,9 @@
 @media (prefers-reduced-motion: reduce) {
   .landmark-hero__image { transform: none; }
 }
-.section { padding-block: 72px; }
 @media (max-width: 760px) {
   .section { padding-block: 42px !important; }
 }
-
-.section { padding-block: clamp(58px, 6vw, 82px); }
-.section { padding-block: clamp(56px, 6vw, 78px); }
 .detail-actions .button--light { background: #fffaf3; color: var(--text-strong); }
 .detail-actions .button--outline-light {
   border-color: rgba(255,255,255,.18);
@@ -176,11 +174,6 @@
   body.mobile-editorial .section { padding-block: 36px !important; }
   body.mobile-editorial .breadcrumbs { font-size: var(--fs-xs) !important; gap: 5px 9px; flex-wrap: wrap; white-space: normal; }
   body.mobile-editorial .breadcrumbs a { min-height: 36px; display: inline-flex; align-items: center; }
-}
-@media (max-width: 700px) {
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
 }
 body.encyclopedia-ui nav.breadcrumbs {
   width: fit-content;

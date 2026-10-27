@@ -55,7 +55,7 @@ export default async function ActivitiesPage() {
             const items = getBusinessesForActivity(activity, catalog.businesses);
             const localityCount = new Set(items.map((item) => canonicalLocalityName(item.locality))).size;
             return (
-              <Link key={activity.slug} href={`/activities/${activity.slug}`} className="category-card">
+              <Link prefetch={false} key={activity.slug} href={`/activities/${activity.slug}`} className="category-card">
                 <CategoryCover category={activity.visualCategory} index={index} media={getActivityMedia(activity)} />
                 <h3>{activity.name}</h3>
                 <p>{activity.description}</p>

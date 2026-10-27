@@ -32,7 +32,7 @@ export default function KnowledgePage() {
     </div></section>
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="overview" /></div>
     <div className={`shell ${styles.wrap}`}>
-      <section className={styles.attribution}><div className={styles.seal}>أد</div><div><h2>المؤلف والمصادر</h2><p>{primaryKnowledgeContributor.attributionFull}. <Link href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المؤلف والمساهم ←</Link></p></div></section>
+      <section className={styles.attribution}><div className={styles.seal}>أد</div><div><h2>المؤلف والمصادر</h2><p>{primaryKnowledgeContributor.attributionFull}. <Link prefetch={false} href={`/contributors/${primaryKnowledgeContributor.slug}`}>عرض ملف المؤلف والمساهم ←</Link></p></div></section>
       <section className={v3Styles.hubGrid}>{sections.map((item) => <article className={`${styles.card} ${v3Styles.hubCard}`} key={item.href}><div className={v3Styles.visual}><Image src={item.image} alt={item.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 42vw" /></div><div><div className={styles.cardTop}><span className={styles.cardBadge}>{item.count.toLocaleString(NUMBER_LOCALE)} سجل</span></div><h2>{item.title}</h2><p>{item.text}</p></div><Link href={item.href} prefetch={false}>استكشف القسم ←</Link></article>)}</section>
       <section className={styles.section}><div className={styles.sectionHeader}><div><span>منهج النشر</span><h2>المعلومة لا تنفصل عن أصلها</h2></div></div><div className={styles.grid}>
         <article className={styles.card}><span className={styles.cardBadge}>01</span><h3>مصدر محدد</h3><p>كل معلومة منشورة مرتبطة بمصدرها ومؤلفها، مع احترام حقوق أصحاب المواد الأصلية.</p></article>

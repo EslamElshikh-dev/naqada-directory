@@ -207,6 +207,22 @@
   outline-offset: 3px;
 }
 
-.searchForm:global(.search-field) {
+.searchForm {
   grid-template-columns: 24px minmax(0, 1fr) auto;
 }
+
+/* Scoped browser controls; old global redesign layers do not apply here. */
+.explorer { min-width:0; }
+.tools { display:grid; grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr)); align-items:end; gap:12px; padding:16px; border:1px solid #dce5dc; border-radius:18px; background:#fffefb; }
+.searchField { display:grid; align-items:center; gap:8px; min-width:0; min-height:48px; padding:4px 8px; border:1px solid #d5e0d5; border-radius:12px; background:#fffefb; }
+.searchField>span { color:var(--text-muted); font-size:var(--fs-2xl); }
+.searchField input { width:100%; min-width:0; height:40px; padding:6px 0; border:0; outline:0; background:transparent; color:var(--text-strong); font-size:var(--fs-sm); }
+.searchField input::placeholder { color:var(--text-muted); opacity:1; }
+.selectField { display:grid; gap:4px; min-width:0; color:var(--text-muted); font-size:var(--fs-xs); }
+.selectField select { width:100%; min-width:0; min-height:48px; padding:8px 10px; border:1px solid #d5e0d5; border-radius:12px; background:#fffefb; color:var(--text-strong); font-size:var(--fs-sm); }
+.pills { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.pills button { display:inline-flex; flex:none; align-items:center; gap:6px; min-height:42px; padding:8px 13px; border:1px solid #d4dfd3; border-radius:24px; background:#fffefb; color:var(--text-body); font-size:var(--fs-sm); }
+.pills button.active { border-color:#1d5b4a; background:#1d5b4a; color:var(--text-on-dark); }
+.pills small { font-size:var(--fs-xs); }
+@media(max-width:1000px) { .tools { grid-template-columns:repeat(2,minmax(0,1fr)); } .searchField { grid-column:1/-1; } }
+@media(max-width:700px) { .tools { gap:10px; padding:12px; } .pills { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; } .pills::-webkit-scrollbar { display:none; } }

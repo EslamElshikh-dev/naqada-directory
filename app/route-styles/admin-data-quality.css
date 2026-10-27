@@ -1,11 +1,1 @@
 
-.page-main { min-height: 70vh; }
-.page-main { background: transparent; }
-
-.page-main h1, .page-main h2, .page-main h3 {
-  text-wrap: balance;
-}
-
-.page-main p {
-  text-wrap: pretty;
-}

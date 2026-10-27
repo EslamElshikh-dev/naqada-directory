@@ -9,7 +9,7 @@ function load(path, modules, globals = {}) {
   const code = ts.transpileModule(readFileSync(new URL(path, import.meta.url), 'utf8'), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
   }).outputText;
-  vm.runInNewContext(code, { module: record, exports: record.exports, require: name => name === 'react' ? { cache: fn => fn } : modules[name],
+  vm.runInNewContext(code, { module: record, exports: record.exports, require: name => name === 'react' ? { cache: fn => fn } : name === 'next/server' ? { connection: async () => {} } : modules[name],
     AbortSignal, Response, Date, console, ...globals });
   return record.exports;
 }
@@ -38,7 +38,7 @@ function cacheHarness() {
   return { nextCache, publicCache, registrations, invalidations };
 }
 
-test('moderation visibility is read on each request and authenticated reads remain separate', async () => {
+test('withdrawable public reads are fresh across requests and authenticated reads remain separate', async () => {
   const cache = cacheHarness();
   const calls = [];
   const moderator = load('../lib/auth/moderator.ts', {
@@ -79,28 +79,6 @@ test('a successful moderation decision expires old public rows without serving t
   assert.equal(cache.invalidations[0].profile.expire, 0);
 });
 
-test('an older owner read finishing after withdrawal cannot repopulate later requests', async () => {
-  const cache = cacheHarness();
-  let release;
-  let reads = 0;
-  const owners = load('../lib/owner-listings.ts', {
-    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
-    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
-    '@/lib/owner-listing-photo': {},
-  }, { fetch: async () => {
-    reads++;
-    if (reads === 1) return new Promise(resolve => { release = () => resolve(Response.json([{ id: 'withdrawn' }])); });
-    return Response.json([]);
-  } });
-  const oldRead = owners.getPublishedOwnerListing('withdrawn');
-  cache.publicCache.invalidatePublicContent();
-  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
-  release();
-  assert.equal((await oldRead).id, 'withdrawn');
-  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
-  assert.equal(reads, 3);
-});
-
 test('failed public reads are not cached as empty catalogs and can recover on the next request', async () => {
   const cache = cacheHarness();
   let fail = true;
@@ -121,7 +99,7 @@ test('failed public reads are not cached as empty catalogs and can recover on th
   assert.equal(calls, 3);
 });
 
-test('job visibility and expiry are checked again on the next request', async () => {
+test('job visibility and expiry are checked again on each request', async () => {
   const cache = cacheHarness();
   let now = Date.parse('2026-10-13T03:00:00Z');
   let calls = 0;
@@ -212,4 +190,26 @@ test('owner permission failures are neither retried nor cached as empty results'
   assert.equal(calls, 1);
   await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
   assert.equal(calls, 2);
+});
+
+test('an older owner read finishing after withdrawal cannot repopulate later requests', async () => {
+  const cache = cacheHarness();
+  let hidden = false, release, startedRead;
+  const started = new Promise(resolve => { startedRead = resolve; });
+  const owners = load('../lib/owner-listings.ts', {
+    '@/lib/public-content-cache': cache.publicCache,
+    '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
+    '@/lib/owner-listing-photo': {},
+  }, { fetch: async () => {
+    if (!hidden) return new Promise(resolve => { release = () => resolve(Response.json([{ id: 'withdrawn', status: 'published' }])); startedRead(); });
+    return Response.json([]);
+  } });
+  const earlier = owners.getPublishedOwnerListing('withdrawn');
+  await started;
+  hidden = true;
+  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
+  release();
+  assert.equal((await earlier).id, 'withdrawn');
+  assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
+  assert.equal(cache.registrations.length, 0);
 });

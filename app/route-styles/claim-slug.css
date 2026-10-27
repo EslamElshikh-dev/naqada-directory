@@ -1,13 +1,6 @@
 
-.page-main { min-height: 70vh; }
 .eyebrow { display: inline-block; font-size: var(--fs-xs); font-weight: 700; letter-spacing: normal; margin-bottom: 11px; }
-.detail-layout { grid-template-columns: minmax(0, 1.5fr) minmax(250px, .5fr); }
-.detail-card { padding: 23px; border: 1px solid var(--line); }
-.detail-aside { border: 1px solid var(--line); }
-.detail-grid { grid-template-columns: 1fr 1fr; }
-.detail-grid strong { display: block; }
-.source-panel { border: 1px solid #eadbb7; background: #f8f0dc; }
-.source-panel > span { display: block; }
+.detail-grid strong, .source-panel > span { display: block; }
 .source-panel p { margin: 7px 0; color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.9; }
 .source-panel a { color: var(--text-accent); font-size: var(--fs-xs); font-weight: 700; }
 .detail-aside { align-self: start; position: sticky; top: 98px; }
@@ -23,7 +16,6 @@
 }
 .eyebrow { color: var(--text-on-dark-accent); }
 .eyebrow--dark { color: var(--text-accent); }
-.page-main { background: transparent; }
 .detail-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, .32fr);
@@ -51,7 +43,6 @@
   padding: 14px 15px;
   border: 1px solid rgba(84,49,36,.085);
   border-radius: 15px;
-  background: #fbf8f4;
 }
 .detail-grid span {
   display: block;
@@ -70,7 +61,6 @@
   padding: 19px;
   border: 1px solid rgba(43,114,119,.13);
   border-radius: 18px;
-  background: linear-gradient(135deg, #f1f8f6, #fbfdfc);
 }
 .source-panel > span { color: var(--text-muted); font-size: var(--fs-xs); font-weight: 700; }
 .source-panel > strong { display: block; margin-top: 5px; color: var(--text-body); font-size: var(--fs-sm); }
@@ -82,7 +72,6 @@
 
 @media (max-width: 680px) {
   .detail-layout { padding-block: 24px 52px; }
-  .detail-grid { grid-template-columns: 1fr; }
 }
 .detail-aside {
   padding:20px;
@@ -116,11 +105,7 @@
   }
 }
 
-.page-main h1, .page-main h2, .page-main h3 {
-  text-wrap: balance;
-}
-
-.page-main p, .source-panel p {
+.source-panel p {
   text-wrap: pretty;
 }
 

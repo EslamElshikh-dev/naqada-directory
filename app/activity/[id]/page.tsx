@@ -1,6 +1,6 @@
+import '@/app/route-styles/activity-id.css';
 import { ownerActivityHref, ownerActivityId, ownerActivityNeedsRedirect } from '@/lib/activity-path';
 import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
-import '@/app/route-styles/activity-id.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { OwnerPhoto } from '@/components/owner-photo';
@@ -18,7 +18,6 @@ import styles from './activity.module.css';
 
 type Props = { params: Promise<{ id: string }> };
 export const dynamic = 'force-dynamic';
-export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id: requestedId } = await params;

@@ -2,6 +2,7 @@
 import '@/app/route-styles/account-oauth-callback.css';
 
 
+
 import Link from 'next/link';
 import { safeAuthReturn } from '@/lib/auth/return-path';
 import { useEffect, useState } from 'react';
@@ -64,7 +65,7 @@ export default function OAuthCallbackPage() {
         {state === 'working' ? <span className="oauth-spinner" aria-hidden="true" /> : <span className="oauth-error-mark" aria-hidden="true">!</span>}
         <h1>{state === 'working' ? 'لحظات ونفتح حسابك' : 'لم تكتمل العملية'}</h1>
         <p>{message}</p>
-        {state === 'error' && <Link href="/account/login">العودة إلى تسجيل الدخول</Link>}
+        {state === 'error' && <Link prefetch={false} href="/account/login">العودة إلى تسجيل الدخول</Link>}
       </section>
     </main>
   );

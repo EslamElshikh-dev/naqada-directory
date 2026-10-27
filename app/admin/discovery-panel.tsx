@@ -65,7 +65,7 @@ export function DiscoveryPanel({ insights, available, pathLabel }: {
             </section>
 
             <section className={styles.block} aria-labelledby="missing-heading">
-              <div className={styles.blockHead}><div><span>ما طلبه أهل البلد</span><h3 id="missing-heading">عبارات لم تجد نتيجة حتى الآن</h3></div><Link href="/admin/growth">رتّب فرص الإضافة ←</Link></div>
+              <div className={styles.blockHead}><div><span>ما طلبه أهل البلد</span><h3 id="missing-heading">عبارات لم تجد نتيجة حتى الآن</h3></div><Link prefetch={false} href="/admin/growth">رتّب فرص الإضافة ←</Link></div>
               {insights.missedSearches.length ? <ol className={styles.missed}>{insights.missedSearches.map((item, index) => (
                 <li key={item.id || searchGapKey(item)}>
                   <span className={styles.index}>{count(index + 1)}</span>

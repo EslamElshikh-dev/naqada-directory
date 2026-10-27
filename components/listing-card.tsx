@@ -9,9 +9,9 @@ import { ActionIcon } from './action-icon';
 import { ListingCardActions } from './listing-card-actions';
 import { ListingCover } from './listing-cover';
 import { publicBusinessHref } from '@/lib/business-links';
-import { CardStyles } from './card-styles';
+import styles from './listing-card.module.css';
 
-export function ListingCard({ listing, compact = false, eagerStyles = false }: { listing: DirectoryItem; compact?: boolean; eagerStyles?: boolean }) {
+export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const locality = canonicalLocalityName(listing.locality);
@@ -25,28 +25,27 @@ export function ListingCard({ listing, compact = false, eagerStyles = false }: {
     : `/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}`;
 
   return (
-    <article className={`listing-card${compact ? ' listing-card--compact' : ''}`} data-card-key={listing.id}>
-      <CardStyles eager={eagerStyles} cardId={listing.id} />
-      <div className="listing-card__cover">
+    <article data-ui="listing-card" className={`${styles.card}${compact ? ` ${styles.compact}` : ''}`}>
+      <div className={styles.cover}>
         {listing.imageUrl || listing.id.startsWith('owner-') ? <ListingCover src={listing.imageUrl} name={listing.name} category={listing.category} locality={locality} /> :
           <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}
-        <Link prefetch={false} className="listing-card__cover-link" href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
-        <Link prefetch={false} className="listing-card__category-mark" href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
+        <Link prefetch={false} className={styles.coverLink} href={detailHref} aria-label={`عرض تفاصيل ${listing.name}`} />
+        <Link prefetch={false} className={styles.categoryMark} href={categoryHref} aria-label={`استكشف قسم ${listing.category}`}>
           <CategoryVisual category={listing.category} size="sm" />
         </Link>
-        {hasMapReference && <span className="source-chip"><i /> موقع على الخريطة</span>}
+        {hasMapReference && <span className={styles.source}><i /> موقع على الخريطة</span>}
       </div>
-      <div className="listing-card__head">
-        <div className="listing-card__eyebrow">
+      <div className={styles.head}>
+        <div className={styles.eyebrow}>
           <div><Link prefetch={false} href={categoryHref}>{listing.subcategory || listing.category}</Link><small>{listing.subcategory ? listing.category : `دليل ${locality}`}</small></div>
         </div>
       </div>
-      <div className="listing-card__body">
+      <div className={styles.body}>
         <h3><Link prefetch={false} href={detailHref}>{listing.name}</Link></h3>
-        <p className="listing-card__location"><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
-        <div className="listing-card__meta">
+        <p className={styles.location}><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
+        <div className={styles.meta}>
           <Link prefetch={false} href={localityHref}>{locality}</Link>
-          {typeof listing.rating === 'number' && <span className="rating" title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString(NUMBER_LOCALE)}{listing.reviews ? ` (${listing.reviews.toLocaleString(NUMBER_LOCALE)})` : ''}</span>}
+          {typeof listing.rating === 'number' && <span className={styles.rating} title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString(NUMBER_LOCALE)}{listing.reviews ? ` (${listing.reviews.toLocaleString(NUMBER_LOCALE)})` : ''}</span>}
           <Link prefetch={false} href="/about" title={verificationLabel(listing.verification)}>مصدر البيانات</Link>
         </div>
       </div>

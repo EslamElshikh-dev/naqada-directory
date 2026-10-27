@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import { getNewsItem, getNewsShareImageUrl } from '@/lib/news';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 export const alt = 'صورة الخبر وعنوانه على أخبار نقادة';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
@@ -85,6 +86,6 @@ export default async function NewsOpenGraph({ params }: { params: Promise<{ id: 
       {photo && !item.isOriginal ? <div style={{ display: 'flex', position: 'absolute', bottom: 25, left: 30, padding: '9px 15px', borderRadius: 8, backgroundColor: 'rgba(6, 29, 24, .78)', color: '#fff', fontSize: 16 }}>الصورة: {item.source}</div> : null}
       <div style={{ display: 'flex', position: 'absolute', inset: 0, border: '6px solid #155039', pointerEvents: 'none' }} />
     </div>,
-    { ...size, fonts: [{ name: 'NaqadaArabic', data: font, weight: 700, style: 'normal' }] },
+    { ...size, headers: { 'Cache-Control': 'no-store' }, fonts: [{ name: 'NaqadaArabic', data: font, weight: 700, style: 'normal' }] },
   );
 }

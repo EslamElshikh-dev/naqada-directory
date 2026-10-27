@@ -224,7 +224,7 @@ export function OwnerBusinessForm({
       <span className={styles.step}>نشاطك باسمك</span>
       <h2>سجّل دخولك الأول، والنشاط يبقى مربوط بحسابك.</h2>
       <p>بعد الدخول تقدر تضيف بيانات نشاطك وصوره، وتتابع المراجعة وتعدّل عليه من حسابك.</p>
-      <div className={styles.signInActions}><Link href="/account/login" className="button button--primary">تسجيل الدخول</Link><Link href="/account/register" className="button button--ghost">إنشاء حساب جديد</Link></div>
+      <div className={styles.signInActions}><Link prefetch={false} href="/account/login" className="button button--primary">تسجيل الدخول</Link><Link prefetch={false} href="/account/register" className="button button--ghost">إنشاء حساب جديد</Link></div>
     </div>
   );
 
@@ -286,8 +286,8 @@ export function OwnerBusinessForm({
         <span className={styles.step}>أنشطتي في الدليل</span>
         <h2>كل نشاط له صاحبه</h2>
         <p>الحساب ده هو صاحب الأنشطة اللي يضيفها. تقدر تعدّل التفاصيل وتتابع حالة المراجعة من هنا.</p>
-        {mine.length ? <div className={styles.ownList}>{mine.map((listing) => <article key={listing.id}><span className={`${styles.status} ${styles[listing.status]}`}>{listing.status === 'published' ? 'منشور' : listing.status === 'rejected' ? 'يحتاج تعديلًا' : 'قيد المراجعة'}</span><h3>{listing.name}</h3><small>{listing.locality} · {listing.category}</small><div><Link href={`/contribute?edit=${listing.id}`}>تعديل النشاط</Link>{listing.status === 'published' && <Link href={`/activity/${listing.id}/`}>عرض الصفحة</Link>}</div></article>)}</div> : <div className={styles.empty}>أول نشاط تضيفه هيظهر هنا، تحت حسابك مباشرة.</div>}
-        <Link href="/account" className={styles.accountLink}>الرجوع لحسابك ←</Link>
+        {mine.length ? <div className={styles.ownList}>{mine.map((listing) => <article key={listing.id}><span className={`${styles.status} ${styles[listing.status]}`}>{listing.status === 'published' ? 'منشور' : listing.status === 'rejected' ? 'يحتاج تعديلًا' : 'قيد المراجعة'}</span><h3>{listing.name}</h3><small>{listing.locality} · {listing.category}</small><div><Link prefetch={false} href={`/contribute?edit=${listing.id}`}>تعديل النشاط</Link>{listing.status === 'published' && <Link prefetch={false} href={`/activity/${listing.id}/`}>عرض الصفحة</Link>}</div></article>)}</div> : <div className={styles.empty}>أول نشاط تضيفه هيظهر هنا، تحت حسابك مباشرة.</div>}
+        <Link prefetch={false} href="/account" className={styles.accountLink}>الرجوع لحسابك ←</Link>
       </aside>
     </div>
   );

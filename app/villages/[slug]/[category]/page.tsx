@@ -15,7 +15,6 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 type Props = { params: Promise<{ slug: string; category: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, category: categorySlug } = await params;
@@ -82,12 +81,12 @@ export default async function LocalCategoryPage({ params }: Props) {
       <section className="detail-hero category-hero">
         <div className="shell category-hero__grid">
           <div>
-            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/villages">القرى والنجوع</Link><span>/</span><Link href={`/villages/${locality.slug}`}>{locality.name}</Link><span>/</span><span>{category.shortLabel}</span></nav>
+            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/villages">القرى والنجوع</Link><span>/</span><Link prefetch={false} href={`/villages/${locality.slug}`}>{locality.name}</Link><span>/</span><span>{category.shortLabel}</span></nav>
             <span className="eyebrow">بحث محلي داخل {locality.name}</span>
             <h1>{category.shortLabel} <em>في {locality.name}</em></h1>
             <p>{category.description} هذه الصفحة تعرض النتائج المنشورة داخل {locality.name} فقط.</p>
             <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString(NUMBER_LOCALE)}</b> نتيجة</span><span><b>مركز نقادة</b> · قنا</span></div>
-            <div className="detail-actions"><Link href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link><a href="#local-category-discovery" className="button button--outline-light">استكشف أسرع ↓</a></div>
+            <div className="detail-actions"><Link prefetch={false} href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link prefetch={false} href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link><a href="#local-category-discovery" className="button button--outline-light">استكشف أسرع ↓</a></div>
           </div>
           <CategoryVisual category={category.name} size="lg" />
         </div>

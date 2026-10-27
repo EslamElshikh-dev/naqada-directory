@@ -57,9 +57,9 @@ export default async function GrowthPriorityPage() {
               <p>عدد الطلبات من وقت تسجيل البحث. العبارات التي أصبحت لها نتيجة منشورة تُستبعد من طابور الجمع، وتظل محفوظة في القياس التاريخي.</p>
             </div>
             <nav aria-label="روابط تشغيل أولويات النمو">
-              <Link href="/admin">لوحة الإدارة</Link>
-              <Link href="/coverage">خريطة التغطية</Link>
-              <Link href="/contribute">إضافة أو تصحيح</Link>
+              <Link prefetch={false} href="/admin">لوحة الإدارة</Link>
+              <Link prefetch={false} href="/coverage">خريطة التغطية</Link>
+              <Link prefetch={false} href="/contribute">إضافة أو تصحيح</Link>
             </nav>
           </div>
 
@@ -96,7 +96,7 @@ export default async function GrowthPriorityPage() {
 
                   <div className={styles.actions}>
                     <Link href={item.actionHref} prefetch={false}>جهّز طلب جمع ←</Link>
-                    {item.localityHref ? <Link href={item.localityHref}>افتح الموضع</Link> : null}
+                    {item.localityHref ? <Link prefetch={false} href={item.localityHref}>افتح الموضع</Link> : null}
                   </div>
                 </article>
               ))}

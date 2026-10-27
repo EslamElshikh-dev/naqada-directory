@@ -474,7 +474,7 @@ async function loadNewsSources(): Promise<NewsFeedResult> {
   return { items: [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)], checkedAt: new Date().toISOString(), successfulFeeds, totalFeeds: NEWS_FEEDS.length };
 }
 
-// Expensive publisher reads may be cached; current moderation decisions may not.
+// External source work can be shared; moderation visibility is always applied later.
 const cachedNewsSources = unstable_cache(loadNewsSources, ['naqada-news-sources-v3'], {
   revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
 });

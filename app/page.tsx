@@ -261,7 +261,7 @@ async function HomeEditorial() {
   const leadArticle = featuredArticles[0];
   if (posts.status === 'rejected' || people.status === 'rejected') console.error('HOME_EDITORIAL_CONTENT_UNAVAILABLE');
   return <>
-    {posts.status === 'rejected' || people.status === 'rejected' ? <HomeSectionStatus>بعض حكايات البلد غير متاحة مؤقتًا. <Link href="/blog">تصفّح الحكايات</Link></HomeSectionStatus> : null}
+    {posts.status === 'rejected' || people.status === 'rejected' ? <HomeSectionStatus>بعض حكايات البلد غير متاحة مؤقتًا. <Link prefetch={false} href="/blog">تصفّح الحكايات</Link></HomeSectionStatus> : null}
       <RoleModelFeature people={roleModels.map((person) => ({
         slug: person.slug,
         name: person.name,

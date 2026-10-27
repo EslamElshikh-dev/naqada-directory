@@ -1,0 +1,21 @@
+.card { display:flex; flex-direction:column; min-width:0; overflow:hidden; border:1px solid #dce5dc; border-radius:18px; background:#fffefb; box-shadow:0 8px 24px #173a300a; }
+.cover { position:relative; aspect-ratio:16/10; overflow:hidden; background:#e6ede5; }
+.cover>div { width:100%; height:100%; }
+.cover img { width:100%; height:100%; object-fit:cover; }
+.coverLink { position:absolute; inset:0; z-index:1; }
+.categoryMark { position:absolute; z-index:2; inset-inline-end:12px; inset-block-start:12px; display:grid; place-items:center; width:38px; height:38px; border:1px solid #ffffff99; border-radius:12px; background:#fffefbe8; }
+.source { position:absolute; z-index:2; inset-inline-start:12px; bottom:12px; display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:20px; background:#fffefbe8; color:var(--text-strong); font-size:var(--fs-xs); line-height:1.7; }
+.source i { width:6px; height:6px; border-radius:50%; background:#17664d; }
+.head { padding:14px 16px 0; }
+.eyebrow>div { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px; }
+.eyebrow a { color:var(--text-link); font-size:var(--fs-xs); font-weight:700; }
+.eyebrow small { color:var(--text-muted); font-size:var(--fs-xs); }
+.body { flex:1; display:grid; align-content:start; gap:10px; min-width:0; padding:10px 16px 16px; }
+.body h3 { display:-webkit-box; min-height:2.9em; margin:0; overflow:hidden; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:var(--text-strong); font-size:var(--fs-lg); line-height:1.5; }
+.location { display:flex; align-items:start; gap:6px; min-height:3.4em; margin:0; color:var(--text-muted); font-size:var(--fs-sm); line-height:1.8; }
+.location svg { flex:none; width:16px; height:16px; margin-top:4px; }
+.location span { display:-webkit-box; overflow:hidden; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.meta { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:var(--fs-xs); line-height:1.8; }
+.meta>a,.rating { padding:3px 8px; border:1px solid #dce6dc; border-radius:20px; background:#f3f7f1; color:var(--text-body); }
+.rating { color:var(--text-accent); }
+.compact .cover { aspect-ratio:2; }

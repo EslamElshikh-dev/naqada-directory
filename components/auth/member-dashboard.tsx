@@ -119,8 +119,8 @@ export function MemberDashboard() {
         <div className="member-status"><span>{user.emailVerified ? 'حساب مؤكد' : 'بانتظار تأكيد البريد'}</span><strong>{completion}%</strong><small>اكتمال الملف</small></div>
       </section>
 
-      {isAdmin && <Link href="/admin" className="admin-entry"><span>لوحة الإدارة المعتمدة</span><strong>افتح مركز تشغيل دليل نقادة</strong><b>الإحصاءات والمراجعات والبيانات ←</b></Link>}
-      {isModerator && <Link href="/moderator" className="admin-entry"><span>مشرفة ذهبية ✦</span><strong>افتحي مساحة الإشراف والتحرير</strong><b>الأنشطة والأخبار والمقالات والأعضاء ←</b></Link>}
+      {isAdmin && <Link prefetch={false} href="/admin" className="admin-entry"><span>لوحة الإدارة المعتمدة</span><strong>افتح مركز تشغيل دليل نقادة</strong><b>الإحصاءات والمراجعات والبيانات ←</b></Link>}
+      {isModerator && <Link prefetch={false} href="/moderator" className="admin-entry"><span>مشرفة ذهبية ✦</span><strong>افتحي مساحة الإشراف والتحرير</strong><b>الأنشطة والأخبار والمقالات والأعضاء ←</b></Link>}
 
       <div className="member-grid">
         <section className="profile-editor" id="profile">
@@ -145,7 +145,7 @@ export function MemberDashboard() {
               <small>{reputation.contributionCount.toLocaleString(NUMBER_LOCALE)} مساهمة محسوبة · {reputation.acceptedCount.toLocaleString(NUMBER_LOCALE)} معتمدة/منشورة · {reputation.pendingCount.toLocaleString(NUMBER_LOCALE)} قيد المراجعة</small>
             </div>
           </section>
-          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link href="/contribute"><b>02</b><span>أضف نشاطك وأنشطتي<small>سجّله باسمك وتابع المراجعة والصور</small></span><i>←</i></Link><Link href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
+          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link prefetch={false} href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link prefetch={false} href="/contribute"><b>02</b><span>أضف نشاطك وأنشطتي<small>سجّله باسمك وتابع المراجعة والصور</small></span><i>←</i></Link><Link prefetch={false} href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
           <section className="member-security"><span>حماية الحساب</span><strong>{user.emailVerified ? 'البريد مؤكد والحساب نشط' : 'أكمل تأكيد البريد'}</strong><p>جلسة الدخول محفوظة في ملفات ارتباط آمنة ولا تُعرض مفاتيح الإدارة داخل المتصفح.</p></section>
         </aside>
       </div>

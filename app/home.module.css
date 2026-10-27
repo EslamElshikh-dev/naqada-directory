@@ -223,4 +223,4 @@
 }
 @media (prefers-reduced-motion:reduce) { .page * { scroll-behavior:auto; transition:none; animation:none; } }
 
-@keyframes gentleArrival { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes gentleArrival { from { transform:translateY(6px); } to { transform:translateY(0); } }

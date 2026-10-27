@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { localities } from '@/lib/data';
 import { socialCard } from '@/lib/social-card';
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 export const alt = 'القرية وخدماتها في دليل نقادة';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/jpeg';

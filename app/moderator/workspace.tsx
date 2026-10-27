@@ -155,7 +155,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
   return (
     <>
       <section className={styles.hero}>
-        <div><span className={styles.eyebrow}>✦ · مساحة آية رفاعي</span><h1>أهلًا يا {name}، <em>كل الدليل قدامك.</em></h1><p>راجعي الطلبات، حرري المحتوى، وتابعي أثر شغلك على الدليل من مكان واحد.</p><div className={styles.heroLinks}><button type="button" onClick={() => { setTab('business'); document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' }); }}>ابدئي المراجعة ←</button><Link href="/directory">عرض الدليل ↗</Link></div></div>
+        <div><span className={styles.eyebrow}>✦ · مساحة آية رفاعي</span><h1>أهلًا يا {name}، <em>كل الدليل قدامك.</em></h1><p>راجعي الطلبات، حرري المحتوى، وتابعي أثر شغلك على الدليل من مكان واحد.</p><div className={styles.heroLinks}><button type="button" onClick={() => { setTab('business'); document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' }); }}>ابدئي المراجعة ←</button><Link prefetch={false} href="/directory">عرض الدليل ↗</Link></div></div>
         <aside className={styles.heroIdentity}><MemberAvatar name={dashboard.viewer?.name || name} src={dashboard.viewer?.avatarUrl || avatarUrl} frame="gold" size={84} priority /><div><span>حساب موثّق</span><strong>مشرفة ذهبية</strong><small>{number(dashboard.metrics.myActions30d)} إجراء مسجّل خلال ٣٠ يومًا</small></div><i>✦</i></aside>
       </section>
 

@@ -29,5 +29,5 @@ export async function socialCard(title: string, subtitle: string) {
   </div>, { width: 1200, height: 630 });
   let jpeg = await sharp(Buffer.from(await image.arrayBuffer())).jpeg({ quality: 78, mozjpeg: true }).toBuffer();
   if (jpeg.length > 90_000) jpeg = await sharp(jpeg).jpeg({ quality: 60, mozjpeg: true }).toBuffer();
-  return new Response(new Uint8Array(jpeg), { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=60, s-maxage=60, must-revalidate' } });
+  return new Response(new Uint8Array(jpeg), { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store' } });
 }

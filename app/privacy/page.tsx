@@ -30,7 +30,7 @@ export default function PrivacyPage() {
     <main id="main-content" className="page-main">
       <section className="about-hero">
         <div className="shell">
-          <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span>/</span><span>الخصوصية</span></nav>
+          <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><span>الخصوصية</span></nav>
           <span className="eyebrow">الوضوح قبل القياس</span>
           <h1>الخصوصية و<em>استخدام البيانات</em></h1>
           <p>نستخدم أقل قدر عملي من البيانات لتحسين الدليل ومراجعة المساهمات. لا نبيع بيانات المستخدمين؛ بيانات التواصل في قسم الوظائف تظهر للعامة فقط بموافقة صاحب الإعلان وبعد مراجعته.</p>
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">قسم الوظائف</span><h2>ظهور الخبرات ووسائل التواصل</h2></div>
           <p>لما تضيف وظيفة أو تعرض خبرتك، بنحفظ المجال والمنطقة والتفاصيل وطريقة التواصل لمراجعتها. إذا وافقت واتنشر الطلب، تظهر وسيلة التواصل للزوار داخل بطاقة الإعلان وشريط الموقع مع العنوان فقط. يختفي الإعلان تلقائيًا بعد ٣٠ يومًا من نشره؛ والإعلانات الخارجية ترتبط بمصدرها الأصلي ولا ننشر لها بيانات تواصل إضافية.</p>
           <p>لطلب تعديل الإعلان أو حذفه، تواصل معنا واذكر عنوان الإعلان ومكانه. لا ترسل أرقام هوية أو مستندات حساسة في وصف الوظيفة.</p>
-          <Link href="/jobs" className="text-link">افتح قسم الوظائف ←</Link>
+          <Link prefetch={false} href="/jobs" className="text-link">افتح قسم الوظائف ←</Link>
         </div>
       </section>
 
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
             <span className="eyebrow eyebrow--dark">المساهمات</span>
             <h2>عندما تضيف نشاطًا أو ترسل تصحيحًا</h2>
             <p>عند إضافة نشاط من حسابك، نحفظ اسم النشاط ورقم الجوال والمواعيد والعنوان والوصف والصور وربطها بحساب المالك. تبقى بيانات النشاط وصوره غير ظاهرة للعامة حتى الموافقة على نشره، وبعدها تظهر هذه البيانات في الدليل للزوار. أما طلبات التصحيح فنحفظ تفاصيلها ومصدرها ووسيلة تواصل اختيارية للمراجعة فقط.</p>
-            <Link href="/contribute" className="text-link">فتح نموذج المساهمة ←</Link>
+            <Link prefetch={false} href="/contribute" className="text-link">فتح نموذج المساهمة ←</Link>
           </div>
           <div className="methodology__grid">
             <article><b>01</b><h3>غرض واضح</h3><p>تُستخدم بيانات الطلب لمراجعة إضافة أو تصحيح أو نتيجة مفقودة وتحسين جودة التغطية.</p></article>
@@ -127,7 +127,7 @@ export default function PrivacyPage() {
 
       <section className="section section--muted">
         <div className="shell methodology">
-          <div><span className="eyebrow eyebrow--dark">التواصل والتصحيح</span><h2>طلب مراجعة بياناتك</h2><p>إذا أرسلت وسيلة تواصل اختيارية في مساهمة وتريد تصحيحها أو حذفها، استخدم نموذج التصحيح واذكر مرجع الطلب إن كان متاحًا.</p><Link href="/contribute?type=correction" className="button button--primary">إرسال طلب تصحيح</Link></div>
+          <div><span className="eyebrow eyebrow--dark">التواصل والتصحيح</span><h2>طلب مراجعة بياناتك</h2><p>إذا أرسلت وسيلة تواصل اختيارية في مساهمة وتريد تصحيحها أو حذفها، استخدم نموذج التصحيح واذكر مرجع الطلب إن كان متاحًا.</p><Link prefetch={false} href="/contribute?type=correction" className="button button--primary">إرسال طلب تصحيح</Link></div>
           <div className="methodology__grid">
             <article><b>أ</b><h3>الدليل مستقل</h3><p>دليل نقادة منصة معلوماتية مستقلة وليست جهة حكومية أو ممثلًا للأنشطة المدرجة.</p></article>
             <article><b>ب</b><h3>تقليل البيانات</h3><p>نفضل المصادر العامة والمعلومات اللازمة للمراجعة، ولا نطلب بيانات حساسة لإضافة نشاط أو تصحيح سجل.</p></article>

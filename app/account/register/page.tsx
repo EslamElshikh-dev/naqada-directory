@@ -11,7 +11,7 @@ export default function RegisterPage() {
     <main id="main-content" className="auth-page">
       <div className="shell auth-shell">
         <section className="auth-card">
-          <Link href="/" className="auth-brand"><BrandMark/><span><strong>دليل نقادة</strong><small>عضوية جديدة</small></span></Link>
+          <Link prefetch={false} href="/" className="auth-brand"><BrandMark/><span><strong>دليل نقادة</strong><small>عضوية جديدة</small></span></Link>
           <div className="auth-heading"><span>انضم إلى المجتمع</span><h1>إنشاء حساب عضو</h1><p>حساب واحد آمن لتقييم الدليل وإدارة ملفك والاستفادة من مزايا الأعضاء.</p></div>
           <RegisterForm/>
         </section>

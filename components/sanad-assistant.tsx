@@ -1,16 +1,16 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SanadReply } from '@/lib/sanad';
-import styles from './sanad-assistant-styles';
-import { ensureWidgetStyles } from '@/lib/widget-styles';
+import launcherStyles from './sanad-launcher.module.css';
 
 type Message = { role: 'user' | 'assistant'; text: string; reply?: SanadReply };
 const prompts = ['أبحث عن خدمة', 'وظائف نقادة', 'نماذج مشرفة', 'إزاي أضيف نشاط؟'];
 const welcome: Message = { role: 'assistant', text: 'يا مرحب بيك! أنا سند، مساعدك في دليل نقادة. خدمة، قرية، شغل أو حكاية حد من بلدنا؟ قولّي بس، وأنا أسندك بالمعلومة المتاحة.' };
 function Icon({ close = false }: { close?: boolean }) { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{close ? <path d="m6 6 12 12M6 18 18 6" /> : <path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3" />}</svg>; }
 export function SanadAssistant() {
+  const [styles, setStyles] = useState<Record<string, string>>(launcherStyles);
   const [open, setOpen] = useState(false);
   const [hint, setHint] = useState(false);
   const hintDismissed = useRef(false);
@@ -27,6 +27,11 @@ export function SanadAssistant() {
   const panel = useRef<HTMLElement>(null);
   const field = useRef<HTMLInputElement>(null);
   const log = useRef<HTMLDivElement>(null);
+  const show = useCallback(async () => {
+    hintDismissed.current = true; setHint(false);
+    const loaded = await import('./sanad-assistant.module.css');
+    setStyles(loaded.default); setOpen(true);
+  }, []);
   useEffect(() => {
     const key = 'naqada-sanad-hint';
     try { if (sessionStorage.getItem(key)) return; } catch {}
@@ -50,10 +55,10 @@ export function SanadAssistant() {
     return () => { clearTimeout(showTimer); clearTimeout(hideTimer); observer?.disconnect(); window.removeEventListener('load', schedule); window.removeEventListener('scroll', scroll); window.removeEventListener('pointerdown', hide); window.removeEventListener('keydown', hide); };
   }, []);
   useEffect(() => {
-    const hash = () => { if (location.hash === '#sanad') { hintDismissed.current = true; setHint(false); setOpen(true); } };
+    const hash = () => { if (location.hash === '#sanad') void show(); };
     const timer = setTimeout(hash, 0); window.addEventListener('hashchange', hash);
     return () => { clearTimeout(timer); window.removeEventListener('hashchange', hash); abort.current?.abort(); };
-  }, []);
+  }, [show]);
   useEffect(() => {
     if (!open) return;
     const launchElement = launcher.current;
@@ -90,11 +95,6 @@ export function SanadAssistant() {
   }, [messages, pending, open]);
   function dismissHint() { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem('naqada-sanad-hint', '1'); } catch {} }
   function close() { setOpen(false); }
-  async function openPanel() {
-    dismissHint();
-    try { await ensureWidgetStyles('sanad'); setOpen(true); }
-    catch { window.alert('تعذّر فتح المحادثة. تحقّق من الاتصال وحاول مرة أخرى.'); }
-  }
   async function send(value: string, retry = false) {
     const text = value.trim();
     if (!text || busy.current) return;
@@ -113,8 +113,8 @@ export function SanadAssistant() {
   }
   const suggestions = messages.at(-1)?.reply?.suggestions || prompts;
   return <div ref={root} className={styles.root} dir="rtl" data-open={open}>
-    {!open && <button className={styles.hint} data-visible={hint} onClick={openPanel} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
-    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { if (open) close(); else void openPanel(); }}>
+    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); void show(); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
+    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else void show(); }}>
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
       <span className={styles.mobileLabel} aria-hidden="true">سند</span>
     </button>
@@ -136,7 +136,7 @@ export function SanadAssistant() {
         {messages.map((message, index) => <div key={index} className={message.role === 'user' ? styles.user : styles.answer}>
           <span className={styles.speaker}>{message.role === 'user' ? 'أنت' : 'سند'}</span><p>{message.text}</p>
           {message.reply?.cards.map(card => <article key={card.href + card.title} className={styles.card}>
-            <Link href={card.href} onClick={close}><small>{card.badge}<span aria-hidden="true">↗</span></small><strong>{card.title}</strong>{card.subtitle && <span>{card.subtitle}</span>}</Link>
+            <Link prefetch={false} href={card.href} onClick={close}><small>{card.badge}<span aria-hidden="true">↗</span></small><strong>{card.title}</strong>{card.subtitle && <span>{card.subtitle}</span>}</Link>
             {card.detail && <p>{card.detail}</p>}
             {(card.phone || card.mapsUrl) && <div className={styles.actions}>{card.phone && <a href={`tel:${card.phone.replace(/[^+\d]/g, '')}`}>اتصال <bdi>{card.phone}</bdi></a>}{card.mapsUrl && <a href={card.mapsUrl} target="_blank" rel="noreferrer">الخريطة ↗</a>}</div>}
           </article>)}
@@ -150,7 +150,7 @@ export function SanadAssistant() {
         <input id="sanad-question" ref={field} value={input} maxLength={600} autoComplete="off" onChange={event => setInput(event.target.value)} placeholder="اكتب سؤالك… أنا معاك" />
         <button type="submit" disabled={pending || !input.trim()} aria-label="إرسال السؤال"><Icon /></button>
       </form>
-      <p className={styles.note}>من بيانات الدليل · الأسئلة والإجابات تُحفظ ٩٠ يومًا للإدارة بعد حجب بيانات التواصل · <Link href="/privacy">الخصوصية</Link></p>
+      <p className={styles.note}>من بيانات الدليل · الأسئلة والإجابات تُحفظ ٩٠ يومًا للإدارة بعد حجب بيانات التواصل · <Link prefetch={false} href="/privacy">الخصوصية</Link></p>
     </section>}
   </div>;
 }

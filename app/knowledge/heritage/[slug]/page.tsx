@@ -32,7 +32,7 @@ export default async function HeritageDetail({params}:Props){
   return <main id="main-content" className="page-main">
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="heritage" /></div>
     <div className={`shell ${styles.wrap} ${styles.detail}`}>
-      <Link className={styles.back} href="/knowledge/heritage">← التراث والمعالم</Link>
+      <Link prefetch={false} className={styles.back} href="/knowledge/heritage">← التراث والمعالم</Link>
       <article className={styles.detailCard}>
         <span className={styles.eyebrow}>{item.category} · مؤكد من المصدر</span>
         <h1>{item.name}</h1>

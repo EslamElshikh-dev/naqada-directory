@@ -1,26 +1,13 @@
 
-.page-main { min-height: 70vh; }
 
-.explorer__tools { position: sticky; z-index: 40; inset-block-start: 91px; grid-template-columns: minmax(260px, 1fr) repeat(3, minmax(145px, .36fr)); border: 1px solid var(--line); backdrop-filter: blur(14px); }
-.explorer__tools--two { grid-template-columns: 1fr 260px; }
-.search-field { display: flex; gap: 9px; }
-.search-field input { background: transparent; }
-.select-field { grid-template-columns: auto 1fr; border: 1px solid var(--line); }
+.explorer__tools { z-index: 40; inset-block-start: 91px; backdrop-filter: blur(14px); }
+.search-field { gap: 9px; }
 .select-field span { color: var(--text-muted); font-size: var(--fs-xs); }
 .select-field select { background: transparent; }
-.results-bar { margin-top: 12px; }
-.results-bar span { color: var(--text-muted); font-size: var(--fs-xs); }
-.results-bar button { border: 0; }
-.empty-state { grid-column: 1 / -1; padding: 60px 25px; border: 1px dashed #bdc8c1; text-align: center; }
-.empty-state strong { display: block; font-size: var(--fs-lg); }
-.empty-state p { color: var(--text-muted); font-size: var(--fs-xs); }
-.empty-state .button { margin-top: 10px; }
 .locality-explorer .results-bar { margin-bottom: 5px; }
-.village-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.village-card { border: 1px solid var(--line); background: var(--paper); transition: transform .2s ease, box-shadow .2s ease; }
+.village-card { transition: transform .2s ease, box-shadow .2s ease; }
 .village-card { content-visibility: auto; contain-intrinsic-size: auto 235px; }
 .village-card__type { display: block; }
-.village-card__meta { margin-top: 13px; }
 
 @media (max-width: 1080px) {
   .explorer__tools { grid-template-columns: 1fr 1fr; }
@@ -28,35 +15,16 @@
 
 @media (max-width: 620px) {
   .village-grid { grid-template-columns: 1fr; }
-  .page-section { padding-block: 24px 55px; }
   .explorer__tools, .explorer__tools--two { position: static; grid-template-columns: 1fr; }
 }
 .village-card__visual { color: var(--text-danger); }
 .search-field { color: var(--text-muted); }
-.page-main { background: transparent; }
-.page-section { padding-block: 34px 70px; }
-.explorer__tools {
-  border: 1px solid var(--nq-line);
-}
 .search-field, .select-field {
   border-color: rgba(83,49,37,.11);
 }
-.search-field:focus-within, .select-field:focus-within {
-  box-shadow: 0 0 0 3px rgba(43,114,119,.08);
-}
-.results-bar {
-  margin-block: 14px 16px;
-  border: 1px solid rgba(83,49,37,.08);
-}
-.empty-state {
-  border: 1px dashed rgba(83,49,37,.18);
-  background: #fffaf6;
-}
 
 @media (max-width: 680px) {
-  .page-section { padding-block: 24px 54px; }
   .explorer__tools { padding: 9px; border-radius: 16px; }
-  .results-bar { margin-block: 10px 12px; }
 }
 .locality-explorer { display:grid; }
 .explorer__tools--two { grid-template-columns:minmax(0,1fr) minmax(220px,.32fr); }
@@ -65,7 +33,6 @@
   display:flex;
   flex-direction:column;
   border:1px solid var(--nq-line);
-  background:linear-gradient(155deg,#fff,#fffaf6);
   transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
 }
 .village-card:hover { transform:translateY(-3px); border-color:rgba(169,83,55,.17); box-shadow:var(--nq-shadow); }
@@ -75,7 +42,7 @@
   place-items:center;
   border:1px solid rgba(43,114,119,.12);
 }
-.village-card__index { font-size:var(--fs-xs); font-weight:700; letter-spacing:normal; }
+.village-card__index { font-size:var(--fs-xs); font-weight:700; }
 .village-card p { margin:0; }
 .village-card__meta { display:flex; flex-wrap:wrap; margin-top:auto; }
 .village-card__meta span { border-radius:999px; color:var(--text-muted); font-size:var(--fs-xs); font-weight:700; }
@@ -91,16 +58,8 @@
   .village-card{min-height:0;padding:16px;border-radius:17px}
 }
 
-.page-main h1, .page-main h2, .page-main h3 {
-  text-wrap: balance;
-}
-
-.page-main p, .village-card p {
+.village-card p {
   text-wrap: pretty;
-}
-
-.explorer__tools {
-  box-shadow: var(--nq-card-shadow);
 }
 
 .village-card {
@@ -135,10 +94,6 @@
     transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
   }
 
-  .village-card:hover {
-    transform: translateY(-3px);
-  }
-
   .village-card:focus-visible {
     transform: translateY(-3px);
     border-color: rgba(169,83,55,.2);
@@ -147,16 +102,9 @@
 }
 
 @media (max-width: 680px) {
-  .page-section {
-    padding-bottom: 48px;
-  }
 
   .explorer__tools {
     gap: 8px;
-  }
-
-  .results-bar {
-    padding-inline: 13px;
   }
 
   .village-card__type {
@@ -176,19 +124,12 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .village-card {
-    transition: none !important;
-  }
-}
-
 .explorer__tools {
   display: grid;
   grid-template-columns: minmax(320px, 1.35fr) repeat(3, minmax(150px, .55fr));
   gap: 8px;
   padding: 10px;
   border: 1px solid var(--nq-v18-line);
-  box-shadow: 0 14px 36px rgba(35,47,41,.06);
 }
 
 .search-field, .select-field {
@@ -263,43 +204,6 @@
   font-weight: 700;
 }
 
-.results-bar {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 10px 14px;
-  border: 1px solid rgba(38,73,60,.075);
-  border-radius: 15px;
-  background: rgba(255,253,248,.68);
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
-}
-
-.results-bar strong {
-  color: var(--text-body);
-  font-size: var(--fs-sm);
-}
-
-.results-bar button {
-  min-height: 34px;
-  padding: 6px 10px;
-  border: 1px solid rgba(145,85,57,.12);
-  border-radius: 999px;
-  background: #fff8f2;
-  color: var(--text-danger);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-}
-
-.empty-state {
-  border-color: rgba(32,83,64,.12) !important;
-  border-radius: 22px !important;
-  background: linear-gradient(145deg, #fffdf8, #f5f7f3) !important;
-  box-shadow: 0 10px 28px rgba(35,47,41,.045);
-}
-
 @media (max-width: 980px) {
   .explorer__tools {
     grid-template-columns: minmax(0,1fr) repeat(3, minmax(130px,.46fr));
@@ -342,12 +246,6 @@
   .explorer__tools .select-field:last-child {
     grid-column: 1 / -1;
   }
-
-  .results-bar {
-    min-height: 46px;
-    padding: 8px 11px;
-    border-radius: 13px;
-  }
 }
 
 @media (max-width: 430px) {
@@ -359,8 +257,6 @@
 
   .search-field { padding-inline: 8px 10px; }
   .select-field { padding-inline: 8px; }
-
-  .results-bar span { font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -396,7 +292,6 @@
   background:
     radial-gradient(circle at 100% 0%, rgba(40,108,112,.11), transparent 38%),
     linear-gradient(150deg, #fff 0%, #fffdfa 64%, #f8f1ea 100%) !important;
-  box-shadow: var(--v19-shadow-soft) !important;
 }
 
 .village-card::after {
@@ -404,8 +299,6 @@
   position: absolute;
   inset-inline-end: -52px;
   inset-block-end: -58px;
-  border: 1px solid rgba(155,79,55,.08);
-  box-shadow: 0 0 0 28px rgba(155,79,55,.025);
   pointer-events: none;
   z-index: -1;
 }
@@ -469,9 +362,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .village-card:hover {
-    transform: translateY(-4px) !important;
     border-color: rgba(40,108,112,.18) !important;
-    box-shadow: var(--v19-shadow) !important;
   }
 }
 .village-card:focus-visible {
@@ -541,16 +432,9 @@
     transition: none !important;
   }
 }
-@media (max-width: 700px) {
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
-}
 
 @media (max-width: 700px) {
  body.mobile-editorial main .explorer__tools label { font-size: var(--fs-sm) !important; line-height: 1.8; gap: 7px; }
- body.mobile-editorial main .results-bar { font-size: var(--fs-sm) !important; line-height: 1.8; }
- body.mobile-editorial main .results-bar button { min-height: 44px; font-size: var(--fs-sm) !important; }
 }
 
 body.encyclopedia-ui .explorer__tools {
@@ -584,9 +468,6 @@ body.encyclopedia-ui .village-card p { font-size: var(--fs-xs) !important; }
   position: relative;
   isolation: isolate;
   overflow: clip;
-  border-color: rgba(29, 84, 65, .12) !important;
-  background: rgba(255, 253, 248, .9) !important;
-  box-shadow: 0 16px 42px rgba(24, 59, 49, .08) !important;
   -webkit-backdrop-filter: blur(18px) saturate(1.12);
   backdrop-filter: blur(18px) saturate(1.12);
 }
@@ -628,33 +509,6 @@ body.encyclopedia-ui .village-card p { font-size: var(--fs-xs) !important; }
   background: currentColor;
   transform: rotate(45deg);
   transform-origin: center;
-}
-
-.results-bar button:focus-visible {
-  outline: 3px solid rgba(32, 105, 80, .2);
-  outline-offset: 2px;
-}
-
-.results-bar {
-  border-color: rgba(29, 84, 65, .09) !important;
-  background: linear-gradient(135deg, rgba(255, 253, 248, .86), rgba(238, 247, 242, .72)) !important;
-  box-shadow: inset 0 1px rgba(255, 255, 255, .75);
-}
-
-.results-bar > div {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.results-bar > div::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  margin-inline-end: 4px;
-  border-radius: 50%;
-  background: #3b9373;
-  box-shadow: 0 0 0 5px rgba(59, 147, 115, .1);
 }
 
 @media (min-width: 901px) {

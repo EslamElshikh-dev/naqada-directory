@@ -73,7 +73,7 @@ export function SiteReviews() {
                 <div className="review-form-actions"><button type="submit" disabled={busy || !rating || review.trim().length < 20}>{busy ? 'جارٍ الحفظ…' : payload.myReview ? 'حفظ التعديل' : 'نشر التقييم'}</button>{payload.myReview && <button type="button" onClick={remove} disabled={busy}>حذف</button>}</div>
               </form>
             ) : <div className="review-auth-note"><b>✓</b><div><strong>أكد بريدك أولًا</strong><p>التأكيد يحافظ على جودة تقييمات الأعضاء.</p></div></div> : (
-              <div className="review-auth-note"><b>★</b><div><strong>سجّل الدخول لتشارك رأيك</strong><p>يمكن للجميع قراءة التقييمات، والكتابة للأعضاء المسجلين.</p><nav><Link href="/account/login">تسجيل الدخول</Link><Link href="/account/register">إنشاء حساب</Link></nav></div></div>
+              <div className="review-auth-note"><b>★</b><div><strong>سجّل الدخول لتشارك رأيك</strong><p>يمكن للجميع قراءة التقييمات، والكتابة للأعضاء المسجلين.</p><nav><Link prefetch={false} href="/account/login">تسجيل الدخول</Link><Link prefetch={false} href="/account/register">إنشاء حساب</Link></nav></div></div>
             )}
             <div className="review-feedback" aria-live="polite">{feedback && <span className="is-success">{feedback}</span>}{error && <span className="is-error">{error}</span>}</div>
           </div>

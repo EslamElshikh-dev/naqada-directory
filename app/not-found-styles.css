@@ -1,22 +1,7 @@
 /* Source: ./globals.css */
 :root {
-  --green-1000: #0a201a;
-  --green-950: #102a24;
-  --green-900: #173a30;
-  --green-800: #235745;
-  --green-700: #327258;
-  --green-100: #e6efe9;
-  --green-50: #f0f5f1;
-  --gold: #e3b655;
-  --gold-dark: #9a7424;
-  --cream: #f7f5ef;
-  --paper: #fffefb;
-  --ink: #17241f;
-  --muted: #66736e;
-  --line: #dfe4df;
   --danger: #9a3939;
   --danger-dark: #461d1d;
-  --shadow: 0 22px 60px rgba(20, 49, 40, .1);
   --shell: min(1180px, calc(100% - 40px));
 }
 
@@ -24,13 +9,12 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--cream); -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration: none; }
-button, input, select { font: inherit; }
 button, select { cursor: pointer; }
 img, svg { display: block; max-width: 100%; }
 :focus-visible { outline: 3px solid rgba(227, 182, 85, .75); outline-offset: 3px; }
-.shell { width: var(--shell); margin-inline: auto; }
+.shell { margin-inline: auto; }
 .button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; transition: background .2s ease, color .2s ease, border-color .2s ease; }
-.button--primary { background: var(--green-950); color: var(--text-on-dark); }
+.button--primary { color: var(--text-on-dark); }
 .button--primary:hover { background: var(--green-800); }
 .button--ghost { border-color: var(--line); color: var(--text-muted); }
 
@@ -41,7 +25,6 @@ img, svg { display: block; max-width: 100%; }
 .not-found > div { display: flex; gap: 7px; margin-top: 16px; }
 
 @media (max-width: 840px) {
-  :root { --shell: min(100% - 26px, 1180px); }
   body { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
 }
 
@@ -91,8 +74,6 @@ img, svg { display: block; max-width: 100%; }
   --gold-dark: #8c6137;
   --cream: #f6efe6;
   --paper: #fffaf3;
-  --ink: #2a1e19;
-  --muted: #796b62;
   --line: #e5d7ca;
   --shadow: 0 24px 65px rgba(66, 35, 24, .11);
 }
@@ -112,7 +93,6 @@ body {
 /* ---------- Main hero ---------- */
 
 /* ---------- Site-wide palette cleanup ---------- */
-.button--ghost { background: #fffaf4; }
 
 /* ---------- Footer ---------- */
 
@@ -198,8 +178,6 @@ body {
 /* Source: ./experience-polish.css */
 /* Final experience layer: mobile-first navigation, tactile actions, and landmark gallery. */
 :root {
-  --ui-radius: 18px;
-  --ui-shadow: 0 18px 48px rgba(66, 34, 24, .10);
   --ui-shadow-raised: 0 28px 68px rgba(56, 28, 19, .16);
   --ui-ease: cubic-bezier(.22, .8, .25, 1);
 }
@@ -215,7 +193,6 @@ body { overflow-x: clip; }
   transition: transform .22s var(--ui-ease), box-shadow .22s ease, background .22s ease, border-color .22s ease;
 }
 .button svg { width: 18px; height: 18px; flex: 0 0 auto; }
-.button--primary { background: linear-gradient(145deg, #512d22, #2d1b16); box-shadow: 0 11px 24px rgba(54,27,20,.2), inset 0 1px rgba(255,255,255,.12); }
 .button--ghost { background: linear-gradient(145deg, #fff, #f7eee6); }
 
 /* Category and service cards */
@@ -286,15 +263,10 @@ body {
   border-radius: inherit;
   pointer-events: none;
 }
-.button--primary { background: linear-gradient(145deg,#5a3025,#2d1b16); }
 .button:active { transform: translateY(1px) scale(.985); }
 .button:focus-visible { outline: 3px solid rgba(52,122,128,.36); outline-offset: 3px; }
 
 /* Footer */
-
-@media (max-width: 680px) {
-  :root { --shell: min(100% - 24px,1180px); }
-}
 
 @keyframes homeActionIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 @keyframes cardRise { from { opacity: .55; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -325,9 +297,6 @@ body {
 }
 
 /* Device-screenshot refinements: rebalance the homepage for 360–430px phones. */
-@media (max-width: 430px) {
-  :root { --shell: min(100% - 16px, 1180px); }
-}
 
 /* Final phone pass based on live device screenshots. */
 
@@ -350,7 +319,6 @@ body {
 }
 
 html { overflow-x: clip; }
-.shell { width: min(1220px, calc(100% - 48px)); }
 
 /* A clearer desktop header with comfortable, stable targets. */
 
@@ -364,12 +332,7 @@ html { overflow-x: clip; }
 
 @media (max-width: 680px) {
   :root { --ui-radius: 20px; }
-  .shell { width: min(100% - 24px, 620px); }
   body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
-}
-
-@media (max-width: 390px) {
-  .shell { width: min(100% - 20px, 370px); }
 }
 
 /* Precision pass: header, discovery cards, listing actions and footer. */
@@ -747,9 +710,6 @@ button, .button, input, select, textarea {
 
 /* Source: ./encyclopedia-refresh.css */
 /* Final navigation and reading shell: fewer primary paths, calmer chrome. */
-body.encyclopedia-ui {
-  --shell: min(1160px, calc(100% - 48px));
-}
 
 /* Living cards across discovery pages */
 
@@ -759,11 +719,7 @@ body.encyclopedia-ui a:focus-visible, body.encyclopedia-ui button:focus-visible,
 }
 
 @media (max-width: 980px) {
-  body.encyclopedia-ui { --shell: min(100% - 32px, 1160px); --mobile-nav-clearance: calc(88px + env(safe-area-inset-bottom)); }
-}
-
-@media (max-width: 720px) {
-  body.encyclopedia-ui { --shell: calc(100% - 32px); }
+  body.encyclopedia-ui { --mobile-nav-clearance: calc(88px + env(safe-area-inset-bottom)); }
 }
 
 @media (max-width: 390px) {

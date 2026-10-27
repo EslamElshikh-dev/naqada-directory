@@ -7281,4 +7281,3 @@ table,time,[data-counter] { font-variant-numeric:tabular-nums; }
 @media(min-width:761px) {
   :where(.article-prose,.article-body,.knowledge-copy,.village-article) { font-size:var(--fs-lg); }
 }
-

@@ -1,5 +1,6 @@
 import { SUPABASE_URL, restHeaders, SupabaseAuthError } from '@/lib/auth/supabase-rest';
 import { cache } from 'react';
+import { connection } from 'next/server';
 import { invalidatePublicContent, PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
 
 export type CuratedKind = 'business' | 'news' | 'article' | 'role_model';
@@ -50,9 +51,10 @@ export async function assertMemberAllowed(token: string) {
   }
 }
 
-// Deduplicate within one render; moderation visibility must be read again on
-// the next request, even if an older read finishes after an invalidation.
+// React cache deduplicates one render only. Withdrawal state must never survive
+// into a later request, including when an earlier read finishes after moderation.
 export const getPublicCurated = cache(async (kind: CuratedKind): Promise<CuratedRecord[]> => {
+  await connection();
   return retryPublicRead(() => rpc<CuratedRecord[]>('get_public_naqada_content', undefined, { p_kind: kind }, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)), kind);
 });
 

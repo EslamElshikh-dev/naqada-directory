@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import { BODY_FONT, bodyFontVariable, displayFont } from '@/app/fonts';
+import { BODY_FONT, bodyFontVariable, displayFontVariable } from '@/app/fonts';
 import { SiteHeader } from '@/components/site-shell';
 import { Footer } from '@/components/site-footer';
 import { MobileNav } from '@/components/mobile-nav';
@@ -11,7 +11,6 @@ import { UpdatesTicker } from '@/components/updates-ticker';
 import { PwaSetup } from '@/components/pwa-setup';
 import { MetaPixel } from '@/components/meta-pixel';
 import './shell-styles.css';
-import './widget-triggers.css';
 
 
 export const metadata: Metadata = {
@@ -94,10 +93,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   };
 
   return (
-    <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFont.variable + ' ' + bodyFontVariable}>
+    <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFontVariable + ' ' + bodyFontVariable}>
       <head><link rel="preconnect" href="https://ceyjfguoomdlrtsujskj.supabase.co" crossOrigin="anonymous" /></head>
       <body className="mobile-editorial encyclopedia-ui">
-        <noscript dangerouslySetInnerHTML={{ __html: '<link rel="stylesheet" href="/styles/widgets/cards.css">' }} />
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
         <UpdatesTicker />
@@ -105,7 +103,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <PwaSetup />
         <Suspense fallback={null}><MetaPixel /></Suspense>
 
-        {children}
+        <div className="page-region">{children}</div>
         <Footer />
         <MobileNav />
         <SanadAssistant />

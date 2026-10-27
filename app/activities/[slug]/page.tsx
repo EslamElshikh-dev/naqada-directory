@@ -15,7 +15,6 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 type Props = { params: Promise<{ slug: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() { return []; }
 
 function activityKeywords(name: string, searchLabel: string) {
   const core = name.replace(/\s+في\s+نقادة$/, ' نقادة');

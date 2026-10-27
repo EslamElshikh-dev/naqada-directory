@@ -199,10 +199,10 @@ export default async function SearchPage({ searchParams }: Props) {
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
             <div><strong>ابدأ باسم خدمة أو مكان أو شخصية</strong><p>اكتب ما تحتاجه بطريقة طبيعية؛ نفس محرك البحث يعمل في الهيدر والصفحة الرئيسية وهنا.</p></div>
             <nav className={styles.quickLinks} aria-label="أمثلة بحث سريعة">
-              <Link href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
-              <Link href="/search?q=بشلاو&scope=places">بشلاو</Link>
-              <Link href="/search?q=عبد%20الرحيم%20القمولي&scope=knowledge">عبد الرحيم القمولي</Link>
-              <Link href="/search?q=تراث&scope=knowledge">تراث</Link>
+              <Link prefetch={false} href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
+              <Link prefetch={false} href="/search?q=بشلاو&scope=places">بشلاو</Link>
+              <Link prefetch={false} href="/search?q=عبد%20الرحيم%20القمولي&scope=knowledge">عبد الرحيم القمولي</Link>
+              <Link prefetch={false} href="/search?q=تراث&scope=knowledge">تراث</Link>
             </nav>
           </div>
         ) : scopedResults.length ? (
@@ -234,9 +234,9 @@ export default async function SearchPage({ searchParams }: Props) {
                 <section className={styles.group} id={group.id} key={group.id}>
                   <header className={styles.groupHead}>
                     <div><span>{group.items.length.toLocaleString(NUMBER_LOCALE)} نتيجة معروضة</span><h2>{group.label}</h2><p>{group.description}</p></div>
-                    {group.id === 'directory' ? <Link href={`/directory?q=${encodeURIComponent(query)}`}>فتح دليل الأنشطة ←</Link> : null}
-                    {group.id === 'knowledge' ? <Link href="/knowledge">فتح الموسوعة ←</Link> : null}
-                    {group.id === 'places' ? <Link href="/villages">كل القرى والنجوع ←</Link> : null}
+                    {group.id === 'directory' ? <Link prefetch={false} href={`/directory?q=${encodeURIComponent(query)}`}>فتح دليل الأنشطة ←</Link> : null}
+                    {group.id === 'knowledge' ? <Link prefetch={false} href="/knowledge">فتح الموسوعة ←</Link> : null}
+                    {group.id === 'places' ? <Link prefetch={false} href="/villages">كل القرى والنجوع ←</Link> : null}
                   </header>
                   <div className={styles.resultsGrid}>{group.items.map((item) => <ResultCard item={item} key={`${item.kind}-${item.href}`} />)}</div>
                 </section>
@@ -266,9 +266,9 @@ export default async function SearchPage({ searchParams }: Props) {
             ) : null}
 
             <div className={styles.emptyActions}>
-              {activeScope !== 'all' ? <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link> : null}
-              <Link href="/directory">فتح دليل الأنشطة</Link>
-              <Link href="/knowledge">فتح موسوعة نقادة</Link>
+              {activeScope !== 'all' ? <Link prefetch={false} href={searchHref(query, 'all')}>عرض كل النتائج</Link> : null}
+              <Link prefetch={false} href="/directory">فتح دليل الأنشطة</Link>
+              <Link prefetch={false} href="/knowledge">فتح موسوعة نقادة</Link>
               <Link href={`/contribute?type=missing&name=${encodeURIComponent(query)}`} prefetch={false}>تعرف النشاط؟ ابعت تفاصيله</Link>
             </div>
           </div>

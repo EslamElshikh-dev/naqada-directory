@@ -125,7 +125,7 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activities.includes("title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم'"));
   assert.ok(activities.includes('دليل خدمات وأنشطة <em>نقادة</em>'));
   assert.ok(activities.includes('activityLandings.map'));
-  assert.ok(activityPage.includes('generateStaticParams'));
+  assert.ok(activityPage.includes("export const dynamic = 'force-dynamic'"));
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
   assert.ok(activityPage.includes('activityKeywords(activity.name, activity.searchLabel)'));
   assert.ok(activityPage.includes('<h2>دليل {activity.name}: الأسماء والعناوين</h2>'));
@@ -190,7 +190,7 @@ test('blog schema contains editorial posts only and routes directory intent to v
   assert.ok(!blog.includes('...villageArticles.map'));
   assert.ok(blog.includes('عبارة «دليل + اسم القرية» مملوكة لصفحة القرية نفسها'));
   assert.ok(blog.includes('دليل بشلاو'));
-  assert.ok(blog.includes('<Link href="/villages"'));
+  assert.match(blog, /<Link\b[^>]*\bhref="\/villages"/);
 });
 
 test('listing SEO keyword routing only rewrites nursery intent', () => {

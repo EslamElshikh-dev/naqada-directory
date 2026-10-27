@@ -105,7 +105,7 @@ export function DeveloperWorkShowcase() {
                 {content}
               </a>
             ) : (
-              <Link key={project.title} href={project.href} className={styles.projectCard} style={cardStyle}>
+              <Link prefetch={false} key={project.title} href={project.href} className={styles.projectCard} style={cardStyle}>
                 {content}
               </Link>
             );

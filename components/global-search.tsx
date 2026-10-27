@@ -1,4 +1,5 @@
 'use client';
+import '@/app/route-styles/global-search.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 
 
@@ -7,7 +8,6 @@ import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from '
 import { trackCompletedSearch } from '@/lib/search-tracking';
 import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
 import assistStyles from './global-search-assist.module.css';
-import { ensureWidgetStyles } from '@/lib/widget-styles';
 
 type SearchItem = {
   kind: SiteSearchKind;
@@ -37,12 +37,12 @@ function resultGlyph(kind: SearchItem['kind']) {
   return '↗';
 }
 
-export function GlobalSearch() {
+export function GlobalSearch({ initialOpen = false }: { initialOpen?: boolean } = {}) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const requestRef = useRef<AbortController | null>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SearchItem[]>([]);
   const [suggestions, setSuggestions] = useState<SearchRecoverySuggestion[]>([]);
@@ -51,12 +51,6 @@ export function GlobalSearch() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const trimmedQuery = query.trim();
   const canSearch = trimmedQuery.length >= 2;
-
-  async function toggleSearch() {
-    if (open) { setOpen(false); return; }
-    try { await ensureWidgetStyles('search'); setOpen(true); }
-    catch { router.push('/search/'); }
-  }
 
   const status = useMemo(() => {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
@@ -180,7 +174,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={rootRef} className={`global-search${open ? ' is-open' : ''}`}>
-      <button type="button" className="global-search__trigger" aria-label="البحث في دليل نقادة" aria-haspopup="dialog" aria-expanded={open} onClick={toggleSearch}>
+      <button type="button" className="global-search__trigger" aria-label="البحث في دليل نقادة" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
         <SearchIcon /><span>بحث</span>
       </button>
       {open ? (

@@ -63,7 +63,7 @@ export function AccountButton() {
   }, [loadSession, ready, router]);
 
   return (
-    <Link
+    <Link prefetch={false}
       className={`account-trigger${user ? ' is-member' : ''}`}
       href={user ? '/account' : '/account/login'}
       aria-label={user ? `حساب ${displayName}` : 'تسجيل الدخول أو إنشاء حساب'}

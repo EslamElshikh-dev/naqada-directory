@@ -1,5 +1,5 @@
-import { ShareActions } from '@/components/share-actions';
 import '@/app/route-styles/villages-slug.css';
+import { ShareActions } from '@/components/share-actions';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -13,12 +13,12 @@ import { aliasesForPlace, childrenForPlace, knowledgePeopleForLocality, knowledg
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
 import styles from './article.module.css';
-import knowledgeStyles from './knowledge-summary.module.css';
+import knowledgeStyles from './reference.module.css';
+import pageStyles from './village-hero.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -156,25 +156,25 @@ export default async function LocalityPage({ params }: Props) {
 
   return (
     <main id="main-content" className="page-main">
-      <section className="village-hero">
-        <div className="shell village-hero__grid">
+      <section className={pageStyles.hero}>
+        <div className={`shell ${pageStyles.heroGrid}`}>
           <div>
-            <nav className="breadcrumbs"><Link prefetch={false} href="/villages">القرى والنجوع</Link><span>/</span><span>{locality.name}</span></nav>
-            <div className="village-hero__identity">
+            <nav className={pageStyles.breadcrumbs}><Link prefetch={false} href="/villages">القرى والنجوع</Link><span>/</span><span>{locality.name}</span></nav>
+            <div className={pageStyles.identity}>
               <BrandMark />
-              <div><span className="eyebrow">{article ? 'حكاية محلية من مركز نقادة' : `${locality.type} ضمن نطاق مركز نقادة`}</span><small>{locality.classification}</small></div>
+              <div><span className={pageStyles.eyebrow}>{article ? 'حكاية محلية من مركز نقادة' : `${locality.type} ضمن نطاق مركز نقادة`}</span><small>{locality.classification}</small></div>
             </div>
             <h1>{article?.title || locality.name}</h1>
             <p>{article?.intro[0] || locality.notes || locality.scope || 'موضع محلي ضمن مركز نقادة بمحافظة قنا.'}</p>
             <div className="detail-actions">
-              {article ? <a href="#village-article" className="button button--light">اقرأ حكاية المكان</a> : <a href="#locality-listings" className="button button--light">عرض الأنشطة</a>}
-              {knowledgePlace ? <a href="#reference-knowledge" className="button button--outline-light">المادة المرجعية</a> : null}
-              <a href="#locality-listings" className="button button--outline-light">الخدمات والأنشطة</a>
+              {article ? <a href="#village-article" className={`button ${pageStyles.lightButton}`}>اقرأ حكاية المكان</a> : <a href="#locality-listings" className={`button ${pageStyles.lightButton}`}>عرض الأنشطة</a>}
+              {knowledgePlace ? <a href="#reference-knowledge" className={`button ${pageStyles.outlineButton}`}>المادة المرجعية</a> : null}
+              <a href="#locality-listings" className={`button ${pageStyles.outlineButton}`}>الخدمات والأنشطة</a>
             </div>
           </div>
-          <aside className="village-hero__summary">
+          <aside className={pageStyles.summary}>
             <span>ملخص الموضع</span>
-            <div className="catalog-hero__metrics">
+            <div className={pageStyles.metrics}>
               <span><b>{scoped.length.toLocaleString(NUMBER_LOCALE)}</b><small>سجلًا منشورًا</small></span>
               <span><b>{categoryCount.toLocaleString(NUMBER_LOCALE)}</b><small>قسمًا متاحًا</small></span>
               <span><b>{locality.verification || 'مراجع'}</b><small>حالة الإدراج</small></span>
@@ -185,7 +185,7 @@ export default async function LocalityPage({ params }: Props) {
       </section>
 
       <section className={`shell page-section ${article ? styles.articleWrap : ''}`}>
-        <div className="locality-summary">
+        <div className={pageStyles.localitySummary}>
           <div><span>النوع</span><strong>{locality.type}</strong></div>
           <div><span>النطاق الإداري</span><strong>{locality.center || 'مركز نقادة'}</strong></div>
           <div><span>التصنيف</span><strong>{locality.classification || 'موضع محلي'}</strong></div>
@@ -277,7 +277,7 @@ export default async function LocalityPage({ params }: Props) {
 
       <section id="locality-listings" className="shell page-section">
         {topCategories.length > 0 && (
-          <div className="category-pills" aria-label={`أشهر أقسام ${locality.name}`}>
+          <div className={pageStyles.categories} aria-label={`أشهر أقسام ${locality.name}`}>
             {topCategories.map(({ category, count }) => <Link prefetch={false} key={category.slug} href={count >= 3 ? `/villages/${locality.slug}/${category.slug}` : `/directory/${category.slug}?locality=${encodeURIComponent(locality.name)}`}>{category.shortLabel} <small>{count.toLocaleString(NUMBER_LOCALE)}</small></Link>)}
           </div>
         )}

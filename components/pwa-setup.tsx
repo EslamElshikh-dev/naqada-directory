@@ -119,7 +119,7 @@ export function InstallAction() {
     await requestInstall();
   }
 
-  if (platform === 'installed') return <Link href="/">افتح دليل نقادة <span aria-hidden="true">←</span></Link>;
+  if (platform === 'installed') return <Link prefetch={false} href="/">افتح دليل نقادة <span aria-hidden="true">←</span></Link>;
   if (platform === 'prompt') return <button type="button" onClick={install}>ثبّت التطبيق الآن <span aria-hidden="true">←</span></button>;
   return <a href={platform === 'ios' ? '#iphone' : '#android'}>شوف طريقة التثبيت <span aria-hidden="true">↓</span></a>;
 }
@@ -182,7 +182,7 @@ export function InstallBanner() {
       <div className={styles.actions}>
         {mode === 'prompt' ?
           <button type="button" className={styles.install} onClick={install}>ثبّت التطبيق</button> :
-          <Link className={styles.install} href={mode === 'ios' ? '/install#iphone' : mode === 'android' ? '/install#android' : '/install/'} onClick={() => hide(1)}>طريقة التثبيت</Link>}
+          <Link prefetch={false} className={styles.install} href={mode === 'ios' ? '/install#iphone' : mode === 'android' ? '/install#android' : '/install/'} onClick={() => hide(1)}>طريقة التثبيت</Link>}
         <span>مجاني ومن المتصفح</span>
       </div>
     </aside>

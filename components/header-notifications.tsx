@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { DirectoryNotice } from '@/lib/notifications';
 import { ensureClientSession, subscribeClientSession } from './auth/client-session';
-import styles from './header-notifications-styles';
-import { ensureWidgetStyles } from '@/lib/widget-styles';
+import triggerStyles from './notification-trigger.module.css';
 
 const WELCOME_ID = 'welcome-salawat-v1';
 const SEEN_KEY = 'naqada_seen_notices_v1';
@@ -25,6 +24,7 @@ function BellIcon() {
 }
 
 export function HeaderNotifications() {
+  const [styles, setStyles] = useState<Record<string, string>>(triggerStyles);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
   const [greetingInPanel, setGreetingInPanel] = useState(false);
@@ -165,8 +165,10 @@ export function HeaderNotifications() {
 
   async function togglePanel() {
     if (!open) {
-      try { await ensureWidgetStyles('notifications'); }
-      catch { window.alert('تعذّر فتح التنبيهات. تحقّق من الاتصال وحاول مرة أخرى.'); return; }
+      const loaded = await import('./header-notifications.module.css');
+      setStyles(loaded.default);
+    }
+    if (!open) {
       setGreetingInPanel(!seenIds.includes(WELCOME_ID));
       markRead();
     } else {
@@ -184,7 +186,7 @@ export function HeaderNotifications() {
 
       {decisionToast?.userId === viewerId && <div className={styles.decisionToast} role="status" aria-live="polite">
         <span className={styles.decisionMark} aria-hidden="true">✓</span>
-        <Link href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>{decisionToast.notice.label}</small><strong>{decisionToast.notice.title}</strong><span>{decisionToast.notice.detail}</span></Link>
+        <Link prefetch={false} href={decisionToast.notice.href} onClick={() => setDecisionToast(null)}><small>{decisionToast.notice.label}</small><strong>{decisionToast.notice.title}</strong><span>{decisionToast.notice.detail}</span></Link>
         <button type="button" onClick={() => setDecisionToast(null)} aria-label="إغلاق إشعار القبول">×</button>
       </div>}
 
@@ -202,7 +204,7 @@ export function HeaderNotifications() {
           </div> : null}
           {personalEnabled ? <div className={styles.personalHeading}><span>✦ خاصة بحسابك</span><small>طلباتك والمتابعات المسموح بها لك</small></div> : null}
           {personalItems.map((item) => (
-            <Link key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>
+            <Link prefetch={false} key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>
               <span className={styles.marker} aria-hidden="true">✦</span>
               <span className={styles.copy}><small>{item.label}</small><strong>{item.title}</strong><p>{item.detail}</p></span>
               <span className={styles.arrow} aria-hidden="true">←</span>
@@ -211,7 +213,7 @@ export function HeaderNotifications() {
           {personalEnabled && !personalItems.length ? <p className={styles.empty}>مفيش تنبيهات خاصة جديدة دلوقت. قرارات مراجعة طلباتك هتظهر هنا.</p> : null}
           {personalEnabled ? <div className={styles.personalHeading}><span>من الدليل</span><small>أخبار منشورة للجميع</small></div> : null}
           {items.map((item) => (
-            <Link key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>
+            <Link prefetch={false} key={item.id} href={item.href} className={styles.item} data-tone={item.tone} onClick={() => setOpen(false)}>
               <span className={styles.marker} aria-hidden="true">•</span>
               <span className={styles.copy}><small>{item.label}</small><strong>{item.title}</strong><p>{item.detail}</p></span>
               <span className={styles.arrow} aria-hidden="true">←</span>
@@ -220,7 +222,7 @@ export function HeaderNotifications() {
           {items.length === 0 && !personalEnabled ? <p className={styles.empty}>لا توجد تنبيهات جديدة الآن. ستظهر تحديثات الدليل هنا أولًا بأول.</p> : null}
         </div>
 
-        <footer className={styles.footer}><span><i /> التنبيهات من محتوى الدليل الفعلي</span><Link href="/updates" onClick={() => setOpen(false)}>سجل التحديثات</Link></footer>
+        <footer className={styles.footer}><span><i /> التنبيهات من محتوى الدليل الفعلي</span><Link prefetch={false} href="/updates" onClick={() => setOpen(false)}>سجل التحديثات</Link></footer>
       </section> : null}
     </div>
   );

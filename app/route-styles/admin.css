@@ -19,6 +19,7 @@
 @media (max-width: 620px) {
   .workspace-hero h1 { font-size: var(--fs-3xl); line-height: 1.42; letter-spacing: normal; }
 }
+.global-search.is-open .global-search__trigger { color:var(--text-on-dark); background:linear-gradient(145deg,#347a80,#214f53); box-shadow:0 12px 27px rgba(37,93,98,.24); }
 @media (max-width: 760px) {
   .admin-hero { padding-block: 32px 64px !important; }
   .admin-shell--premium { margin-top: -34px !important; gap: 14px !important; }
@@ -34,9 +35,4 @@
 
 @media (max-width: 380px) {
   .admin-primary-metrics { grid-template-columns: 1fr 1fr !important; }
-}
-@media (max-width: 700px) {
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] { min-height: 0 !important; padding-block: 30px !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] h1 { font-size: var(--fs-3xl) !important; line-height: 1.6 !important; letter-spacing: normal !important; }
- body.mobile-editorial main > section[class*='knowledge'][class*='hero'] p { font-size: var(--fs-base) !important; line-height: 1.95 !important; }
 }

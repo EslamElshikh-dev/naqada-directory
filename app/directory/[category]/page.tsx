@@ -14,7 +14,6 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 type Props = { params: Promise<{ category: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: slug } = await params;

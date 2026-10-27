@@ -94,6 +94,10 @@ jobs:
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/withdrawal-qa.mjs
 
+      - name: Verify withdrawal while an older public read is in flight
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/content-withdrawal-qa.mjs
+
       - name: Run responsive diagnostics and screenshots
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/visual-qa-v2.mjs
