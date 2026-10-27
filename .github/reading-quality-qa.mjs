@@ -46,11 +46,38 @@ try {
     await page.close();
   }
 
+  // A synthetic signed-in response exercises the automatic notice, without a
+  // real account, session cookie or production write.
+  const personalPage = await isolatedPage(browser, { viewport: { width: 390, height: 900 }, serviceWorkers: 'block' });
+  await personalPage.route('**/api/auth/session*', route => route.fulfill({ json: { user: {
+    id: '00000000-0000-4000-8000-000000000001', displayName: 'مستخدم الفحص',
+    email: 'quality@example.invalid', avatarUrl: '', emailVerified: true, createdAt: '2026-10-27T00:00:00Z',
+  } } }));
+  await personalPage.route('**/api/profile*', route => route.fulfill({ json: { profile: { fullName: 'مستخدم الفحص' } } }));
+  await personalPage.route('**/api/notifications/personal/*', route => route.fulfill({ json: { items: [{
+    id: 'quality-decision-fixture', kind: 'decision', status: 'published', tone: 'mint',
+    href: '/updates/', label: 'قرار المراجعة', title: 'تم قبول الإضافة التجريبية', detail: 'إشعار اصطناعي لاختبار العرض فقط.',
+    occurredAt: '2026-10-27T00:00:00Z',
+  }] } }));
+  await personalPage.goto(base, { waitUntil: 'networkidle' });
+  const toast = personalPage.getByRole('status').filter({ hasText: 'تم قبول الإضافة التجريبية' });
+  await toast.waitFor({ state: 'visible' });
+  assert.equal(await toast.evaluate(node => getComputedStyle(node).position), 'fixed');
+  await personalPage.getByRole('button', { name: 'إغلاق إشعار القبول', exact: true }).click();
+  await toast.waitFor({ state: 'detached' });
+  results.push({ automaticPersonalNoticeStyledAndDismissed: true, syntheticAccount: true });
+  await personalPage.close();
+
   const page = await isolatedPage(browser, { viewport: { width: 390, height: 900 }, serviceWorkers: 'block' });
   const directory = await fetch(base + '/directory/').then(response => response.text());
   const listing = directory.match(/href="(\/listing\/[^"?]+)"/)?.[1];
   assert.ok(listing, 'A published activity is required for the sharing journey');
   await page.goto(base + listing, { waitUntil: 'networkidle' });
+  const directions = page.getByRole('link', { name: 'افتح الاتجاهات إلى النشاط على خرائط Google', exact: true }).first();
+  if (await directions.count()) {
+    const glyph = directions.locator('[aria-hidden="true"]').first();
+    assert.equal(await glyph.evaluate(node => getComputedStyle(node).color), 'rgb(255, 255, 255)');
+  }
   await page.evaluate(() => {
     navigator.share = async () => { throw new DOMException('Cancelled', 'AbortError'); };
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {

@@ -70,3 +70,18 @@ Meta لا يُحمّل قبل اختيار موافقة صريح من التذي
 توليد مستقل عبر image_gen، ثم تحويل إلى WebP بواسطة Sharp. النص المستخدم:
 
 > Create a natural photorealistic wide 3:2 category photograph for an Egyptian community directory. Interior of a clean modest community pharmacy in a small Upper Egyptian town, neat generic medicine boxes on shelves, glass counter, warm cream walls and muted dark-green details, soft daylight. No people. No readable writing, brands, business names, logos, watermark, certificates, or medical claims. A small simple generic green pharmacy cross is acceptable. Compose clearly at thumbnail size. It is an illustrative scene, not any named real pharmacy. Professional realistic editorial photography, organized and welcoming.
+
+
+## متابعة مراجعة Visual QA V2
+
+عند مراجعة طلب #202 كان نص الشريط قد صُحح في مصدر التصميم إلى 14px، مع بقاء شرط 13px في اختبار الاستخدام دون تخفيف. يحافظ الشريط على الحركة من اليسار إلى اليمين بسرعة 24px/ثانية، والإيقاف عند الطلب والتركيز والمرور واحترام تقليل الحركة. تتضمن الاختبارات مقاسات 390 و430 و1440px والنصوص القصيرة والطويلة وتحديث التغذية والمحتوى البديل.
+
+استُوعبت تحديثات الرأس `a303e30` مع الإبقاء على قوالبه وتقسيم CSS وحالة المحتوى الحديثة. نجح [CI 40547679328](https://github.com/EslamElshikh-dev/naqada-directory/actions/runs/40547679328) بجميع الاختبارات الـ195، والبناء وTypeScript وESLint وتدقيق الوسائط وSEO، ونجح [اختبار PostgreSQL 17 المعزول](https://github.com/EslamElshikh-dev/naqada-directory/actions/runs/40547679342). هذه نتائج ذلك الرأس تحديدًا؛ يُعاد Visual QA V2 لكل تعديل تالٍ، وتوثّق نتيجته النهائية وقياسات النقل في وصف طلب الدمج.
+
+صُحح لون أيقونتي الاتصال والخريطة لاحترام `--contact-icon-color` المحدد لسطح الزر؛ كانت الأيقونة تستخدم اللون الافتراضي الداكن فوق زر اتجاهات داكن. لم تتغير روابط الاتصال أو الخريطة أو التتبع أو حركتها. يختبر مسار المشاركة لون أيقونة الاتجاهات على السطح الداكن.
+
+أضيف اختبار عرض وإغلاق إشعار قبول تلقائي بحساب وقرار اصطناعيين داخل اعتراضات المتصفح، دون جلسة حقيقية أو كتابة إنتاج. يتحقق من تموضع الإشعار بعد تطبيق أنماطه، مع بقاء اختبارات حصر التركيز وإعادته في سند، والإشعارات، وإلغاء المشاركة ونسخ الرابط القياسي وWhatsApp، وصور JPEG العربية 1200×630 تحت 90KB، والقراءة دون اتصال وعزل المسارات الخاصة.
+
+تنبيه توثيقي للكاش: تظل ترويسات HTTP الخاصة وno-store كما هي. توجد استثناءات مقصودة داخل العامل الخدمي لنسخة HTML عامة مجهولة موسومة `naqada-public-snapshot=anonymous` على قائمة المسارات العامة فقط، لاستمرار القراءة دون اتصال بعد جعل الصفحات ديناميكية. لا يشمل ذلك الحساب أو الإدارة أو API أو الاستعلامات أو ردود Set-Cookie، ويظهر إشعار النسخة المحفوظة عند استخدامها.
+
+تبقى المسودة مفتوحة دون دمج أو نشر إنتاج. لا تعادل اختبارات المختبر قياس INP ميدانيًا أو TTFB من مصر أو اختبار التثبيت الأصلي أو OAuth بحساب إنتاج. تُراجع Checks ومعاينة الرأس الأخير قبل أي موافقة على الدمج.
