@@ -11,6 +11,7 @@ import { UpdatesTicker } from '@/components/updates-ticker';
 import { PwaSetup } from '@/components/pwa-setup';
 import { MetaPixel } from '@/components/meta-pixel';
 import './shell-styles.css';
+import './widget-triggers.css';
 
 
 export const metadata: Metadata = {
@@ -96,6 +97,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ar-EG" dir="rtl" data-body-font={BODY_FONT} className={displayFont.variable + ' ' + bodyFontVariable}>
       <head><link rel="preconnect" href="https://ceyjfguoomdlrtsujskj.supabase.co" crossOrigin="anonymous" /></head>
       <body className="mobile-editorial encyclopedia-ui">
+        <noscript dangerouslySetInnerHTML={{ __html: '<link rel="stylesheet" href="/styles/widgets/cards.css">' }} />
         <a className="skip-link" href="#main-content">تجاوز إلى المحتوى</a>
         <SiteHeader />
         <UpdatesTicker />

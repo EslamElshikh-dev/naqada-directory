@@ -34,3 +34,25 @@ test('offline eviction enforces byte and entry budgets without dropping essentia
   assert.ok(kept.reduce((sum,[,entry])=>sum+entry.bytes,0) <= policy.MAX_BYTES);
   assert.ok(!gone.has('root'));
 });
+
+test('dynamic anonymous snapshots remain readable offline while restricted responses stay excluded', async () => {
+  const saved = new Map();
+  const cache = { match: async key => saved.get(key), put: async (key, response) => saved.set(key, response), delete: async key => saved.delete(key) };
+  const runtime = vm.runInNewContext(source + '\n;({remember})', {
+    URL, Response, Headers, Request, TextDecoder, AbortController, setTimeout, clearTimeout,
+    caches: { open: async () => cache },
+    self: { location: { origin: 'https://naqada-directory.vercel.app' }, addEventListener() {} },
+  });
+  const marker = '<meta name="naqada-public-snapshot" content="anonymous"/>';
+  const response = (html, extra = {}) => new Response(html, { headers: { 'content-type': 'text/html', 'cache-control': 'private, no-store', ...extra } });
+  await runtime.remember('/listing/public/', response(marker + '<h1>Public activity</h1>'), 'listing');
+  assert.ok(saved.has('/listing/public/'));
+  for (const path of ['/account/', '/admin/', '/claim/example/', '/api/test/', '/listing/public/?preview=1']) {
+    await runtime.remember(path, response(marker + 'private'), 'listing');
+    assert.ok(!saved.has(path), path);
+  }
+  await runtime.remember('/listing/unmarked/', response('unmarked'), 'listing');
+  await runtime.remember('/listing/session/', response(marker, { 'set-cookie': 'session=private' }), 'listing');
+  assert.ok(!saved.has('/listing/unmarked/'));
+  assert.ok(!saved.has('/listing/session/'));
+});

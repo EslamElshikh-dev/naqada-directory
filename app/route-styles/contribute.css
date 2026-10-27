@@ -24,7 +24,8 @@
 .about-hero::after { content: ''; position: absolute; border: 1px solid rgba(227,182,85,.16); box-shadow: 0 0 0 48px rgba(227,182,85,.03), 0 0 0 96px rgba(227,182,85,.02); }
 .loading-state { min-height: 240px; display: grid; place-items: center; color: var(--text-muted); }
 .detail-layout { grid-template-columns: minmax(0, 1.5fr) minmax(250px, .5fr); }
-.detail-card, .detail-aside { padding: 23px; border: 1px solid var(--line); }
+.detail-card { padding: 23px; border: 1px solid var(--line); }
+.detail-aside { border: 1px solid var(--line); }
 .detail-grid { grid-template-columns: 1fr 1fr; }
 .detail-grid strong { display: block; }
 .source-panel { border: 1px solid #eadbb7; background: #f8f0dc; }
@@ -349,11 +350,7 @@
     padding: 11px 12px !important;
   }
 
-  .detail-grid > div span {
-    font-size: var(--fs-xs) !important;
-  }
-
-  .detail-grid > div strong {
+  .detail-grid > div span, .detail-grid > div strong {
     font-size: var(--fs-xs) !important;
   }
 

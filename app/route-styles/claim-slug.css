@@ -2,7 +2,8 @@
 .page-main { min-height: 70vh; }
 .eyebrow { display: inline-block; font-size: var(--fs-xs); font-weight: 700; letter-spacing: normal; margin-bottom: 11px; }
 .detail-layout { grid-template-columns: minmax(0, 1.5fr) minmax(250px, .5fr); }
-.detail-card, .detail-aside { padding: 23px; border: 1px solid var(--line); }
+.detail-card { padding: 23px; border: 1px solid var(--line); }
+.detail-aside { border: 1px solid var(--line); }
 .detail-grid { grid-template-columns: 1fr 1fr; }
 .detail-grid strong { display: block; }
 .source-panel { border: 1px solid #eadbb7; background: #f8f0dc; }
@@ -119,11 +120,7 @@
   text-wrap: balance;
 }
 
-.page-main p {
-  text-wrap: pretty;
-}
-
-.source-panel p {
+.page-main p, .source-panel p {
   text-wrap: pretty;
 }
 
@@ -165,11 +162,7 @@
     padding: 11px 12px !important;
   }
 
-  .detail-grid > div span {
-    font-size: var(--fs-xs) !important;
-  }
-
-  .detail-grid > div strong {
+  .detail-grid > div span, .detail-grid > div strong {
     font-size: var(--fs-xs) !important;
   }
 

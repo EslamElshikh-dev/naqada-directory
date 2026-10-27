@@ -9,8 +9,9 @@ import { ActionIcon } from './action-icon';
 import { ListingCardActions } from './listing-card-actions';
 import { ListingCover } from './listing-cover';
 import { publicBusinessHref } from '@/lib/business-links';
+import { CardStyles } from './card-styles';
 
-export function ListingCard({ listing, compact = false }: { listing: DirectoryItem; compact?: boolean }) {
+export function ListingCard({ listing, compact = false, eagerStyles = false }: { listing: DirectoryItem; compact?: boolean; eagerStyles?: boolean }) {
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const locality = canonicalLocalityName(listing.locality);
@@ -24,7 +25,8 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
     : `/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(locality)}`;
 
   return (
-    <article className={`listing-card${compact ? ' listing-card--compact' : ''}`}>
+    <article className={`listing-card${compact ? ' listing-card--compact' : ''}`} data-card-key={listing.id}>
+      <CardStyles eager={eagerStyles} cardId={listing.id} />
       <div className="listing-card__cover">
         {listing.imageUrl || listing.id.startsWith('owner-') ? <ListingCover src={listing.imageUrl} name={listing.name} category={listing.category} locality={locality} /> :
           <BusinessMedia businessId={listing.id} fallbackCategory={listing.category} businessName={listing.name} subcategory={listing.subcategory} locality={locality} />}

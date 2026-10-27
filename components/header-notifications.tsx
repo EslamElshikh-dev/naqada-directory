@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { DirectoryNotice } from '@/lib/notifications';
 import { ensureClientSession, subscribeClientSession } from './auth/client-session';
-import styles from './header-notifications.module.css';
+import styles from './header-notifications-styles';
+import { ensureWidgetStyles } from '@/lib/widget-styles';
 
 const WELCOME_ID = 'welcome-salawat-v1';
 const SEEN_KEY = 'naqada_seen_notices_v1';
@@ -162,8 +163,10 @@ export function HeaderNotifications() {
     }
   }
 
-  function togglePanel() {
+  async function togglePanel() {
     if (!open) {
+      try { await ensureWidgetStyles('notifications'); }
+      catch { window.alert('تعذّر فتح التنبيهات. تحقّق من الاتصال وحاول مرة أخرى.'); return; }
       setGreetingInPanel(!seenIds.includes(WELCOME_ID));
       markRead();
     } else {

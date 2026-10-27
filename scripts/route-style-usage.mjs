@@ -107,6 +107,16 @@ export function extractRouteStyles(css, usage, sharedUsage) {
     return output;
   }
   const output = filter(postcss.parse(css));
+  // A grouped selector can be overridden for only one of its members. Reduce
+  // each member separately so its dead declarations do not survive the group.
+  const rules = [];
+  output.walkRules(rule => rules.push(rule));
+  for (const rule of rules) {
+    const selectors = postcss.list.comma(rule.selector);
+    if (selectors.length < 2 || /keyframes$/.test(rule.parent.name || '')) continue;
+    for (const selector of selectors) rule.parent.insertBefore(rule, rule.clone({ selector }));
+    rule.remove();
+  }
   // Drop earlier declarations only when an identical selector/context replaces
   // them with a broadly supported value. Keep progressive-enhancement fallbacks.
   const stableValue = value => /^(?:#[\da-f]{3,8}|var\(--[\w-]+\)|(?:rgb|rgba|hsl|hsla)\([^()]+\)|(?:-?[\d.]+(?:px|rem|em|%|vh|vw|svh|dvh|ch)?\s*)+)$/i.test(value);
@@ -143,5 +153,19 @@ export function extractRouteStyles(css, usage, sharedUsage) {
   }
   output.walkRules(rule => { if (!rule.nodes.length) rule.remove(); });
   output.walkAtRules(rule => { if (rule.nodes && !rule.nodes.length) rule.remove(); });
+  // Recombine adjacent identical blocks without moving them in the cascade.
+  const containers = [output];
+  output.walkAtRules(rule => { if (rule.nodes) containers.push(rule); });
+  for (const container of containers) {
+    let previous;
+    for (const rule of [...container.nodes]) {
+      if (rule.type !== 'rule') { previous = undefined; continue; }
+      const body = rule.nodes.map(node => node.toString()).join(';');
+      if (previous && previous.body === body) {
+        previous.rule.selector += ', ' + rule.selector;
+        rule.remove();
+      } else previous = { rule, body };
+    }
+  }
   return output.toString();
 }

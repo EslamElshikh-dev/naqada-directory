@@ -30,6 +30,7 @@ export const metadata: Metadata = {
   title: { absolute: siteConfig.name },
   description: siteConfig.description,
   alternates: { canonical: '/' },
+  other: { 'naqada-public-snapshot': 'anonymous' },
 };
 
 const serviceToneByCategory: Record<string, string> = {

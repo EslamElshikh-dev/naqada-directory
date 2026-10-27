@@ -69,7 +69,7 @@
   .heritage-toolbar { grid-template-columns: 1fr; }
   .tabs { display: grid; grid-template-columns: 1fr 1fr; }
 }
-.results-bar button, .tabs button, .source-links a { font-size: var(--fs-sm); }
+.tabs button, .source-links a { font-size: var(--fs-sm); }
 .eyebrow { color: var(--text-on-dark-accent); }
 .record-card { box-shadow: 0 1px 0 rgba(255,255,255,.65); }
 .record-card dl > div { background: #f4ece4; color: var(--text-muted); }

@@ -169,7 +169,7 @@
 @media (max-width: 680px) {
   .category-card h3 { line-height: 1.55; }
   .category-card > p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3 !important; }
-  .category-card__footer b, .category-card__footer span { font-size: var(--fs-xs) !important; }
+  .category-card__footer span { font-size: var(--fs-xs) !important; }
 }
 
 @media (max-width: 390px) {

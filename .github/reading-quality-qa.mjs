@@ -19,6 +19,8 @@ try {
     const launcher = page.getByRole('button', { name: 'افتح محادثة سند، مساعد دليل نقادة' });
     await launcher.click();
     const dialog = page.getByRole('dialog', { name: 'محادثة سند' });
+    await dialog.waitFor({ state: 'visible' });
+    assert.equal(await dialog.evaluate(node => getComputedStyle(node).position), 'fixed');
     assert.equal(await dialog.getAttribute('aria-modal'), 'true');
     assert.ok(await page.locator('main').evaluate(node => Boolean(node.closest('[inert]'))));
     const controls = dialog.locator('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]');
@@ -32,6 +34,12 @@ try {
     assert.ok(await launcher.evaluate(node => node === document.activeElement));
     assert.equal(await page.evaluate(() => document.body.style.overflow), '');
     assert.equal(await page.locator('main[inert]').count(), 0);
+    const notifications = page.getByRole('button', { name: /^عرض الإشعارات/ });
+    await notifications.click();
+    const notices = page.getByRole('dialog', { name: 'إشعاراتك' });
+    await notices.waitFor({ state: 'visible' });
+    assert.ok(await notices.evaluate(node => ['fixed', 'absolute'].includes(getComputedStyle(node).position)));
+    await page.getByRole('button', { name: 'إغلاق الإشعارات', exact: true }).click();
     await page.screenshot({ path: `${folder}/home-${width}.png` });
     assert.deepEqual(errors, []);
     results.push({ width, keyboardTrapAndRestoredFocus: true, clientErrors: 0 });
@@ -74,6 +82,24 @@ try {
     results.push({ path, shareImage: { width: metadata.width, height: metadata.height, bytes: bytes.length } });
   }
   await page.close();
+
+  const offlinePage = await isolatedPage(browser, { viewport: { width: 390, height: 900 }, serviceWorkers: 'allow' });
+  await offlinePage.goto(base, { waitUntil: 'networkidle' });
+  await offlinePage.evaluate(() => navigator.serviceWorker.ready);
+  await offlinePage.waitForFunction(() => navigator.serviceWorker.controller);
+  await offlinePage.goto(base + listing, { waitUntil: 'networkidle' });
+  await offlinePage.waitForFunction(async () => {
+    const cache = await caches.open('naqada-offline-v2');
+    return Boolean(await cache.match(location.href));
+  });
+  await offlinePage.context().setOffline(true);
+  await offlinePage.goto(base + listing, { waitUntil: 'domcontentloaded' });
+  await offlinePage.getByRole('status').filter({ hasText: 'نسخة محفوظة' }).waitFor();
+  assert.ok((await offlinePage.locator('h1').textContent()).trim());
+  const cachedUrls = await offlinePage.evaluate(async () => (await (await caches.open('naqada-offline-v2')).keys()).map(request => request.url));
+  assert.ok(cachedUrls.every(url => !/^\/(?:api|account|admin|moderator|claim)\//.test(new URL(url).pathname)));
+  results.push({ offlinePublicSnapshot: true, privateRoutesExcluded: true });
+  await offlinePage.close();
 } finally {
   await browser.close();
   await writeFile(`${folder}/results.json`, JSON.stringify(results, null, 2));

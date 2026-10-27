@@ -7,6 +7,7 @@ import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from '
 import { trackCompletedSearch } from '@/lib/search-tracking';
 import type { SearchRecoverySuggestion, SiteSearchKind } from '@/lib/site-search';
 import assistStyles from './global-search-assist.module.css';
+import { ensureWidgetStyles } from '@/lib/widget-styles';
 
 type SearchItem = {
   kind: SiteSearchKind;
@@ -50,6 +51,12 @@ export function GlobalSearch() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const trimmedQuery = query.trim();
   const canSearch = trimmedQuery.length >= 2;
+
+  async function toggleSearch() {
+    if (open) { setOpen(false); return; }
+    try { await ensureWidgetStyles('search'); setOpen(true); }
+    catch { router.push('/search/'); }
+  }
 
   const status = useMemo(() => {
     if (!canSearch) return 'اكتب حرفين على الأقل لبدء البحث السريع.';
@@ -173,7 +180,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={rootRef} className={`global-search${open ? ' is-open' : ''}`}>
-      <button type="button" className="global-search__trigger" aria-label="البحث في دليل نقادة" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+      <button type="button" className="global-search__trigger" aria-label="البحث في دليل نقادة" aria-haspopup="dialog" aria-expanded={open} onClick={toggleSearch}>
         <SearchIcon /><span>بحث</span>
       </button>
       {open ? (

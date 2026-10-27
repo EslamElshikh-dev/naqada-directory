@@ -13,7 +13,7 @@ import { aliasesForPlace, childrenForPlace, knowledgePeopleForLocality, knowledg
 import { buildPageMetadata, isSafeExternalUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { getVillageArticle, villageArticleAuthor } from '@/lib/village-articles';
 import styles from './article.module.css';
-import knowledgeStyles from '../../knowledge/knowledge.module.css';
+import knowledgeStyles from './knowledge-summary.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
 export const dynamic = 'force-dynamic';

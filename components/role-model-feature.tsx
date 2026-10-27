@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RoleModelPhoto } from '@/lib/role-models';
-import styles from '@/app/role-models/role-models.module.css';
+import styles from './role-model-feature.module.css';
 
 export type FeaturedRoleModel = {
   slug: string;

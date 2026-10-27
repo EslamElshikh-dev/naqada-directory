@@ -3,7 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { SanadReply } from '@/lib/sanad';
-import styles from './sanad-assistant.module.css';
+import styles from './sanad-assistant-styles';
+import { ensureWidgetStyles } from '@/lib/widget-styles';
 
 type Message = { role: 'user' | 'assistant'; text: string; reply?: SanadReply };
 const prompts = ['أبحث عن خدمة', 'وظائف نقادة', 'نماذج مشرفة', 'إزاي أضيف نشاط؟'];
@@ -89,6 +90,11 @@ export function SanadAssistant() {
   }, [messages, pending, open]);
   function dismissHint() { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem('naqada-sanad-hint', '1'); } catch {} }
   function close() { setOpen(false); }
+  async function openPanel() {
+    dismissHint();
+    try { await ensureWidgetStyles('sanad'); setOpen(true); }
+    catch { window.alert('تعذّر فتح المحادثة. تحقّق من الاتصال وحاول مرة أخرى.'); }
+  }
   async function send(value: string, retry = false) {
     const text = value.trim();
     if (!text || busy.current) return;
@@ -107,8 +113,8 @@ export function SanadAssistant() {
   }
   const suggestions = messages.at(-1)?.reply?.suggestions || prompts;
   return <div ref={root} className={styles.root} dir="rtl" data-open={open}>
-    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); setOpen(true); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
-    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else setOpen(true); }}>
+    {!open && <button className={styles.hint} data-visible={hint} onClick={openPanel} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
+    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { if (open) close(); else void openPanel(); }}>
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
       <span className={styles.mobileLabel} aria-hidden="true">سند</span>
     </button>

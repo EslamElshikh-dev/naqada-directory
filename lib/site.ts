@@ -85,6 +85,10 @@ export function buildPageMetadata({
   return {
     title: { absolute: brandedTitle },
     description: summary,
+    // Only these anonymous public documents may be saved as explicit offline
+    // snapshots. Account, moderation, claim and query responses stay excluded.
+    ...(/^\/(?:listing|activity|villages|directory|activities|blog|role-models|knowledge|emergency)(?:\/[^/?]+){0,2}\/$/.test(normalizedPath)
+      ? { other: { 'naqada-public-snapshot': 'anonymous' } } : {}),
     ...(keywords?.length ? { keywords } : {}),
     alternates: { canonical: normalizedPath },
     robots: robots ?? defaultIndexRobots,

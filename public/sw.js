@@ -15,6 +15,7 @@ function navigationKind(url) {
 }
 function asset(url) {
   if (url.origin !== self.location.origin) return false;
+  if (!url.search && /^\/styles\/widgets\/(?:sanad|notifications|search|reviews|cards)\.css$/.test(url.pathname)) return true;
   if (/^\/_next\/image\/?$/.test(url.pathname)) {
     const value = url.searchParams.get('url');
     if (!value) return false;
@@ -51,9 +52,16 @@ async function readIndex(cache) {
 }
 function remember(request, response, kind) {
   return serialized(async () => {
-    if (!response.ok || response.type === 'opaque' || /(?:no-store|private)/i.test(response.headers.get('cache-control') || '')) return;
+    if (!response.ok || response.type === 'opaque' || response.headers.has('set-cookie')) return;
+    const restricted = /(?:no-store|private)/i.test(response.headers.get('cache-control') || '');
+    const url = new URL(typeof request === 'string' ? request : request.url, self.location.origin);
+    // Next's dynamic public HTML uses private/no-store by default. An explicit
+    // anonymous-document marker permits a local offline snapshot only; it does
+    // not change HTTP/CDN caching or permit private routes, APIs or query pages.
+    if (restricted && (kind === 'asset' || !navigationKind(url) || !/text\/html/i.test(response.headers.get('content-type') || ''))) return;
     const data = await response.clone().arrayBuffer();
     if (data.byteLength > 2 * 1024 * 1024) return;
+    if (restricted && !/<meta\s+name="naqada-public-snapshot"\s+content="anonymous"\s*\/?>/i.test(new TextDecoder().decode(data))) return;
     const cache = await caches.open(CACHE), index = await readIndex(cache);
     await cache.put(request, response);
     const key = typeof request === 'string' ? new URL(request, self.location.origin).href : request.url;

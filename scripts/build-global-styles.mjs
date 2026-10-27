@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, unlink
 import { cleanGlobalStyles } from './global-style-cleanup.mjs';
 import { createStyleUsageCollector, extractRouteStyles } from './route-style-usage.mjs';
 import { fileURLToPath } from 'node:url';
+import { buildWidgetStyles, deferGlobalWidgetStyles } from './deferred-widget-styles.mjs';
 
 // Preserve the established cascade; CSS Modules stay separate by route.
 const sources = [
@@ -55,11 +56,14 @@ const css = sources.map((name) => {
 }).join('\n\n');
 const cleaned = cleanGlobalStyles(css, retiredClasses);
 writeFileSync(new URL('site-styles.css', app), cleaned.css + '\n');
+const project = new URL('../', import.meta.url);
+buildWidgetStyles(project);
+const eagerCss = deferGlobalWidgetStyles(cleaned.css, project);
 const root = fileURLToPath(new URL('../', import.meta.url));
 const collect = createStyleUsageCollector(root);
 const sharedEntries = ['app/layout.tsx', 'app/not-found.tsx', 'app/error.tsx'].filter(name => existsSync(new URL('../' + name, import.meta.url)));
 const shared = collect(sharedEntries);
-const shell = extractRouteStyles(cleaned.css, shared);
+const shell = extractRouteStyles(eagerCss, shared);
 writeFileSync(new URL('shell-styles.css', app), shell.trimEnd() + '\n');
 // Compatibility sheet for third-party embeds; app routes import their own subset.
 writeFileSync(new URL('content-styles.css', app), extractRouteStyles(cleaned.css, collect(['app/layout.tsx', ...pageFiles(app)]), shared) + '\n');
@@ -77,7 +81,7 @@ for (const file of pageFiles(app)) {
   const name = relative === 'page.tsx' ? 'home' : relative.replace(/\/page\.tsx$/, '').replace(/[^a-zA-Z0-9-]+/g, '-').replace(/-+$/, '');
   if (sizes[name] !== undefined) throw Error('Duplicate route style name: ' + name);
   const parents = relative.split('/').slice(0, -1).map((_, index, parts) => 'app/' + parts.slice(0, index + 1).join('/') + '/layout.tsx').filter(path => existsSync(new URL('../' + path, import.meta.url)));
-  const styles = extractRouteStyles(cleaned.css, collect([...sharedEntries, ...parents, file]), shared);
+  const styles = extractRouteStyles(eagerCss, collect([...sharedEntries, ...parents, file]), shared);
   writeFileSync(new URL('route-styles/' + name + '.css', app), styles.trimEnd() + (styles.trim() ? '\n' : ''));
   staleSheets.delete(name + '.css');
   sizes[name] = Buffer.byteLength(styles);

@@ -39,3 +39,12 @@ test('route declaration reduction preserves media queries, importance and browse
   assert.match(css, /margin:2px!important/);
   assert.doesNotMatch(css, /color:#111|margin:1px/);
 });
+
+test('a later override removes only the obsolete member of a grouped selector', () => {
+  const usage = { words: new Set(['a', 'b']), prefixes: new Set(), modules: new Set(), moduleClasses: new Set() };
+  const css = extractRouteStyles('.a,.b{color:#111;padding:1px}.a{color:#222}.a:hover{padding:2px}', usage);
+  assert.match(css, /\.b\{color:#111/);
+  assert.doesNotMatch(css, /\.a\{color:#111/);
+  assert.match(css, /\.a\{padding:1px/);
+  assert.match(css, /\.a:hover\{padding:2px/);
+});
