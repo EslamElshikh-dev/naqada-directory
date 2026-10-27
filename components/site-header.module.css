@@ -19,6 +19,8 @@
 .emergency { display:flex; align-items:center; gap:7px; min-height:42px; padding:8px 12px; border-radius:9px; border:1px solid #eadbcd; background:#fcf7ef; color:var(--text-danger); font-size:var(--fs-xs); white-space:nowrap; }
 .emergencyDot { width:6px; height:6px; background:#ba6847; border-radius:50%; }
 .explore { display:none; }
+/* The full-size Arabic navigation needs more room than the article shell. */
+@media (min-width:1401px) { .header .inner { width:min(1320px,calc(100% - 40px)); } }
 @media (max-width:1280px) { .inner { gap:14px; } .emergency { display:none; } }
 @media (max-width:1120px) {
  .inner { min-height:74px; grid-template-columns:minmax(0,1fr) auto auto; gap:10px; }

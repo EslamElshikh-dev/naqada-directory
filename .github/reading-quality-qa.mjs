@@ -40,6 +40,11 @@ try {
     await notices.waitFor({ state: 'visible' });
     assert.ok(await notices.evaluate(node => ['fixed', 'absolute'].includes(getComputedStyle(node).position)));
     await page.getByRole('button', { name: 'إغلاق الإشعارات', exact: true }).click();
+    if (width === 1440) {
+      const brand = await page.getByRole('link', { name: 'دليل نقادة — الرئيسية', exact: true }).boundingBox();
+      const navigation = await page.locator('header').first().locator('nav:visible').first().boundingBox();
+      assert.ok(brand && navigation && navigation.x + navigation.width <= brand.x - 8, 'Desktop navigation overlaps the site identity');
+    }
     await page.screenshot({ path: `${folder}/home-${width}.png` });
     assert.deepEqual(errors, []);
     results.push({ width, keyboardTrapAndRestoredFocus: true, clientErrors: 0 });

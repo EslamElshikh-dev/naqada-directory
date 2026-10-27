@@ -49,11 +49,12 @@ async function settlePage(page) {
   await page.evaluate(async () => {
     const step = Math.max(320, Math.floor(window.innerHeight * 0.75));
     for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      window.scrollTo(0, y);
+      window.scrollTo({ top: y, left: 0, behavior: 'instant' });
       await new Promise((resolve) => setTimeout(resolve, 60));
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   });
+  await page.waitForFunction(() => window.scrollY === 0);
   await page.waitForTimeout(300);
 }
 
