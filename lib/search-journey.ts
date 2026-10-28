@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { activityLandings, getBusinessesForActivity, type ActivityLanding } from './activity-landings';
 import { canonicalLocalityName, categories, localities } from './data';
 import { buildSearchContext } from './search-context';
@@ -96,7 +97,7 @@ export function buildSearchJourney(query: string): SearchJourney | null {
     .slice(0, 4)
     .map(({ activity, count }) => ({
       title: activityLabel(activity),
-      subtitle: `${count.toLocaleString('ar-EG')} نتيجة داخل ${currentLocality.name}`,
+      subtitle: `${count.toLocaleString(NUMBER_LOCALE)} نتيجة داخل ${currentLocality.name}`,
       href: searchHref(activity.searchLabel, currentLocality.name),
       count,
       badge: 'خدمة مرتبطة',
@@ -116,8 +117,8 @@ export function buildSearchJourney(query: string): SearchJourney | null {
         .map(({ locality, exactCount, broadCount }) => ({
           title: locality.name,
           subtitle: exactCount > 0
-            ? `${exactCount.toLocaleString('ar-EG')} من نفس الخدمة · ${broadCount.toLocaleString('ar-EG')} ضمن ${category.shortLabel}`
-            : `${broadCount.toLocaleString('ar-EG')} نتيجة ضمن ${category.shortLabel}`,
+            ? `${exactCount.toLocaleString(NUMBER_LOCALE)} من نفس الخدمة · ${broadCount.toLocaleString(NUMBER_LOCALE)} ضمن ${category.shortLabel}`
+            : `${broadCount.toLocaleString(NUMBER_LOCALE)} نتيجة ضمن ${category.shortLabel}`,
           href: exactCount > 0 ? searchHref(currentActivity.searchLabel, locality.name) : `/villages/${locality.slug}`,
           count: exactCount || broadCount,
           badge: 'نفس النطاق الإداري',
@@ -133,7 +134,7 @@ export function buildSearchJourney(query: string): SearchJourney | null {
     .slice(0, 6)
     .map(({ locality, count }) => ({
       title: locality.name,
-      subtitle: `${count.toLocaleString('ar-EG')} نتيجة من نفس الخدمة`,
+      subtitle: `${count.toLocaleString(NUMBER_LOCALE)} نتيجة من نفس الخدمة`,
       href: searchHref(currentActivity.searchLabel, locality.name),
       count,
       badge: 'نفس الخدمة',

@@ -1,3 +1,5 @@
+import '@/app/route-styles/news-id.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Link from 'next/link';
@@ -15,7 +17,7 @@ type StoryPageProps = { params: Promise<{ id: string }> };
 
 function formatNewsDate(value: string) {
   if (!value) return 'وقت النشر غير متاح';
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -89,11 +91,11 @@ async function RelatedStories({ item }: { item: ExternalNewsItem }) {
       <div className="shell">
         <div className={styles.relatedHeading}>
           <div><span>تابع المشهد</span><h2 id="related-news-title">أخبار مرتبطة</h2></div>
-          <Link href="/news">كل الأخبار ←</Link>
+          <Link prefetch={false} href="/news">كل الأخبار ←</Link>
         </div>
         <div className={styles.relatedGrid}>
           {related.map((story) => (
-            <Link href={`/news/${story.id}`} className={styles.relatedCard} key={story.id}>
+            <Link prefetch={false} href={`/news/${story.id}`} className={styles.relatedCard} key={story.id}>
               <span className={styles.relatedMedia}>
                 <NewsImage src={story.imageUrl} alt={story.imageAlt} sizes="(max-width: 700px) 120px, 260px" />
               </span>
@@ -149,7 +151,7 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
         <header className={styles.hero}>
           <div className={`shell ${styles.heroInner}`}>
             <nav className={styles.breadcrumbs} aria-label="مسار الخبر">
-              <Link href="/">الرئيسية</Link><span>/</span><Link href="/news">الأخبار</Link><span>/</span><span>{item.category}</span>
+              <Link prefetch={false} href="/">الرئيسية</Link><span>/</span><Link prefetch={false} href="/news">الأخبار</Link><span>/</span><span>{item.category}</span>
             </nav>
             <div className={styles.labels}><span>{item.category}</span><b>{item.isNaqada ? 'نقادة' : 'قنا'}</b></div>
             <h1>{item.title}</h1>

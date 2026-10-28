@@ -1,10 +1,9 @@
 import Image from 'next/image';
-import { getCategoryMedia } from '@/lib/category-media';
+import { getCategoryMedia, type CategoryMedia } from '@/lib/category-media';
 import { CategoryVisual } from './category-visual';
 import styles from './category-cover.module.css';
 
-export function CategoryCover({ category, index }: { category: string; index: number }) {
-  const media = getCategoryMedia(category);
+export function CategoryCover({ category, index, media = getCategoryMedia(category) }: { category: string; index: number; media?: CategoryMedia }) {
   return (
     <div className={styles.cover}>
       <Image

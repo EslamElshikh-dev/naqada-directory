@@ -178,7 +178,7 @@ body.encyclopedia-ui .listing-grid > .listing-card:nth-child(3n + 2) .listing-ca
   display: grid;
   place-items: center;
   border-radius: 17px;
-  color: var(--card-accent-deep);
+  color: var(--text-danger);
   transition: transform .24s cubic-bezier(.2, .72, .24, 1), filter .24s ease;
 }
 
@@ -213,9 +213,9 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
   border-radius: 999px !important;
   background: rgba(12, 55, 44, .78) !important;
   box-shadow: 0 7px 22px rgba(9, 33, 27, .18);
-  color: #fff !important;
-  font-size: .65rem !important;
-  font-weight: 850;
+  color: var(--text-on-dark) !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 700;
   line-height: 1;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -264,9 +264,9 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
 
 .listing-card__eyebrow a {
   overflow: hidden;
-  color: var(--card-accent) !important;
-  font-size: .72rem;
-  font-weight: 900;
+  color: var(--text-danger) !important;
+  font-size: var(--fs-xs);
+  font-weight: 700;
   line-height: 1.6;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -276,9 +276,9 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  color: #9a8b82 !important;
-  font-size: .62rem !important;
-  font-weight: 750;
+  color: var(--text-muted) !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 700;
   line-height: 1.6;
   white-space: nowrap;
 }
@@ -301,8 +301,8 @@ body.encyclopedia-ui .listing-card .listing-card__category-mark .category-visual
 .listing-card h3,
 body.encyclopedia-ui .listing-card h3 {
   margin: 13px 0 7px !important;
-  color: var(--listing-ink) !important;
-  font-size: clamp(1.03rem, 1.45vw, 1.18rem) !important;
+  color: var(--text-strong) !important;
+  font-size: var(--fs-lg) !important;
   line-height: 1.65 !important;
   text-wrap: balance;
 }
@@ -322,8 +322,8 @@ body.encyclopedia-ui .listing-card__location {
   align-items: start !important;
   gap: 7px !important;
   margin: 0 !important;
-  color: var(--listing-muted) !important;
-  font-size: .78rem !important;
+  color: var(--text-muted) !important;
+  font-size: var(--fs-xs) !important;
   line-height: 1.9 !important;
 }
 
@@ -331,7 +331,7 @@ body.encyclopedia-ui .listing-card__location {
   width: 17px;
   height: 17px;
   margin-top: 4px;
-  color: var(--card-spark) !important;
+  color: var(--text-on-dark-accent) !important;
 }
 
 .listing-card__meta {
@@ -351,20 +351,20 @@ body.encyclopedia-ui .listing-card__location {
   border: 1px solid rgba(50, 78, 66, .055) !important;
   border-radius: 999px !important;
   background: #f5f0ea !important;
-  color: #72675f !important;
-  font-size: .66rem !important;
-  font-weight: 800;
+  color: var(--text-muted) !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 700;
   line-height: 1.5;
 }
 
 .listing-card__meta > a {
   background: var(--card-accent-soft) !important;
-  color: var(--card-accent-deep) !important;
+  color: var(--text-danger) !important;
 }
 
 .listing-card__meta .rating {
   background: #fff5df !important;
-  color: #74551f !important;
+  color: var(--text-accent) !important;
 }
 
 .listing-card__actions,
@@ -389,7 +389,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button {
   border-radius: 14px !important;
   gap: 7px !important;
   box-shadow: none !important;
-  font-size: .7rem !important;
+  font-size: var(--fs-xs) !important;
   line-height: 1.4 !important;
   white-space: nowrap;
 }
@@ -403,8 +403,8 @@ body.mobile-editorial .listing-card .listing-card__actions .button--primary {
   border: 1px solid rgba(255, 255, 255, .08) !important;
   background: linear-gradient(135deg, var(--card-accent) 0%, var(--card-accent-deep) 100%) !important;
   box-shadow: 0 10px 24px color-mix(in srgb, var(--card-accent) 20%, transparent) !important;
-  color: #fff !important;
-  font-size: .8rem !important;
+  color: var(--text-on-dark) !important;
+  font-size: var(--fs-xs) !important;
 }
 
 .listing-card__actions .button--primary::before {
@@ -421,19 +421,19 @@ body.mobile-editorial .listing-card .listing-card__actions .button--primary {
 .listing-card__actions .button--soft {
   border: 1px solid color-mix(in srgb, var(--card-accent) 12%, transparent) !important;
   background: var(--card-accent-soft) !important;
-  color: var(--card-accent-deep) !important;
+  color: var(--text-danger) !important;
 }
 
 .listing-card__actions .button--whatsapp {
   border: 1px solid rgba(24, 133, 72, .1) !important;
   background: #e8f8ed !important;
-  color: #176f3a !important;
+  color: var(--text-link) !important;
 }
 
 .listing-card__actions .button--ghost {
   border: 1px solid rgba(156, 81, 57, .1) !important;
   background: #fcf3ed !important;
-  color: #8b4935 !important;
+  color: var(--text-danger) !important;
 }
 
 .listing-card__actions .button span,
@@ -494,15 +494,15 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   border: 1px solid rgba(50, 78, 66, .08) !important;
   border-radius: 999px !important;
   background: rgba(255, 255, 255, .72) !important;
-  color: #746057 !important;
-  font-size: .62rem !important;
+  color: var(--text-muted) !important;
+  font-size: var(--fs-xs) !important;
   white-space: nowrap;
 }
 
 .listing-card__discovery a:last-child {
   border-color: color-mix(in srgb, var(--card-accent) 13%, transparent) !important;
   background: color-mix(in srgb, var(--card-accent-soft) 84%, transparent) !important;
-  color: var(--card-accent-deep) !important;
+  color: var(--text-danger) !important;
 }
 
 /* Directory discovery tools: useful polish above decoration. */
@@ -641,7 +641,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   }
 
   .listing-card h3 a:hover {
-    color: var(--card-accent-deep) !important;
+    color: var(--text-danger) !important;
     text-decoration-color: color-mix(in srgb, var(--card-accent) 38%, transparent);
   }
 
@@ -663,7 +663,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
 
   .listing-card__discovery a:hover {
     border-color: color-mix(in srgb, var(--card-accent) 22%, transparent) !important;
-    color: var(--card-accent-deep) !important;
+    color: var(--text-danger) !important;
   }
 }
 
@@ -719,7 +719,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
     inset-block-start: 11px;
     min-height: 28px;
     padding: 5px 9px !important;
-    font-size: .61rem !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .listing-card__head {
@@ -735,7 +735,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   body.mobile-editorial .listing-card h3,
   body.encyclopedia-ui .listing-card h3 {
     margin: 11px 0 6px !important;
-    font-size: 1rem !important;
+    font-size: var(--fs-base) !important;
     line-height: 1.7 !important;
   }
 
@@ -744,7 +744,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   body.encyclopedia-ui .listing-card__location {
     min-height: 0 !important;
     margin-bottom: 9px !important;
-    font-size: .75rem !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.85 !important;
   }
 
@@ -764,7 +764,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
   .listing-card__meta > * {
     flex: 0 0 auto;
     min-height: 29px !important;
-    font-size: .66rem !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .listing-card__actions,
@@ -780,14 +780,14 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
     padding: 9px 8px !important;
     border-radius: 13px !important;
     gap: 6px !important;
-    font-size: .72rem !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .listing-card__actions .button--primary,
   body.mobile-editorial .listing-card .listing-card__actions .button--primary {
     min-height: 49px !important;
     padding-inline: 14px !important;
-    font-size: .79rem !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .listing-card__actions .button--primary svg,
@@ -809,7 +809,7 @@ body.mobile-editorial .listing-card .listing-card__actions .button svg {
 
   .listing-card__discovery a {
     min-height: 34px;
-    font-size: .62rem !important;
+    font-size: var(--fs-xs) !important;
   }
 }
 

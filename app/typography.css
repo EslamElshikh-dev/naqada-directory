@@ -1,0 +1,57 @@
+:root {
+  --fs-xs:12px;
+  --fs-sm:14px;
+  --fs-base:16px;
+  --fs-md:17px;
+  --fs-lg:18px;
+  --fs-xl:20px;
+  --fs-2xl:24px;
+  --fs-3xl:clamp(28px,2.4vw + 18px,34px);
+  --fs-display:clamp(32px,4.5vw + 14px,52px);
+  --text-strong:#173a30;
+  --text-body:#264b3e;
+  --text-muted:#566656;
+  --text-on-dark:#fffefb;
+  --text-on-dark-muted:#ceded3;
+  --text-accent:#8c631e;
+  --text-on-dark-accent:#edc574;
+  --text-link:#17664d;
+  --text-danger:#9a3939;
+  --ink:var(--text-strong);
+  --muted:var(--text-muted);
+}
+/* Explicit family keeps local font naming consistent between both Next bundlers. */
+html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
+html[data-body-font='plex'] { --font-body:var(--font-plex); }
+html[data-body-font='readex'] { --font-body:var(--font-readex); }
+body, body.encyclopedia-ui {
+  font-family:var(--font-body),sans-serif;
+  font-size:var(--fs-base);
+  line-height:1.8;
+  letter-spacing:normal;
+  font-synthesis:none;
+}
+button,input,select,textarea { font:inherit; line-height:1.5; }
+code,pre,kbd,samp { font-family:inherit; }
+:is(h1,h2,h3,h4,h5,h6), .display, .brand__copy strong, [data-counter] {
+  font-family:var(--font-display),sans-serif;
+  font-weight:700;
+  line-height:1.35;
+  text-wrap:balance;
+}
+h1 { font-size:var(--fs-display); }
+h2 { font-size:var(--fs-2xl); }
+h3 { font-size:var(--fs-xl); }
+h4 { font-size:var(--fs-lg); }
+p { text-wrap:pretty; }
+b,strong { font-weight:700; }
+small { font-size:var(--fs-xs); }
+table,time,[data-counter],.hero__trust { font-variant-numeric:tabular-nums; }
+:where(.article-prose,.article-body,.knowledge-copy,.village-article) {
+  max-inline-size:70ch;
+  font-size:var(--fs-md);
+  line-height:1.9;
+}
+@media(min-width:761px) {
+  :where(.article-prose,.article-body,.knowledge-copy,.village-article) { font-size:var(--fs-lg); }
+}

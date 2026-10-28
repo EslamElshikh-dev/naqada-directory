@@ -1,3 +1,4 @@
+import '@/app/route-styles/jobs.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -58,7 +59,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
   return <main id="main-content" className={styles.page}>
     <section className={styles.hero}>
       <div className={`shell ${styles.heroShell}`}>
-        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>وظائف نقادة</span></nav>
+        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>وظائف نقادة</span></nav>
         <div className={styles.heroGrid}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}><i aria-hidden="true" /> باب رزق من قلب البلد</span>

@@ -1,6 +1,10 @@
 'use client';
+import '@/app/route-styles/account-oauth-callback.css';
+
+
 
 import Link from 'next/link';
+import { safeAuthReturn } from '@/lib/auth/return-path';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BrandMark } from '@/components/site-shell';
@@ -38,10 +42,10 @@ export default function OAuthCallbackPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ accessToken, refreshToken, expiresIn }),
         });
-        const data = await response.json().catch(() => ({})) as { user?: ClientSessionUser; error?: string };
+        const data = await response.json().catch(() => ({})) as { user?: ClientSessionUser; error?: string; redirectTo?: string };
         if (!response.ok || !data.user) throw new Error(data.error || 'تعذر حفظ جلسة الدخول.');
         setClientSessionUser(data.user);
-        router.replace('/account');
+        router.replace(safeAuthReturn(data.redirectTo));
         router.refresh();
       } catch (error) {
         if (!active) return;
@@ -61,7 +65,7 @@ export default function OAuthCallbackPage() {
         {state === 'working' ? <span className="oauth-spinner" aria-hidden="true" /> : <span className="oauth-error-mark" aria-hidden="true">!</span>}
         <h1>{state === 'working' ? 'لحظات ونفتح حسابك' : 'لم تكتمل العملية'}</h1>
         <p>{message}</p>
-        {state === 'error' && <Link href="/account/login">العودة إلى تسجيل الدخول</Link>}
+        {state === 'error' && <Link prefetch={false} href="/account/login">العودة إلى تسجيل الدخول</Link>}
       </section>
     </main>
   );

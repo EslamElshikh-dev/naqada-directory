@@ -60,8 +60,8 @@
 
 .hubCard > div:not(.visual) { margin-top: 15px; }
 
-.hubCard h2 { font-size: clamp(1.2rem, 2.2vw, 1.65rem); }
-.hubCard:nth-child(-n+2) h2 { font-size: clamp(1.4rem, 2.8vw, 1.95rem); }
+.hubCard h2 { font-size: var(--fs-2xl); }
+.hubCard:nth-child(-n+2) h2 { font-size: var(--fs-3xl); }
 
 .jumpRail {
   display: flex;
@@ -87,10 +87,10 @@
   border: 1px solid rgba(84,49,36,.10);
   border-radius: 999px;
   background: #fff;
-  color: #5a4035;
+  color: var(--text-muted);
   text-decoration: none;
-  font-size: .76rem;
-  font-weight: 820;
+  font-size: var(--fs-xs);
+  font-weight: 700;
   scroll-snap-align: start;
 }
 
@@ -99,9 +99,9 @@
   padding: 3px 7px;
   border-radius: 999px;
   background: #f2e7dc;
-  color: #8a513a;
+  color: var(--text-danger);
   text-align: center;
-  font-size: .64rem;
+  font-size: var(--fs-xs);
 }
 
 .groupSection {
@@ -124,15 +124,15 @@
 .groupHeader span {
   display: block;
   margin-bottom: 3px;
-  color: #996149;
-  font-size: .7rem;
-  font-weight: 850;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .groupHeader h2 {
   margin: 0;
-  color: #2e201b;
-  font-size: clamp(1.35rem,2.7vw,1.9rem);
+  color: var(--text-strong);
+  font-size: var(--fs-3xl);
   text-wrap: balance;
 }
 
@@ -145,10 +145,10 @@
   padding: 8px 11px;
   border-radius: 13px;
   background: #f4ebe2;
-  color: #7c4a36;
+  color: var(--text-danger);
   text-align: center;
-  font-size: .76rem;
-  font-weight: 850;
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .summaryRail {
@@ -170,12 +170,12 @@
   padding: 7px 11px;
   border-radius: 999px;
   background: #f1e7dd;
-  color: #704b3b;
-  font-size: .74rem;
-  font-weight: 800;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
-.summaryRail b { color: #a95337; }
+.summaryRail b { color: var(--text-danger); }
 
 @media (max-width: 900px) {
   .hubCard,
@@ -197,14 +197,14 @@
   .hubCard:nth-child(1) .visual,
   .hubCard:nth-child(2) .visual { flex-basis: 172px; }
   .jumpRail a,
-  .jumpRail span { min-height: 44px; font-size: .74rem; }
-  .jumpRail small { font-size: .63rem; }
+  .jumpRail span { min-height: 44px; font-size: var(--fs-xs); }
+  .jumpRail small { font-size: var(--fs-xs); }
   .groupHeader { align-items: center; }
-  .groupHeader span { font-size: .69rem; }
-  .groupCount { min-width: 66px; min-height: 42px; font-size: .73rem; }
+  .groupHeader span { font-size: var(--fs-xs); }
+  .groupCount { min-width: 66px; min-height: 42px; font-size: var(--fs-xs); }
   .summaryRail { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-inline: contain; }
   .summaryRail::-webkit-scrollbar { display: none; }
-  .summaryRail span { flex: none; min-height: 40px; font-size: .72rem; }
+  .summaryRail span { flex: none; min-height: 40px; font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {

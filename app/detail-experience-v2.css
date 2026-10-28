@@ -10,7 +10,7 @@
     radial-gradient(circle at 82% 12%, rgba(221,177,112,.17), transparent 28rem),
     radial-gradient(circle at 4% 90%, rgba(43,114,119,.16), transparent 25rem),
     linear-gradient(132deg, #211512 0%, #342019 58%, #583026 100%);
-  color: #fff;
+  color: var(--text-on-dark);
 }
 .detail-hero::after,
 .village-hero::after {
@@ -35,9 +35,9 @@
   align-items: center;
 }
 .detail-hero .breadcrumbs,
-.village-hero .breadcrumbs { color: #bba79d; }
+.village-hero .breadcrumbs { color: var(--text-on-dark-accent); }
 .detail-hero .breadcrumbs a,
-.village-hero .breadcrumbs a { color: #e7d9d0; }
+.village-hero .breadcrumbs a { color: var(--text-on-dark-muted); }
 .detail-hero__badges,
 .village-hero__identity { margin-top: 18px; }
 .detail-hero__badges { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -50,18 +50,18 @@
   border: 1px solid rgba(255,255,255,.11);
   border-radius: 999px;
   background: rgba(255,255,255,.055);
-  color: #e8c58f;
-  font-size: .66rem;
-  font-weight: 850;
+  color: var(--text-on-dark-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 .detail-hero h1,
 .village-hero h1 {
   max-width: 780px;
   margin: 12px 0 10px;
-  color: #fff;
-  font-size: clamp(2.25rem, 4.8vw, 3.75rem);
+  color: var(--text-on-dark);
+  font-size: var(--fs-display);
   line-height: 1.35;
-  letter-spacing: -.045em;
+  letter-spacing: normal;
   text-wrap: balance;
 }
 .detail-hero > .shell p,
@@ -69,8 +69,8 @@
 .village-hero__grid > div > p {
   max-width: 760px;
   margin: 0;
-  color: #ddcec6;
-  font-size: .86rem;
+  color: var(--text-on-dark-muted);
+  font-size: var(--fs-sm);
   line-height: 2;
 }
 .detail-actions {
@@ -83,13 +83,13 @@
   min-height: 44px;
   border-radius: 13px;
   box-shadow: none;
-  font-size: .7rem;
+  font-size: var(--fs-xs);
 }
-.detail-actions .button--light { background: #fffaf3; color: #38241e; }
+.detail-actions .button--light { background: #fffaf3; color: var(--text-strong); }
 .detail-actions .button--outline-light {
   border-color: rgba(255,255,255,.18);
   background: rgba(255,255,255,.045);
-  color: #fff;
+  color: var(--text-on-dark);
 }
 .detail-hero__summary,
 .village-hero__summary {
@@ -105,12 +105,12 @@
 .village-hero__summary > span {
   display: block;
   margin-top: 14px;
-  color: #cdb8ad;
-  font-size: .64rem;
-  font-weight: 850;
+  color: var(--text-on-dark-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
-.detail-hero__summary > strong { display: block; margin-top: 4px; color: #fff; font-size: 1rem; }
-.detail-hero__summary > p { margin: 4px 0 0; color: #c7b5ac; font-size: .67rem; }
+.detail-hero__summary > strong { display: block; margin-top: 4px; color: var(--text-on-dark); font-size: var(--fs-base); }
+.detail-hero__summary > p { margin: 4px 0 0; color: var(--text-on-dark-muted); font-size: var(--fs-xs); }
 .village-hero__identity {
   display: flex;
   align-items: center;
@@ -125,7 +125,7 @@
   border-radius: 15px;
   background: rgba(255,255,255,.06);
 }
-.village-hero__identity .eyebrow { color: #e5c28b; }
+.village-hero__identity .eyebrow { color: var(--text-on-dark-accent); }
 .village-hero__summary .catalog-hero__metrics { margin-top: 10px; }
 .village-hero__summary .catalog-hero__metrics span {
   border-color: rgba(255,255,255,.08);
@@ -134,9 +134,9 @@
 .village-hero__summary > a {
   display: inline-flex;
   margin-top: 13px;
-  color: #e6bd82;
-  font-size: .68rem;
-  font-weight: 850;
+  color: var(--text-on-dark-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 /* Detail content shell */
@@ -159,8 +159,8 @@
 .detail-card__heading h2,
 .listing-description h2 {
   margin: 5px 0 0;
-  color: var(--nq-ink);
-  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+  color: var(--text-strong);
+  font-size: var(--fs-3xl);
   line-height: 1.55;
 }
 .detail-grid {
@@ -178,13 +178,13 @@
 .detail-grid span {
   display: block;
   margin-bottom: 5px;
-  color: #8b7770;
-  font-size: .63rem;
-  font-weight: 800;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 .detail-grid strong {
-  color: #3c2b24;
-  font-size: .78rem;
+  color: var(--text-strong);
+  font-size: var(--fs-xs);
   line-height: 1.75;
 }
 .listing-description {
@@ -193,7 +193,7 @@
   border-radius: 18px;
   background: linear-gradient(135deg, #f9f3ec, #fffaf6);
 }
-.listing-description p { margin: 8px 0 0; color: #6e5e56; font-size: .8rem; line-height: 2; }
+.listing-description p { margin: 8px 0 0; color: var(--text-muted); font-size: var(--fs-xs); line-height: 2; }
 .source-panel {
   margin-top: 22px;
   padding: 19px;
@@ -201,9 +201,9 @@
   border-radius: 18px;
   background: linear-gradient(135deg, #f1f8f6, #fbfdfc);
 }
-.source-panel > span { color: #63817d; font-size: .64rem; font-weight: 850; }
-.source-panel > strong { display: block; margin-top: 5px; color: #254b4c; font-size: .9rem; }
-.source-panel > p { margin: 7px 0 0; color: #61726f; font-size: .76rem; line-height: 1.9; }
+.source-panel > span { color: var(--text-muted); font-size: var(--fs-xs); font-weight: 700; }
+.source-panel > strong { display: block; margin-top: 5px; color: var(--text-body); font-size: var(--fs-sm); }
+.source-panel > p { margin: 7px 0 0; color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.9; }
 
 /* Village content */
 .locality-summary {
@@ -219,8 +219,8 @@
   background: #fff;
   box-shadow: 0 7px 22px rgba(55,30,21,.035);
 }
-.locality-summary span { display: block; color: #907d74; font-size: .63rem; font-weight: 800; }
-.locality-summary strong { display: block; margin-top: 4px; color: var(--nq-ink); font-size: .8rem; }
+.locality-summary span { display: block; color: var(--text-muted); font-size: var(--fs-xs); font-weight: 700; }
+.locality-summary strong { display: block; margin-top: 4px; color: var(--text-strong); font-size: var(--fs-xs); }
 
 /* Make secondary public page cards share the same material language. */
 .page-main .faq-grid details,
@@ -247,13 +247,13 @@
   .detail-hero::after,
   .village-hero::after { opacity: .55; }
   .detail-hero h1,
-  .village-hero h1 { font-size: clamp(1.9rem, 9vw, 2.55rem); }
+  .village-hero h1 { font-size: var(--fs-3xl); }
   .detail-hero__grid > div > p,
-  .village-hero__grid > div > p { font-size: .75rem; line-height: 1.9; }
+  .village-hero__grid > div > p { font-size: var(--fs-xs); line-height: 1.9; }
   .detail-hero__summary,
   .village-hero__summary { padding: 14px; border-radius: 19px; }
   .detail-actions { gap: 6px; margin-top: 16px; }
-  .detail-actions .button { min-height: 42px; padding-inline: 12px; font-size: .65rem; }
+  .detail-actions .button { min-height: 42px; padding-inline: 12px; font-size: var(--fs-xs); }
   .detail-layout { padding-block: 24px 52px; }
   .detail-card { padding: 17px; border-radius: 19px; }
   .detail-grid { grid-template-columns: 1fr; }

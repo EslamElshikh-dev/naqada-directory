@@ -1,3 +1,4 @@
+import '@/app/route-styles/moderator.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -26,8 +27,8 @@ export default async function ModeratorPage() {
     <main id="main-content" className={styles.page}>
       <div className={styles.shell}>
         <header className={styles.topbar}>
-          <Link href="/" className={styles.brand}><span>ن</span><b>دليل نقادة</b><small>مساحة الإشراف</small></Link>
-          <div className={styles.toplinks}><Link href="/account">حسابي</Link>{isAdmin ? <Link href="/admin">لوحة المالك</Link> : null}<Link href="/">عرض الموقع ↗</Link></div>
+          <Link prefetch={false} href="/" className={styles.brand}><span>ن</span><b>دليل نقادة</b><small>مساحة الإشراف</small></Link>
+          <div className={styles.toplinks}><Link prefetch={false} href="/account">حسابي</Link>{isAdmin ? <Link prefetch={false} href="/admin">لوحة المالك</Link> : null}<Link prefetch={false} href="/">عرض الموقع ↗</Link></div>
         </header>
         <ModeratorWorkspace initialDashboard={dashboard} initialContent={content} name={dashboard.viewer?.name || session.user.displayName} avatarUrl={dashboard.viewer?.avatarUrl || session.user.avatarUrl} />
       </div>

@@ -1,16 +1,40 @@
 import type { Metadata } from 'next';
 import type { Business } from './types';
 
+const configuredOrigin = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined;
+const siteOrigin = configuredOrigin ? new URL(configuredOrigin).origin : 'https://naqada-directory.vercel.app';
+if (!siteOrigin.startsWith('https://')) throw new Error('NEXT_PUBLIC_SITE_URL must use HTTPS');
+
 export const siteConfig = {
-  name: 'دليل نقادة | دليل الخدمات والأنشطة والقرى والنجوع',
+  name: 'دليل الخدمات والأنشطة والقرى والنجوع | دليل نقادة',
   shortName: 'دليل نقادة',
   alternateNames: ['دليل مركز نقادة', 'دليل خدمات نقادة', 'موسوعة نقادة المحلية'],
-  url: 'https://naqada-directory.vercel.app',
+  url: siteOrigin,
   locale: 'ar_EG',
   description: 'دليل نقادة هو الدليل المحلي للخدمات والأنشطة والقرى والنجوع في مركز نقادة بمحافظة قنا، ويضم أطباء وصيدليات ومدارس ومطاعم ومحلات وروابط وصول مباشرة.',
-  socialImage: 'https://naqada-directory.vercel.app/images/social/naqada-share-v2.jpg',
-  logoImage: 'https://naqada-directory.vercel.app/app-icons/icon-192.png',
+  socialImage: siteOrigin + '/images/social/naqada-share-v2.jpg',
+  logoImage: siteOrigin + '/app-icons/icon-192.png',
 };
+
+export function pageTitle(value: string) {
+  const suffix = ' | دليل نقادة';
+  const core = value.replace(/^دليل نقادة\s*\|\s*/u, '').replace(/\s*\|\s*دليل نقادة\s*$/u, '').replace(/\s+/g, ' ').trim();
+  let result = '';
+  for (const word of core.split(' ')) {
+    const next = result ? result + ' ' + word : word;
+    if (next.length > 60 - suffix.length) break;
+    result = next;
+  }
+  return (result || 'المعلومات والخدمات المحلية') + suffix;
+}
+export function pageDescription(value: string) {
+  const clean = value.replace(/\s+/g, ' ').trim();
+  if (!clean) return siteConfig.description;
+  const fuller = clean.length < 40
+    ? 'معلومات ' + clean + ' في دليل نقادة، الدليل المحلي المستقل للخدمات والأنشطة والقرى والنجوع بمحافظة قنا. راجع التفاصيل وروابط الوصول والمصادر المنشورة، وشارك بالتصحيح.'
+    : clean.length < 120 ? clean + ' تصفح المعلومات المنشورة وروابط الوصول ذات الصلة، وشارك بتصحيح موثق للمراجعة عند الحاجة.' : clean;
+  return truncateMetaDescription(fuller, 155);
+}
 
 const defaultIndexRobots: Metadata['robots'] = {
   googleBot: {
@@ -43,13 +67,15 @@ export function buildPageMetadata({
   description: string;
   path: string;
   robots?: Metadata['robots'];
-  socialImage?: { url: string; alt?: string };
+  socialImage?: { url: string; alt?: string; width?: number; height?: number; type?: string };
   keywords?: string[];
 }): Metadata {
   const normalizedPath = canonicalPath(path);
   const url = absoluteUrl(normalizedPath);
+  const brandedTitle = pageTitle(title);
+  const summary = pageDescription(description);
   const image = socialImage
-    ? { url: socialImage.url, alt: socialImage.alt || title }
+    ? { ...socialImage, alt: socialImage.alt || title }
     : {
         url: siteConfig.socialImage,
         width: 1200,
@@ -57,8 +83,12 @@ export function buildPageMetadata({
         alt: 'دليل نقادة — الموسوعة المحلية لمركز نقادة',
       };
   return {
-    title: title.includes(siteConfig.shortName) ? { absolute: title } : title,
-    description,
+    title: { absolute: brandedTitle },
+    description: summary,
+    // Only these anonymous public documents may be saved as explicit offline
+    // snapshots. Account, moderation, claim and query responses stay excluded.
+    ...(/^\/(?:listing|activity|villages|directory|activities|blog|role-models|knowledge|emergency)(?:\/[^/?]+){0,2}\/$/.test(normalizedPath)
+      ? { other: { 'naqada-public-snapshot': 'anonymous' } } : {}),
     ...(keywords?.length ? { keywords } : {}),
     alternates: { canonical: normalizedPath },
     robots: robots ?? defaultIndexRobots,
@@ -66,15 +96,15 @@ export function buildPageMetadata({
       type: 'website',
       locale: siteConfig.locale,
       url,
-      title,
-      description,
+      title: brandedTitle,
+      description: summary,
       siteName: siteConfig.shortName,
       images: [image],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: brandedTitle,
+      description: summary,
       images: [socialImage?.url || siteConfig.socialImage],
     },
   };
@@ -151,7 +181,13 @@ export function normalizeRouteSlug(value: string) {
 }
 
 export function cleanPhone(phone: string | null) {
-  return phone?.replace(/[^+\d]/g, '') || null;
+  if (!phone) return null;
+  const ascii = phone.replace(/[٠-٩]/g, digit => String(digit.charCodeAt(0) - 0x660)).replace(/[۰-۹]/g, digit => String(digit.charCodeAt(0) - 0x6f0));
+  const value = ascii.replace(/[^+\d]/g, '');
+  if (/^0020\d{8,10}$/.test(value)) return '+' + value.slice(2);
+  if (/^20(?:1[0125]\d{8}|[2-9]\d{7,8})$/.test(value)) return '+' + value;
+  if (/^01[0125]\d{8}$/.test(value) || /^0[2-9]\d{7,8}$/.test(value)) return '+20' + value.slice(1);
+  return value || null;
 }
 
 export function businessSummary(listing: Pick<Business, 'name' | 'category' | 'subcategory' | 'locality' | 'address' | 'phone' | 'mapsUrl' | 'checked'>) {
@@ -169,12 +205,12 @@ export function businessSummary(listing: Pick<Business, 'name' | 'category' | 's
   return `${listing.name} — ${kind} في ${locality} ضمن مركز نقادة بمحافظة قنا. العنوان المنشور: ${location}. ${access}${review}`;
 }
 
-export function truncateMetaDescription(value: string, maxLength = 160) {
+export function truncateMetaDescription(value: string, maxLength = 155) {
   const normalized = value.replace(/\s+/g, ' ').trim();
   if (normalized.length <= maxLength) return normalized;
-  const candidate = normalized.slice(0, maxLength + 1);
+  const candidate = normalized.slice(0, maxLength - 1);
   const boundary = candidate.lastIndexOf(' ');
-  const end = boundary >= Math.floor(maxLength * 0.75) ? boundary : maxLength;
+  const end = boundary >= Math.floor(maxLength * 0.75) ? boundary : maxLength - 1;
   return `${candidate.slice(0, end).replace(/[،؛:,.…\-\s]+$/u, '')}…`;
 }
 

@@ -1,3 +1,5 @@
+import '@/app/route-styles/about.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { Suspense, type CSSProperties } from 'react';
 import Image from 'next/image';
@@ -41,13 +43,13 @@ const experiencePaths = [
   },
   {
     code: '02', href: '/villages', title: 'خريطة المكان',
-    value: meta.localityCount.toLocaleString('ar-EG'), label: 'قرية وموضعًا',
+    value: meta.localityCount.toLocaleString(NUMBER_LOCALE), label: 'قرية وموضعًا',
     description: 'صفحات تجمع كل قرية ونجع بما يرتبط بهما من خدمات ومحتوى محلي قابل للتوسع.',
     image: '/images/landmarks/naqada-city.webp', alt: 'مشهد من مدينة نقادة ضمن صفحات القرى والأماكن',
   },
   {
     code: '03', href: '/knowledge', title: 'الذاكرة المحلية',
-    value: (meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG'), label: 'علمًا ومعلمًا',
+    value: (meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE), label: 'علمًا ومعلمًا',
     description: 'أماكن وأعلام وتراث ومراجع محفوظة في موسوعة توضح المصدر وحدود المعلومة.',
     image: '/images/landmarks/naqada-royal-tomb.webp', alt: 'المقبرة الملكية في نقادة ضمن الموسوعة المحلية',
   },
@@ -96,14 +98,14 @@ export default function AboutPage() {
         <div className={styles.heroGlow} aria-hidden="true" />
         <div className={`shell ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
-            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link><span>/</span><b>عن الدليل</b></nav>
+            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><b>عن الدليل</b></nav>
             <p className={styles.eyebrow}><i aria-hidden="true" /> من نقادة… ولأهل نقادة</p>
             <h1 id="about-title">معرفة المكان<br /><strong>في خدمة أهله.</strong></h1>
             <p className={styles.lead}>دليل نقادة مشروع محلي <em>خدمي وتطوعي ومجاني</em>، يجمع الخدمات والقرى والذاكرة المحلية في مساحة عربية واحدة؛ واضحة، سريعة، وقابلة للمراجعة والتحديث.</p>
             <div className={styles.promiseRow} aria-label="مبادئ الدليل"><span>مجاني للجميع</span><span>مشاركة مجتمعية</span><span>مصادر واضحة</span></div>
             <div className={styles.heroActions}>
-              <Link href="/directory" className={styles.primaryAction}>استكشف الدليل <span aria-hidden="true">←</span></Link>
-              <Link href="/contribute" className={styles.secondaryAction}>شارك بمعلومة <span aria-hidden="true">＋</span></Link>
+              <Link prefetch={false} href="/directory" className={styles.primaryAction}>استكشف الدليل <span aria-hidden="true">←</span></Link>
+              <Link prefetch={false} href="/contribute" className={styles.secondaryAction}>شارك بمعلومة <span aria-hidden="true">＋</span></Link>
             </div>
           </div>
 
@@ -123,9 +125,9 @@ export default function AboutPage() {
 
       <section className={`shell ${styles.metrics}`} aria-label="الدليل في أرقام">
         <article><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><span>خدمة ونشاط</span><small>بيانات منشورة قابلة للتحديث</small></article>
-        <article><b>{meta.localityCount.toLocaleString('ar-EG')}</b><span>قرية وموضعًا</span><small>داخل نطاق مركز نقادة</small></article>
-        <article><b>{meta.familyCount.toLocaleString('ar-EG')}</b><span>سجلًا عائليًا</span><small>بحدود توثيق واضحة</small></article>
-        <article><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><span>علمًا ومعلمًا</span><small>من ذاكرة المكان</small></article>
+        <article><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><span>قرية وموضعًا</span><small>داخل نطاق مركز نقادة</small></article>
+        <article><b>{meta.familyCount.toLocaleString(NUMBER_LOCALE)}</b><span>سجلًا عائليًا</span><small>بحدود توثيق واضحة</small></article>
+        <article><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><span>علمًا ومعلمًا</span><small>من ذاكرة المكان</small></article>
       </section>
 
       <section className={`shell ${styles.storySection}`}>
@@ -153,7 +155,7 @@ export default function AboutPage() {
         </header>
         <div className={styles.experienceGrid}>
           {experiencePaths.map((item, index) => (
-            <Link key={item.href} href={item.href} className={styles.experienceCard} style={{ '--i': index } as CSSProperties}>
+            <Link prefetch={false} key={item.href} href={item.href} className={styles.experienceCard} style={{ '--i': index } as CSSProperties}>
               <Image src={item.image} alt={item.alt} fill sizes="(max-width: 720px) 94vw, (max-width: 1100px) 50vw, 680px" />
               <span className={styles.experienceShade} aria-hidden="true" />
               <span className={styles.experienceTop}><small>{item.code}</small><b>{item.value}<em>{item.label}</em></b></span>
@@ -178,7 +180,7 @@ export default function AboutPage() {
       <section className={styles.closing}>
         <div className={`shell ${styles.closingInner}`}>
           <div><p>الدليل يكبر بالمعلومة الصحيحة</p><h2>تعرف نشاطًا ناقصًا<br />أو معلومة تحتاج تصحيحًا؟</h2></div>
-          <div className={styles.closingActions}><Link href="/contribute">أرسل المعلومة <span aria-hidden="true">←</span></Link><Link href="/developer">تعرّف إلى المطوّر</Link></div>
+          <div className={styles.closingActions}><Link prefetch={false} href="/contribute">أرسل المعلومة <span aria-hidden="true">←</span></Link><Link prefetch={false} href="/developer">تعرّف إلى المطوّر</Link></div>
         </div>
       </section>
 

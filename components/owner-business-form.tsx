@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { OwnerPhoto } from '@/components/owner-photo';
 import Image from 'next/image';
@@ -222,7 +224,7 @@ export function OwnerBusinessForm({
       <span className={styles.step}>نشاطك باسمك</span>
       <h2>سجّل دخولك الأول، والنشاط يبقى مربوط بحسابك.</h2>
       <p>بعد الدخول تقدر تضيف بيانات نشاطك وصوره، وتتابع المراجعة وتعدّل عليه من حسابك.</p>
-      <div className={styles.signInActions}><Link href="/account/login" className="button button--primary">تسجيل الدخول</Link><Link href="/account/register" className="button button--ghost">إنشاء حساب جديد</Link></div>
+      <div className={styles.signInActions}><Link prefetch={false} href="/account/login" className="button button--primary">تسجيل الدخول</Link><Link prefetch={false} href="/account/register" className="button button--ghost">إنشاء حساب جديد</Link></div>
     </div>
   );
 
@@ -245,7 +247,7 @@ export function OwnerBusinessForm({
             <label className={styles.field}><span>مواعيد العمل <i>*</i></span><input required minLength={3} maxLength={180} value={fields.hours} onChange={(event) => update('hours', event.target.value)} placeholder="السبت–الخميس، ٩ صباحًا–٩ مساءً" /></label>
             <label className={styles.field}><span>العنوان <i>*</i></span><input required minLength={5} maxLength={240} value={fields.address} onChange={(event) => update('address', event.target.value)} placeholder="الشارع، أقرب علامة واضحة، القرية" autoComplete="street-address" /></label>
             <label className={`${styles.field} ${styles.wide}`}><span>رابط الموقع على خرائط Google <small>اختياري</small></span><input type="url" dir="ltr" maxLength={600} value={fields.maps_url} onChange={(event) => update('maps_url', event.target.value)} placeholder="https://maps.app.goo.gl/…" /><small>الصق رابط مكان نشاطك عشان زر الاتجاهات يوصّل الزوار له مباشرة.</small></label>
-            <label className={`${styles.field} ${styles.wide}`}><span>وصف النشاط <i>*</i></span><textarea required minLength={20} maxLength={2000} rows={5} value={fields.description} onChange={(event) => update('description', event.target.value)} placeholder="بتقدم إيه؟ وإيه اللي يميز خدمتك؟ اكتب وصفًا حقيقيًا يفيد اللي بيدوّر عليك." /><small>{fields.description.length.toLocaleString('ar-EG')} / ٢٠٠٠ حرف</small></label>
+            <label className={`${styles.field} ${styles.wide}`}><span>وصف النشاط <i>*</i></span><textarea required minLength={20} maxLength={2000} rows={5} value={fields.description} onChange={(event) => update('description', event.target.value)} placeholder="بتقدم إيه؟ وإيه اللي يميز خدمتك؟ اكتب وصفًا حقيقيًا يفيد اللي بيدوّر عليك." /><small>{fields.description.length.toLocaleString(NUMBER_LOCALE)} / ٢٠٠٠ حرف</small></label>
           </div>
 
           <div className={styles.sectionTitle} id="activity-cover"><b>٣</b><div><h3>صورة غلاف النشاط <small>اختياري</small></h3><p>الصورة الرئيسية اللي تظهر في بطاقة نشاطك وأول صفحته. اختار صورة واضحة للواجهة أو لشغلك.</p></div></div>
@@ -284,8 +286,8 @@ export function OwnerBusinessForm({
         <span className={styles.step}>أنشطتي في الدليل</span>
         <h2>كل نشاط له صاحبه</h2>
         <p>الحساب ده هو صاحب الأنشطة اللي يضيفها. تقدر تعدّل التفاصيل وتتابع حالة المراجعة من هنا.</p>
-        {mine.length ? <div className={styles.ownList}>{mine.map((listing) => <article key={listing.id}><span className={`${styles.status} ${styles[listing.status]}`}>{listing.status === 'published' ? 'منشور' : listing.status === 'rejected' ? 'يحتاج تعديلًا' : 'قيد المراجعة'}</span><h3>{listing.name}</h3><small>{listing.locality} · {listing.category}</small><div><Link href={`/contribute?edit=${listing.id}`}>تعديل النشاط</Link>{listing.status === 'published' && <Link href={`/activity/${listing.id}/`}>عرض الصفحة</Link>}</div></article>)}</div> : <div className={styles.empty}>أول نشاط تضيفه هيظهر هنا، تحت حسابك مباشرة.</div>}
-        <Link href="/account" className={styles.accountLink}>الرجوع لحسابك ←</Link>
+        {mine.length ? <div className={styles.ownList}>{mine.map((listing) => <article key={listing.id}><span className={`${styles.status} ${styles[listing.status]}`}>{listing.status === 'published' ? 'منشور' : listing.status === 'rejected' ? 'يحتاج تعديلًا' : 'قيد المراجعة'}</span><h3>{listing.name}</h3><small>{listing.locality} · {listing.category}</small><div><Link prefetch={false} href={`/contribute?edit=${listing.id}`}>تعديل النشاط</Link>{listing.status === 'published' && <Link prefetch={false} href={`/activity/${listing.id}/`}>عرض الصفحة</Link>}</div></article>)}</div> : <div className={styles.empty}>أول نشاط تضيفه هيظهر هنا، تحت حسابك مباشرة.</div>}
+        <Link prefetch={false} href="/account" className={styles.accountLink}>الرجوع لحسابك ←</Link>
       </aside>
     </div>
   );

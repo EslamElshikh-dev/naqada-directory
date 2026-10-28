@@ -25,7 +25,7 @@ const routes = [
 const sitemapResponse = await fetch(`${baseURL}/sitemap.xml`);
 if (!sitemapResponse.ok) throw new Error(`Sitemap discovery failed: HTTP ${sitemapResponse.status}`);
 const sitemap = await sitemapResponse.text();
-const ownerPath = sitemap.match(/<loc>https:\/\/naqada-directory\.vercel\.app(\/activity\/[0-9a-f-]{36}\/)\s*<\/loc>/i)?.[1];
+const ownerPath = sitemap.match(/<loc>https:\/\/naqada-directory\.vercel\.app(\/activity\/[^/<]+\/)\s*<\/loc>/i)?.[1];
 if (ownerPath) routes.push(['owner-activity', ownerPath]);
 const archiveResponse = await fetch(`${baseURL}/news/archive/`);
 if (!archiveResponse.ok) throw new Error(`News discovery failed: HTTP ${archiveResponse.status}`);
@@ -49,11 +49,12 @@ async function settlePage(page) {
   await page.evaluate(async () => {
     const step = Math.max(320, Math.floor(window.innerHeight * 0.75));
     for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      window.scrollTo(0, y);
+      window.scrollTo({ top: y, left: 0, behavior: 'instant' });
       await new Promise((resolve) => setTimeout(resolve, 60));
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   });
+  await page.waitForFunction(() => window.scrollY === 0);
   await page.waitForTimeout(300);
 }
 
@@ -172,7 +173,7 @@ for (const viewportName of ['mobile-390', 'mobile-430']) {
   }
 }
 
-// Sanad: a compact non-modal conversation integrated into the mobile navigation.
+// Sanad: a compact modal conversation integrated into the mobile navigation.
 for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390, 844], ['desktop', 1440, 1000]]) {
   const page = await isolatedPage(browser, { viewport: { width, height } });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
@@ -190,6 +191,7 @@ for (const [name, width, height] of [['small-mobile', 320, 640], ['mobile', 390,
   await page.screenshot({ path: `artifacts/sanad-${name}-closed.png` });
   await launcher.click();
   const dialog = page.getByRole('dialog', { name: 'محادثة سند' });
+  if (await dialog.getAttribute('aria-modal') !== 'true') out.failures.push('Sanad must expose modal semantics');
   const panel = await dialog.boundingBox();
   if (!panel || panel.x < 0 || panel.y < 0 || panel.x + panel.width > width || panel.y + panel.height > height || panel.height > height * .65) out.failures.push(`sanad-${name}: chat is outside the viewport or too tall`);
   if (panel && nav && nav.height && panel.y + panel.height >= nav.y) out.failures.push(`sanad-${name}: chat overlaps bottom navigation`);

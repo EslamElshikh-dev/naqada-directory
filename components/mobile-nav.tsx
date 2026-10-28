@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import styles from './mobile-nav.module.css';
 import { isNavigationActive } from '@/lib/navigation';
@@ -32,8 +33,27 @@ function NavIcon({ name }: { name: NavIconName }) {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const nav = useRef<HTMLElement>(null);
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let last = scrollY, frame = 0;
+    const reset = requestAnimationFrame(() => setHidden(false));
+    const scroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const current = scrollY;
+        if (Math.abs(current - last) < 12) return;
+        setHidden(current > last && current > 180 && !nav.current?.contains(document.activeElement) && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+        last = current;
+      });
+    };
+    const keyboard = (event: KeyboardEvent) => { if (event.key === 'Tab') setHidden(false); };
+    window.addEventListener('keydown', keyboard);
+    window.addEventListener('scroll', scroll, { passive: true });
+    return () => { cancelAnimationFrame(reset); cancelAnimationFrame(frame); window.removeEventListener('scroll', scroll); window.removeEventListener('keydown', keyboard); };
+  }, [pathname]);
   return (
-    <nav className={styles.nav} aria-label="التنقل على الجوال">
+    <nav ref={nav} data-hidden={hidden} className={styles.nav} aria-label="التنقل على الجوال">
       {items.map((item) => {
         const active = isNavigationActive(pathname, item.href);
         return (

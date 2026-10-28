@@ -1,3 +1,5 @@
+import '@/app/route-styles/updates.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ListingCard } from '@/components/listing-card';
@@ -53,14 +55,14 @@ export default function UpdatesPage() {
     <main id="main-content" className="page-main">
       <section className="detail-hero">
         <div className="shell">
-          <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span>/</span><span>آخر التحديثات</span></nav>
+          <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><span>آخر التحديثات</span></nav>
           <span className="eyebrow">حركة البيانات داخل الدليل</span>
           <h1>آخر تحديثات <em>دليل نقادة</em></h1>
           <p>صفحة تجمع السجلات التي تمت مراجعتها مؤخرًا، حتى تعرف ما الذي أضيف أو أُعيد التحقق منه بدل الاعتماد على قائمة ثابتة بلا تاريخ.</p>
           <div className="hero-inline-stats">
-            <span><b>{recent.length.toLocaleString('ar-EG')}</b> سجلًا حديث المراجعة</span>
-            <span><b>{localityCount.toLocaleString('ar-EG')}</b> موضعًا</span>
-            <span><b>{categoryCount.toLocaleString('ar-EG')}</b> قسمًا</span>
+            <span><b>{recent.length.toLocaleString(NUMBER_LOCALE)}</b> سجلًا حديث المراجعة</span>
+            <span><b>{localityCount.toLocaleString(NUMBER_LOCALE)}</b> موضعًا</span>
+            <span><b>{categoryCount.toLocaleString(NUMBER_LOCALE)}</b> قسمًا</span>
           </div>
         </div>
       </section>
@@ -68,14 +70,14 @@ export default function UpdatesPage() {
       <section className="section shell">
         <div className="section-heading">
           <div><span className="eyebrow eyebrow--dark">آخر مراجعة: {formatDate(latestDate)}</span><h2>سجلات راجعنا بياناتها مؤخرًا</h2><p>تاريخ المراجعة يعني آخر فحص مسجل داخل قاعدة الدليل، ولا يعني اعتمادًا حكوميًا للنشاط.</p></div>
-          <Link href="/directory" className="text-link">البحث في كل الدليل ←</Link>
+          <Link prefetch={false} href="/directory" className="text-link">البحث في كل الدليل ←</Link>
         </div>
         <div className="listing-grid">{recent.map((item) => <ListingCard key={item.id} listing={item} compact />)}</div>
       </section>
 
       <section className="section section--muted">
         <div className="shell methodology">
-          <div><span className="eyebrow eyebrow--dark">لماذا هذه الصفحة؟</span><h2>مؤشر واضح على حداثة الدليل</h2><p>نربط كل تحديث بصفحة النشاط والموضع والتصنيف، ما يجعل اكتشاف المحتوى الجديد أسهل للمستخدم ومحركات البحث.</p><Link href="/about" className="text-link">منهجية البيانات ←</Link></div>
+          <div><span className="eyebrow eyebrow--dark">لماذا هذه الصفحة؟</span><h2>مؤشر واضح على حداثة الدليل</h2><p>نربط كل تحديث بصفحة النشاط والموضع والتصنيف، ما يجعل اكتشاف المحتوى الجديد أسهل للمستخدم ومحركات البحث.</p><Link prefetch={false} href="/about" className="text-link">منهجية البيانات ←</Link></div>
           <div className="methodology__grid">
             <article><b>01</b><h3>مراجعة قابلة للتتبع</h3><p>السجلات المنشورة تحمل تاريخ مراجعة داخليًا ويظهر التاريخ في صفحة التفاصيل.</p></article>
             <article><b>02</b><h3>روابط داخلية أعمق</h3><p>كل سجل حديث يقود إلى نشاط وتصنيف وموضع، بدل أن يبقى المحتوى معزولًا.</p></article>
@@ -87,3 +89,5 @@ export default function UpdatesPage() {
     </main>
   );
 }
+
+export const revalidate = 60;

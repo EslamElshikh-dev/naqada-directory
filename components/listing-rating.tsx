@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useEffect, useState } from 'react';
 import { getListingRating, submitListingRating, type RatingSummary } from '@/lib/analytics-client';
@@ -7,6 +9,7 @@ const scores = [1, 2, 3, 4, 5];
 
 export function ListingRating({ listingSlug, listingName }: { listingSlug: string; listingName: string }) {
   const [summary, setSummary] = useState<RatingSummary | null>(null);
+  const [loadedSlug, setLoadedSlug] = useState('');
   const [selected, setSelected] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -16,6 +19,7 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
     void getListingRating(listingSlug).then((result) => {
       if (!active) return;
       setSummary(result);
+      setLoadedSlug(listingSlug);
       try {
         const saved = Number(window.localStorage.getItem(`naqada-rating:${listingSlug}`));
         if (scores.includes(saved)) setSelected(saved);
@@ -38,7 +42,7 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
       return;
     }
 
-    if (result.summary) setSummary(result.summary);
+    if (result.summary) { setSummary(result.summary); setLoadedSlug(listingSlug); }
     try {
       window.localStorage.setItem(`naqada-rating:${listingSlug}`, String(selected));
     } catch {
@@ -46,6 +50,9 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
     }
     setMessage('شكرًا، تم حفظ تقييمك ويمكنك تعديله في أي وقت.');
   }
+
+  const loaded = loadedSlug === listingSlug;
+  const currentSummary = loaded ? summary : null;
 
   return (
     <section className="listing-rating" aria-labelledby="listing-rating-title">
@@ -55,8 +62,8 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
         <p>شارك تقييمك لمساعدة أهالي نقادة في الوصول إلى الخدمة المناسبة.</p>
       </div>
       <div className="listing-rating__summary" aria-live="polite">
-        <strong>{summary?.count ? summary.average.toLocaleString('ar-EG', { maximumFractionDigits: 1 }) : '—'}</strong>
-        <span>{summary?.count ? `من 5 · ${summary.count.toLocaleString('ar-EG')} تقييم` : 'لا توجد تقييمات بعد'}</span>
+        <strong>{currentSummary?.count ? currentSummary.average.toLocaleString(NUMBER_LOCALE, { maximumFractionDigits: 1 }) : '—'}</strong>
+        <span>{!loaded ? 'جارٍ تحميل التقييمات…' : currentSummary === null ? 'التقييمات غير متاحة الآن' : currentSummary.count ? `من 5 · ${currentSummary.count.toLocaleString(NUMBER_LOCALE)} تقييم` : 'لا توجد تقييمات بعد'}</span>
       </div>
       <div className="listing-rating__form">
         <div className="listing-rating__stars" role="group" aria-label="اختر تقييمًا من خمس نجوم">
@@ -70,7 +77,7 @@ export function ListingRating({ listingSlug, listingName }: { listingSlug: strin
           >★</button>)}
         </div>
         <button className="button button--primary" type="button" disabled={!selected || submitting} onClick={submit}>
-          {submitting ? 'جارٍ الحفظ…' : selected ? `إرسال تقييم ${selected.toLocaleString('ar-EG')}/5` : 'اختر عدد النجوم'}
+          {submitting ? 'جارٍ الحفظ…' : selected ? `إرسال تقييم ${selected.toLocaleString(NUMBER_LOCALE)}/5` : 'اختر عدد النجوم'}
         </button>
       </div>
       {message && <p className="listing-rating__message" role="status">{message}</p>}

@@ -1,9 +1,10 @@
+import { PrivacyPreferences } from './privacy-preferences';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
-import { Suspense } from 'react';
 import { meta } from '@/lib/data';
 import { BrandMark } from './site-shell';
 import { ActionIcon } from './action-icon';
-import { PublicBusinessCount } from './public-business-count';
+import { FooterBusinessCount } from './footer-business-count';
 import { InstallBanner } from './pwa-setup';
 import footerStyles from './site-footer.module.css';
 
@@ -38,7 +39,7 @@ export function Footer() {
             <span className={footerStyles.emblem}><BrandMark /></span>
             <div className={footerStyles.identityCopy}>
               <span className={footerStyles.kicker}>من أهل البلد، لأهل البلد</span>
-              <h2 id="site-footer-title">دليل نقادة</h2>
+              <p className={footerStyles.brandTitle} id="site-footer-title">دليل نقادة</p>
               <p>خدمات بلدنا وقراها وحكاوي ناسها في مكان واحد. بندوّر على المعلومة ونراجعها، والدليل يكبر بمشاركة أهل البلد.</p>
             </div>
           </div>
@@ -71,9 +72,9 @@ export function Footer() {
                 <div><span>من أرض نقادة</span><h2 id="footer-metrics-title">بلدنا في الدليل</h2></div>
               </div>
               <div className={footerStyles.stats}>
-                <span><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><small>خدمة ونشاط</small></span>
-                <span><b>{meta.localityCount.toLocaleString('ar-EG')}</b><small>قرية وموضعًا</small></span>
-                <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString('ar-EG')}</b><small>علمًا ومعلمًا</small></span>
+                <span><b><FooterBusinessCount /></b><small>خدمة ونشاط</small></span>
+                <span><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><small>قرية وموضعًا</small></span>
+                <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><small>علمًا ومعلمًا</small></span>
               </div>
             </section>
 
@@ -92,6 +93,7 @@ export function Footer() {
           </aside>
         </div>
 
+        <PrivacyPreferences />
         <div className={footerStyles.bottom}>
           <div className={footerStyles.bottomInfo}>
             <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>

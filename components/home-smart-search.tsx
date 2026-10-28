@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -255,7 +257,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
           {canSearch ? (
             <>
               <div className={styles.panelHead}>
-                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString('ar-EG')} اقتراحات مباشرة` : suggestions.length ? 'وجدنا اقتراحًا قريبًا' : 'لا توجد نتيجة مباشرة'}</span>
+                <span>{loading ? 'جارٍ البحث في الدليل والموسوعة…' : error ? 'تعذر البحث السريع' : items.length ? `${items.length.toLocaleString(NUMBER_LOCALE)} اقتراحات مباشرة` : suggestions.length ? 'وجدنا اقتراحًا قريبًا' : 'لا توجد نتيجة مباشرة'}</span>
                 <button type="button" onClick={() => navigate(unifiedSearchHref())}>كل النتائج ←</button>
               </div>
 
@@ -289,7 +291,7 @@ export function HomeSmartSearch({ compact = false }: { compact?: boolean }) {
                     <button key={`${suggestion.reason}-${suggestion.query}`} type="button" onClick={() => applySuggestion(suggestion)}>
                       <span>{suggestion.reason}</span>
                       <strong>«{suggestion.query}»</strong>
-                      <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة</small>
+                      <small>{suggestion.count.toLocaleString(NUMBER_LOCALE)} نتيجة</small>
                     </button>
                   ))}
                 </div>

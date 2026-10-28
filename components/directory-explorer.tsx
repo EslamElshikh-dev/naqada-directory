@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -223,22 +225,22 @@ export function DirectoryExplorer({
   }
 
   return (
-    <div className="explorer">
-      <div className="explorer__tools">
-        <form className={`search-field ${styles.searchForm}`} role="search" onSubmit={(event) => { event.preventDefault(); recordSearch(); }}>
+    <div className={styles.explorer}>
+      <div className={styles.tools}>
+        <form data-ui="directory-search" className={`${styles.searchField} ${styles.searchForm}`} role="search" onSubmit={(event) => { event.preventDefault(); recordSearch(); }}>
           <span aria-hidden="true">⌕</span>
           <label className="sr-only" htmlFor="directory-search-input">ابحث داخل الدليل</label>
           <input id="directory-search-input" value={query} onChange={(event) => { setQuery(event.target.value.slice(0, 100)); setPage(1); }} type="search" placeholder="ابحث باسم نشاط أو خدمة أو عنوان…" autoComplete="off" enterKeyHint="search" />
           <button className={styles.searchSubmit} type="submit">ابحث</button>
         </form>
-        {!lockedLocality && <label className="select-field"><span>المكان</span><select value={locality} onChange={(event) => { setLocality(event.target.value); setPage(1); recordSearch(category, event.target.value); }}><option value="">كل المناطق</option>{localities.filter((item) => item.businessCount > 0).map((item) => <option key={item.slug} value={item.name}>{item.name} ({item.businessCount.toLocaleString('ar-EG')})</option>)}</select></label>}
-        {!lockedCategory && <label className="select-field"><span>القسم</span><select value={category} onChange={(event) => { setCategory(event.target.value); setPage(1); recordSearch(event.target.value, locality); }}><option value="">كل الأقسام</option>{categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel} ({item.count.toLocaleString('ar-EG')})</option>)}</select></label>}
-        <label className="select-field"><span>الترتيب</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortMode); setPage(1); }}><option value="recommended">الأكثر صلة</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم أبجديًا</option></select></label>
+        {!lockedLocality && <label className={styles.selectField}><span>المكان</span><select value={locality} onChange={(event) => { setLocality(event.target.value); setPage(1); recordSearch(category, event.target.value); }}><option value="">كل المناطق</option>{localities.filter((item) => item.businessCount > 0).map((item) => <option key={item.slug} value={item.name}>{item.name} ({item.businessCount.toLocaleString(NUMBER_LOCALE)})</option>)}</select></label>}
+        {!lockedCategory && <label className={styles.selectField}><span>القسم</span><select value={category} onChange={(event) => { setCategory(event.target.value); setPage(1); recordSearch(event.target.value, locality); }}><option value="">كل الأقسام</option>{categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel} ({item.count.toLocaleString(NUMBER_LOCALE)})</option>)}</select></label>}
+        <label className={styles.selectField}><span>الترتيب</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortMode); setPage(1); }}><option value="recommended">الأكثر صلة</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم أبجديًا</option></select></label>
       </div>
 
-      <div className="category-pills" aria-label="التصنيفات">
-        {!lockedCategory && <button className={!category ? 'is-active' : ''} onClick={() => { setCategory(''); setPage(1); recordSearch('', locality); }} type="button">كل الأقسام</button>}
-        {categories.filter(item => !lockedCategory || item.name === initialCategory).slice(0, 12).map((item) => <button key={item.slug} className={category === item.name ? 'is-active' : ''} onClick={() => { setCategory(item.name); setPage(1); recordSearch(item.name, locality); }} type="button">{item.shortLabel} <small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+      <div className={styles.pills} aria-label="التصنيفات">
+        {!lockedCategory && <button className={!category ? styles.active : ''} onClick={() => { setCategory(''); setPage(1); recordSearch('', locality); }} type="button">كل الأقسام</button>}
+        {categories.filter(item => !lockedCategory || item.name === initialCategory).slice(0, 12).map((item) => <button key={item.slug} className={category === item.name ? styles.active : ''} onClick={() => { setCategory(item.name); setPage(1); recordSearch(item.name, locality); }} type="button">{item.shortLabel} <small>{item.count.toLocaleString(NUMBER_LOCALE)}</small></button>)}
       </div>
 
       {hydratedFromUrl && hasActiveFilters ? (
@@ -249,7 +251,7 @@ export function DirectoryExplorer({
               <strong>{trimmedQuery ? `«${trimmedQuery}»` : [categoryLabels.get(category) || category, locality].filter(Boolean).join(' · ')}</strong>
               <small>{category ? `القسم: ${categoryLabels.get(category) || category}` : 'كل الأقسام'} · {locality ? `المكان: ${locality}` : 'كل المناطق'} · الترتيب: {sort === 'recommended' ? 'الأكثر صلة' : sort === 'rating' ? 'الأعلى تقييمًا' : 'أبجديًا'}</small>
             </div>
-            <span className={styles.count}><b>{resultCount.toLocaleString('ar-EG')}</b><small>نتيجة</small></span>
+            <span className={styles.count}><b>{resultCount.toLocaleString(NUMBER_LOCALE)}</b><small>نتيجة</small></span>
           </div>
 
           {trimmedQuery && (facets.categories.length > 1 || facets.localities.length > 1) ? (
@@ -258,7 +260,7 @@ export function DirectoryExplorer({
                 <div className={styles.facetGroup}>
                   <span>ضيّق حسب نوع الخدمة</span>
                   <div className={styles.facetList}>
-                    {facets.categories.map((item) => <button key={item.name} type="button" data-active={category === item.name} aria-pressed={category === item.name} onClick={() => { setCategory(category === item.name ? '' : item.name); setPage(1); recordSearch(category === item.name ? '' : item.name, locality); }}>{categoryLabels.get(item.name) || item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+                    {facets.categories.map((item) => <button key={item.name} type="button" data-active={category === item.name} aria-pressed={category === item.name} onClick={() => { setCategory(category === item.name ? '' : item.name); setPage(1); recordSearch(category === item.name ? '' : item.name, locality); }}>{categoryLabels.get(item.name) || item.name}<small>{item.count.toLocaleString(NUMBER_LOCALE)}</small></button>)}
                   </div>
                 </div>
               ) : null}
@@ -266,7 +268,7 @@ export function DirectoryExplorer({
                 <div className={styles.facetGroup}>
                   <span>ضيّق حسب المكان</span>
                   <div className={styles.facetList}>
-                    {facets.localities.map((item) => <button key={item.name} type="button" data-active={locality === item.name} aria-pressed={locality === item.name} onClick={() => { setLocality(locality === item.name ? '' : item.name); setPage(1); recordSearch(category, locality === item.name ? '' : item.name); }}>{item.name}<small>{item.count.toLocaleString('ar-EG')}</small></button>)}
+                    {facets.localities.map((item) => <button key={item.name} type="button" data-active={locality === item.name} aria-pressed={locality === item.name} onClick={() => { setLocality(locality === item.name ? '' : item.name); setPage(1); recordSearch(category, locality === item.name ? '' : item.name); }}>{item.name}<small>{item.count.toLocaleString(NUMBER_LOCALE)}</small></button>)}
                   </div>
                 </div>
               ) : null}
@@ -276,7 +278,7 @@ export function DirectoryExplorer({
       ) : null}
 
       <div className="results-bar" aria-live="polite">
-        <div><strong>{resultCount.toLocaleString('ar-EG')}</strong><span> نتيجة مطابقة</span></div>
+        <div><strong>{resultCount.toLocaleString(NUMBER_LOCALE)}</strong><span> نتيجة مطابقة</span></div>
         {(query || (!lockedCategory && category) || (!lockedLocality && locality)) && <button type="button" onClick={reset}>مسح الفلاتر</button>}
       </div>
 
@@ -296,7 +298,7 @@ export function DirectoryExplorer({
         {currentPage > 1
           ? <Link prefetch={false} className="pagination__link" href={paginationHref(currentPage - 1)} rel="prev" scroll={false} onClick={preparePageNavigation}>السابق</Link>
           : <span className="pagination__link" aria-disabled="true">السابق</span>}
-        <span>صفحة {currentPage.toLocaleString('ar-EG')} من {totalPages.toLocaleString('ar-EG')}</span>
+        <span>صفحة {currentPage.toLocaleString(NUMBER_LOCALE)} من {totalPages.toLocaleString(NUMBER_LOCALE)}</span>
         {currentPage < totalPages
           ? <Link prefetch={false} className="pagination__link" href={paginationHref(currentPage + 1)} rel="next" scroll={false} onClick={preparePageNavigation}>التالي</Link>
           : <span className="pagination__link" aria-disabled="true">التالي</span>}

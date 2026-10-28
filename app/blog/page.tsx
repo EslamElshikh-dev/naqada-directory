@@ -1,3 +1,5 @@
+import '@/app/route-styles/blog.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +28,7 @@ function editorialImage(asset: string) {
 function formatArticleDate(date: string) {
   const [year, month, day] = date.split('-').map(Number);
   if (!year || !month || !day) return date;
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -106,15 +108,15 @@ export default async function BlogPage() {
           <h1>نقادة كما يعرفها أهلها… <em>مش كما تختصرها الخريطة.</em></h1>
           <p>هذه مساحة المقالات التحريرية في دليل نقادة: موضوعات عن الناس والذاكرة والمدارس والدواوين والمعالم والحياة اليومية. أمّا البحث عن قرية أو خدمة بعينها فله صفحات دليل مستقلة حتى لا تتنافس نيات البحث مع بعضها.</p>
           <div className={styles.stats}>
-            <span><b>{totalPosts.toLocaleString('ar-EG')}</b> مقالات تحريرية منشورة</span>
+            <span><b>{totalPosts.toLocaleString(NUMBER_LOCALE)}</b> مقالات تحريرية منشورة</span>
             <span><b>{villageArticleAuthor.name}</b> الكاتب والمحرر</span>
-            <span><Link href="/villages">دليل القرى والنجوع ←</Link></span>
+            <span><Link prefetch={false} href="/villages">دليل القرى والنجوع ←</Link></span>
           </div>
         </div>
       </section>
 
       <section className={`shell ${styles.archive}`}>
-        {originalPosts.length ? <section className={curatedStyles.section} aria-labelledby="editorial-original-title"><div><span>بقلم فريق الدليل</span><h2 id="editorial-original-title">مقالات محلية جديدة</h2></div><div className={curatedStyles.grid}>{originalPosts.map((post) => <Link href={`/blog/${post.slug}`} key={post.slug}><small>{post.payload.category || 'من نقادة'} · {post.payload.locality || 'مركز نقادة'}</small><h3>{post.payload.title}</h3><p>{post.payload.summary}</p><b>اقرأ المقال ←</b></Link>)}</div></section> : null}
+        {originalPosts.length ? <section className={curatedStyles.section} aria-labelledby="editorial-original-title"><div><span>بقلم فريق الدليل</span><h2 id="editorial-original-title">مقالات محلية جديدة</h2></div><div className={curatedStyles.grid}>{originalPosts.map((post) => <Link prefetch={false} href={`/blog/${post.slug}`} key={post.slug}><small>{post.payload.category || 'من نقادة'} · {post.payload.locality || 'مركز نقادة'}</small><h3>{post.payload.title}</h3><p>{post.payload.summary}</p><b>اقرأ المقال ←</b></Link>)}</div></section> : null}
         {displayPosts.length > 0 && (
           <div className={editorialStyles.editorialBlock}>
             <div className={styles.heading}>
@@ -126,7 +128,7 @@ export default async function BlogPage() {
             </div>
             <div className={editorialStyles.editorialGrid}>
               {displayPosts.map((post) => (
-                <Link key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
+                <Link prefetch={false} key={post.slug} href={`/blog/${post.slug}`} className={editorialStyles.editorialCard}>
                   <Image
                     unoptimized={post.hero.asset.startsWith('/api/article-media/')} src={editorialImagePath(post.hero.asset)}
                     width={post.hero.width}
@@ -158,7 +160,7 @@ export default async function BlogPage() {
             <h2>انتقل إلى دليل قرى ونجوع نقادة</h2>
             <p>صفحات القرى هي الوجهة المرجعية لعبارات مثل «دليل بشلاو» و«دليل الأوسط قمولا» و«دليل طوخ» و«دليل الخطارة» و«دليل دنفيق»، وتربط كل موضع بالخدمات والأنشطة المنشورة داخله.</p>
           </div>
-          <Link href="/villages" className="text-link">استكشف دليل القرى والنجوع ←</Link>
+          <Link prefetch={false} href="/villages" className="text-link">استكشف دليل القرى والنجوع ←</Link>
         </div>
 
         <aside className={styles.authorBand} aria-label="كاتب مدونة دليل نقادة">
@@ -168,7 +170,7 @@ export default async function BlogPage() {
             <strong>{villageArticleAuthor.name}</strong>
             <p>{villageArticleAuthor.role} · {villageArticleAuthor.bio}</p>
           </div>
-          <Link href={villageArticleAuthor.href}>عن الكاتب والدليل ←</Link>
+          <Link prefetch={false} href={villageArticleAuthor.href}>عن الكاتب والدليل ←</Link>
         </aside>
       </section>
 

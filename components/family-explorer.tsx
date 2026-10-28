@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useState } from 'react';
 import type { Family } from '@/lib/types';
@@ -36,7 +38,7 @@ export function FamilyExplorer({ families, initialLocality = '', initialQuery = 
         <label className="select-field"><span>الموضع</span><select value={locality} onChange={(event) => setLocality(event.target.value)}><option value="">كل المواضع</option>{localities.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label className="select-field"><span>الدرجة</span><select value={grade} onChange={(event) => setGrade(event.target.value)}><option value="">كل الدرجات</option>{grades.map((item) => <option key={item}>{item}</option>)}</select></label>
       </div>
-      <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> سجلًا منشورًا</span></div></div>
+      <div className="results-bar"><div><strong>{filtered.length.toLocaleString(NUMBER_LOCALE)}</strong><span> سجلًا منشورًا</span></div></div>
       <p className="record-card__scope">السجل جزئي، ويعرض ما توفر له دليل منشور. عدم ظهور عائلة لا ينفي وجودها في الموضع.</p>
       {!filtered.length ? <div className="empty-state"><strong>لا يوجد سجل موثق يطابق البحث حتى الآن</strong><p>جرّب اسم العائلة أو غيّر الموضع، ويمكنك إرسال مصدر لإضافته من صفحة المساهمات.</p></div> : null}
       <div className="record-grid">{filtered.map((item) => (

@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -32,8 +34,8 @@ const statusLabels: Record<string, string> = {
   draft: 'مسودة', active: 'نشط', suspended: 'مقيد مؤقتًا', removed: 'أزيل من الدليل',
 };
 const kindLabels: Record<CuratedKind, string> = { business: 'نشاط', news: 'خبر', article: 'مقال', role_model: 'نموذج مشرف' };
-function number(value: number) { return Number(value || 0).toLocaleString('ar-EG'); }
-function date(value: string) { return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(value)); }
+function number(value: number) { return Number(value || 0).toLocaleString(NUMBER_LOCALE); }
+function date(value: string) { return new Intl.DateTimeFormat(NUMBER_LOCALE, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Cairo' }).format(new Date(value)); }
 function chartHeight(value: number, maximum: number) { return `${Math.max(value ? 9 : 3, Math.round(value / Math.max(1, maximum) * 100))}%`; }
 
 export function ModeratorWorkspace({ initialDashboard, initialContent, name, avatarUrl }: {
@@ -153,7 +155,7 @@ export function ModeratorWorkspace({ initialDashboard, initialContent, name, ava
   return (
     <>
       <section className={styles.hero}>
-        <div><span className={styles.eyebrow}>✦ · مساحة آية رفاعي</span><h1>أهلًا يا {name}، <em>كل الدليل قدامك.</em></h1><p>راجعي الطلبات، حرري المحتوى، وتابعي أثر شغلك على الدليل من مكان واحد.</p><div className={styles.heroLinks}><button type="button" onClick={() => { setTab('business'); document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' }); }}>ابدئي المراجعة ←</button><Link href="/directory">عرض الدليل ↗</Link></div></div>
+        <div><span className={styles.eyebrow}>✦ · مساحة آية رفاعي</span><h1>أهلًا يا {name}، <em>كل الدليل قدامك.</em></h1><p>راجعي الطلبات، حرري المحتوى، وتابعي أثر شغلك على الدليل من مكان واحد.</p><div className={styles.heroLinks}><button type="button" onClick={() => { setTab('business'); document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' }); }}>ابدئي المراجعة ←</button><Link prefetch={false} href="/directory">عرض الدليل ↗</Link></div></div>
         <aside className={styles.heroIdentity}><MemberAvatar name={dashboard.viewer?.name || name} src={dashboard.viewer?.avatarUrl || avatarUrl} frame="gold" size={84} priority /><div><span>حساب موثّق</span><strong>مشرفة ذهبية</strong><small>{number(dashboard.metrics.myActions30d)} إجراء مسجّل خلال ٣٠ يومًا</small></div><i>✦</i></aside>
       </section>
 

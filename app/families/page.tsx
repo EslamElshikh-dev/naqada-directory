@@ -1,3 +1,5 @@
+import '@/app/route-styles/families.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FamilyExplorer } from '@/components/family-explorer';
@@ -18,7 +20,7 @@ export default async function FamiliesPage({ searchParams }: { searchParams: Pro
   const gradeA = families.filter((item) => item.grade === 'A').length;
   return (
     <main id="main-content" className="page-main">
-      <section className="record-hero"><div className="shell record-hero__grid"><div><nav className="breadcrumbs"><Link href="/">الرئيسية</Link><span>/</span><span>العائلات</span></nav><span className="eyebrow">سجل عائلي منضبط</span><h1>العائلة والموضع والدليل… <em>من غير تخمين</em></h1><p>نعرض الحضور العائلي الذي وصل لمعيار النشر فقط، ونفصل بين العائلة الحالية والفرع التاريخي والإشارة الجزئية.</p></div><aside><span><b>{families.length.toLocaleString('ar-EG')}</b><small>سجلًا منشورًا</small></span><span><b>{localities.toLocaleString('ar-EG')}</b><small>موضعًا</small></span><span><b>{gradeA.toLocaleString('ar-EG')}</b><small>بدرجة A</small></span></aside></div></section>
+      <section className="record-hero"><div className="shell record-hero__grid"><div><nav className="breadcrumbs"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><span>العائلات</span></nav><span className="eyebrow">سجل عائلي منضبط</span><h1>العائلة والموضع والدليل… <em>من غير تخمين</em></h1><p>نعرض الحضور العائلي الذي وصل لمعيار النشر فقط، ونفصل بين العائلة الحالية والفرع التاريخي والإشارة الجزئية.</p></div><aside><span><b>{families.length.toLocaleString(NUMBER_LOCALE)}</b><small>سجلًا منشورًا</small></span><span><b>{localities.toLocaleString(NUMBER_LOCALE)}</b><small>موضعًا</small></span><span><b>{gradeA.toLocaleString(NUMBER_LOCALE)}</b><small>بدرجة A</small></span></aside></div></section>
       <section className="shell page-section">
         <div className="methodology-banner"><span>✓</span><div><strong>قاعدة الفصل أولًا</strong><p>تشابه اللقب بين موضعين لا يعني وحدة العائلة، واسم الديوان يثبت الحضور ولا يثبت شجرة نسب بعيدة.</p></div></div>
         <FamilyExplorer key={`${initialLocality}|${initialQuery}`} families={families} initialLocality={initialLocality} initialQuery={initialQuery} />

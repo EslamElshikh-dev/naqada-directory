@@ -1,3 +1,4 @@
+import { cleanPhone } from './site';
 import { categories, localities } from '@/lib/data';
 import { isActivityMapUrl } from '@/lib/activity-map';
 
@@ -8,9 +9,10 @@ function field(value: unknown, max: number) {
 export function validateOwnerListing(input: unknown) {
   if (!input || typeof input !== 'object') return { error: 'أكمل بيانات النشاط أولًا.' } as const;
   const body = input as Record<string, unknown>;
+  const rawPhone = field(body.phone, 20);
   const data = {
     name: field(body.name, 160),
-    phone: field(body.phone, 20).replace(/[\s()-]/g, ''),
+    phone: cleanPhone(rawPhone) || '',
     hours: field(body.hours, 180),
     address: field(body.address, 240),
     description: field(body.description, 2000),
@@ -19,7 +21,7 @@ export function validateOwnerListing(input: unknown) {
     ...('maps_url' in body ? { maps_url: field(body.maps_url, 600) || null } : {}),
   };
   if (data.name.length < 2) return { error: 'اكتب اسم النشاط بوضوح.' } as const;
-  if (!/^\+?[0-9]{10,15}$/.test(data.phone)) return { error: 'اكتب رقم جوال صحيحًا مثل 01012345678.' } as const;
+  if (/[^0-9٠-٩۰-۹+().\s-]/u.test(rawPhone) || !/^\+?[0-9]{10,15}$/.test(data.phone)) return { error: 'اكتب رقم جوال صحيحًا مثل 01012345678.' } as const;
   if (data.hours.length < 3) return { error: 'اكتب مواعيد العمل؛ ولو بتتغير، اذكر إن التواصل مسبقًا مطلوب.' } as const;
   if (data.address.length < 5) return { error: 'اكتب عنوانًا يساعد الناس توصل للنشاط.' } as const;
   if (data.description.length < 20) return { error: 'صف نشاطك وخدماتك في ٢٠ حرفًا على الأقل.' } as const;

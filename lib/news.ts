@@ -466,16 +466,23 @@ export async function getExpandedNewsBody(item: ExternalNewsItem): Promise<strin
   }
 }
 
-async function loadLiveNews(): Promise<NewsFeedResult> {
-  const [results, curated] = await Promise.all([
-    Promise.allSettled(NEWS_FEEDS.map(fetchFeed)),
-    getPublicCurated('news'),
-  ]);
+async function loadNewsSources(): Promise<NewsFeedResult> {
+  const results = await Promise.allSettled(NEWS_FEEDS.map(fetchFeed));
   const successfulFeeds = results.filter((result) => result.status === 'fulfilled').length;
   const merged = deduplicateNews(results.flatMap((result) => result.status === 'fulfilled' ? result.value : []));
   const enriched = await Promise.all(merged.slice(0, MAX_ITEMS_TO_ENRICH).map(enrichItem));
+  return { items: [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)], checkedAt: new Date().toISOString(), successfulFeeds, totalFeeds: NEWS_FEEDS.length };
+}
+
+// External source work can be shared; moderation visibility is always applied later.
+const cachedNewsSources = unstable_cache(loadNewsSources, ['naqada-news-sources-v3'], {
+  revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
+});
+
+async function loadLiveNews(): Promise<NewsFeedResult> {
+  const [sources, curated] = await Promise.all([cachedNewsSources(), getPublicCurated('news')]);
   const revisions = new Map(curated.filter((item) => item.origin === 'static').map((item) => [item.slug, item]));
-  const external = [...enriched, ...merged.slice(MAX_ITEMS_TO_ENRICH)]
+  const external = sources.items
     .filter((item) => revisions.get(item.id)?.status !== 'hidden')
     .map((item) => {
       const revision = revisions.get(item.id);
@@ -498,16 +505,13 @@ async function loadLiveNews(): Promise<NewsFeedResult> {
 
   return {
     items: [...originals, ...external],
-    checkedAt: new Date().toISOString(),
-    successfulFeeds,
-    totalFeeds: NEWS_FEEDS.length,
+    checkedAt: sources.checkedAt,
+    successfulFeeds: sources.successfulFeeds,
+    totalFeeds: sources.totalFeeds,
   };
 }
 
-const cachedLiveNews = unstable_cache(loadLiveNews, ['naqada-live-news-v2'], {
-  revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
-});
-export const getLiveNews = cache(() => cachedLiveNews());
+export const getLiveNews = cache(loadLiveNews);
 
 type ArchivedNews = { payload: ExternalNewsItem };
 const cachedArchive = unstable_cache(async (query: string): Promise<ExternalNewsItem[]> => {

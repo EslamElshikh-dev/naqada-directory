@@ -1,0 +1,28 @@
+
+.text-link { font-weight: 700; }
+.text-link { font-size: var(--fs-xs); }
+
+.text-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 12px;
+  border-radius: 999px;
+  color: var(--text-body);
+  transition: background .18s ease, transform .18s ease;
+}
+
+.text-link:hover {
+  background: rgba(35,87,69,.07);
+  transform: translateX(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-link {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+@media (max-width: 700px) {
+  body.mobile-editorial main .text-link { display: inline-flex; align-items: center; gap: 5px; white-space: normal; }
+}

@@ -1,3 +1,4 @@
+import { RequestLimiter } from '@/lib/request-limiter';
 import { answerSanad } from '@/lib/sanad';
 import { randomUUID } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,7 +7,12 @@ export const runtime = 'nodejs';
 const headers = { 'Cache-Control': 'no-store' };
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+const requestLimiter = new RequestLimiter(20, 60_000);
+
 export async function POST(request: NextRequest) {
+  const rate = requestLimiter.take(request.headers);
+  if (!rate.allowed) return Response.json({ error: 'طلبات كثيرة. حاول بعد قليل.' }, { status: 429,
+    headers: { 'Cache-Control': 'no-store', 'Retry-After': String(rate.retryAfter) } });
   const origin = request.headers.get('origin');
   // Next.js can normalize request.url to localhost; Host retains the requested origin.
   const requestUrl = new URL(request.url);

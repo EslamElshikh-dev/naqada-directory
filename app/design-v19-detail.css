@@ -67,12 +67,12 @@
 }
 
 .listing-card__eyebrow a {
-  color: var(--v19-copper-dark);
-  font-weight: 900;
+  color: var(--text-danger);
+  font-weight: 700;
 }
 
 .listing-card__eyebrow small {
-  color: #98847a;
+  color: var(--text-muted);
 }
 
 .source-chip {
@@ -82,8 +82,8 @@
   border: 1px solid rgba(40,108,112,.12) !important;
   border-radius: 999px !important;
   background: rgba(40,108,112,.07) !important;
-  color: var(--v19-teal-dark) !important;
-  font-size: .58rem !important;
+  color: var(--text-link) !important;
+  font-size: var(--fs-xs) !important;
 }
 
 .listing-card__body {
@@ -93,8 +93,8 @@
 
 .listing-card h3 {
   margin-block: 13px 6px !important;
-  color: var(--v19-ink) !important;
-  font-size: clamp(1rem, 1.5vw, 1.12rem) !important;
+  color: var(--text-strong) !important;
+  font-size: var(--fs-lg) !important;
   line-height: 1.65 !important;
   text-wrap: balance;
 }
@@ -106,14 +106,14 @@
 .listing-card__location {
   align-items: flex-start !important;
   gap: 6px !important;
-  color: var(--v19-muted) !important;
+  color: var(--text-muted) !important;
   line-height: 1.8 !important;
 }
 
 .listing-card__location svg {
   flex: 0 0 auto;
   margin-top: 2px;
-  color: var(--v19-teal);
+  color: var(--text-link);
 }
 
 .listing-card__meta {
@@ -129,18 +129,18 @@
   padding: 4px 8px !important;
   border-radius: 999px;
   background: #f7f1ec;
-  color: #76665e !important;
-  font-weight: 800;
+  color: var(--text-muted) !important;
+  font-weight: 700;
 }
 
 .listing-card__meta > a {
   background: rgba(40,108,112,.07);
-  color: var(--v19-teal-dark) !important;
+  color: var(--text-link) !important;
 }
 
 .listing-card .rating {
   background: rgba(217,169,93,.13) !important;
-  color: #745526 !important;
+  color: var(--text-accent) !important;
 }
 
 .listing-card__actions {
@@ -230,20 +230,20 @@
   justify-content: center;
   border-radius: 10px;
   background: rgba(155,79,55,.07);
-  color: var(--v19-copper-dark) !important;
-  letter-spacing: .04em !important;
+  color: var(--text-danger) !important;
+  letter-spacing: normal !important;
 }
 
 .village-card__type {
   margin-top: 15px !important;
-  color: var(--v19-copper-dark) !important;
-  letter-spacing: .01em;
+  color: var(--text-danger) !important;
+  letter-spacing: normal;
 }
 
 .village-card h2 {
   margin: 5px 0 6px !important;
-  color: var(--v19-ink) !important;
-  font-size: 1.08rem !important;
+  color: var(--text-strong) !important;
+  font-size: var(--fs-md) !important;
   text-wrap: balance;
 }
 
@@ -252,7 +252,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  color: #786960 !important;
+  color: var(--text-muted) !important;
   line-height: 1.85 !important;
 }
 
@@ -273,7 +273,7 @@
 .village-card__cta {
   margin-top: 10px !important;
   padding-top: 10px !important;
-  color: var(--v19-copper-dark) !important;
+  color: var(--text-danger) !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -301,12 +301,12 @@
 }
 
 .page-main .category-card h3 {
-  color: var(--v19-ink) !important;
+  color: var(--text-strong) !important;
   text-wrap: balance;
 }
 
 .page-main .category-card > p {
-  color: #786960 !important;
+  color: var(--text-muted) !important;
 }
 
 .page-main .category-card__footer {
@@ -315,12 +315,12 @@
 }
 
 .page-main .category-card__footer b {
-  color: var(--v19-teal-dark) !important;
+  color: var(--text-link) !important;
 }
 
 .page-main .category-card__footer span {
-  color: var(--v19-copper-dark) !important;
-  font-weight: 900;
+  color: var(--text-danger) !important;
+  font-weight: 700;
 }
 
 /* Business detail hero — immediate action and trust hierarchy */
@@ -348,14 +348,14 @@
 .detail-hero h1 {
   max-width: 19ch !important;
   margin-block: 12px 8px !important;
-  font-size: clamp(2.35rem, 4.5vw, 3.8rem) !important;
+  font-size: var(--fs-display) !important;
   line-height: 1.28 !important;
-  letter-spacing: -.035em !important;
+  letter-spacing: normal !important;
 }
 
 .detail-hero__grid > div > p {
   max-width: 720px !important;
-  color: #decfc7 !important;
+  color: var(--text-on-dark-muted) !important;
 }
 
 .detail-actions {
@@ -391,11 +391,11 @@
 
 .detail-hero__summary > span {
   margin-top: 12px !important;
-  color: #cdbcb3 !important;
+  color: var(--text-on-dark-muted) !important;
 }
 
 .detail-hero__summary > strong {
-  color: #fff9f3 !important;
+  color: var(--text-on-dark) !important;
 }
 
 /* Detail body — reduce cognitive load */
@@ -422,11 +422,11 @@
 }
 
 .detail-grid > div span {
-  color: #8b786f !important;
+  color: var(--text-muted) !important;
 }
 
 .detail-grid > div strong {
-  color: #3a2a23 !important;
+  color: var(--text-strong) !important;
 }
 
 .listing-description {
@@ -525,7 +525,7 @@
 
   .village-card p {
     -webkit-line-clamp: 2;
-    font-size: .72rem !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .detail-hero {
@@ -534,7 +534,7 @@
 
   .detail-hero h1 {
     max-width: 100% !important;
-    font-size: clamp(1.95rem, 8.8vw, 2.55rem) !important;
+    font-size: var(--fs-3xl) !important;
     line-height: 1.38 !important;
   }
 

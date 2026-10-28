@@ -1,3 +1,5 @@
+import { ShareActions } from '@/components/share-actions';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { EditorialPost } from '@/lib/editorial-posts';
@@ -18,7 +20,7 @@ function localImageUrl(asset: string) {
 function formatArticleDate(date: string) {
   const [year, month, day] = date.split('-').map(Number);
   if (!year || !month || !day) return date;
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -77,15 +79,6 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
           { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
         ],
       },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonicalUrl}#faq`,
-        mainEntity: post.faqs.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: { '@type': 'Answer', text: item.answer },
-        })),
-      },
     ],
   };
 
@@ -95,7 +88,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
         <header className={styles.hero}>
           <div className="shell">
             <nav className={styles.breadcrumbs} aria-label="مسار المقال">
-              <Link href="/">الرئيسية</Link><span>/</span><Link href="/blog">المدونة</Link><span>/</span><span>{post.locality}</span>
+              <Link prefetch={false} href="/">الرئيسية</Link><span>/</span><Link prefetch={false} href="/blog">المدونة</Link><span>/</span><span>{post.locality}</span>
             </nav>
             <div className={styles.heroGrid}>
               <div className={styles.heroCopy}>
@@ -103,7 +96,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
                 <h1>{post.title}</h1>
                 <p>{post.excerpt}</p>
                 <div className={styles.meta}>
-                  <span>بقلم {authorHref ? <Link href={authorHref} rel="author">{authorName}</Link> : authorName}</span>
+                  <span>بقلم {authorHref ? <Link prefetch={false} href={authorHref} rel="author">{authorName}</Link> : authorName}</span>
                   <time dateTime={post.publishedAt}>{formatArticleDate(post.publishedAt)}</time>
                   <span>مقال محلي مصوّر</span>
                 </div>
@@ -178,7 +171,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
                     ? `صفحة المكان تجمع الموقع والهوية المحلية والخدمات، بينما المقال الحالي يركز على موضوع مستقل داخل ${post.locality} بزاوية أعمق ومصادر وصور مخصصة.`
                     : `المقال الحالي يركز على ${post.locality}، بينما صفحة ${post.relatedVillage} تجمع السياق الجغرافي والخدمي الأوسع والمواضع المرتبطة بها داخل مركز نقادة.`}
                 </p>
-                <Link href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.relatedVillage} الكامل ←</Link>
+                <Link prefetch={false} href={`/villages/${relatedLocality.slug}`}>فتح دليل {post.relatedVillage} الكامل ←</Link>
               </aside>
             )}
 
@@ -209,7 +202,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
                 <strong>{authorName}</strong>
                 {authorRole && <small>{authorRole}</small>}
                 {authorBio && <p>{authorBio}</p>}
-                {authorHref && <Link href={authorHref} rel="author">عن الكاتب ←</Link>}
+                {authorHref && <Link prefetch={false} href={authorHref} rel="author">عن الكاتب ←</Link>}
               </div>
             </footer>
           </div>
@@ -225,6 +218,7 @@ export function EditorialPostArticle({ post }: { post: EditorialPost }) {
           </aside>
         </div>
       </article>
+      <div className="shell page-section"><ShareActions title={post.title} url={canonicalUrl} scope="content" /></div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );

@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -27,7 +29,7 @@ function rankDescription(reputation: MemberReputation) {
     : 'وصلت إلى أعلى رتبة مساهم عامة في دليل نقادة.';
   if (reputation.nextTierAt && reputation.nextTierLabel) {
     const remaining = Math.max(0, reputation.nextTierAt - reputation.contributionCount);
-    return `متبقي ${remaining.toLocaleString('ar-EG')} مساهمة غير مرفوضة للوصول إلى ${reputation.nextTierLabel}.`;
+    return `متبقي ${remaining.toLocaleString(NUMBER_LOCALE)} مساهمة غير مرفوضة للوصول إلى ${reputation.nextTierLabel}.`;
   }
   return 'استمر في المساهمة لتحصل على إطار أعلى.';
 }
@@ -117,8 +119,8 @@ export function MemberDashboard() {
         <div className="member-status"><span>{user.emailVerified ? 'حساب مؤكد' : 'بانتظار تأكيد البريد'}</span><strong>{completion}%</strong><small>اكتمال الملف</small></div>
       </section>
 
-      {isAdmin && <Link href="/admin" className="admin-entry"><span>لوحة الإدارة المعتمدة</span><strong>افتح مركز تشغيل دليل نقادة</strong><b>الإحصاءات والمراجعات والبيانات ←</b></Link>}
-      {isModerator && <Link href="/moderator" className="admin-entry"><span>مشرفة ذهبية ✦</span><strong>افتحي مساحة الإشراف والتحرير</strong><b>الأنشطة والأخبار والمقالات والأعضاء ←</b></Link>}
+      {isAdmin && <Link prefetch={false} href="/admin" className="admin-entry"><span>لوحة الإدارة المعتمدة</span><strong>افتح مركز تشغيل دليل نقادة</strong><b>الإحصاءات والمراجعات والبيانات ←</b></Link>}
+      {isModerator && <Link prefetch={false} href="/moderator" className="admin-entry"><span>مشرفة ذهبية ✦</span><strong>افتحي مساحة الإشراف والتحرير</strong><b>الأنشطة والأخبار والمقالات والأعضاء ←</b></Link>}
 
       <div className="member-grid">
         <section className="profile-editor" id="profile">
@@ -140,14 +142,14 @@ export function MemberDashboard() {
             <p>{rankDescription(reputation)}</p>
             <div style={{ display: 'grid', gap: 9, marginTop: 14 }}>
               <div style={{ height: 8, borderRadius: 999, background: '#ece5df', overflow: 'hidden' }}><i style={{ display: 'block', width: `${reputation.progressPercent}%`, height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#9b7440,#d6b15d)' }}/></div>
-              <small>{reputation.contributionCount.toLocaleString('ar-EG')} مساهمة محسوبة · {reputation.acceptedCount.toLocaleString('ar-EG')} معتمدة/منشورة · {reputation.pendingCount.toLocaleString('ar-EG')} قيد المراجعة</small>
+              <small>{reputation.contributionCount.toLocaleString(NUMBER_LOCALE)} مساهمة محسوبة · {reputation.acceptedCount.toLocaleString(NUMBER_LOCALE)} معتمدة/منشورة · {reputation.pendingCount.toLocaleString(NUMBER_LOCALE)} قيد المراجعة</small>
             </div>
           </section>
-          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link href="/contribute"><b>02</b><span>أضف نشاطك وأنشطتي<small>سجّله باسمك وتابع المراجعة والصور</small></span><i>←</i></Link><Link href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
+          <section><span>اختصارات العضو</span><h2>كل ما تحتاجه قريب</h2><div className="member-links"><Link prefetch={false} href="/directory"><b>01</b><span>استكشف الأنشطة<small>ابحث واتصل وافتح الخرائط</small></span><i>←</i></Link><Link prefetch={false} href="/contribute"><b>02</b><span>أضف نشاطك وأنشطتي<small>سجّله باسمك وتابع المراجعة والصور</small></span><i>←</i></Link><Link prefetch={false} href="/#site-reviews"><b>03</b><span>قيّم دليل نقادة<small>شارك رأيك مع المجتمع</small></span><i>←</i></Link></div></section>
           <section className="member-security"><span>حماية الحساب</span><strong>{user.emailVerified ? 'البريد مؤكد والحساب نشط' : 'أكمل تأكيد البريد'}</strong><p>جلسة الدخول محفوظة في ملفات ارتباط آمنة ولا تُعرض مفاتيح الإدارة داخل المتصفح.</p></section>
         </aside>
       </div>
-      <div className="member-footer"><span>عضو منذ {profile.createdAt ? new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric' }).format(new Date(profile.createdAt)) : 'اليوم'}</span><button type="button" onClick={logout} disabled={loggingOut}>{loggingOut ? 'جارٍ الخروج…' : 'تسجيل الخروج'}</button></div>
+      <div className="member-footer"><span>عضو منذ {profile.createdAt ? new Intl.DateTimeFormat(NUMBER_LOCALE, { month: 'long', year: 'numeric' }).format(new Date(profile.createdAt)) : 'اليوم'}</span><button type="button" onClick={logout} disabled={loggingOut}>{loggingOut ? 'جارٍ الخروج…' : 'تسجيل الخروج'}</button></div>
     </div>
   );
 }

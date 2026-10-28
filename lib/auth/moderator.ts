@@ -1,6 +1,7 @@
 import { SUPABASE_URL, restHeaders, SupabaseAuthError } from '@/lib/auth/supabase-rest';
-import { unstable_cache } from 'next/cache';
-import { invalidatePublicContent, PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL, PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
+import { cache } from 'react';
+import { connection } from 'next/server';
+import { invalidatePublicContent, PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
 
 export type CuratedKind = 'business' | 'news' | 'article' | 'role_model';
 export type CuratedRecord = {
@@ -50,9 +51,12 @@ export async function assertMemberAllowed(token: string) {
   }
 }
 
-export const getPublicCurated = unstable_cache(async (kind: CuratedKind): Promise<CuratedRecord[]> => {
+// React cache deduplicates one render only. Withdrawal state must never survive
+// into a later request, including when an earlier read finishes after moderation.
+export const getPublicCurated = cache(async (kind: CuratedKind): Promise<CuratedRecord[]> => {
+  await connection();
   return retryPublicRead(() => rpc<CuratedRecord[]>('get_public_naqada_content', undefined, { p_kind: kind }, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)), kind);
-}, ['naqada-public-curated-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
+});
 
 export async function getEditorContent(token: string): Promise<CuratedRecord[]> {
   return rpc<CuratedRecord[]>('get_naqada_editor_content', token);

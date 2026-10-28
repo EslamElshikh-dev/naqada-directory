@@ -104,7 +104,7 @@ export function LoginForm() {
       <PasswordField id="login-password" name="password" autoComplete="current-password"/>
       <div className="auth-feedback" aria-live="polite">{error && <span>{error}</span>}</div>
       <button className="auth-submit" type="submit" disabled={busy}>{busy ? 'جارٍ تسجيل الدخول…' : 'تسجيل الدخول'}</button>
-      <p className="auth-switch">ليس لديك حساب؟ <Link href="/account/register">أنشئ حسابًا جديدًا</Link></p>
+      <p className="auth-switch">ليس لديك حساب؟ <Link prefetch={false} href="/account/register">أنشئ حسابًا جديدًا</Link></p>
       <ResendConfirmation email={email} />
     </form>
   );
@@ -143,7 +143,7 @@ export function RegisterForm() {
     } finally { setBusy(false); }
   }
   if (verificationSent) return (
-    <div className="auth-success"><span>✓</span><h2>راجع بريدك لتأكيد الحساب</h2><p>افتح رسالة التأكيد وسجّل الدخول بعدها. لو الرسالة مش ظاهرة، راجع الرسائل غير المرغوب فيها أو اطلب إعادة الإرسال.</p><ResendConfirmation email={email} /><Link href="/account/login">الذهاب إلى تسجيل الدخول</Link></div>
+    <div className="auth-success"><span>✓</span><h2>راجع بريدك لتأكيد الحساب</h2><p>افتح رسالة التأكيد وسجّل الدخول بعدها. لو الرسالة مش ظاهرة، راجع الرسائل غير المرغوب فيها أو اطلب إعادة الإرسال.</p><ResendConfirmation email={email} /><Link prefetch={false} href="/account/login">الذهاب إلى تسجيل الدخول</Link></div>
   );
   return (
     <form className="auth-form" onSubmit={submit} onChange={markStarted} onInvalid={() => { markStarted(); trackEvent('Registration Error'); }}>
@@ -159,7 +159,7 @@ export function RegisterForm() {
       <PasswordField id="register-confirm" name="confirm" autoComplete="new-password" value={confirm} onChange={setConfirm}/>
       <div className="auth-feedback" aria-live="polite">{error && <span>{error}</span>}</div>
       <button className="auth-submit" type="submit" disabled={busy}>{busy ? 'جارٍ إنشاء الحساب…' : 'إنشاء حساب عضو'}</button>
-      <p className="auth-switch">لديك حساب بالفعل؟ <Link href="/account/login">تسجيل الدخول</Link></p>
+      <p className="auth-switch">لديك حساب بالفعل؟ <Link prefetch={false} href="/account/login">تسجيل الدخول</Link></p>
     </form>
   );
 }

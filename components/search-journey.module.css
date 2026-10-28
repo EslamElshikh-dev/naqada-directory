@@ -20,16 +20,16 @@
 
 .header > div:first-child > span {
   display: block;
-  color: var(--nq-copper-dark);
-  font-size: .72rem;
-  font-weight: 900;
-  letter-spacing: .01em;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: normal;
 }
 
 .header h2 {
   margin: 5px 0 7px;
-  color: var(--nq-ink);
-  font-size: clamp(1.28rem,2.5vw,1.82rem);
+  color: var(--text-strong);
+  font-size: var(--fs-3xl);
   line-height: 1.5;
   text-wrap: balance;
 }
@@ -37,8 +37,8 @@
 .header p {
   max-width: 780px;
   margin: 0;
-  color: #776960;
-  font-size: .8rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.85;
   text-wrap: pretty;
 }
@@ -58,9 +58,9 @@
   border-radius: 999px;
   background: #fff;
   border: 1px solid rgba(84,49,36,.09);
-  color: #6f594f;
-  font-size: .66rem;
-  font-weight: 850;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -92,22 +92,22 @@
   height: 40px;
   border-radius: 13px;
   background: #2b7277;
-  color: #fff;
-  font-size: .72rem;
-  letter-spacing: .04em;
+  color: var(--text-on-dark);
+  font-size: var(--fs-xs);
+  letter-spacing: normal;
 }
 
 .stepHead strong {
   display: block;
-  color: #38261f;
-  font-size: .92rem;
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
   line-height: 1.65;
 }
 
 .stepHead p {
   margin: 4px 0 0;
-  color: #82736a;
-  font-size: .74rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.8;
 }
 
@@ -142,9 +142,9 @@
 
 .badge {
   grid-column: 1 / -1;
-  color: var(--nq-teal);
-  font-size: .65rem;
-  font-weight: 900;
+  color: var(--text-link);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .card strong {
@@ -152,15 +152,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #38251e;
-  font-size: .86rem;
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
   line-height: 1.6;
 }
 
 .card small {
   grid-column: 1 / -1;
-  color: #7d7068;
-  font-size: .71rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.7;
 }
 
@@ -168,9 +168,9 @@
   grid-row: 2;
   grid-column: 2;
   align-self: center;
-  color: var(--nq-copper-dark);
-  font-size: .68rem;
-  font-weight: 900;
+  color: var(--text-danger);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -183,18 +183,18 @@
 @media(max-width:680px){
   .journey { padding: 16px; border-radius: 20px; }
   .cards { grid-template-columns: 1fr; }
-  .header h2 { font-size: 1.2rem; }
-  .header p { font-size: .76rem; }
+  .header h2 { font-size: var(--fs-xl); }
+  .header p { font-size: var(--fs-xs); }
   .legend { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; padding-bottom: 2px; overscroll-behavior-inline: contain; }
   .legend::-webkit-scrollbar { display: none; }
-  .legend span { flex: 0 0 auto; min-height: 36px; font-size: .64rem; }
+  .legend span { flex: 0 0 auto; min-height: 36px; font-size: var(--fs-xs); }
   .stepHead > b { width: 38px; height: 38px; }
-  .stepHead strong { font-size: .88rem; }
-  .stepHead p { font-size: .72rem; }
+  .stepHead strong { font-size: var(--fs-sm); }
+  .stepHead p { font-size: var(--fs-xs); }
   .card { min-height: 100px; padding: 14px; }
-  .card strong { font-size: .84rem; }
-  .card small { font-size: .7rem; }
-  .cardAction { font-size: .67rem; }
+  .card strong { font-size: var(--fs-sm); }
+  .card small { font-size: var(--fs-xs); }
+  .cardAction { font-size: var(--fs-xs); }
 }
 
 @media(prefers-reduced-motion:reduce){

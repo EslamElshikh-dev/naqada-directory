@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { AccountButton } from './auth/account-button';
 import { HeaderNav } from './header-nav';
 import { ActionIcon } from './action-icon';
-import { GlobalSearch } from './global-search';
+import { DeferredGlobalSearch as GlobalSearch } from './deferred-global-search';
 import { HeaderNotifications } from './header-notifications';
 import headerStyles from './site-header.module.css';
 import brandStyles from './brand-mark.module.css';

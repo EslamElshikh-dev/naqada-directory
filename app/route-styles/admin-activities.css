@@ -1,0 +1,7 @@
+
+.eyebrow { display: inline-block; font-size: var(--fs-xs); font-weight: 700; letter-spacing: normal; margin-bottom: 11px; }
+.eyebrow { color: var(--text-on-dark-accent); }
+.eyebrow--dark { color: var(--text-accent); }
+@media (max-width: 700px) {
+  body.mobile-editorial .eyebrow { font-size: var(--fs-xs) !important; line-height: 1.8 !important; letter-spacing: normal !important; }
+}

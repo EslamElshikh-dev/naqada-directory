@@ -57,7 +57,7 @@ export function RoleModelStory({ person }: { person: RoleModel }) {
     <article>
       <header className={styles.articleHero}>
         <div className={'shell ' + styles.articleHeroInner}>
-          <nav className={styles.breadcrumbs} aria-label="مسار المقال"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><Link href="/role-models">نماذج مشرفة</Link><span aria-hidden="true">/</span><span aria-current="page">{person.name}</span></nav>
+          <nav className={styles.breadcrumbs} aria-label="مسار المقال"><Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span><Link prefetch={false} href="/role-models">نماذج مشرفة</Link><span aria-hidden="true">/</span><span aria-current="page">{person.name}</span></nav>
           <div className={styles.articleHeroGrid}>
             <div>
               <span className={styles.eyebrow}>نماذج مشرفة في نقادة · {person.locality}</span>
@@ -112,7 +112,7 @@ export function RoleModelStory({ person }: { person: RoleModel }) {
             {person.additionalSources?.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer external">{source.label} <span aria-hidden="true">↗</span></a>)}
             {person.rewrittenBy && <p>تمت إعادة الصياغة بواسطة | {person.rewrittenBy}</p>}
           </section>
-          <div className={styles.articleEnd}><Link href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
+          <div className={styles.articleEnd}><Link prefetch={false} href="/role-models">شوف نماذج مشرفة تانية <span aria-hidden="true">←</span></Link></div>
         </div>
         <aside className={styles.articleSide} aria-label="معلومات عن المقال">
           <div className={styles.sideCard}><small>الاسم</small><strong>{person.name}</strong><small>من</small><b>{person.locality}</b></div>

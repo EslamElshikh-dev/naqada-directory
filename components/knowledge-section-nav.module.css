@@ -25,7 +25,7 @@
   padding: 10px 11px;
   border: 1px solid transparent;
   border-radius: 13px;
-  color: #49362f;
+  color: var(--text-body);
   text-decoration: none;
   transition: background .18s ease, border-color .18s ease, transform .18s ease;
 }
@@ -41,8 +41,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: .72rem;
-  font-weight: 850;
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .item small {
@@ -51,22 +51,22 @@
   padding: 3px 6px;
   border-radius: 999px;
   background: #f1e6da;
-  color: #87533d;
+  color: var(--text-danger);
   text-align: center;
-  font-size: .6rem;
-  font-weight: 850;
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .active {
   border-color: rgba(169,83,55,.16);
   background: linear-gradient(135deg,#37221b,#6f3525);
-  color: #fff8ee;
+  color: var(--text-on-dark);
   box-shadow: 0 8px 18px rgba(69,35,24,.14);
 }
 
 .active small {
   background: rgba(239,192,128,.16);
-  color: #f2ca8e;
+  color: var(--text-on-dark-accent);
 }
 
 @media (max-width: 980px) {
@@ -97,6 +97,6 @@
  .nav { margin-top: 16px; }
  .rail { box-shadow: 0 4px 16px #183f3009; gap: 6px; }
  .item { flex: 0 0 auto; min-height: 48px; min-width: 124px; }
- .item span { font-size: .875rem; line-height: 1.8; }
- .item small { font-size: .75rem; }
+ .item span { font-size: var(--fs-sm); line-height: 1.8; }
+ .item small { font-size: var(--fs-xs); }
 }

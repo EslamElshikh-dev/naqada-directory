@@ -1,3 +1,4 @@
+import '@/app/route-styles/landmarks.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -94,11 +95,11 @@ export default function LandmarksPage() {
         <div className="landmark-hero__veil" aria-hidden="true" />
         <div className="shell landmark-hero__content">
           <div>
-            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span>/</span><span>معالم نقادة</span></nav>
+            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span>/</span><span>معالم نقادة</span></nav>
             <span className="landmark-hero__eyebrow"><i /> دليل بصري موثّق</span>
             <h1>معالم نقادة… <em>حكاية مكان</em> تمتد لآلاف السنين.</h1>
             <p>جولة مختصرة في العمارة القبطية وذاكرة نوبت وحضارة نقادة، بصور مفتوحة الترخيص وروابط مباشرة إلى مصادرها.</p>
-            <div className="landmark-hero__actions"><a href="#gallery" className="button button--light"><ActionIcon name="landmark" /><span>ابدأ الجولة</span></a><Link href="/heritage" className="button button--outline-light"><ActionIcon name="arrow" /><span>السجل التراثي الكامل</span></Link></div>
+            <div className="landmark-hero__actions"><a href="#gallery" className="button button--light"><ActionIcon name="landmark" /><span>ابدأ الجولة</span></a><Link prefetch={false} href="/heritage" className="button button--outline-light"><ActionIcon name="arrow" /><span>السجل التراثي الكامل</span></Link></div>
           </div>
           <aside><span>هوية نقادة</span><strong>مدينة صنعت اسمًا أثريًا عالميًا</strong><p>مناظر حقيقية ووثائق تاريخية، مع تمييز واضح بين الصورة الحديثة والرسم الأرشيفي.</p><div><b>٤<small>مشاهد مختارة</small></b><b>٣<small>محطات للزيارة</small></b></div></aside>
         </div>
@@ -123,12 +124,12 @@ export default function LandmarksPage() {
 
       <section className="section landmark-route">
         <div className="shell landmark-route__grid">
-          <div className="landmark-route__intro"><span className="eyebrow">مسار مقترح</span><h2>ثلاث محطات لفهم روح المكان</h2><p>هذه ليست مواعيد تشغيل أو برنامج رحلة رسميًا؛ هي نقطة بداية لتجميع أهم الأسماء قبل الزيارة.</p><Link href="/directory" className="button button--light"><ActionIcon name="map" /><span>ابحث عن خدمات قريبة</span></Link></div>
+          <div className="landmark-route__intro"><span className="eyebrow">مسار مقترح</span><h2>ثلاث محطات لفهم روح المكان</h2><p>هذه ليست مواعيد تشغيل أو برنامج رحلة رسميًا؛ هي نقطة بداية لتجميع أهم الأسماء قبل الزيارة.</p><Link prefetch={false} href="/directory" className="button button--light"><ActionIcon name="map" /><span>ابحث عن خدمات قريبة</span></Link></div>
           <ol>{routeStops.map((stop) => <li key={stop.number}><b>{stop.number}</b><div><h3>{stop.title}</h3><p>{stop.text}</p></div></li>)}</ol>
         </div>
       </section>
 
-      <section className="shell landmarks-next"><div><span>سجل أكبر من الصور</span><h2>تابع المعالم والأعلام بمصادرها</h2><p>صفحة الذاكرة تجمع السجل التفصيلي ودرجة كل معلومة وروابط توثيقها.</p></div><Link href="/heritage" className="button button--primary"><ActionIcon name="arrow" /><span>افتح ذاكرة نقادة</span></Link></section>
+      <section className="shell landmarks-next"><div><span>سجل أكبر من الصور</span><h2>تابع المعالم والأعلام بمصادرها</h2><p>صفحة الذاكرة تجمع السجل التفصيلي ودرجة كل معلومة وروابط توثيقها.</p></div><Link prefetch={false} href="/heritage" className="button button--primary"><ActionIcon name="arrow" /><span>افتح ذاكرة نقادة</span></Link></section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
     </main>
   );

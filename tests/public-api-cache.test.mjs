@@ -1,3 +1,4 @@
+import { createHmac, randomBytes } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
@@ -62,18 +63,25 @@ test('public notifications share the bounded job data cache without pinning with
 
 test('search returns a recoverable uncached response when public data is unavailable', async () => {
   let reads = 0;
+  const limiter = load('../lib/request-limiter.ts', { 'node:crypto': { createHmac, randomBytes } });
   const api = load('../app/api/site-search/route.ts', {
+    '@/lib/request-limiter': limiter,
     'next/server': { NextResponse: Response },
     '@/lib/article-content': { getPublicRoleModels: async () => [], getPublicEditorialPosts: async () => [] },
     '@/lib/curated-content': { getPublicBusinessCatalog: async () => { reads++; throw Error('offline'); } },
     '@/lib/site-search': { sanitizeSiteSearchQuery: value => value || '' },
     '@/lib/search-context': {},
   });
-  const request = query => ({ nextUrl: new URL(`https://directory.example/api/site-search?q=${query}`) });
+  const request = query => ({ headers: new Headers(), nextUrl: new URL(`https://directory.example/api/site-search?q=${query}`) });
   assert.equal((await api.GET(request('a'))).status, 200);
   assert.equal(reads, 0);
   const failed = await api.GET(request('صيدلية'));
   assert.equal(failed.status, 503);
   assert.equal(failed.headers.get('cache-control'), 'no-store');
   assert.match((await failed.json()).error, /جرّب/);
+  for (let i = 0; i < 88; i++) assert.equal((await api.GET(request('a'))).status, 200);
+  const limited = await api.GET(request('a'));
+  assert.equal(limited.status, 429);
+  assert.ok(Number(limited.headers.get('retry-after')) > 0);
+  assert.equal(reads, 1);
 });

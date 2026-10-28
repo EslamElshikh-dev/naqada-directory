@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import { businesses, canonicalLocalityName, localities } from './data';
 import { knowledgePlaces, sourceById } from './knowledge';
 import { normalizeArabic } from './site';
@@ -34,12 +35,12 @@ export function localityKnowledge(message: string, previous: string): SanadReply
   let answer = `${place.name} مذكورة في موسوعة نقادة ضمن ${place.parent}.`;
   if (/سكان/.test(text)) {
     answer = /دلوقتي|حاليا|الان|2026|٢٠٢٦/.test(text) ? 'عدد السكان الحالي غير متاح عندي بمصدر مؤكد.\n' : '';
-    answer += place.population2014 ? `العدد الوارد في الموسوعة عن ${place.name} لسنة 2014 هو ${place.population2014.toLocaleString('ar-EG')} نسمة.` : `ما عنديش رقم مسجل لسنة 2014 عن ${place.name}.`;
-    if (place.population1897) answer += ` وفي سنة 1897 سُجّل ${place.population1897.toLocaleString('ar-EG')} نسمة.`;
+    answer += place.population2014 ? `العدد الوارد في الموسوعة عن ${place.name} لسنة 2014 هو ${place.population2014.toLocaleString(NUMBER_LOCALE)} نسمة.` : `ما عنديش رقم مسجل لسنة 2014 عن ${place.name}.`;
+    if (place.population1897) answer += ` وفي سنة 1897 سُجّل ${place.population1897.toLocaleString(NUMBER_LOCALE)} نسمة.`;
     answer += '\nدي أرقام تاريخية وليست تعدادًا حاليًا.';
   } else {
     if (published?.notes) answer += `\n${published.notes}`;
-    if (published) answer += `\nالدليل يضم ${businesses.filter(b => canonicalLocalityName(b.locality) === published.name).length.toLocaleString('ar-EG')} نشاطًا في نطاقها المسجل.`;
+    if (published) answer += `\nالدليل يضم ${businesses.filter(b => canonicalLocalityName(b.locality) === published.name).length.toLocaleString(NUMBER_LOCALE)} نشاطًا في نطاقها المسجل.`;
     answer += '\nالتبعية هنا بحسب المصدر؛ راجع صفحة المكان لأي اختلاف بين السجل التاريخي والتقسيم الحالي.';
   }
   if (source) answer += `\nالمصدر: ${source.title} — ${source.author}${source.year ? ` (${source.year})` : ''}.`;

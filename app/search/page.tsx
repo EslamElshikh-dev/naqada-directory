@@ -1,3 +1,5 @@
+import '@/app/route-styles/search.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { UtilityPageHeader } from '@/components/utility-page-header';
@@ -182,7 +184,7 @@ export default async function SearchPage({ searchParams }: Props) {
                 prefetch={false}
               >
                 <span>{option.label}</span>
-                <b>{counts[option.id].toLocaleString('ar-EG')}</b>
+                <b>{counts[option.id].toLocaleString(NUMBER_LOCALE)}</b>
               </Link>
             ))}
           </nav>
@@ -197,10 +199,10 @@ export default async function SearchPage({ searchParams }: Props) {
             <span className={styles.stateIcon} aria-hidden="true">⌕</span>
             <div><strong>ابدأ باسم خدمة أو مكان أو شخصية</strong><p>اكتب ما تحتاجه بطريقة طبيعية؛ نفس محرك البحث يعمل في الهيدر والصفحة الرئيسية وهنا.</p></div>
             <nav className={styles.quickLinks} aria-label="أمثلة بحث سريعة">
-              <Link href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
-              <Link href="/search?q=بشلاو&scope=places">بشلاو</Link>
-              <Link href="/search?q=عبد%20الرحيم%20القمولي&scope=knowledge">عبد الرحيم القمولي</Link>
-              <Link href="/search?q=تراث&scope=knowledge">تراث</Link>
+              <Link prefetch={false} href="/search?q=صيدلية%20في%20الخطارة&scope=directory">صيدلية في الخطارة</Link>
+              <Link prefetch={false} href="/search?q=بشلاو&scope=places">بشلاو</Link>
+              <Link prefetch={false} href="/search?q=عبد%20الرحيم%20القمولي&scope=knowledge">عبد الرحيم القمولي</Link>
+              <Link prefetch={false} href="/search?q=تراث&scope=knowledge">تراث</Link>
             </nav>
           </div>
         ) : scopedResults.length ? (
@@ -210,20 +212,20 @@ export default async function SearchPage({ searchParams }: Props) {
                 <span>{activeScope === 'all' ? 'كل النتائج لعبارة' : `${activeOption.label} لعبارة`}</span>
                 <strong>«{query}»</strong>
                 <small>
-                  {scopedResults.length.toLocaleString('ar-EG')} نتيجة مطابقة
-                  {hasMore ? ` · نعرض أول ${results.length.toLocaleString('ar-EG')} نتيجة حسب الصلة` : ' · معروضة بالكامل حسب الصلة'}
+                  {scopedResults.length.toLocaleString(NUMBER_LOCALE)} نتيجة مطابقة
+                  {hasMore ? ` · نعرض أول ${results.length.toLocaleString(NUMBER_LOCALE)} نتيجة حسب الصلة` : ' · معروضة بالكامل حسب الصلة'}
                 </small>
               </div>
               <div className={styles.metrics}>
-                <span><b>{counts.directory.toLocaleString('ar-EG')}</b><small>أنشطة وأقسام</small></span>
-                <span><b>{counts.places.toLocaleString('ar-EG')}</b><small>قرى ومعالم</small></span>
-                <span><b>{counts.knowledge.toLocaleString('ar-EG')}</b><small>نتائج موسوعية</small></span>
+                <span><b>{counts.directory.toLocaleString(NUMBER_LOCALE)}</b><small>أنشطة وأقسام</small></span>
+                <span><b>{counts.places.toLocaleString(NUMBER_LOCALE)}</b><small>قرى ومعالم</small></span>
+                <span><b>{counts.knowledge.toLocaleString(NUMBER_LOCALE)}</b><small>نتائج موسوعية</small></span>
               </div>
             </div>
 
             {grouped.length > 1 ? (
               <nav className={styles.groupRail} aria-label="الانتقال بين أنواع النتائج">
-                {grouped.map((group) => <a href={`#${group.id}`} key={group.id}>{group.label}<b>{group.items.length.toLocaleString('ar-EG')}</b></a>)}
+                {grouped.map((group) => <a href={`#${group.id}`} key={group.id}>{group.label}<b>{group.items.length.toLocaleString(NUMBER_LOCALE)}</b></a>)}
               </nav>
             ) : null}
 
@@ -231,10 +233,10 @@ export default async function SearchPage({ searchParams }: Props) {
               {grouped.map((group) => (
                 <section className={styles.group} id={group.id} key={group.id}>
                   <header className={styles.groupHead}>
-                    <div><span>{group.items.length.toLocaleString('ar-EG')} نتيجة معروضة</span><h2>{group.label}</h2><p>{group.description}</p></div>
-                    {group.id === 'directory' ? <Link href={`/directory?q=${encodeURIComponent(query)}`}>فتح دليل الأنشطة ←</Link> : null}
-                    {group.id === 'knowledge' ? <Link href="/knowledge">فتح الموسوعة ←</Link> : null}
-                    {group.id === 'places' ? <Link href="/villages">كل القرى والنجوع ←</Link> : null}
+                    <div><span>{group.items.length.toLocaleString(NUMBER_LOCALE)} نتيجة معروضة</span><h2>{group.label}</h2><p>{group.description}</p></div>
+                    {group.id === 'directory' ? <Link prefetch={false} href={`/directory?q=${encodeURIComponent(query)}`}>فتح دليل الأنشطة ←</Link> : null}
+                    {group.id === 'knowledge' ? <Link prefetch={false} href="/knowledge">فتح الموسوعة ←</Link> : null}
+                    {group.id === 'places' ? <Link prefetch={false} href="/villages">كل القرى والنجوع ←</Link> : null}
                   </header>
                   <div className={styles.resultsGrid}>{group.items.map((item) => <ResultCard item={item} key={`${item.kind}-${item.href}`} />)}</div>
                 </section>
@@ -256,7 +258,7 @@ export default async function SearchPage({ searchParams }: Props) {
                     <Link href={searchHref(suggestion.query, activeScope)} key={`${suggestion.reason}-${suggestion.query}`} prefetch={false}>
                       <span>{suggestion.reason}</span>
                       <strong>«{suggestion.query}»</strong>
-                      <small>{suggestion.count.toLocaleString('ar-EG')} نتيجة متوقعة</small>
+                      <small>{suggestion.count.toLocaleString(NUMBER_LOCALE)} نتيجة متوقعة</small>
                     </Link>
                   ))}
                 </div>
@@ -264,9 +266,9 @@ export default async function SearchPage({ searchParams }: Props) {
             ) : null}
 
             <div className={styles.emptyActions}>
-              {activeScope !== 'all' ? <Link href={searchHref(query, 'all')}>عرض كل النتائج</Link> : null}
-              <Link href="/directory">فتح دليل الأنشطة</Link>
-              <Link href="/knowledge">فتح موسوعة نقادة</Link>
+              {activeScope !== 'all' ? <Link prefetch={false} href={searchHref(query, 'all')}>عرض كل النتائج</Link> : null}
+              <Link prefetch={false} href="/directory">فتح دليل الأنشطة</Link>
+              <Link prefetch={false} href="/knowledge">فتح موسوعة نقادة</Link>
               <Link href={`/contribute?type=missing&name=${encodeURIComponent(query)}`} prefetch={false}>تعرف النشاط؟ ابعت تفاصيله</Link>
             </div>
           </div>

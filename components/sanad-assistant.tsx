@@ -1,15 +1,16 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SanadReply } from '@/lib/sanad';
-import styles from './sanad-assistant.module.css';
+import launcherStyles from './sanad-launcher.module.css';
 
 type Message = { role: 'user' | 'assistant'; text: string; reply?: SanadReply };
 const prompts = ['أبحث عن خدمة', 'وظائف نقادة', 'نماذج مشرفة', 'إزاي أضيف نشاط؟'];
 const welcome: Message = { role: 'assistant', text: 'يا مرحب بيك! أنا سند، مساعدك في دليل نقادة. خدمة، قرية، شغل أو حكاية حد من بلدنا؟ قولّي بس، وأنا أسندك بالمعلومة المتاحة.' };
 function Icon({ close = false }: { close?: boolean }) { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{close ? <path d="m6 6 12 12M6 18 18 6" /> : <path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3" />}</svg>; }
 export function SanadAssistant() {
+  const [styles, setStyles] = useState<Record<string, string>>(launcherStyles);
   const [open, setOpen] = useState(false);
   const [hint, setHint] = useState(false);
   const hintDismissed = useRef(false);
@@ -26,15 +27,53 @@ export function SanadAssistant() {
   const panel = useRef<HTMLElement>(null);
   const field = useRef<HTMLInputElement>(null);
   const log = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const showTimer = setTimeout(() => {
-      if (!hintDismissed.current) setHint(true);
-    }, 650);
-    const hideTimer = setTimeout(() => setHint(false), 4650);
-    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); abort.current?.abort(); };
+  const show = useCallback(async () => {
+    hintDismissed.current = true; setHint(false);
+    const loaded = await import('./sanad-assistant.module.css');
+    setStyles(loaded.default); setOpen(true);
   }, []);
   useEffect(() => {
+    const key = 'naqada-sanad-hint';
+    try { if (sessionStorage.getItem(key)) return; } catch {}
+    if (!matchMedia('(min-width: 981px)').matches) return;
+    let showTimer: ReturnType<typeof setTimeout>, hideTimer: ReturnType<typeof setTimeout>;
+    const reveal = () => {
+      if (hintDismissed.current || document.readyState !== 'complete') return;
+      hintDismissed.current = true;
+      try { sessionStorage.setItem(key, '1'); } catch {}
+      setHint(true); hideTimer = setTimeout(() => setHint(false), 4000);
+    };
+    const schedule = () => { clearTimeout(showTimer); showTimer = setTimeout(reveal, 4000); };
+    const scroll = () => { if (!hintDismissed.current && scrollY > 180) reveal(); };
+    const hide = () => { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem(key, '1'); } catch {} };
+    let observer: PerformanceObserver | undefined;
+    try { observer = new PerformanceObserver(schedule); observer.observe({ type: 'largest-contentful-paint', buffered: true }); } catch {}
+    if (document.readyState === 'complete') schedule();
+    window.addEventListener('load', schedule, { once: true });
+    window.addEventListener('scroll', scroll, { passive: true });
+    window.addEventListener('pointerdown', hide); window.addEventListener('keydown', hide);
+    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); observer?.disconnect(); window.removeEventListener('load', schedule); window.removeEventListener('scroll', scroll); window.removeEventListener('pointerdown', hide); window.removeEventListener('keydown', hide); };
+  }, []);
+  useEffect(() => {
+    const hash = () => { if (location.hash === '#sanad') void show(); };
+    const timer = setTimeout(hash, 0); window.addEventListener('hashchange', hash);
+    return () => { clearTimeout(timer); window.removeEventListener('hashchange', hash); abort.current?.abort(); };
+  }, [show]);
+  useEffect(() => {
     if (!open) return;
+    const launchElement = launcher.current;
+    const trigger = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : launchElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const inert: [HTMLElement, boolean][] = [];
+    let branch: HTMLElement | null = root.current;
+    while (branch?.parentElement) {
+      for (const sibling of branch.parentElement.children) if (sibling !== branch && sibling instanceof HTMLElement) {
+        inert.push([sibling, sibling.inert]); sibling.inert = true;
+      }
+      branch = branch.parentElement;
+    }
+    if (launcher.current) { inert.push([launcher.current, launcher.current.inert]); launcher.current.inert = true; }
     if (window.matchMedia('(min-width: 981px)').matches) field.current?.focus({ preventScroll: true });
     else panel.current?.focus({ preventScroll: true });
     const viewport = window.visualViewport;
@@ -46,7 +85,7 @@ export function SanadAssistant() {
     const outside = (event: PointerEvent) => { if (event.target instanceof Node && !root.current?.contains(event.target)) setOpen(false); };
     document.addEventListener('pointerdown', outside);
     resize(); viewport?.addEventListener('resize', resize); viewport?.addEventListener('scroll', resize);
-    return () => { document.removeEventListener('pointerdown', outside); viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); };
+    return () => { document.body.style.overflow = previousOverflow; for (const [element, value] of inert) element.inert = value; (trigger?.isConnected ? trigger : launchElement)?.focus({ preventScroll: true }); document.removeEventListener('pointerdown', outside); viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); };
   }, [open]);
   useEffect(() => {
     if (!open || !log.current) return;
@@ -54,8 +93,8 @@ export function SanadAssistant() {
     if (pending || !last) log.current.scrollTop = log.current.scrollHeight;
     else log.current.scrollTop += last.getBoundingClientRect().top - log.current.getBoundingClientRect().top - 12;
   }, [messages, pending, open]);
-  function dismissHint() { hintDismissed.current = true; setHint(false); }
-  function close() { setOpen(false); launcher.current?.focus(); }
+  function dismissHint() { hintDismissed.current = true; setHint(false); try { sessionStorage.setItem('naqada-sanad-hint', '1'); } catch {} }
+  function close() { setOpen(false); }
   async function send(value: string, retry = false) {
     const text = value.trim();
     if (!text || busy.current) return;
@@ -74,12 +113,19 @@ export function SanadAssistant() {
   }
   const suggestions = messages.at(-1)?.reply?.suggestions || prompts;
   return <div ref={root} className={styles.root} dir="rtl" data-open={open}>
-    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); setOpen(true); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
-    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else setOpen(true); }}>
+    {!open && <button className={styles.hint} data-visible={hint} onClick={() => { dismissHint(); void show(); }} tabIndex={hint ? 0 : -1}><span aria-hidden="true">✦</span> أي خدمة يا أبو عمو؟</button>}
+    <button ref={launcher} className={styles.launcher} aria-label="افتح محادثة سند، مساعد دليل نقادة" aria-expanded={open} aria-controls="sanad-panel" onClick={() => { dismissHint(); if (open) close(); else void show(); }}>
       <span className={styles.avatar}><Image src="/images/assistant/sanad.webp" alt="سند، شاب بزي صعيدي" width={58} height={58} sizes="58px" /></span>
       <span className={styles.mobileLabel} aria-hidden="true">سند</span>
     </button>
-    {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
+    {open && <section id="sanad-panel" ref={panel} className={styles.panel} role="dialog" aria-modal="true" tabIndex={-1} aria-label="محادثة سند" onKeyDown={event => {
+      if (event.key === 'Tab') {
+        const targets = [...(panel.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]') || [])].filter(item => item.getClientRects().length);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+      if (event.key === 'Escape') { event.stopPropagation(); close(); } }}>
       <header className={styles.header}>
         <Image src="/images/assistant/sanad.webp" alt="" width={38} height={38} sizes="38px" />
         <div><h2>سند <span>ابن البلد</span></h2><p>دليل نقادة… وأنا معاك</p></div>
@@ -90,7 +136,7 @@ export function SanadAssistant() {
         {messages.map((message, index) => <div key={index} className={message.role === 'user' ? styles.user : styles.answer}>
           <span className={styles.speaker}>{message.role === 'user' ? 'أنت' : 'سند'}</span><p>{message.text}</p>
           {message.reply?.cards.map(card => <article key={card.href + card.title} className={styles.card}>
-            <Link href={card.href} onClick={close}><small>{card.badge}<span aria-hidden="true">↗</span></small><strong>{card.title}</strong>{card.subtitle && <span>{card.subtitle}</span>}</Link>
+            <Link prefetch={false} href={card.href} onClick={close}><small>{card.badge}<span aria-hidden="true">↗</span></small><strong>{card.title}</strong>{card.subtitle && <span>{card.subtitle}</span>}</Link>
             {card.detail && <p>{card.detail}</p>}
             {(card.phone || card.mapsUrl) && <div className={styles.actions}>{card.phone && <a href={`tel:${card.phone.replace(/[^+\d]/g, '')}`}>اتصال <bdi>{card.phone}</bdi></a>}{card.mapsUrl && <a href={card.mapsUrl} target="_blank" rel="noreferrer">الخريطة ↗</a>}</div>}
           </article>)}
@@ -104,7 +150,7 @@ export function SanadAssistant() {
         <input id="sanad-question" ref={field} value={input} maxLength={600} autoComplete="off" onChange={event => setInput(event.target.value)} placeholder="اكتب سؤالك… أنا معاك" />
         <button type="submit" disabled={pending || !input.trim()} aria-label="إرسال السؤال"><Icon /></button>
       </form>
-      <p className={styles.note}>من بيانات الدليل · الأسئلة والإجابات تُحفظ ٩٠ يومًا للإدارة بعد حجب بيانات التواصل · <Link href="/privacy">الخصوصية</Link></p>
+      <p className={styles.note}>من بيانات الدليل · الأسئلة والإجابات تُحفظ ٩٠ يومًا للإدارة بعد حجب بيانات التواصل · <Link prefetch={false} href="/privacy">الخصوصية</Link></p>
     </section>}
   </div>;
 }

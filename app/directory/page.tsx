@@ -1,3 +1,5 @@
+import '@/app/route-styles/directory.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { buildPageMetadata, siteConfig } from '@/lib/site';
 import { Suspense } from 'react';
@@ -43,7 +45,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const [params, catalog] = await Promise.all([searchParams, getPublicBusinessCatalog()]);
   const state = resolveDirectoryState(params, catalog.directoryBusinesses.length);
   const hasFilters = Boolean(state.q || state.category || state.locality || state.sort !== 'recommended');
-  const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString('ar-EG')}` : '';
+  const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString(NUMBER_LOCALE)}` : '';
   const pageHref = state.page > 1 ? `/directory/?page=${state.page}` : '/directory/';
 
   const canonical = hasFilters ? '/directory/' : pageHref;
@@ -76,10 +78,10 @@ export default async function DirectoryPage({ searchParams }: Props) {
         title={<>كل خدمات نقادة في <em>بحث واحد</em></>}
         description="اكتب اسم النشاط أو الخدمة، وحدّد القرية أو القسم للوصول إلى النتائج."
         metrics={[
-          { value: directoryBusinesses.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
-          { value: categories.length.toLocaleString('ar-EG'), label: 'قسم' },
-          { value: mapped.toLocaleString('ar-EG'), label: 'رابط خريطة' },
-          { value: phoned.toLocaleString('ar-EG'), label: 'رقم اتصال' },
+          { value: directoryBusinesses.length.toLocaleString(NUMBER_LOCALE), label: 'نشاط منشور' },
+          { value: categories.length.toLocaleString(NUMBER_LOCALE), label: 'قسم' },
+          { value: mapped.toLocaleString(NUMBER_LOCALE), label: 'رابط خريطة' },
+          { value: phoned.toLocaleString(NUMBER_LOCALE), label: 'رقم اتصال' },
         ]} />
       <section className="shell page-section">
         <Suspense fallback={<div className="loading-state" style={{ minHeight: '100svh' }}>جارٍ تجهيز الدليل…</div>}>
@@ -99,7 +101,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
       </section>
       <section className="shell directory-activity-cta" aria-label="تصفح أنواع الأنشطة">
         <div><span className="eyebrow eyebrow--dark">تصفّح حسب نوع الخدمة</span><h2>تفضّل تختار القسم؟</h2><p>صيدليات وأطباء ومدارس ومطاعم وبقية الخدمات المحلية.</p></div>
-        <Link href="/activities" className="button button--primary">كل أنواع الخدمات</Link>
+        <Link prefetch={false} href="/activities" className="button button--primary">كل أنواع الخدمات</Link>
       </section>
     </main>
   );

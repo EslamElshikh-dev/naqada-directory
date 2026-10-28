@@ -41,7 +41,7 @@ body {
 }
 
 .global-search__result strong {
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   line-height: 1.55;
 }
 
@@ -49,14 +49,14 @@ body {
 .global-search__empty small,
 .global-search__footer,
 .global-search__status {
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   line-height: 1.7;
 }
 
 .global-search__result i,
 .global-search__suggestions button,
 .global-search__footer-action {
-  font-size: 10px;
+  font-size: var(--fs-xs);
 }
 
 .global-search__result,
@@ -100,20 +100,20 @@ body {
   .hero-home-v2__copy p,
   .home-v2__hero p,
   .hero__content > p {
-    font-size: 14px !important;
+    font-size: var(--fs-sm) !important;
     line-height: 1.9 !important;
   }
 
   .search-strip input,
   .hero-search input,
   .global-search__input {
-    font-size: 16px !important;
+    font-size: var(--fs-base) !important;
   }
 
   .search-strip button,
   .hero-search button {
     min-height: 46px;
-    font-size: 12px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .search-strip__quick button,
@@ -121,28 +121,28 @@ body {
     min-height: 34px;
     display: inline-flex;
     align-items: center;
-    font-size: 11px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-v2__trust span,
   .hero__trust span {
-    font-size: 11.5px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-v2__trust small,
   .hero__trust small {
-    font-size: 10.5px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.6;
   }
 
   .home-action-row strong,
   .home-action strong {
-    font-size: 12px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-action-row small,
   .home-action small {
-    font-size: 10.5px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.55;
   }
 
@@ -151,20 +151,20 @@ body {
   }
 
   .global-search__result strong {
-    font-size: 13px;
+    font-size: var(--fs-xs);
   }
 
   .global-search__result small,
   .global-search__empty small,
   .global-search__status,
   .global-search__footer {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 
   .global-search__result i,
   .global-search__suggestions button,
   .global-search__footer-action {
-    font-size: 10.5px;
+    font-size: var(--fs-xs);
   }
 }
 
@@ -183,20 +183,20 @@ body {
   }
 
   .brand__copy small {
-    font-size: 9.5px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .hero-home-v2__copy p,
   .home-v2__hero p,
   .hero__content > p {
-    font-size: 13.5px !important;
+    font-size: var(--fs-sm) !important;
     line-height: 1.9 !important;
   }
 
   .section-heading p,
   .footer__about > p,
   .detail-aside__note {
-    font-size: 12px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.85 !important;
   }
 
@@ -211,24 +211,24 @@ body {
   input[type='password'],
   select,
   textarea {
-    font-size: 16px !important;
+    font-size: var(--fs-base) !important;
   }
 
   .search-strip__quick button,
   .hero__quick-links a {
     min-height: 36px;
     padding-inline: 10px !important;
-    font-size: 11px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-v2__trust span,
   .hero__trust span {
-    font-size: 11px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-v2__trust small,
   .hero__trust small {
-    font-size: 10px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .home-action-row,
@@ -238,13 +238,13 @@ body {
 
   .home-action-row strong,
   .home-action strong {
-    font-size: 11.5px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.6;
   }
 
   .home-action-row small,
   .home-action small {
-    font-size: 10px !important;
+    font-size: var(--fs-xs) !important;
   }
 
   .mobile-nav {
@@ -259,14 +259,14 @@ body {
   }
 
   .mobile-nav__label {
-    font-size: 10px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.25;
   }
 
   .footer__links a,
   .footer__bottom,
   .footer__cta p {
-    font-size: 11.5px !important;
+    font-size: var(--fs-xs) !important;
     line-height: 1.75;
   }
 
@@ -356,7 +356,7 @@ body {
 }
 
 .results-bar strong {
-  font-size: 1rem;
+  font-size: var(--fs-base);
 }
 
 .village-card {
@@ -367,20 +367,20 @@ body {
 }
 
 .village-card__type {
-  color: #906048;
-  font-size: .7rem;
-  font-weight: 850;
+  color: var(--text-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
 }
 
 .village-card h2 {
   margin-block: 8px 6px;
-  color: var(--nq-ink);
+  color: var(--text-strong);
   line-height: 1.55;
 }
 
 .village-card p {
-  color: #6f625b;
-  font-size: .75rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
   line-height: 1.9;
 }
 
@@ -397,8 +397,8 @@ body {
   min-height: var(--nq-control-height);
   display: inline-flex;
   align-items: center;
-  color: var(--nq-copper-dark);
-  font-weight: 900;
+  color: var(--text-danger);
+  font-weight: 700;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -432,21 +432,21 @@ body {
   }
 
   .village-card__type {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 
   .village-card h2 {
-    font-size: 1rem;
+    font-size: var(--fs-base);
   }
 
   .village-card p {
-    font-size: 12px;
+    font-size: var(--fs-xs);
     line-height: 1.85;
   }
 
   .village-card__meta,
   .village-card__cta {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
 }
 

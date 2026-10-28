@@ -14,7 +14,7 @@ type Props = {
 export function UtilityPageHeader({ current, eyebrow, title, description, metrics = [], parent }: Props) {
   return <section className={styles.hero}>
     <div className="shell">
-      <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span>{parent ? <><Link href={parent.href}>{parent.label}</Link><span aria-hidden="true">/</span></> : null}<span aria-current="page">{current}</span></nav>
+      <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span>{parent ? <><Link prefetch={false} href={parent.href}>{parent.label}</Link><span aria-hidden="true">/</span></> : null}<span aria-current="page">{current}</span></nav>
       <div className={styles.row}>
         <div className={styles.copy}>
           {eyebrow ? <span className={styles.eyebrow}>{eyebrow}</span> : null}

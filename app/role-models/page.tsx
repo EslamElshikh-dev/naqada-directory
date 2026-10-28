@@ -1,3 +1,4 @@
+import '@/app/route-styles/role-models.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -45,7 +46,7 @@ export default async function RoleModelsPage() {
   return <main id="main-content" className={styles.page}>
     <section className={styles.hero}>
       <div className={'shell ' + styles.heroInner}>
-        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>نماذج مشرفة</span></nav>
+        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>نماذج مشرفة</span></nav>
         <span className={styles.eyebrow}>من أهل نقادة · حكايات تستحق النور</span>
         <h1>نماذج مشرفة <em>في نقادة</em></h1>
         <p>في بلدنا ناس بتتعب وتتعلم وتسيب أثر. هنا نقرّبك من حكاياتهم، باسم كل شخص ومصدر قصته، عشان تعرف صاحب الحكاية من أولها.</p>
@@ -63,7 +64,7 @@ export default async function RoleModelsPage() {
         {roleModels.map((person) => {
           const photo = person.photos[person.cardPhotoIndex ?? 0];
           return <article className={styles.card} key={person.slug}>
-            <Link href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
+            <Link prefetch={false} href={'/role-models/' + person.slug} className={styles.cardLink} aria-label={'اقرأ قصة ' + person.name}>
               <span className={styles.cardVisual}>
                 {photo
                   ? <Image unoptimized={photo.src.startsWith('/api/article-media/')} src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 720px) 100vw, 390px" style={photo.cardPosition ? { objectPosition: photo.cardPosition } : undefined} />

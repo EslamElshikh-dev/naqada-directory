@@ -32,16 +32,16 @@ function errorText(error?: string) {
   return 'تعذر حفظ الطلب الآن. لم تُفقد البيانات المكتوبة ويمكنك إعادة المحاولة.';
 }
 
-export function ContributionBuilder({ categories, localities }: { categories: Category[]; localities: LocalityPage[] }) {
+export function ContributionBuilder({ categories, localities, defaults = {} }: { categories: Category[]; localities: LocalityPage[]; defaults?: { type?: ContributionType; name?: string; category?: string; locality?: string; listing?: string; details?: string } }) {
   const searchParams = useSearchParams();
-  const [type, setType] = useState<ContributionType>(() => normalizeType(searchParams.get('type')));
-  const [name, setName] = useState(() => searchParams.get('name') || searchParams.get('q') || '');
-  const [category, setCategory] = useState(() => searchParams.get('category') || '');
-  const [locality, setLocality] = useState(() => searchParams.get('locality') || '');
-  const [details, setDetails] = useState('');
+  const [type, setType] = useState<ContributionType>(() => normalizeType(defaults.type || searchParams.get('type')));
+  const [name, setName] = useState(() => defaults.name || searchParams.get('name') || searchParams.get('q') || '');
+  const [category, setCategory] = useState(() => defaults.category || searchParams.get('category') || '');
+  const [locality, setLocality] = useState(() => defaults.locality || searchParams.get('locality') || '');
+  const [details, setDetails] = useState(() => defaults.details || searchParams.get('details') || '');
   const [source, setSource] = useState('');
   const [contact, setContact] = useState('');
-  const [listingSlug] = useState(() => searchParams.get('listing') || '');
+  const [listingSlug] = useState(() => defaults.listing || searchParams.get('listing') || '');
   const [website, setWebsite] = useState('');
   const [formStartedAt] = useState(() => Date.now());
   const [prepared, setPrepared] = useState(false);
@@ -136,16 +136,16 @@ export function ContributionBuilder({ categories, localities }: { categories: Ca
     <div className="detail-layout">
       <form className="detail-card" onSubmit={submitRequest}>
         <div className="detail-card__heading"><span className="eyebrow eyebrow--dark">بيانات المساهمة</span><h2>أرسل الطلب مباشرة إلى قائمة المراجعة</h2></div>
-        <p>لو الطلب مرتبط بحسابك، هيجيلك إشعار بقرار المراجعة. <Link href="/account/login/">سجّل دخولك</Link> قبل الإرسال عشان تتابعه من حسابك.</p>
+        <p>لو الطلب مرتبط بحسابك، هيجيلك إشعار بقرار المراجعة. <Link prefetch={false} href="/account/login/">سجّل دخولك</Link> قبل الإرسال عشان تتابعه من حسابك.</p>
         <div className="detail-grid">
           <label><span>نوع الطلب</span><select style={fieldStyle} value={type} onChange={(event) => { setType(event.target.value as ContributionType); markChanged(); }}><option value="add">إضافة نشاط أو خدمة</option><option value="correction">تصحيح بيانات سجل</option><option value="missing">نتيجة بحث مفقودة</option></select></label>
           <label><span>اسم النشاط أو الخدمة</span><input style={fieldStyle} required maxLength={160} value={name} onChange={(event) => { setName(event.target.value); markChanged(); }} placeholder="مثال: معمل تحاليل أو اسم النشاط" /></label>
           <label><span>التصنيف</span><select style={fieldStyle} value={category} onChange={(event) => { setCategory(event.target.value); markChanged(); }}><option value="">اختر التصنيف إن كان معروفًا</option>{categories.map((item) => <option key={item.slug} value={item.name}>{item.shortLabel}</option>)}</select></label>
           <label><span>الموضع</span><select style={fieldStyle} value={locality} onChange={(event) => { setLocality(event.target.value); markChanged(); }}><option value="">اختر القرية أو الموضع إن كان معروفًا</option>{localities.map((item) => <option key={item.slug} value={item.name}>{item.name}</option>)}</select></label>
         </div>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>التفاصيل أو المعلومة المطلوب تعديلها</span><textarea style={{ ...fieldStyle, minHeight: 120, resize: 'vertical' }} maxLength={2000} value={details} onChange={(event) => { setDetails(event.target.value); markChanged(); }} placeholder="اكتب العنوان أو الهاتف أو وصف الخطأ أو أي تفاصيل تساعد في المراجعة" /></label>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>مصدر عام داعم — موصى به</span><input style={fieldStyle} type="url" maxLength={1000} value={source} onChange={(event) => { setSource(event.target.value); markChanged(); }} placeholder="رابط خرائط Google أو موقع رسمي أو مصدر عام يبدأ بـ https://" /></label>
-        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 13 }}>وسيلة تواصل اختيارية</span><input style={fieldStyle} maxLength={320} value={contact} onChange={(event) => { setContact(event.target.value); markChanged(); }} placeholder="للتواصل عند الحاجة فقط — اختياري" /></label>
+        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 'var(--fs-xs)' }}>التفاصيل أو المعلومة المطلوب تعديلها</span><textarea style={{ ...fieldStyle, minHeight: 120, resize: 'vertical' }} maxLength={2000} value={details} onChange={(event) => { setDetails(event.target.value); markChanged(); }} placeholder="اكتب العنوان أو الهاتف أو وصف الخطأ أو أي تفاصيل تساعد في المراجعة" /></label>
+        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 'var(--fs-xs)' }}>مصدر عام داعم — موصى به</span><input style={fieldStyle} type="url" maxLength={1000} value={source} onChange={(event) => { setSource(event.target.value); markChanged(); }} placeholder="رابط خرائط Google أو موقع رسمي أو مصدر عام يبدأ بـ https://" /></label>
+        <label style={{ display: 'grid', gap: 8, marginTop: 16 }}><span style={{ color: 'var(--muted)', fontSize: 'var(--fs-xs)' }}>وسيلة تواصل اختيارية</span><input style={fieldStyle} maxLength={320} value={contact} onChange={(event) => { setContact(event.target.value); markChanged(); }} placeholder="للتواصل عند الحاجة فقط — اختياري" /></label>
         <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
           <label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
         </div>

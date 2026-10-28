@@ -28,7 +28,7 @@
   background:
     radial-gradient(circle at 20% 20%, rgba(241, 198, 103, .2), transparent 30%),
     linear-gradient(140deg, #174f3e, #0b2d25);
-  color: #fff7e5;
+  color: var(--text-on-dark);
 }
 
 .rings {
@@ -61,7 +61,7 @@
 .paper i { height: 3px; border-radius: 99px; background: rgba(243, 207, 126, .72); }
 .paper i:nth-child(2) { width: 78%; }
 .paper i:nth-child(3) { width: 58%; }
-.fallback b { position: relative; z-index: 1; font-size: clamp(1.45rem, 4vw, 2.3rem); line-height: 1.45; text-align: center; }
+.fallback b { position: relative; z-index: 1; font-size: var(--fs-3xl); line-height: 1.45; text-align: center; }
 
 @media (prefers-reduced-motion: no-preference) {
   :global(a:hover) .root > img { transform: scale(1.035); }

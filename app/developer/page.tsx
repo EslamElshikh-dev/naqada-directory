@@ -1,3 +1,4 @@
+import '@/app/route-styles/developer.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -117,7 +118,7 @@ export default function DeveloperPage() {
       <section className={styles.hero} aria-labelledby="developer-title">
         <div className={`shell ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
-            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link href="/">دليل نقادة</Link><span aria-hidden="true">/</span><span>عن المطوّر</span></nav>
+            <nav className={styles.breadcrumbs} aria-label="مسار الصفحة"><Link prefetch={false} href="/">دليل نقادة</Link><span aria-hidden="true">/</span><span>عن المطوّر</span></nav>
             <p className={styles.eyebrow}><span aria-hidden="true">✦</span> من الرياض إلى جذور الصعيد</p>
             <h1 id="developer-title">المهندس إسلام الشيخ<br /><em>ابن العسيرات، سوهاج.</em></h1>
             <p className={styles.eyebrow} lang="en" dir="ltr">Eslam Elshikh</p>
@@ -220,7 +221,7 @@ export default function DeveloperPage() {
             <a href="https://www.wikidata.org/wiki/Q138800449" target="_blank" rel="noreferrer me">إسلام الشيخ على Wikidata <span aria-hidden="true">↗</span></a>
             <a href="https://www.youtube.com/@remoesoo10" target="_blank" rel="noreferrer me">قناتي على YouTube <span aria-hidden="true">↗</span></a>
             <a href="https://www.eslam-elshikh.com/work-evidence/" target="_blank" rel="noreferrer">سجل الأعمال والأدلة <span aria-hidden="true">↗</span></a>
-            <Link href="/about">عن دليل نقادة <span aria-hidden="true">←</span></Link>
+            <Link prefetch={false} href="/about">عن دليل نقادة <span aria-hidden="true">←</span></Link>
           </div>
         </div>
       </section>

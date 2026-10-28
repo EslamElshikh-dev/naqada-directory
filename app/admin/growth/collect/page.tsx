@@ -1,3 +1,4 @@
+import '@/app/route-styles/admin-growth-collect.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -94,7 +95,7 @@ export default async function CollectGrowthLead({ searchParams }: Props) {
             </section>
           </div>
           <section className={styles.next}><div><span className={styles.eyebrow}>03 · الخطوة التالية</span><h2>وثّق ما وصلت إليه</h2><p>لو وجدت مصدرًا مباشرًا، أرسل الاسم والعنوان والرابط لقائمة المراجعة. المساهمة لا تنشر سجلًا تلقائيًا.</p></div><Link href={`/contribute?${contributionParams.toString()}`} prefetch={false}>سجّل دليلًا للمراجعة ←</Link></section>
-        </> : <section className={styles.panel}><h2>ابدأ بعبارة من أولويات النمو</h2><p>اكتب اسم النشاط أو الخدمة في الحقل أعلاه، أو ارجع إلى طابور الأولويات.</p><Link href="/admin/growth">العودة إلى الأولويات ←</Link></section>}
+        </> : <section className={styles.panel}><h2>ابدأ بعبارة من أولويات النمو</h2><p>اكتب اسم النشاط أو الخدمة في الحقل أعلاه، أو ارجع إلى طابور الأولويات.</p><Link prefetch={false} href="/admin/growth">العودة إلى الأولويات ←</Link></section>}
       </div>
     </main>
   );

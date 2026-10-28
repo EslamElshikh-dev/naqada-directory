@@ -1,3 +1,5 @@
+import '@/app/route-styles/news.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { NewsImage } from '@/components/news-image';
@@ -35,7 +37,7 @@ function validFilter(value?: string) {
 
 function formatNewsDate(value: string) {
   if (!value) return 'وقت النشر غير متاح';
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -46,7 +48,7 @@ function formatNewsDate(value: string) {
 }
 
 function formatCheckedAt(value: string) {
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(NUMBER_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
     timeZone: 'Africa/Cairo',
@@ -79,7 +81,7 @@ function StoryButton({ item, compact = false }: { item: ExternalNewsItem; compac
 function RelatedCoverage({ items }: { items: ExternalNewsItem[] }) {
   if (!items.length) return null;
   return <details className={styles.relatedCoverage}>
-    <summary>تغطيات أخرى للحدث ({items.length.toLocaleString('ar-EG')})</summary>
+    <summary>تغطيات أخرى للحدث ({items.length.toLocaleString(NUMBER_LOCALE)})</summary>
     <ul>{items.map(item => <li key={item.id}><Link prefetch={false} href={`/news/${item.id}`}><strong>{item.source}</strong> · {item.title}</Link></li>)}</ul>
   </details>;
 }
@@ -161,8 +163,8 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             <h1>الخبر المحلي… <em>من مصدره.</em></h1>
             <p>متابعة منظمة لأخبار نقادة ومحافظة قنا من المصادر الصحفية والرسمية، ومعها الأخبار المحلية التي يكتبها فريق الدليل.</p>
             <div className={styles.heroStats}>
-              <span><b>{feed.items.length.toLocaleString('ar-EG')}</b><small>خبرًا في أحدث الأخبار</small></span>
-              <span><b>{sourceCount.toLocaleString('ar-EG')}</b><small>مصادر ظاهرة</small></span>
+              <span><b>{feed.items.length.toLocaleString(NUMBER_LOCALE)}</b><small>خبرًا في أحدث الأخبار</small></span>
+              <span><b>{sourceCount.toLocaleString(NUMBER_LOCALE)}</b><small>مصادر ظاهرة</small></span>
               <span><b>١٥</b><small>دقيقة بين التحديثات</small></span>
             </div>
           </div>
@@ -172,7 +174,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             <p>فلترة تلقائية، إزالة للتكرار، وربط مباشر بالناشر.</p>
             <div className={styles.livePanelFoot}>
               <span>آخر فحص <time dateTime={feed.checkedAt}>{formatCheckedAt(feed.checkedAt)}</time></span>
-              <span>{feed.successfulFeeds.toLocaleString('ar-EG')} من {feed.totalFeeds.toLocaleString('ar-EG')} قنوات متاحة</span>
+              <span>{feed.successfulFeeds.toLocaleString(NUMBER_LOCALE)} من {feed.totalFeeds.toLocaleString(NUMBER_LOCALE)} قنوات متاحة</span>
             </div>
           </aside>
         </div>
@@ -223,7 +225,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
 
             {latest.length > 0 ? (
               <section className={styles.latestSection} aria-labelledby="latest-news-title">
-                <div className={styles.sectionTitle}><div><span>آخر ما وصل</span><h2 id="latest-news-title">أحدث الأخبار من المصادر</h2></div><small>{latest.length.toLocaleString('ar-EG')} خبرًا في هذا العرض</small></div>
+                <div className={styles.sectionTitle}><div><span>آخر ما وصل</span><h2 id="latest-news-title">أحدث الأخبار من المصادر</h2></div><small>{latest.length.toLocaleString(NUMBER_LOCALE)} خبرًا في هذا العرض</small></div>
                 <div className={styles.grid}>{latest.map(({ item, related }) => <NewsCard item={item} related={related} key={item.id} />)}</div>
               </section>
             ) : null}

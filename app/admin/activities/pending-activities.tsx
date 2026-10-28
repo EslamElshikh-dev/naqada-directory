@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -34,10 +36,10 @@ export function PendingActivities({ initial }: { initial: OwnerListing[] }) {
   }
 
   return <div className={styles.list}>
-    <p>في انتظار المراجعة: <strong>{listings.length.toLocaleString('ar-EG')}</strong></p>
+    <p>في انتظار المراجعة: <strong>{listings.length.toLocaleString(NUMBER_LOCALE)}</strong></p>
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {listings.length ? listings.map((item) => <article id={`business-${item.id}`} className={styles.card} key={item.id}>
-      <header><span>نشاط يملكه عضو مسجّل</span><time dateTime={item.updated_at}>{new Date(item.updated_at).toLocaleString('ar-EG')}</time></header>
+      <header><span>نشاط يملكه عضو مسجّل</span><time dateTime={item.updated_at}>{new Date(item.updated_at).toLocaleString(NUMBER_LOCALE)}</time></header>
       <h2>{item.name}</h2>
       <p><strong>{item.category}</strong> · {item.locality} · {item.address}</p>
       <p>{item.description}</p>

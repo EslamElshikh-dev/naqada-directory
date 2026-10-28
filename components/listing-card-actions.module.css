@@ -1,0 +1,10 @@
+.cardActions { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:stretch; gap:8px; margin:16px 16px 12px; }
+.cardActions[data-contacts="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.cardActions[data-contacts="1"],.cardActions[data-contacts="0"] { grid-template-columns:minmax(0,1fr); }
+.detailsAction { grid-column:1/-1; }
+.cardActions :global(.button) { min-width:0; min-height:46px; padding:9px 8px; border-radius:12px; font-size:var(--fs-sm); }
+.cardActions :global(.button svg) { width:18px; height:18px; flex:none; }
+.mapCardAction { background:#edf4f8; border-color:#d4e1e8; color:var(--text-link); }
+.cardDiscovery { display:flex; gap:6px; overflow-x:auto; padding:0 16px 14px; scrollbar-width:none; }
+.cardDiscovery::-webkit-scrollbar { display:none; }
+.cardDiscovery a { display:inline-flex; flex:none; align-items:center; gap:8px; min-height:44px; padding:6px 10px; border:1px solid #d4dfd2; border-radius:20px; background:#f4f8f2; color:var(--text-muted); font-size:var(--fs-xs); line-height:1.7; }

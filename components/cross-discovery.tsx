@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { businesses, canonicalLocalityName, localities } from '@/lib/data';
 import { localCategoryHref } from '@/lib/discovery-routing';
@@ -74,7 +75,7 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
         <article className={styles.card}>
           <span>نفس الخدمة · {locality}</span>
           <h3>{serviceLabel} في {locality}</h3>
-          <p>{localPeers.length ? `${localPeers.length.toLocaleString('ar-EG')} بدائل مختارة داخل الموضع نفسه.` : 'لا توجد بدائل منشورة من النوع نفسه داخل الموضع حاليًا.'}</p>
+          <p>{localPeers.length ? `${localPeers.length.toLocaleString(NUMBER_LOCALE)} بدائل مختارة داخل الموضع نفسه.` : 'لا توجد بدائل منشورة من النوع نفسه داخل الموضع حاليًا.'}</p>
           <div className={styles.links}>
             {localPeers.map((item) => <Link key={item.id} href={`/listing/${item.slug}/`} prefetch={false}>{item.name}<span aria-hidden="true">←</span></Link>)}
             <Link href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>كل النتائج في {locality}<span aria-hidden="true">←</span></Link>
@@ -86,7 +87,7 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
           <h3>{listing.category} في {locality}</h3>
           <p>خدمات أخرى من المجال نفسه داخل القرية أو النجع.</p>
           <div className={styles.links}>
-            {siblingServices.map(([label, count]) => <Link key={label} href={`/directory?q=${encodeURIComponent(label)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>{label} <small>{count.toLocaleString('ar-EG')}</small><span aria-hidden="true">←</span></Link>)}
+            {siblingServices.map(([label, count]) => <Link key={label} href={`/directory?q=${encodeURIComponent(label)}&locality=${encodeURIComponent(locality)}`} prefetch={false}>{label} <small>{count.toLocaleString(NUMBER_LOCALE)}</small><span aria-hidden="true">←</span></Link>)}
             <Link href={categoryHref} prefetch={false}>كل {listing.category} في {locality}<span aria-hidden="true">←</span></Link>
           </div>
         </article>
@@ -96,7 +97,7 @@ export function CrossDiscovery({ listing }: CrossDiscoveryProps) {
           <h3>{serviceLabel} في مواضع أخرى</h3>
           <p>انتقل إلى القرى والنجوع التي تحتوي على نتائج منشورة من نوع الخدمة نفسه.</p>
           <div className={styles.links}>
-            {otherLocalities.map(({ locality: place, count }) => <Link key={place.slug} href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(place.name)}`} prefetch={false}>{place.name} <small>{count.toLocaleString('ar-EG')}</small><span aria-hidden="true">←</span></Link>)}
+            {otherLocalities.map(({ locality: place, count }) => <Link key={place.slug} href={`/directory?q=${encodeURIComponent(serviceLabel)}&locality=${encodeURIComponent(place.name)}`} prefetch={false}>{place.name} <small>{count.toLocaleString(NUMBER_LOCALE)}</small><span aria-hidden="true">←</span></Link>)}
           </div>
         </article>
       </div>

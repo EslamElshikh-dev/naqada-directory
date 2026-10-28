@@ -1,0 +1,9 @@
+
+
+.admin-shell { padding-block:clamp(28px,5vw,60px); }
+
+.admin-shell{display:grid;gap:20px}
+@media(max-width:760px){.admin-shell{padding-block:20px}}
+@media (max-width: 760px) {
+  .admin-shell--premium { margin-top: -34px !important; gap: 14px !important; }
+}

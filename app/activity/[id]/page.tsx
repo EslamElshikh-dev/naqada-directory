@@ -1,7 +1,11 @@
+import '@/app/route-styles/activity-id.css';
+import { ownerActivityHref, ownerActivityId, ownerActivityNeedsRedirect } from '@/lib/activity-path';
+import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { OwnerPhoto } from '@/components/owner-photo';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { ActionIcon } from '@/components/action-icon';
 import { ListingCover } from '@/components/listing-cover';
 import { ListingPrimaryActions } from '@/components/listing-primary-actions';
@@ -13,37 +17,40 @@ import { buildPageMetadata, cleanPhone, jsonLdStringify, siteConfig, slugify, tr
 import styles from './activity.module.css';
 
 type Props = { params: Promise<{ id: string }> };
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const listing = uuidPattern.test(id) ? await getPublishedOwnerListing(id) : null;
+  const { id: requestedId } = await params;
+  const id = ownerActivityId(requestedId);
+  const listing = id ? await getPublishedOwnerListing(id) : null;
   if (!listing) return { title: 'النشاط غير متاح | دليل نقادة', robots: { index: false, follow: false } };
-  const cover = ownerListingCoverPath(listing);
   return buildPageMetadata({
     title: `${listing.name} في ${listing.locality}`,
-    description: truncateMetaDescription(listing.description), path: `/activity/${id}`,
-    socialImage: cover ? { url: `${siteConfig.url}${ownerPhotoUrl(cover)}`, alt: `غلاف ${listing.name}` } : undefined,
+    description: truncateMetaDescription(listing.description), path: ownerActivityHref(listing),
+    socialImage: { url: siteConfig.url + ownerActivityHref(listing) + 'opengraph-image/', alt: listing.name, width: 1200, height: 630, type: 'image/jpeg' },
   });
 }
 
 export default async function ActivityPage({ params }: Props) {
-  const { id } = await params;
-  const listing = uuidPattern.test(id) ? await getPublishedOwnerListing(id) : null;
-  if (!listing) notFound();
+  const { id: requestedId } = await params;
+  const id = ownerActivityId(requestedId);
+  const listing = id ? await getPublishedOwnerListing(id) : null;
+  if (!id || !listing) notFound();
+  const canonical = ownerActivityHref(listing);
+  if (ownerActivityNeedsRedirect(requestedId, canonical)) permanentRedirect(canonical);
   const coverPath = ownerListingCoverPath(listing);
   const photoPaths = ownerListingPhotoPaths(listing);
   const phone = cleanPhone(listing.phone);
   const whatsapp = whatsappUrl(listing.phone);
   const map = activityMapLink(listing);
-  const pageUrl = `${siteConfig.url}/activity/${id}/`;
+  const pageUrl = siteConfig.url + canonical;
   const categoryHref = `/directory/${slugify(listing.category)}`;
   const localityHref = `/villages/${slugify(listing.locality)}`;
   const structuredData = {
     '@context': 'https://schema.org', '@graph': [{
       '@type': 'LocalBusiness', '@id': `${pageUrl}#activity`, name: listing.name,
-      description: listing.description, url: pageUrl, telephone: listing.phone,
+      description: listing.description, url: pageUrl, telephone: cleanPhone(listing.phone),
+      openingHoursSpecification: fullTimeHours(listing.hours), geo: verifiedMapCoordinates(listing.maps_url),
       address: { '@type': 'PostalAddress', streetAddress: listing.address,
         addressLocality: listing.locality, addressRegion: 'قنا', addressCountry: 'EG' },
       ...(photoPaths.length ? { image: photoPaths.map((path) => `${siteConfig.url}${ownerPhotoUrl(path)}`) } : {}),
@@ -65,7 +72,7 @@ export default async function ActivityPage({ params }: Props) {
           <div className={styles.identity}>
             <div className={styles.identityTop}>
               <div className={styles.tags}><Link prefetch={false} href={categoryHref}>{listing.category}</Link><Link prefetch={false} href={localityHref}>{listing.locality}</Link></div>
-              <span className={styles.badge}><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" opacity=".1"/><path d="m5.5 10 3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>منشور في الدليل</span>
+              <span className={styles.badge}><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" opacity=".1"/><path d="m5.5 10 3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>يديره صاحبه</span>
             </div>
             <h1>{listing.name}</h1>
             <p className={styles.location}><ActionIcon name="pin" /><span>{listing.address}، {listing.locality}</span></p>
@@ -88,12 +95,12 @@ export default async function ActivityPage({ params }: Props) {
           <dl className={styles.facts}><div><dt>التصنيف</dt><dd><Link prefetch={false} href={categoryHref}>{listing.category}</Link></dd></div><div><dt>القرية أو الموضع</dt><dd><Link prefetch={false} href={localityHref}>{listing.locality}</Link></dd></div></dl>
         </section>
         {photoPaths.length > 0 && <section className={styles.gallery} aria-labelledby="activity-gallery-title">
-          <div className={styles.galleryHead}><div><h2 id="activity-gallery-title">صور النشاط</h2><p>اضغط على الصورة لعرضها كاملة</p></div><span className={styles.photoCount}>{photoPaths.length === 1 ? 'صورة واحدة' : photoPaths.length === 2 ? 'صورتان' : `${photoPaths.length.toLocaleString('ar-EG')} صور`}</span></div>
-          <div className={styles.photos}>{photoPaths.map((path, index) => <figure key={path}><a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" aria-label={`افتح صورة ${index + 1} من ${listing.name} كاملة`}><OwnerPhoto src={ownerPhotoUrl(path)} alt={`صورة ${index + 1} من ${listing.name}`} width={720} height={520} sizes={index === 0 ? '(max-width: 800px) 90vw, 760px' : '(max-width: 800px) 44vw, 380px'} /><span className={styles.photoOpen} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M20 4l-8 8M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></span></a><figcaption>{path === coverPath ? 'غلاف النشاط' : `صورة ${(index + 1).toLocaleString('ar-EG')}`}</figcaption></figure>)}</div>
+          <div className={styles.galleryHead}><div><h2 id="activity-gallery-title">صور النشاط</h2><p>اضغط على الصورة لعرضها كاملة</p></div><span className={styles.photoCount}>{photoPaths.length === 1 ? 'صورة واحدة' : photoPaths.length === 2 ? 'صورتان' : `${photoPaths.length.toLocaleString(NUMBER_LOCALE)} صور`}</span></div>
+          <div className={styles.photos}>{photoPaths.map((path, index) => <figure key={path}><a href={ownerPhotoUrl(path)} target="_blank" rel="noopener noreferrer" aria-label={`افتح صورة ${index + 1} من ${listing.name} كاملة`}><OwnerPhoto src={ownerPhotoUrl(path)} alt={`صورة ${index + 1} من ${listing.name}`} width={720} height={520} sizes={index === 0 ? '(max-width: 800px) 90vw, 760px' : '(max-width: 800px) 44vw, 380px'} /><span className={styles.photoOpen} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4h6v6M20 4l-8 8M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></span></a><figcaption>{path === coverPath ? 'غلاف النشاط' : `صورة ${(index + 1).toLocaleString(NUMBER_LOCALE)}`}</figcaption></figure>)}</div>
         </section>}
         <section className={styles.share} aria-labelledby="activity-share-title">
           <h2 id="activity-share-title">دلّ غيرك على المكان</h2><p className={styles.shareIntro}>ابعته للي محتاج الخدمة من أهل البلد.</p>
-          <ShareActions title={listing.name} locality={listing.locality} listingSlug={id} />
+          <ShareActions url={pageUrl} title={listing.name} locality={listing.locality} listingSlug={id} />
           <nav className={styles.explore} aria-label="استكشف أنشطة قريبة"><Link prefetch={false} href={`/directory?category=${encodeURIComponent(listing.category)}&locality=${encodeURIComponent(listing.locality)}`}><span>أنشطة مشابهة في {listing.locality}</span><ActionIcon name="arrow" /></Link><Link prefetch={false} href={localityHref}><span>كل خدمات {listing.locality}</span><ActionIcon name="arrow" /></Link></nav>
           <Link prefetch={false} className={styles.edit} href={`/contribute?edit=${id}`}>ده نشاطك؟ عدّل بياناته من حسابك <ActionIcon name="arrow" /></Link>
         </section>

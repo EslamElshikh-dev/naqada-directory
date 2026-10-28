@@ -1,3 +1,5 @@
+import '@/app/route-styles/knowledge-places-slug.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { buildPageMetadata } from '@/lib/site';
 import Link from 'next/link';
@@ -36,16 +38,16 @@ export default async function KnowledgePlacePage({ params }: Props){
   return <main id="main-content" className="page-main">
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="places" /></div>
     <div className={`shell ${styles.wrap} ${styles.detail}`}>
-      <Link className={styles.back} href="/knowledge/places">← خريطة المكان</Link>
+      <Link prefetch={false} className={styles.back} href="/knowledge/places">← خريطة المكان</Link>
       <article className={styles.detailCard}>
         <span className={styles.eyebrow}>سجل مكاني · {place.verification === 'source_confirmed' ? 'مؤكد من المصدر' : place.verification}</span>
         <h1>{place.name}</h1>
         <p>{place.parent ? `موضع وارد ضمن نطاق ${place.parent}.` : 'موضع وارد ضمن مركز نقادة.'} الأرقام التاريخية المعروضة هنا تُنسب لفترتها ولا تمثل تقديرًا للسكان الحاليين.</p>
-        <div className={styles.facts}><div className={styles.fact}><small>النوع</small><b>{place.type}</b></div><div className={styles.fact}><small>التبعية</small><b>{place.parent || 'مركز نقادة'}</b></div>{place.population2014 ? <div className={styles.fact}><small>تعداد مذكور 2014</small><b>{place.population2014.toLocaleString('ar-EG')}</b></div> : null}{place.population1897 ? <div className={styles.fact}><small>تعداد 1897</small><b>{place.population1897.toLocaleString('ar-EG')}</b></div> : null}{place.houses1897 ? <div className={styles.fact}><small>مساكن 1897</small><b>{place.houses1897.toLocaleString('ar-EG')}</b></div> : null}</div>
+        <div className={styles.facts}><div className={styles.fact}><small>النوع</small><b>{place.type}</b></div><div className={styles.fact}><small>التبعية</small><b>{place.parent || 'مركز نقادة'}</b></div>{place.population2014 ? <div className={styles.fact}><small>تعداد مذكور 2014</small><b>{place.population2014.toLocaleString(NUMBER_LOCALE)}</b></div> : null}{place.population1897 ? <div className={styles.fact}><small>تعداد 1897</small><b>{place.population1897.toLocaleString(NUMBER_LOCALE)}</b></div> : null}{place.houses1897 ? <div className={styles.fact}><small>مساكن 1897</small><b>{place.houses1897.toLocaleString(NUMBER_LOCALE)}</b></div> : null}</div>
         {aliases.length ? <section><h2>أسماء وتهجئات مرتبطة</h2><div className={styles.tags}>{aliases.map((item) => <span className={styles.tag} key={item.id}>{item.alias}</span>)}</div></section> : null}
-        {children.length ? <section className={styles.section}><h2>مواضع مرتبطة بالتبعية</h2><div className={styles.tags}>{children.map((item) => <Link className={styles.tag} href={`/knowledge/places/${encodeURIComponent(item.slug)}`} key={item.id}>{item.name}</Link>)}</div></section> : null}
-        {live ? <p><Link href={`/villages/${encodeURIComponent(live.slug)}`}>فتح صفحة {live.name} في دليل الخدمات والأنشطة الحالي ←</Link></p> : null}
-        {!isIndexable ? <div className={styles.sourceBox}><strong>سجل أولي يحتاج استكمالًا</strong><p>نحافظ على اسم الموضع وتبعيته كما وردا في المصدر، لكن الصفحة لن تدخل نتائج البحث قبل إضافة معلومة محلية مميزة وموثقة.</p><Link href={`/contribute?type=correction&name=${encodeURIComponent(place.name)}`}>أرسل معلومة أو تصحيحًا موثقًا ←</Link></div> : null}
+        {children.length ? <section className={styles.section}><h2>مواضع مرتبطة بالتبعية</h2><div className={styles.tags}>{children.map((item) => <Link prefetch={false} className={styles.tag} href={`/knowledge/places/${encodeURIComponent(item.slug)}`} key={item.id}>{item.name}</Link>)}</div></section> : null}
+        {live ? <p><Link prefetch={false} href={`/villages/${encodeURIComponent(live.slug)}`}>فتح صفحة {live.name} في دليل الخدمات والأنشطة الحالي ←</Link></p> : null}
+        {!isIndexable ? <div className={styles.sourceBox}><strong>سجل أولي يحتاج استكمالًا</strong><p>نحافظ على اسم الموضع وتبعيته كما وردا في المصدر، لكن الصفحة لن تدخل نتائج البحث قبل إضافة معلومة محلية مميزة وموثقة.</p><Link prefetch={false} href={`/contribute?type=correction&name=${encodeURIComponent(place.name)}`}>أرسل معلومة أو تصحيحًا موثقًا ←</Link></div> : null}
         <div className={styles.sourceBox}><strong>الإسناد</strong><p>{knowledgeAttribution(place.contributorId)}</p><small>المصدر: {source?.title || 'مصدر موسوعة نقادة'}{source?.year ? ` · ${source.year}` : ''}</small></div>
         <RelatedKnowledge kind="place" item={place} />
       </article>

@@ -1,3 +1,5 @@
+import '@/app/route-styles/contributors-slug.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -31,9 +33,9 @@ export default async function ContributorPage({ params }: Props) {
     <div className={`shell ${v3Styles.navWrap}`}><KnowledgeSectionNav current="contributor" /></div>
     <div className={`shell ${styles.wrap}`}>
       <section className={styles.grid}>
-        <article className={styles.card}><span className={styles.cardBadge}>المؤلَّف الأساسي</span><h2>{c.primaryWork}</h2><p>المصدر المرجعي الأساسي للطبقة الجديدة من المكان والأعلام والتراث والمراجع.</p><Link href="/knowledge">فتح الموسوعة ←</Link></article>
-        <article className={styles.card}><span className={styles.cardBadge}>الأثر داخل الدليل</span><h2>{knowledgePlaces.length.toLocaleString('ar-EG')} موضعًا</h2><p>{knowledgePeople.length.toLocaleString('ar-EG')} شخصية · {knowledgeHeritage.length.toLocaleString('ar-EG')} موضوعًا تراثيًا · {knowledgeReferences.length.toLocaleString('ar-EG')} مرجعًا.</p><Link href="/knowledge/places">استكشف البيانات ←</Link></article>
-        <article className={styles.card}><span className={styles.cardBadge}>العمل الميداني</span><h2>{fieldInformants.length.toLocaleString('ar-EG')} اسمًا</h2><p>أسماء ونطاقات جغرافية وردت ضمن المقابلات والمساعدة الميدانية في المصدر.</p><Link href="/knowledge/fieldwork">عرض القائمة ←</Link></article>
+        <article className={styles.card}><span className={styles.cardBadge}>المؤلَّف الأساسي</span><h2>{c.primaryWork}</h2><p>المصدر المرجعي الأساسي للطبقة الجديدة من المكان والأعلام والتراث والمراجع.</p><Link prefetch={false} href="/knowledge">فتح الموسوعة ←</Link></article>
+        <article className={styles.card}><span className={styles.cardBadge}>الأثر داخل الدليل</span><h2>{knowledgePlaces.length.toLocaleString(NUMBER_LOCALE)} موضعًا</h2><p>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)} شخصية · {knowledgeHeritage.length.toLocaleString(NUMBER_LOCALE)} موضوعًا تراثيًا · {knowledgeReferences.length.toLocaleString(NUMBER_LOCALE)} مرجعًا.</p><Link prefetch={false} href="/knowledge/places">استكشف البيانات ←</Link></article>
+        <article className={styles.card}><span className={styles.cardBadge}>العمل الميداني</span><h2>{fieldInformants.length.toLocaleString(NUMBER_LOCALE)} اسمًا</h2><p>أسماء ونطاقات جغرافية وردت ضمن المقابلات والمساعدة الميدانية في المصدر.</p><Link prefetch={false} href="/knowledge/fieldwork">عرض القائمة ←</Link></article>
       </section>
       <section className={styles.section}><div className={styles.sectionHeader}><div><span>المصادر المنسوبة</span><h2>المواد المرجعية المرتبطة</h2></div></div><div className={styles.grid}>{knowledgeSources.map((source) => <article className={styles.card} key={source.id}><span className={styles.cardBadge}>{source.kind}</span><h3>{source.title}</h3><p>{source.year ? `${source.year} · ` : ''}{source.usage.replaceAll('_', ' ')}</p></article>)}</div></section>
     </div>

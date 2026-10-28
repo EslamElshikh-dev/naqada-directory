@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { businesses, canonicalLocalityName, localities } from '@/lib/data';
 import { localCategoryHref } from '@/lib/discovery-routing';
@@ -83,7 +84,7 @@ export function LocalCategoryDiscovery({
             <nav className={styles.pills} aria-label={`تخصصات ${categoryLabel} في ${localityName}`}>
               {subcategories.map(([label, count]) => (
                 <Link key={label} href={`/directory?q=${encodeURIComponent(label)}&locality=${encodeURIComponent(localityName)}`} prefetch={false}>
-                  <strong>{label}</strong><small>{count.toLocaleString('ar-EG')}</small>
+                  <strong>{label}</strong><small>{count.toLocaleString(NUMBER_LOCALE)}</small>
                 </Link>
               ))}
             </nav>
@@ -126,7 +127,7 @@ export function LocalCategoryDiscovery({
             <nav className={styles.pills} aria-label={`${categoryLabel} في مواضع أخرى`}>
               {otherLocalities.map(({ locality, count }) => (
                 <Link key={locality.slug} href={localCategoryHref(categoryName, locality.name)} prefetch={false}>
-                  <strong>{locality.name}</strong><small>{count.toLocaleString('ar-EG')}</small>
+                  <strong>{locality.name}</strong><small>{count.toLocaleString(NUMBER_LOCALE)}</small>
                 </Link>
               ))}
             </nav>

@@ -10,7 +10,7 @@
   background:
     radial-gradient(circle at 86% -140%, rgba(224, 180, 83, .27), transparent 37%),
     linear-gradient(105deg, #0a2a22, #103d30 52%, #0b2e25);
-  color: #fff;
+  color: var(--text-on-dark);
   box-shadow: 0 10px 28px rgba(8, 40, 31, .12), inset 0 1px rgba(255, 255, 255, .04);
   isolation: isolate;
 }
@@ -39,7 +39,7 @@
   gap: 10px;
   padding: 5px max(20px, calc((100vw - 1160px) / 2));
   padding-inline-end: 20px;
-  color: #fff;
+  color: var(--text-on-dark);
   text-decoration: none;
   background: linear-gradient(112deg, rgba(205, 153, 58, .22), rgba(255, 255, 255, .035));
   box-shadow: -1px 0 rgba(255, 255, 255, .08);
@@ -56,8 +56,8 @@
 }
 
 .heading > span { display: grid; gap: 0; }
-.heading small { color: #c8d9d2; font-size: .56rem; font-weight: 750; line-height: 1.35; }
-.heading strong { color: #fff7e6; font-size: .8125rem; font-weight: 900; line-height: 1.55; white-space: nowrap; }
+.heading small { color: var(--text-on-dark-muted); font-size: var(--fs-xs); font-weight: 700; line-height: 1.35; }
+.heading strong { color: var(--text-on-dark); font-size: var(--fs-xs); font-weight: 700; line-height: 1.55; white-space: nowrap; }
 
 .viewport {
   min-width: 0;
@@ -99,7 +99,7 @@
   gap: 8px;
   flex: 0 0 auto;
   padding-inline: 25px;
-  color: #dceae4;
+  color: var(--text-on-dark-muted);
   text-decoration: none;
   white-space: nowrap;
   direction: rtl;
@@ -121,16 +121,16 @@
   border: 1px solid rgba(239, 206, 133, .18);
   border-radius: 999px;
   background: rgba(239, 206, 133, .08);
-  color: #edca7e;
-  font-size: .56rem;
-  font-weight: 900;
+  color: var(--text-on-dark-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
   line-height: 1.4;
 }
 
-.item strong { font-size: .875rem; font-weight: 650; line-height: 1.7; }
-.item b { color: #70b69e; font-size: .77rem; transition: transform .2s ease, color .2s ease; }
-.item:hover { color: #fff; }
-.item:hover b { color: #f0cb7a; transform: translateX(-3px); }
+.item strong { font-size: var(--fs-sm); font-weight: 700; line-height: 1.7; }
+.item b { color: var(--text-muted); font-size: var(--fs-xs); transition: transform .2s ease, color .2s ease; }
+.item:hover { color: var(--text-on-dark); }
+.item:hover b { color: var(--text-on-dark-accent); transform: translateX(-3px); }
 
 .control {
   position: relative;
@@ -143,14 +143,14 @@
   border: 0;
   border-inline-start: 1px solid rgba(255, 255, 255, .08);
   background: rgba(255, 255, 255, .035);
-  color: #d9e9e2;
+  color: var(--text-on-dark-muted);
   font: inherit;
   cursor: pointer;
   transition: background .2s ease, color .2s ease;
 }
 
-.control span { font: 800 .68rem/1 sans-serif; letter-spacing: -1px; }
-.control:hover, .control:focus-visible { background: rgba(239, 203, 121, .12); color: #f4cf7e; }
+.control span { font: 800 .68rem/1 sans-serif; letter-spacing: normal; }
+.control:hover, .control:focus-visible { background: rgba(239, 203, 121, .12); color: var(--text-on-dark-accent); }
 .control:focus-visible { outline: 2px solid #f0c66d; outline-offset: -4px; }
 
 .root[data-paused='true'] .track,
@@ -173,10 +173,10 @@
   .heading { min-width: 92px; gap: 7px; padding: 4px 8px; }
   .heading i { width: 7px; height: 7px; }
   .heading small { display: none; }
-  .heading strong { font-size: .75rem; }
+  .heading strong { font-size: var(--fs-xs); }
   .item { min-height: 35px; gap: 6px; padding-inline: 18px; }
-  .item > span { padding: 2px 6px; font-size: .5rem; }
-  .item strong { font-size: .8125rem; }
+  .item > span { padding: 2px 6px; font-size: var(--fs-xs); }
+  .item strong { font-size: var(--fs-sm); }
   .control { width: 38px; min-height: 37px; }
   .viewport { mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
 }
@@ -184,9 +184,9 @@
 @media (max-width: 390px) {
   .root { grid-template-columns: 88px minmax(0, 1fr) 38px; }
   .heading { min-width: 88px; gap: 5px; padding-inline: 7px; }
-  .heading strong { font-size: .75rem; }
+  .heading strong { font-size: var(--fs-xs); }
   .item { padding-inline: 15px; }
-  .item strong { font-size: .8125rem; }
+  .item strong { font-size: var(--fs-sm); }
   .control { width: 38px; }
 }
 

@@ -1,3 +1,5 @@
+import '@/app/route-styles/villages-slug-category.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
@@ -5,7 +7,7 @@ import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
-import { businesses, canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
+import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
@@ -13,18 +15,6 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 type Props = { params: Promise<{ slug: string; category: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() {
-  const counts = new Map<string, { slug: string; category: string; count: number }>();
-  for (const business of businesses) {
-    const locality = localities.find((item) => item.name === canonicalLocalityName(business.locality));
-    const category = categories.find((item) => item.name === business.category);
-    if (!locality || !category) continue;
-    const key = `${locality.slug}::${category.slug}`;
-    const current = counts.get(key);
-    counts.set(key, { slug: locality.slug, category: category.slug, count: (current?.count || 0) + 1 });
-  }
-  return [...counts.values()].filter((item) => item.count >= MIN_LOCAL_CATEGORY_RESULTS).map(({ slug, category }) => ({ slug, category }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, category: categorySlug } = await params;
@@ -91,12 +81,12 @@ export default async function LocalCategoryPage({ params }: Props) {
       <section className="detail-hero category-hero">
         <div className="shell category-hero__grid">
           <div>
-            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link href="/villages">القرى والنجوع</Link><span>/</span><Link href={`/villages/${locality.slug}`}>{locality.name}</Link><span>/</span><span>{category.shortLabel}</span></nav>
+            <nav className="breadcrumbs" aria-label="مسار التنقل"><Link prefetch={false} href="/villages">القرى والنجوع</Link><span>/</span><Link prefetch={false} href={`/villages/${locality.slug}`}>{locality.name}</Link><span>/</span><span>{category.shortLabel}</span></nav>
             <span className="eyebrow">بحث محلي داخل {locality.name}</span>
             <h1>{category.shortLabel} <em>في {locality.name}</em></h1>
             <p>{category.description} هذه الصفحة تعرض النتائج المنشورة داخل {locality.name} فقط.</p>
-            <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString('ar-EG')}</b> نتيجة</span><span><b>مركز نقادة</b> · قنا</span></div>
-            <div className="detail-actions"><Link href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link><a href="#local-category-discovery" className="button button--outline-light">استكشف أسرع ↓</a></div>
+            <div className="hero-inline-stats"><span><b>{scoped.length.toLocaleString(NUMBER_LOCALE)}</b> نتيجة</span><span><b>مركز نقادة</b> · قنا</span></div>
+            <div className="detail-actions"><Link prefetch={false} href={`/villages/${locality.slug}`} className="button button--light">دليل {locality.name}</Link><Link prefetch={false} href={`/directory/${category.slug}`} className="button button--outline-light">كل {category.shortLabel} في نقادة</Link><a href="#local-category-discovery" className="button button--outline-light">استكشف أسرع ↓</a></div>
           </div>
           <CategoryVisual category={category.name} size="lg" />
         </div>

@@ -1,3 +1,4 @@
+import '@/app/route-styles/account-login.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BrandMark } from '@/components/site-shell';
@@ -10,7 +11,7 @@ export default function LoginPage() {
     <main id="main-content" className="auth-page">
       <div className="shell auth-shell">
         <section className="auth-card">
-          <Link href="/" className="auth-brand"><BrandMark/><span><strong>دليل نقادة</strong><small>حساب الأعضاء</small></span></Link>
+          <Link prefetch={false} href="/" className="auth-brand"><BrandMark/><span><strong>دليل نقادة</strong><small>حساب الأعضاء</small></span></Link>
           <div className="auth-heading"><span>مرحبًا بعودتك</span><h1>تسجيل الدخول</h1><p>ادخل إلى حسابك لإدارة ملفك الشخصي والمشاركة في تقييم دليل نقادة.</p></div>
           <LoginForm/>
         </section>

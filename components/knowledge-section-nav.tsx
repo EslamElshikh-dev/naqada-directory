@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { fieldInformants, knowledgeSummary, primaryKnowledgeContributor } from '@/lib/knowledge';
 import styles from './knowledge-section-nav.module.css';
@@ -10,11 +11,11 @@ type Props = {
 
 const items = [
   { key: 'overview', href: '/knowledge', label: 'الموسوعة', meta: 'الرئيسية' },
-  { key: 'places', href: '/knowledge/places', label: 'الأماكن', meta: knowledgeSummary.counts.places.toLocaleString('ar-EG') },
-  { key: 'people', href: '/knowledge/people', label: 'الأعلام', meta: knowledgeSummary.counts.people.toLocaleString('ar-EG') },
-  { key: 'heritage', href: '/knowledge/heritage', label: 'التراث', meta: knowledgeSummary.counts.heritage.toLocaleString('ar-EG') },
-  { key: 'references', href: '/knowledge/references', label: 'المراجع', meta: knowledgeSummary.counts.references.toLocaleString('ar-EG') },
-  { key: 'fieldwork', href: '/knowledge/fieldwork', label: 'العمل الميداني', meta: fieldInformants.length.toLocaleString('ar-EG') },
+  { key: 'places', href: '/knowledge/places', label: 'الأماكن', meta: knowledgeSummary.counts.places.toLocaleString(NUMBER_LOCALE) },
+  { key: 'people', href: '/knowledge/people', label: 'الأعلام', meta: knowledgeSummary.counts.people.toLocaleString(NUMBER_LOCALE) },
+  { key: 'heritage', href: '/knowledge/heritage', label: 'التراث', meta: knowledgeSummary.counts.heritage.toLocaleString(NUMBER_LOCALE) },
+  { key: 'references', href: '/knowledge/references', label: 'المراجع', meta: knowledgeSummary.counts.references.toLocaleString(NUMBER_LOCALE) },
+  { key: 'fieldwork', href: '/knowledge/fieldwork', label: 'العمل الميداني', meta: fieldInformants.length.toLocaleString(NUMBER_LOCALE) },
   { key: 'contributor', href: `/contributors/${primaryKnowledgeContributor.slug}`, label: 'المساهم', meta: 'أد' },
 ] as const;
 

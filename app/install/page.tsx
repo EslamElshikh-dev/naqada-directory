@@ -1,3 +1,4 @@
+import '@/app/route-styles/install.css';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,7 +19,7 @@ export default function InstallPage() {
     <main id="main-content" className={styles.page}>
       <div className={`shell ${styles.content}`}>
         <nav className={styles.breadcrumbs} aria-label="مسار التنقل">
-          <Link href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>تثبيت التطبيق</span>
+          <Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>تثبيت التطبيق</span>
         </nav>
 
         <section className={styles.hero} aria-labelledby="install-title">

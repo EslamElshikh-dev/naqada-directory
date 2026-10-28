@@ -4,6 +4,6 @@
 .editorialCard:hover { transform:translateY(-3px); border-color:rgba(169,83,55,.18); box-shadow:var(--nq-shadow); }
 .editorialCard > img { display:block; width:100%; height:auto; aspect-ratio:auto; background:#e9ddd2; }
 .editorialCardBody { min-height:270px; display:flex; flex-direction:column; padding:19px; }
-.editorialCardBody h2 { margin:0; color:var(--nq-ink); font-size:clamp(1.12rem,2.5vw,1.4rem); line-height:1.7; }
-.editorialCardBody p { margin:9px 0 17px; color:#75665e; font-size:.75rem; line-height:2; }
+.editorialCardBody h2 { margin:0; color:var(--text-strong); font-size:var(--fs-2xl); line-height:1.7; }
+.editorialCardBody p { margin:9px 0 17px; color:var(--text-muted); font-size:var(--fs-xs); line-height:2; }
 @media(max-width:680px){.editorialGrid{grid-template-columns:1fr}.editorialCardBody{min-height:0;padding:17px}}

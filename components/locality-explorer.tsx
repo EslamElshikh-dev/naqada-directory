@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import Link from 'next/link';
 import { useState } from 'react';
@@ -19,14 +21,14 @@ export function LocalityExplorer({ localities }: { localities: LocalityPage[] })
         <label className="search-field"><span aria-hidden="true">⌕</span><span className="sr-only">ابحث عن قرية أو نجع</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث عن قرية أو نجع أو عزبة…" /></label>
         <label className="select-field"><span>النوع</span><select value={kind} onChange={(event) => setKind(event.target.value)}><option value="">كل الأنواع</option>{kinds.map((item) => <option value={item} key={item}>{item}</option>)}</select></label>
       </div>
-      <div className="results-bar"><div><strong>{filtered.length.toLocaleString('ar-EG')}</strong><span> موضعًا مطابقًا</span></div></div>
+      <div className="results-bar"><div><strong>{filtered.length.toLocaleString(NUMBER_LOCALE)}</strong><span> موضعًا مطابقًا</span></div></div>
       {filtered.length ? <div className="village-grid">{filtered.map((item, index) => (
         <Link prefetch={false} href={`/villages/${item.slug}`} key={item.slug} className="village-card" aria-label={`فتح دليل ${item.name} في نقادة`}>
           <div className="village-card__head"><span className="village-card__visual"><BrandMark compact /></span><span className="village-card__index">{String(index + 1).padStart(2, '0')}</span></div>
           <span className="village-card__type">{item.type} · مركز نقادة</span>
           <h2>دليل {item.name}</h2>
           <p>{item.notes || item.scope || `دليل ${item.name} ضمن مركز نقادة: الخدمات والأنشطة والمعلومات المحلية المنشورة عن المكان.`}</p>
-          <div className="village-card__meta"><span><b>{item.businessCount.toLocaleString('ar-EG')}</b> سجل خدمي</span><span>{item.verification || 'مراجع'}</span></div>
+          <div className="village-card__meta"><span><b>{item.businessCount.toLocaleString(NUMBER_LOCALE)}</b> سجل خدمي</span><span>{item.verification || 'مراجع'}</span></div>
           <span className="village-card__cta">فتح دليل {item.name} ←</span>
         </Link>
       ))}</div> : <div className="empty-state"><strong>لا يوجد موضع مطابق</strong><p>جرّب كتابة جزء من الاسم.</p></div>}

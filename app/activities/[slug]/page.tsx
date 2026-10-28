@@ -1,9 +1,11 @@
+import '@/app/route-styles/activities-slug.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { UtilityPageHeader } from '@/components/utility-page-header';
 import { ListingCard } from '@/components/listing-card';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
-import { activityLandings, getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
+import { getActivityBySlug, getBusinessesForActivity } from '@/lib/activity-landings';
 import { canonicalLocalityName, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { publicBusinessHref } from '@/lib/business-links';
@@ -13,9 +15,6 @@ import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 type Props = { params: Promise<{ slug: string }> };
 export const dynamic = 'force-dynamic';
 
-export function generateStaticParams() {
-  return activityLandings.map((activity) => ({ slug: activity.slug }));
-}
 
 function activityKeywords(name: string, searchLabel: string) {
   const core = name.replace(/\s+في\s+نقادة$/, ' نقادة');
@@ -42,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const count = getBusinessesForActivity(activity, catalog.businesses).length;
   return buildPageMetadata({
     title: `${activity.name}: الأسماء والعناوين`,
-    description: `${activity.description} تصفح ${count.toLocaleString('ar-EG')} اسمًا منشورًا، وابحث حسب القرية أو النجع داخل مركز نقادة بمحافظة قنا.`,
+    description: `${activity.description} تصفح ${count.toLocaleString(NUMBER_LOCALE)} اسمًا منشورًا، وابحث حسب القرية أو النجع داخل مركز نقادة بمحافظة قنا.`,
     path: `/activities/${activity.slug}`,
     keywords: activityKeywords(activity.name, activity.searchLabel),
     robots: count >= 2 ? { index: true, follow: true } : { index: false, follow: true },
@@ -112,8 +111,8 @@ export default async function ActivityPage({ params }: Props) {
       <UtilityPageHeader current={activity.name} parent={{ href: '/activities', label: 'الخدمات' }}
         title={activity.name} description={activity.description}
         metrics={[
-          { value: scoped.length.toLocaleString('ar-EG'), label: 'نشاط منشور' },
-          { value: places.length.toLocaleString('ar-EG'), label: 'قرية أو نجع' },
+          { value: scoped.length.toLocaleString(NUMBER_LOCALE), label: 'نشاط منشور' },
+          { value: places.length.toLocaleString(NUMBER_LOCALE), label: 'قرية أو نجع' },
         ]} />
       <section className="shell page-section">
         <ServiceLocalityDiscovery compact

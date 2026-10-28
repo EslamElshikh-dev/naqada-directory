@@ -1,0 +1,14 @@
+
+.oauth-callback-page { min-height: calc(100vh - 84px); display: grid; place-items: center; padding: 35px 14px; background: radial-gradient(circle at 10% 10%,rgba(210,157,99,.15),transparent 28%),linear-gradient(145deg,#f7efe7,#efe2d5); }
+.oauth-callback-card { width: min(450px,100%); display: grid; justify-items: center; gap: 12px; padding: 42px 28px; border: 1px solid #e1d2c6; border-radius: 28px; background: #fffaf5; box-shadow: 0 28px 75px rgba(68,34,23,.13); text-align: center; }
+.oauth-callback-card > .brand-mark { margin-bottom: 8px; }
+.oauth-callback-card h1 { margin: 4px 0 0; color: var(--text-strong); font-size: var(--fs-2xl); }
+.oauth-callback-card p { margin: 0; color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.9; }
+.oauth-callback-card > a { margin-top: 8px; padding: 10px 14px; border-radius: 12px; background: #4c2b21; color: var(--text-on-dark); font-size: var(--fs-xs); font-weight: 700; }
+.oauth-spinner, .oauth-error-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; }
+.oauth-spinner { border: 3px solid #eaded5; border-top-color: #a94f34; animation: premiumSpin .8s linear infinite; }
+.oauth-error-mark { background: #f5dfdc; color: var(--text-danger); font-size: var(--fs-xl); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .oauth-spinner { animation: none; }
+}

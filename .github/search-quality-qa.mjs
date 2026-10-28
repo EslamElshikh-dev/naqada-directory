@@ -33,7 +33,7 @@ try {
     await page.waitForTimeout(1_150);
     assert.equal(events.length, 0, `${name}: live filtering must not create search events`);
     const submitted = page.waitForResponse((response) => response.url().includes('/directory-intake') && response.request().postDataJSON()?.eventType === 'zero_results');
-    await page.locator('form.search-field button[type="submit"]').click();
+    await page.locator('form[data-ui="directory-search"] button[type="submit"]').click();
     await submitted;
     assert.equal(events.length, 1);
     assert.equal(events[0].queryText, query);

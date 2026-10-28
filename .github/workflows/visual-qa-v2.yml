@@ -34,16 +34,18 @@ jobs:
         run: npm ci
 
       - name: Build Next.js
+        id: build
         run: |
           node scripts/prepare-article-editor-fixture.mjs
           npm run build
 
       - name: Install Playwright and Chromium
         run: |
-          npm install --no-save --package-lock=false playwright@1.55.0
+          npm install --no-save --package-lock=false playwright@1.55.0 lighthouse@12.8.2
           npx playwright install chromium
 
       - name: Start production server
+        id: server
         run: |
           NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' npm run start > /tmp/naqada-next.log 2>&1 &
           echo $! > /tmp/naqada-next.pid
@@ -56,25 +58,53 @@ jobs:
           cat /tmp/naqada-next.log
           exit 1
 
+      - name: Verify Arabic typography and responsive reading tokens
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: |
+          mkdir -p artifacts
+          node scripts/typography-audit.mjs > artifacts/typography.jsonl
+
       - name: Verify complete article editor on desktop and mobile
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/article-editor-qa.mjs
 
       - name: Verify search behavior and event measurement
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/search-quality-qa.mjs
 
       - name: Verify ticker startup, direction and reading speed
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/ticker-motion-qa.mjs
 
       - name: Verify first-visit usability and consistent public counts
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/usability-qa.mjs
 
       - name: Verify complete public journeys and content consistency
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         env:
           QA_BASE_URL: http://127.0.0.1:3000
         run: node .github/production-acceptance.mjs
 
+      - name: Verify keyboard accessibility and sharing cards
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/reading-quality-qa.mjs
+
+      - name: Verify withdrawal during an older in-flight read without database writes
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/withdrawal-qa.mjs
+
+      - name: Verify withdrawal while an older public read is in flight
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/content-withdrawal-qa.mjs
+
       - name: Run responsive diagnostics and screenshots
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/visual-qa-v2.mjs
+
+      - name: Enforce measured CSS transfer budget and valid LCP
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/performance-budget.mjs
 
       - name: Upload visual QA artifacts
         if: always()

@@ -14,7 +14,7 @@ export function AboutSectionNav({ current }: { current: AboutSection }) {
       {items.map((item) => {
         const active = item.key === current;
         return (
-          <Link
+          <Link prefetch={false}
             key={item.key}
             href={item.href}
             className={`${styles.item} ${active ? styles.active : ''}`}

@@ -1,3 +1,5 @@
+import { canonicalLocalityAliases, canonicalLocalityName } from './locality-name';
+export { canonicalLocalityName } from './locality-name';
 import businesses01 from '@/data/businesses-01.json';
 import businesses02 from '@/data/businesses-02.json';
 import businesses03 from '@/data/businesses-03.json';
@@ -93,24 +95,6 @@ export const businesses = rawBusinesses.map((item) => {
   const override = businessOverrides[item.id];
   return enrichment || override ? { ...item, ...enrichment, ...override } : item;
 });
-
-const canonicalLocalityAliases: Record<string, string> = {
-  'كوم الضبع': 'نجع كوم الضبع',
-  'شرق الترعة': 'نجع شرق الترعة',
-};
-
-/**
- * Activity imports sometimes preserve useful parent context in locality strings,
- * for example "بشلاو / الأوسط قمولا". Public locality routes should always use
- * the first (most specific) segment so those records contribute to /villages/بشلاو
- * instead of creating a second pseudo-locality.
- */
-export function canonicalLocalityName(value?: string | null) {
-  const raw = value?.trim() || 'مركز نقادة';
-  const primary = raw.split('/')[0]?.trim();
-  const name = primary || raw;
-  return canonicalLocalityAliases[name] || name;
-}
 
 export function parentLocalityName(locality?: string | null, explicitParent?: string | null) {
   if (explicitParent?.trim()) return explicitParent.trim();

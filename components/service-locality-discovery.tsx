@@ -1,3 +1,4 @@
+import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import styles from './service-locality-discovery.module.css';
 
@@ -25,10 +26,10 @@ export function ServiceLocalityDiscovery({
   if (!items.length) return null;
 
   if (compact) return <details className={styles.compact}>
-    <summary>{title}<span>{items.length.toLocaleString('ar-EG')} مواضع</span></summary>
+    <summary>{title}<span>{items.length.toLocaleString(NUMBER_LOCALE)} مواضع</span></summary>
     <nav className={styles.places} aria-label={`اختيار المكان لـ ${title}`}>
       {items.map(item => <Link key={`${item.name}-${item.href}`} href={item.href} prefetch={false}>
-        <span className={styles.copy}><strong>{item.name}</strong><small>{item.count.toLocaleString('ar-EG')} نتيجة</small></span><span className={styles.arrow} aria-hidden="true">←</span>
+        <span className={styles.copy}><strong>{item.name}</strong><small>{item.count.toLocaleString(NUMBER_LOCALE)} نتيجة</small></span><span className={styles.arrow} aria-hidden="true">←</span>
       </Link>)}
     </nav>
     <a href={resultsHref} className={styles.allResults}>كل النتائج ↓</a>
@@ -48,7 +49,7 @@ export function ServiceLocalityDiscovery({
         {items.map((item, index) => (
           <Link key={`${item.name}-${item.href}`} href={item.href} prefetch={false} className={index === 0 ? styles.primaryPlace : undefined}>
             <span className={styles.rank} aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-            <span className={styles.copy}><strong>{item.name}</strong><small>{item.count.toLocaleString('ar-EG')} نتيجة منشورة</small></span>
+            <span className={styles.copy}><strong>{item.name}</strong><small>{item.count.toLocaleString(NUMBER_LOCALE)} نتيجة منشورة</small></span>
             <span className={styles.arrow} aria-hidden="true">←</span>
           </Link>
         ))}

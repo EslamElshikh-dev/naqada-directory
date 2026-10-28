@@ -1,4 +1,6 @@
 'use client';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -28,10 +30,10 @@ export function PendingContributions({ items, categories, localities }: {
     finally { setWorking(''); }
   }
   return <section className={styles.list} aria-labelledby="contribution-queue-title">
-    <h2 id="contribution-queue-title">طلبات الإضافة والتصحيح <span>({items.length.toLocaleString('ar-EG')})</span></h2>
+    <h2 id="contribution-queue-title">طلبات الإضافة والتصحيح <span>({items.length.toLocaleString(NUMBER_LOCALE)})</span></h2>
     {message ? <p role="status">{message}</p> : null}
     {items.length ? items.map((item) => <article id={`contribution-${item.id}`} className={styles.card} key={item.id}>
-      <header><span>{typeLabels[item.requestType]} · {item.status === 'needs_info' ? 'يحتاج استكمال' : 'في انتظار المراجعة'}</span><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}</time></header>
+      <header><span>{typeLabels[item.requestType]} · {item.status === 'needs_info' ? 'يحتاج استكمال' : 'في انتظار المراجعة'}</span><time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString(NUMBER_LOCALE, { timeZone: 'Africa/Cairo' })}</time></header>
       <h3>{item.name}</h3><p><strong>نص الطلب:</strong> {item.details || 'لم يرفق تفاصيل'}</p>
       {item.contact ? <p>وسيلة متابعة خاصة: <b dir="auto">{item.contact}</b></p> : null}
       {item.sourceUrl && /^https?:\/\//i.test(item.sourceUrl) ? <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">فتح المصدر المرفق</a> : null}
