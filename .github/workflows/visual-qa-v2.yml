@@ -58,6 +58,10 @@ jobs:
           cat /tmp/naqada-next.log
           exit 1
 
+      - name: Verify responsive hero formats, preload and legacy fallback
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/home-hero-qa.mjs
+
       - name: Verify Arabic typography and responsive reading tokens
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: |
