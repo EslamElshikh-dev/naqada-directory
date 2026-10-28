@@ -29,7 +29,7 @@
 .trust b { font-size:var(--fs-2xl); line-height:1.4; color:var(--text-on-dark-accent); font-weight:700; }
 .trust small { font-size:var(--fs-xs); color:var(--text-on-dark-muted); }
 .placeCard { position:relative; min-width:0; height:390px; align-self:center; overflow:hidden; border:1px solid #dcc38a70; border-radius:180px 180px 18px 18px; background:#244535; box-shadow:0 16px 38px #001e2433; }
-.placeCard > img { object-fit:cover; object-position:50% 53%; }
+.placeCard > picture > img { object-fit:cover; object-position:50% 53%; }
 .placeShade { position:absolute; inset:0; background:linear-gradient(180deg,#09241908 40%,#08271ece 100%); }
 .placeTop { position:absolute; top:26px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:8px; width:max-content; max-width:80%; }
 .placeBrand { display:none; }

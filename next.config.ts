@@ -4,6 +4,13 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 const nextConfig: NextConfig = {
   trailingSlash: true,
   poweredByHeader: false,
+  async headers() {
+    return [{
+      // The generator versions this path from the photograph and encoding settings.
+      source: '/images/home-hero/:version/:file',
+      headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+    }];
+  },
   experimental: {
     globalNotFound: true,
     // Ephemeral QA filesystems can opt out without changing the hosted build default.

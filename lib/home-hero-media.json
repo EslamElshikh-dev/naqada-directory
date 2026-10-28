@@ -1,0 +1,175 @@
+{
+  "sourceSha256": "d23d68d1233577ba5305c59dc7fa6d1d4d4c96361f89097f769aaf1dd25368a4",
+  "width": 1376,
+  "height": 768,
+  "variants": [
+    {
+      "width": 384,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-384.avif",
+      "bytes": 8695
+    },
+    {
+      "width": 384,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-384.webp",
+      "bytes": 17744
+    },
+    {
+      "width": 640,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-640.avif",
+      "bytes": 23074
+    },
+    {
+      "width": 640,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-640.webp",
+      "bytes": 47040
+    },
+    {
+      "width": 750,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-750.avif",
+      "bytes": 30716
+    },
+    {
+      "width": 750,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-750.webp",
+      "bytes": 63262
+    },
+    {
+      "width": 960,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-960.avif",
+      "bytes": 48241
+    },
+    {
+      "width": 960,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-960.webp",
+      "bytes": 99590
+    },
+    {
+      "width": 1200,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-1200.avif",
+      "bytes": 72518
+    },
+    {
+      "width": 1200,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-1200.webp",
+      "bytes": 144646
+    },
+    {
+      "width": 1376,
+      "format": "avif",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-1376.avif",
+      "bytes": 91056
+    },
+    {
+      "width": 1376,
+      "format": "webp",
+      "crop": "full",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-full-1376.webp",
+      "bytes": 191576
+    },
+    {
+      "width": 384,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-384.avif",
+      "bytes": 7731
+    },
+    {
+      "width": 384,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-384.webp",
+      "bytes": 15994
+    },
+    {
+      "width": 640,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-640.avif",
+      "bytes": 19577
+    },
+    {
+      "width": 640,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-640.webp",
+      "bytes": 41584
+    },
+    {
+      "width": 750,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-750.avif",
+      "bytes": 26243
+    },
+    {
+      "width": 750,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-750.webp",
+      "bytes": 55160
+    },
+    {
+      "width": 960,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-960.avif",
+      "bytes": 42634
+    },
+    {
+      "width": 960,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-960.webp",
+      "bytes": 86178
+    },
+    {
+      "width": 1200,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-1200.avif",
+      "bytes": 63102
+    },
+    {
+      "width": 1200,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-1200.webp",
+      "bytes": 129620
+    },
+    {
+      "width": 1376,
+      "format": "avif",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-1376.avif",
+      "bytes": 79583
+    },
+    {
+      "width": 1376,
+      "format": "webp",
+      "crop": "mobile",
+      "path": "/images/home-hero/ac1a8134a5a6/naqada-home-mobile-1376.webp",
+      "bytes": 170854
+    }
+  ]
+}

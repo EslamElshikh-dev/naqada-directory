@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ActionIcon } from '@/components/action-icon';
 import { CategoryVisual } from '@/components/category-visual';
 import { HomeSmartSearch } from '@/components/home-smart-search';
+import { HomeHeroImage } from '@/components/home-hero-image';
 import { DeferredSiteReviews as SiteReviews } from '@/components/deferred-site-reviews';
 import { BrandMark } from '@/components/site-shell';
 import { RoleModelFeature } from '@/components/role-model-feature';
@@ -118,14 +119,7 @@ export default function HomePage() {
           </div>
 
           <aside className={styles.placeCard} aria-label="مشهد تعبيري من مركز نقادة">
-            <Image
-              src="/images/naqada-home.jpg"
-              alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"
-              fill
-              loading="eager"
-              fetchPriority="high"
-              sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 40vw, 480px"
-            />
+            <HomeHeroImage />
             <span className={styles.placeShade} aria-hidden="true" />
             <div className={styles.placeTop}>
               <span className={styles.placeBrand}><BrandMark /></span>
