@@ -28,7 +28,13 @@ for (let index = 0; index < paths.length; index++) {
       await writeFile(file, JSON.stringify(result.lhr));
       reports.push(file);
       const a = result.lhr.audits;
-      const image = a['network-requests'].details.items.find(item => item.url.includes('naqada-home'));
+      const heroRequests = a['network-requests'].details.items.filter(item => item.url.includes('naqada-home'));
+      const image = heroRequests[0];
+      if (index === 0 && process.env.LCP_QA_EXPECT_HERO === 'preencoded') {
+        if (heroRequests.length !== 1 || !image?.url.includes('/images/home-hero/')) {
+          throw Error('Candidate identity failed: expected one pre-encoded hero, received ' + JSON.stringify(heroRequests.map(item => item.url)));
+        }
+      }
       console.log(JSON.stringify({ index, run, url: result.lhr.finalDisplayedUrl,
         scores: Object.fromEntries(Object.entries(result.lhr.categories).map(([key, value]) => [key, value.score * 100])),
         lcp: a['largest-contentful-paint'].numericValue, fcp: a['first-contentful-paint'].numericValue,

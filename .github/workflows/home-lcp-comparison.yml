@@ -55,26 +55,26 @@ jobs:
       - name: Measure baseline with three cold-browser runs per template
         working-directory: baseline
         run: |
-          NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' npm start -- --hostname 127.0.0.1 > /tmp/lcp-baseline.log 2>&1 &
+          NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3001 > /tmp/lcp-baseline.log 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
+            if curl -fsS http://127.0.0.1:3001/ >/dev/null; then break; fi
             sleep 1
           done
-          LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/before node ../candidate/.github/home-lcp-qa.mjs
+          LCP_QA_BASE_URL=http://127.0.0.1:3001 LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/before node ../candidate/.github/home-lcp-qa.mjs
       - name: Build candidate
         run: npm run build
       - name: Measure candidate with the same browser and throttling
         run: |
-          NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' npm start -- --hostname 127.0.0.1 > /tmp/lcp-candidate.log 2>&1 &
+          NAQADA_QA_READ_ONLY=1 NODE_OPTIONS='--import=./.github/qa-readonly-fetch.mjs' node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000 > /tmp/lcp-candidate.log 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
             sleep 1
           done
-          LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/after node .github/home-lcp-qa.mjs
+          LCP_QA_EXPECT_HERO=preencoded LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/after node .github/home-lcp-qa.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
