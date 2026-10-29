@@ -14,9 +14,13 @@ await check('public ISR and dynamic query policies',async()=>{
  for(const path of ['/','/about/','/install/','/coverage/','/updates/','/directory/','/villages/','/villages/'+encodeURIComponent('الخطاره')+'/']){
   await fetch(new URL(path,base)).then(r=>r.arrayBuffer());const t=performance.now();const {r}=await html(path);assert.equal(r.status,200);const cache=r.headers.get('cache-control')||'';assert.ok(!cache.includes('no-store'),path+': '+cache);assert.equal(r.headers.get('x-nextjs-cache'),'HIT',path);documents.push({path,cache,xNextjsCache:r.headers.get('x-nextjs-cache'),localResponseMs:Math.round(performance.now()-t)});
  }
- const query=await html('/directory/?q='+encodeURIComponent('صيدلية'));
- assert.equal(query.r.status,200);assert.match(query.r.headers.get('cache-control')||'',/no-store/);
- assert.match(query.r.headers.get('content-security-policy'),/'strict-dynamic'/);assert.match(query.text,/<script[^>]*nonce="[^"]+"/);
+ for(const path of ['/directory/?q='+encodeURIComponent('صيدلية'),'/directory/?q=','/news/?section=','/jobs/?q=']){
+  const query=await html(path),policy=query.r.headers.get('content-security-policy')||'';
+  assert.equal(query.r.status,200);assert.match(query.r.headers.get('cache-control')||'',/no-store/);
+  assert.match(policy,/'strict-dynamic'/);const nonce=policy.match(/'nonce-([^']+)'/)?.[1];assert.ok(nonce);
+  const scripts=[...query.text.matchAll(/<script\b[^>]*>/g)].map(x=>x[0]).filter(x=>!x.includes('application/ld+json'));
+  assert.ok(scripts.length);assert.ok(scripts.every(x=>x.includes('nonce="'+nonce+'"')),path+': a cached script missed the request nonce');
+ }
  for(const path of ['/api/news/','/api/jobs/']){const {r}=await html(path);assert.equal(r.status,200);assert.match(r.headers.get('cache-control')||'',/s-maxage=300/);}
  // NextRequest canonicalizes numeric loopback hosts to localhost in request.url.
  const localOrigin=new URL(base);if(localOrigin.hostname==='127.0.0.1')localOrigin.hostname='localhost';
