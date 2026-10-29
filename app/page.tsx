@@ -11,7 +11,7 @@ import { HomeSmartSearch } from '@/components/home-smart-search';
 import { HomeHeroImage } from '@/components/home-hero-image';
 import { DeferredSiteReviews as SiteReviews } from '@/components/deferred-site-reviews';
 import { BrandMark } from '@/components/brand-mark';
-import { DeferredRoleModelFeature as RoleModelFeature } from '@/components/widget-placeholders';
+import { DeferredRoleModelFeature as RoleModelFeature } from '@/components/role-model-feature-placeholder';
 import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landings';
 import { localities, meta, officialLocalities } from '@/lib/data';
 import { getPublicEditorialPosts, getPublicRoleModels } from '@/lib/article-content';
