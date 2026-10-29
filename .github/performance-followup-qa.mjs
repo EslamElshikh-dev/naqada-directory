@@ -34,7 +34,7 @@ await check('factual business geo, hours, ratings, site search and contact schem
  const records=(await Promise.all((await readdir('data')).filter(x=>/^businesses-.*\.json$/.test(x)).map(x=>readFile('data/'+x,'utf8').then(JSON.parse)))).flat();
  const row=records.find(x=>pins[x.placeId]&&/24|٢٤|طوال اليوم/.test(x.hours||''));assert.ok(row);listing='/listing/'+encodeURIComponent(row.slug)+'/';
  const page=await html(listing);assert.equal(page.r.status,200);const entity=schemas(page.text).find(x=>x.geo);assert.ok(entity);assert.equal(entity.geo.latitude,pins[row.placeId].latitude);assert.equal(entity.geo.longitude,pins[row.placeId].longitude);assert.equal(entity.openingHoursSpecification[0].opens,'00:00');assert.equal(entity.openingHoursSpecification[0].closes,'23:59');
- if(entity.aggregateRating)assert.ok(entity.aggregateRating.reviewCount>0);
+ if(entity.aggregateRating)assert.ok(entity.aggregateRating.ratingCount>0);
  const site=schemas(home.text);assert.ok(site.find(x=>x['@type']==='WebSite').potentialAction.target.urlTemplate.endsWith('/directory/?q={search_term_string}'));const org=site.find(x=>x['@type']==='Organization');assert.ok(org.contactPoint.url);assert.ok(org.sameAs.length);
  return {path:listing,entity,verifiedPins:Object.keys(pins).length,officialRichResultsTest:'Not run: unpublished local URL'};
 });

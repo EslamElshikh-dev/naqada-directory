@@ -1,6 +1,7 @@
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import '@/app/route-styles/listing-slug.css';
-import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import { directoryAggregateRating, fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import { getListingRatingSummary } from '@/lib/listing-rating-summary';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -55,6 +56,7 @@ export default async function ListingPage({ params }: Props) {
   const listing = await getEffectiveBusiness(slug);
   if (!listing) notFound();
   if (listing.id.startsWith('owner:')) permanentRedirect(`/activity/${listing.id.slice(6)}/`);
+  const ratingSummary = await getListingRatingSummary(listing.slug);
   const media = getBusinessMedia(listing.id);
   const ownerPhotoPaths = listing.ownerPhotoPaths || [];
   const locality = canonicalLocalityName(listing.locality);
@@ -118,7 +120,7 @@ export default async function ListingPage({ params }: Props) {
         telephone: phone || undefined,
         openingHoursSpecification: fullTimeHours(listing.hours),
         geo: listing.latitude !== undefined && listing.longitude !== undefined ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude } : verifiedMapCoordinates(listing.mapsUrl),
-        aggregateRating: listing.reviews && listing.reviews > 0 && listing.rating && listing.rating >= 1 && listing.rating <= 5 ? { '@type': 'AggregateRating', ratingValue: listing.rating, reviewCount: listing.reviews } : undefined,
+        aggregateRating: directoryAggregateRating(ratingSummary),
         address: {
           '@type': 'PostalAddress',
           streetAddress: listing.address || undefined,

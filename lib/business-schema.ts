@@ -1,6 +1,12 @@
 import pins from '@/data/business-geo.json';
 import { isActivityMapUrl } from './activity-map';
 
+/** Direct user votes collected by the directory, never imported Maps stars. */
+export function directoryAggregateRating(summary?: {count:number;average:number}|null) {
+  if (!summary || !Number.isInteger(summary.count) || summary.count<=0 || !Number.isFinite(summary.average) || summary.average<1 || summary.average>5) return undefined;
+  return {'@type':'AggregateRating',ratingValue:summary.average,ratingCount:summary.count,bestRating:5,worstRating:1};
+}
+
 /** Only explicit all-day hours are machine readable; free text stays on the page. */
 export function fullTimeHours(value?: string | null) {
   if (!value || !/^(?:(?:مفتوح\s*)?(?:24|٢٤)\s*(?:ساعة|ساعه)(?:\s*يومي[ًاا]*)?|طوال اليوم|على مدار الساعة)[.۔\s]*$/.test(value.trim())) return undefined;

@@ -105,3 +105,10 @@ test('source edits invalidate the public-copy review without changing the owner 
   assert.equal(row.name,item.before.name);
   assert.equal(copy.publicOwnerCopy({...row,description:row.description+' تعديل'}).copy_reviewed_at,undefined);
 });
+
+test('aggregate ratings require direct user votes and omit zero, failed or invalid summaries', () => {
+  for(const value of [null,undefined,{count:0,average:0},{count:-1,average:5},{count:1,average:6},{count:1.5,average:4}])assert.equal(schema.directoryAggregateRating(value),undefined);
+  const rating=schema.directoryAggregateRating({count:1,average:5});
+  assert.equal(rating.ratingCount,1);assert.equal(rating.ratingValue,5);
+  assert.equal(rating.reviewCount,undefined,'A star vote is not a written review');
+});

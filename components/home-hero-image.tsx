@@ -13,7 +13,7 @@ export function HomeHeroImage() {
   const { props: fallback } = getImageProps({
     src: '/images/naqada-home.jpg',
     alt: 'مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا',
-    fill: true, loading: 'eager', fetchPriority: 'high', sizes,
+    fill: true, decoding: 'sync', loading: 'eager', fetchPriority: 'high', sizes,
   });
   return (
     <>
