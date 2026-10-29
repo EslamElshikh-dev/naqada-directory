@@ -17,7 +17,9 @@ try {
     await context.route('https://connect.facebook.net/**', route => route.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
     for (const path of paths) {
       const page = await context.newPage();
-      const response = await page.goto(new URL(path, base).href, { waitUntil: 'networkidle' });
+      const response = await page.goto(new URL(path, base).href, { waitUntil: 'domcontentloaded' });
+      // Background news/account requests are unrelated to typography readiness.
+      await page.locator('main h1').waitFor();
       await page.evaluate(() => document.fonts.ready);
       const result = await page.evaluate(() => {
         const texts = [...document.querySelectorAll('body *')].filter(element => {
