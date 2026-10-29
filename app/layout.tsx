@@ -1,3 +1,4 @@
+import integrity from '@/data/script-integrity.json';
 import { organizationLinks } from '@/lib/organization';
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
