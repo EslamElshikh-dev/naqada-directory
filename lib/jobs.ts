@@ -1,6 +1,6 @@
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { cache } from 'react';
-import { connection } from 'next/server';
+import { unstable_cache } from 'next/cache';
 import { PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 
 export type LocalJob = {
@@ -40,13 +40,12 @@ async function loadJobs(signal: AbortSignal): Promise<{ jobs: LocalJob[]; state:
   return { jobs, state };
 }
 
-const requestJobs = cache(() => loadJobs(AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)));
+const requestJobs = cache(unstable_cache(() => loadJobs(AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)), ['public-jobs-v2'], { revalidate: 3600, tags: ['naqada-public-content'] }));
 
 export async function getJobs(signal?: AbortSignal): Promise<{ jobs: LocalJob[]; state: JobFeedState | null; available: boolean }> {
-  await connection();
   try {
     const data = await (signal ? loadJobs(AbortSignal.any([signal, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)])) : requestJobs());
-    // Visibility and expiry are read fresh; only duplicate calls in one render share data.
+    // Expiry is checked on every call; failed source reads never become a cached empty board.
     return { ...data, jobs: data.jobs.filter((job) => Date.parse(job.expires_at) > Date.now()), available: true };
   } catch {
     return { jobs: [], state: null, available: false };

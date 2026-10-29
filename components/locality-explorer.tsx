@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import type { LocalityPage } from '@/lib/types';
 import { normalizeArabic } from '@/lib/site';
-import { BrandMark } from './site-shell';
+import { BrandMark } from './brand-mark';
 
 export function LocalityExplorer({ localities }: { localities: LocalityPage[] }) {
   const [query, setQuery] = useState('');

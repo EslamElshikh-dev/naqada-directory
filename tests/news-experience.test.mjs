@@ -4,7 +4,7 @@ import test from 'node:test';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const newsLibrary = read('lib/news.ts');
-const newsPage = read('app/news/page.tsx');
+const newsPage = read('app/news/public-document.tsx');
 const storyPage = read('app/news/[id]/page.tsx');
 const newsApi = read('app/api/news/route.ts');
 const ticker = read('components/updates-ticker.tsx');
@@ -37,7 +37,7 @@ test('news sources are fetched concurrently and cached at the server boundary', 
   assert.ok(newsLibrary.includes('Promise.allSettled(NEWS_FEEDS.map(fetchFeed))'));
   assert.ok(newsLibrary.includes('next: { revalidate }'));
   assert.ok(newsLibrary.includes('FEED_REVALIDATE_SECONDS = 15 * 60'));
-  assert.ok(newsApi.includes("'Cache-Control': 'no-store'"));
+  assert.ok(newsApi.includes("'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600'"));
 });
 
 test('external article and image URLs are constrained to known secure publishers', () => {

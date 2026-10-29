@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { Business } from './types';
+import { canonicalLocalityName } from './locality-name';
 
 const configuredOrigin = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SITE_URL : undefined;
 const siteOrigin = configuredOrigin ? new URL(configuredOrigin).origin : 'https://naqada-directory.vercel.app';
@@ -190,10 +191,15 @@ export function cleanPhone(phone: string | null) {
   return value || null;
 }
 
+export function localityContext(value?: string | null, separator = ' ضمن ') {
+  const name = canonicalLocalityName(value);
+  return /^مركز نقاد[ةه]$/u.test(name) ? 'مركز نقادة' : `${name}${separator}مركز نقادة`;
+}
+
 export function businessSummary(listing: Pick<Business, 'name' | 'category' | 'subcategory' | 'locality' | 'address' | 'phone' | 'mapsUrl' | 'checked'>) {
-  const locality = listing.locality?.split('/')[0]?.trim() || 'مركز نقادة';
+  const locality = localityContext(listing.locality);
   const kind = listing.subcategory || listing.category;
-  const location = listing.address || `${locality}، مركز نقادة، محافظة قنا`;
+  const location = listing.address || `${localityContext(listing.locality, '، ')}، محافظة قنا`;
   const access = listing.phone && listing.mapsUrl
     ? 'تتوفر في الصفحة وسيلة اتصال ورابط مباشر للخريطة.'
     : listing.phone
@@ -202,7 +208,7 @@ export function businessSummary(listing: Pick<Business, 'name' | 'category' | 's
         ? 'يتوفر في الصفحة رابط مباشر لمراجعة الموقع على الخريطة.'
         : 'تعرض الصفحة بيانات السجل المنشورة في الدليل.';
   const review = listing.checked ? ` آخر مراجعة للبيانات: ${formatDate(listing.checked)}.` : '';
-  return `${listing.name} — ${kind} في ${locality} ضمن مركز نقادة بمحافظة قنا. العنوان المنشور: ${location}. ${access}${review}`;
+  return `${listing.name} — ${kind} في ${locality} بمحافظة قنا. العنوان المنشور: ${location}. ${access}${review}`;
 }
 
 export function truncateMetaDescription(value: string, maxLength = 155) {

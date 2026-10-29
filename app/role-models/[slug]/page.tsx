@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/role-models-slug.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -8,7 +9,7 @@ import { readArticleDocument } from '@/lib/article-document';
 import { RoleModelStory } from './story-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -58,3 +59,5 @@ export default async function RoleModelArticle({ params }: Props) {
   if (!person) notFound();
   return <RoleModelStory person={person} />;
 }
+
+export async function generateStaticParams() { return (await getPublicRoleModels()).map(item => ({ slug: item.slug })); }

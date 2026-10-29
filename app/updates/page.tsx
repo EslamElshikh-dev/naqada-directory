@@ -1,9 +1,10 @@
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import '@/app/route-styles/updates.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ListingCard } from '@/components/listing-card';
-import { businesses, canonicalLocalityName, meta } from '@/lib/data';
+import { canonicalLocalityName, meta } from '@/lib/data';
 import { formatDate, jsonLdStringify, siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/updates' },
 };
 
-export default function UpdatesPage() {
+export default async function UpdatesPage() {
+  const { businesses } = await getPublicBusinessCatalog();
   const recent = [...businesses]
     .filter((item) => Boolean(item.checked))
     .sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0))
@@ -90,4 +92,4 @@ export default function UpdatesPage() {
   );
 }
 
-export const revalidate = 60;
+export const revalidate = 3600;

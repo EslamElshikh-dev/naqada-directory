@@ -81,7 +81,7 @@
 .chapterNavLabel i { color: var(--text-on-dark-accent); font-size: var(--fs-xs); font-style: normal; }
 .chapterNavLinks { display: flex; align-items: center; justify-content: space-between; gap: clamp(4px, 1vw, 14px); width: 100%; min-width: 0; }
 .chapterNavLinks a { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--text-body); text-decoration: none; font-size: var(--fs-xs); font-weight: 700; white-space: nowrap; transition: color .24s ease, background .24s ease, border-color .24s ease; }
-.chapterNavLinks a small { color: var(--text-accent); font: 800 .67rem Arial, sans-serif; }
+.chapterNavLinks a small { color: var(--text-accent); font: 600 .67rem Arial, sans-serif; }
 .chapterNavLinks a:hover, .chapterNavLinks a:focus-visible { border-color: #e1d2ab; background: #f3eddd; }
 .chapterNavLinks a[aria-current='location'] { border-color: #c4d4c0; background: #e7f0e8; color: var(--text-strong); }
 .chapterNavLinks a[aria-current='location'] small { color: var(--text-link); }
@@ -125,7 +125,7 @@
 .recognition { display: grid; grid-template-columns: minmax(165px, .43fr) minmax(0, 1fr); max-width: 820px; margin-top: 47px; overflow: hidden; border: 1px solid #d8c594; border-radius: 23px; background: #fffdf7; box-shadow: 0 25px 60px #21402d14; }
 .recognitionNumber { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 32px 30px; background: radial-gradient(circle at 5% 90%, #2b7355, transparent 55%), #123f32; color: var(--text-on-dark-muted); }
 .recognitionNumber span { font-size: var(--fs-xs); font-weight: 700; line-height: 1.55; }
-.recognitionNumber strong { color: var(--text-on-dark-accent); font: 800 clamp(3.6rem, 7vw, 5.5rem)/1.15 Arial, sans-serif; }
+.recognitionNumber strong { color: var(--text-on-dark-accent); font: 600 clamp(3.6rem, 7vw, 5.5rem)/1.15 Arial, sans-serif; }
 .recognitionCopy { align-self: center; padding: 30px clamp(22px, 4vw, 42px); }
 .recognitionCopy .recognitionEyebrow { margin: 0 0 9px; color: var(--text-accent); font-size: var(--fs-xs); font-weight: 700; }
 .recognitionCopy p:last-child { margin: 0; color: var(--text-body); font-size: var(--fs-base); line-height: 2; }

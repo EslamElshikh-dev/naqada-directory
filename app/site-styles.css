@@ -7190,7 +7190,7 @@ body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even) {
 body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even)::before {
   content: '←';
   color: var(--text-muted);
-  font: 800 .65rem/1 sans-serif;
+  font: 600 .65rem/1 sans-serif;
 }
 
 body.encyclopedia-ui nav.breadcrumbs > :last-child {
@@ -7246,8 +7246,8 @@ body.encyclopedia-ui nav.breadcrumbs > :first-child:not(a) { color: var(--text-o
   --ink:var(--text-strong);
   --muted:var(--text-muted);
 }
-/* Explicit family keeps local font naming consistent between both Next bundlers. */
-html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
+/* Keep the public family aliases and Next's metric-adjusted fallback stack. */
+html[data-body-font] { --font-display:'Noto Kufi Arabic',var(--font-display-fallback),sans-serif; --font-plex:'IBM Plex Sans Arabic',var(--font-plex-fallback); --font-readex:'Readex Pro',var(--font-readex-fallback); }
 html[data-body-font='plex'] { --font-body:var(--font-plex); }
 html[data-body-font='readex'] { --font-body:var(--font-readex); }
 body, body.encyclopedia-ui {
@@ -7270,7 +7270,7 @@ h2 { font-size:var(--fs-2xl); }
 h3 { font-size:var(--fs-xl); }
 h4 { font-size:var(--fs-lg); }
 p { text-wrap:pretty; }
-b,strong { font-weight:700; }
+b,strong { font-weight:600; }
 small { font-size:var(--fs-xs); }
 table,time,[data-counter] { font-variant-numeric:tabular-nums; }
 :where(.article-prose,.article-body,.knowledge-copy,.village-article) {

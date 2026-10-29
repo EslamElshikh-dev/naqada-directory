@@ -53,7 +53,7 @@
 .livePanelHead { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 36px; }
 .livePanelHead span { display: inline-flex; align-items: center; gap: 8px; color: var(--text-on-dark-muted); font-size: var(--fs-xs); font-weight: 700; }
 .livePanelHead span i { width: 7px; height: 7px; border-radius: 50%; background: #71d49c; box-shadow: 0 0 0 5px rgba(113,212,156,.1); }
-.livePanelHead > b { padding: 5px 8px; border: 1px solid rgba(239,202,115,.17); border-radius: 999px; background: rgba(239,202,115,.08); color: var(--text-on-dark-accent); font: 800 .57rem/1 sans-serif; letter-spacing: normal; }
+.livePanelHead > b { padding: 5px 8px; border: 1px solid rgba(239,202,115,.17); border-radius: 999px; background: rgba(239,202,115,.08); color: var(--text-on-dark-accent); font: 600 .57rem/1 sans-serif; letter-spacing: normal; }
 .livePanel > strong { display: block; color: var(--text-on-dark); font-size: var(--fs-lg); line-height: 1.7; }
 .livePanel > p { margin: 6px 0 28px; color: var(--text-on-dark-muted); font-size: var(--fs-xs); line-height: 1.9; }
 .livePanelFoot { display: flex; justify-content: space-between; gap: 12px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,.09); color: var(--text-on-dark-muted); font-size: var(--fs-xs); font-weight: 700; }
@@ -113,7 +113,7 @@
 .sourceButton { min-height: 48px; padding: 10px 17px; background: #113f32; color: var(--text-on-dark); font-size: var(--fs-xs); box-shadow: 0 9px 22px rgba(17,63,50,.15); }
 .sourceButtonCompact { min-height: 38px; padding: 7px 10px; background: #e6f0eb; color: var(--text-body); font-size: var(--fs-xs); }
 .sourceButton:hover,.sourceButtonCompact:hover { transform: translateY(-2px); background: #a56e2d; color: var(--text-on-dark); }
-.sourceButton b,.sourceButtonCompact b { font: 800 .86rem/1 sans-serif; }
+.sourceButton b,.sourceButtonCompact b { font: 600 .86rem/1 sans-serif; }
 
 .grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
 .card { min-width: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(18,64,50,.11); border-radius: 23px 23px 8px 23px; background: #fffef9; box-shadow: 0 10px 30px rgba(17,50,40,.045); transition: transform .24s ease,box-shadow .24s ease,border-color .24s ease; content-visibility: auto; contain-intrinsic-size: 570px; }
@@ -139,11 +139,11 @@
 .sourceGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
 .sourceGrid > a { min-width: 0; min-height: 82px; display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid rgba(23,74,57,.1); border-radius: 17px 17px 6px 17px; background: rgba(255,255,255,.69); transition: transform .2s ease,background .2s ease,border-color .2s ease; }
 .sourceGrid > a:hover { transform: translateY(-2px); border-color: rgba(156,104,42,.25); background: #fff; }
-.sourceGrid > a > span { color: var(--text-accent); font: 800 .62rem/1 sans-serif; }
+.sourceGrid > a > span { color: var(--text-accent); font: 600 .62rem/1 sans-serif; }
 .sourceGrid div { min-width: 0; display: grid; gap: 3px; }
 .sourceGrid strong { overflow: hidden; color: var(--text-strong); font-size: var(--fs-xs); text-overflow: ellipsis; white-space: nowrap; }
 .sourceGrid small { color: var(--text-muted); font-size: var(--fs-xs); }
-.sourceGrid > a > b { color: var(--text-link); font: 800 .9rem/1 sans-serif; }
+.sourceGrid > a > b { color: var(--text-link); font: 600 .9rem/1 sans-serif; }
 
 @media (prefers-reduced-motion:no-preference) {
   .kicker i,.livePanelHead span i { animation: livePulse 2.4s ease-in-out infinite; }

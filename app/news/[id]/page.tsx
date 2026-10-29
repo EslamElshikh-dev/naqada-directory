@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/news-id.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
@@ -10,7 +11,7 @@ import { jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
 import { NewsShare } from './news-share';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 export const maxDuration = 30;
 
 type StoryPageProps = { params: Promise<{ id: string }> };
@@ -197,3 +198,5 @@ export default async function NewsStoryPage({ params }: StoryPageProps) {
     </main>
   );
 }
+
+export function generateStaticParams() { return []; }

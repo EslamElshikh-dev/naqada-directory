@@ -20,7 +20,7 @@
   .copy h1 { margin-bottom: 7px; }
   .eyebrow { display: none; }
   .copy p { font-size: var(--fs-sm); line-height: 1.8; }
-  .metrics { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; }
+  .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; margin-top: 14px; }
   .metrics div { flex-direction: row-reverse; align-items: baseline; gap: 5px; }
-  .metrics dd { font-size: var(--fs-lg); }
+  .metrics dd { font-size: var(--fs-lg); line-height: 1.5; }
 }

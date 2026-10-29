@@ -1,7 +1,7 @@
 import '@/app/route-styles/account-register.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BrandMark } from '@/components/site-shell';
+import { BrandMark } from '@/components/brand-mark';
 import { RegisterForm } from '@/components/auth/auth-forms';
 
 export const metadata: Metadata = { title: 'إنشاء حساب عضو', robots: { index: false, follow: false } };

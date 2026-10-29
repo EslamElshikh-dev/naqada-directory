@@ -4,12 +4,26 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 const nextConfig: NextConfig = {
   trailingSlash: true,
   poweredByHeader: false,
+  async headers() {
+    return [{
+      // The generator versions this path from the photograph and encoding settings.
+      source: '/images/home-hero/:version/:file',
+      headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+    }];
+  },
   experimental: {
     globalNotFound: true,
     // Ephemeral QA filesystems can opt out without changing the hosted build default.
     turbopackFileSystemCacheForBuild: process.env.NAQADA_DISABLE_BUILD_CACHE !== '1',
     // Share styles by route instead of pulling unrelated component styles into large common chunks.
-    cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 1000 },
+    cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 20000 },
+  },
+  async rewrites() {
+    return { beforeFiles: [
+      ...['q','category','locality','sort','page'].map(key => ({ source: '/directory/', has: [{ type: 'query' as const, key }], destination: '/directory-query/' })),
+      { source: '/news/', has: [{ type: 'query' as const, key: 'section' }], destination: '/news-query/' },
+      ...['q','view'].map(key => ({ source: '/jobs/', has: [{ type: 'query' as const, key }], destination: '/jobs-query/' })),
+    ], afterFiles: [], fallback: [] };
   },
   images: {
     formats: ['image/avif', 'image/webp'],

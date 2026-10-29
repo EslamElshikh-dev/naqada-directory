@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { resolveSession } from '@/lib/auth/session';
 import { isDirectoryAdmin } from '@/lib/auth/admin';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
-import { businessCompleteness } from '@/lib/data-quality';
+import { businessCompleteness, possibleBusinessDuplicates } from '@/lib/data-quality';
 import { publicBusinessHref } from '@/lib/business-links';
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'اكتمال بيانات الأنشطة', robots: { index: false, follow: false } };
@@ -14,9 +14,13 @@ export default async function DataQuality() {
   if (!session || !(await isDirectoryAdmin(session.accessToken))) redirect('/account');
   const catalog = await getPublicBusinessCatalog();
   const rows = catalog.businesses.map(businessCompleteness).sort((a,b) => a.score - b.score || a.item.name.localeCompare(b.item.name, 'ar'));
+  const candidates = possibleBusinessDuplicates(catalog.businesses);
   return <main id="main-content" className="shell page-main"><h1>اكتمال بيانات الأنشطة المنشورة</h1>
     <p>نسبة اكتمال خمسة حقول، وليست توثيقًا لصحة النشاط. صور التصنيفات التوضيحية لا تُحسب صورًا للنشاط. ابدأ بالسجلات الأقل اكتمالًا وراجع المصدر قبل التعديل.</p>
     <div style={{ overflowX: 'auto' }}><table><caption>الهاتف والمواعيد والعنوان والصورة والخريطة</caption><thead><tr><th scope="col">النشاط</th><th scope="col">الاكتمال</th><th scope="col">الحقول الناقصة</th></tr></thead><tbody>
       {rows.map(row => <tr key={row.item.id}><th scope="row"><Link prefetch={false} href={publicBusinessHref(row.item)}>{row.item.name}</Link></th><td>{row.score}%</td><td>{row.missing.join('، ') || 'مكتمل'}</td></tr>)}
-    </tbody></table></div></main>;
+    </tbody></table></div>
+    <section aria-labelledby="duplicate-review-title"><h2 id="duplicate-review-title">تشابه يحتاج مراجعة</h2><p>مقارنة الاسم والقرية والهاتف ووصف الخدمة. تشابه البيانات لا يثبت أن السجلين لنشاط واحد؛ لا يحدث دمج أو حذف تلقائي.</p>
+      <ul>{candidates.map(pair=><li key={pair.first.id+'-'+pair.second.id}><Link prefetch={false} href={publicBusinessHref(pair.first)}>{pair.first.name}</Link> — <Link prefetch={false} href={publicBusinessHref(pair.second)}>{pair.second.name}</Link>، {pair.first.locality}: {pair.reasons.join('، ')}</li>)}</ul>
+    </section></main>;
 }

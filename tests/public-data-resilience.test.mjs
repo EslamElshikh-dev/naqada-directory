@@ -38,7 +38,7 @@ function cacheHarness() {
   return { nextCache, publicCache, registrations, invalidations };
 }
 
-test('withdrawable public reads are fresh across requests and authenticated reads remain separate', async () => {
+test('anonymous reads share the tagged cache while authenticated reads remain separate', async () => {
   const cache = cacheHarness();
   const calls = [];
   const moderator = load('../lib/auth/moderator.ts', {
@@ -47,18 +47,20 @@ test('withdrawable public reads are fresh across requests and authenticated read
   }, { fetch: async (url, init) => { calls.push({ url, ...init }); return Response.json([]); } });
   await moderator.getPublicCurated('business');
   await moderator.getPublicCurated('business');
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 1);
   assert.equal(calls[0].cache, 'no-store');
   assert.equal(calls[0].headers.Authorization, 'Bearer public');
   assert.ok(calls[0].signal instanceof AbortSignal);
   await moderator.getPublicCurated('news');
-  assert.equal(calls.length, 3);
+  assert.equal(calls.length, 2);
   await moderator.getEditorContent('editor-a');
   await moderator.getEditorContent('editor-b');
-  assert.equal(calls.length, 5);
-  assert.equal(calls[3].headers.Authorization, 'Bearer editor-a');
-  assert.equal(calls[4].headers.Authorization, 'Bearer editor-b');
-  assert.equal(cache.registrations.length, 0);
+  assert.equal(calls.length, 4);
+  assert.equal(calls[2].headers.Authorization, 'Bearer editor-a');
+  assert.equal(calls[3].headers.Authorization, 'Bearer editor-b');
+  assert.equal(cache.registrations.length, 4);
+  assert.ok(cache.registrations.every(item => item.options.tags.includes('naqada-public-content')));
+  assert.ok(cache.registrations.some(item => item.options.revalidate === 86400));
 });
 
 test('a successful moderation decision expires old public rows without serving the old visible record', async () => {
@@ -86,7 +88,7 @@ test('failed public reads are not cached as empty catalogs and can recover on th
   const owners = load('../lib/owner-listings.ts', {
     'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
     '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({ Authorization: 'Bearer public' }) },
-    '@/lib/owner-listing-photo': {},
+    '@/lib/owner-listing-photo': {}, '@/lib/owner-listing-copy': { publicOwnerCopy: row => row },
   }, { fetch: async (url, init) => {
     calls++;
     assert.match(url, /status=eq\.published/);
@@ -99,7 +101,7 @@ test('failed public reads are not cached as empty catalogs and can recover on th
   assert.equal(calls, 3);
 });
 
-test('job visibility and expiry are checked again on each request', async () => {
+test('job expiry is checked on each read even while the shared source is cached', async () => {
   const cache = cacheHarness();
   let now = Date.parse('2026-10-13T03:00:00Z');
   let calls = 0;
@@ -115,8 +117,8 @@ test('job visibility and expiry are checked again on each request', async () => 
   assert.equal((await jobs.getJobs()).jobs.length, 1);
   now += 20_000;
   assert.equal((await jobs.getJobs()).jobs.length, 0);
-  assert.equal(calls, 6);
-  assert.equal(cache.registrations.length, 0);
+  assert.equal(calls, 3);
+  assert.equal(cache.registrations.length, 1);
 });
 
 test('cancelled job reads preserve the unavailable state and do not populate the shared cache', async () => {
@@ -165,7 +167,7 @@ test('owner reads retry a timeout once with a fresh signal and retain published-
   const owners = load('../lib/owner-listings.ts', {
     'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
     '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
-    '@/lib/owner-listing-photo': {},
+    '@/lib/owner-listing-photo': {}, '@/lib/owner-listing-copy': { publicOwnerCopy: row => row },
   }, { fetch: async (url, init) => {
     assert.match(url, /status=eq\.published/);
     signals.push(init.signal);
@@ -184,7 +186,7 @@ test('owner permission failures are neither retried nor cached as empty results'
   const owners = load('../lib/owner-listings.ts', {
     'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
     '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
-    '@/lib/owner-listing-photo': {},
+    '@/lib/owner-listing-photo': {}, '@/lib/owner-listing-copy': { publicOwnerCopy: row => row },
   }, { fetch: async () => { calls++; return new Response(null, { status: 403 }); } });
   await assert.rejects(owners.getPublishedOwnerListings(), /PUBLIC_ACTIVITIES_UNAVAILABLE/);
   assert.equal(calls, 1);
@@ -192,24 +194,24 @@ test('owner permission failures are neither retried nor cached as empty results'
   assert.equal(calls, 2);
 });
 
-test('an older owner read finishing after withdrawal cannot repopulate later requests', async () => {
+test('invalidation separates a new withdrawal read from an earlier cached public snapshot', async () => {
   const cache = cacheHarness();
   let hidden = false, release, startedRead;
   const started = new Promise(resolve => { startedRead = resolve; });
   const owners = load('../lib/owner-listings.ts', {
-    '@/lib/public-content-cache': cache.publicCache,
+    'next/cache': cache.nextCache, '@/lib/public-content-cache': cache.publicCache,
     '@/lib/auth/supabase-rest': { SUPABASE_URL: 'https://data.example', restHeaders: () => ({}) },
-    '@/lib/owner-listing-photo': {},
+    '@/lib/owner-listing-photo': {}, '@/lib/owner-listing-copy': { publicOwnerCopy: row => row },
   }, { fetch: async () => {
     if (!hidden) return new Promise(resolve => { release = () => resolve(Response.json([{ id: 'withdrawn', status: 'published' }])); startedRead(); });
     return Response.json([]);
   } });
   const earlier = owners.getPublishedOwnerListing('withdrawn');
   await started;
-  hidden = true;
+  hidden = true; cache.publicCache.invalidatePublicContent();
   assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
   release();
   assert.equal((await earlier).id, 'withdrawn');
   assert.equal(await owners.getPublishedOwnerListing('withdrawn'), null);
-  assert.equal(cache.registrations.length, 0);
+  assert.equal(cache.registrations.length, 2);
 });

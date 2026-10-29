@@ -16,16 +16,16 @@ function load(path, modules) {
 }
 
 for (const route of ['../app/api/news/route.ts', '../app/api/news/feed/route.ts']) {
-  test(`${route}: hiding a news item is not overridden by a separate CDN response cache`, async () => {
+  test(`${route}: explicit news cache policy is bounded and refreshed data can omit withdrawn items`, async () => {
     let items = [{ id: 'published', title: 'خبر منشور', source: 'المصدر', isOriginal: false }];
     const read = async () => ({ items, checkedAt: '2026-10-13T03:00:00Z', successfulFeeds: 1 });
     const api = load(route, { 'next/server': { NextResponse: Response }, '@/lib/news': { getLatestNews: read, getLiveNews: read } });
     const before = await api.GET();
-    assert.equal(before.headers.get('cache-control'), 'no-store');
+    assert.equal(before.headers.get('cache-control'), route.endsWith('/feed/route.ts') ? 'no-store' : 'public, s-maxage=300, stale-while-revalidate=3600');
     assert.equal((await before.json()).items.length, 1);
     items = [];
     const after = await api.GET();
-    assert.equal(after.headers.get('cache-control'), 'no-store');
+    assert.equal(after.headers.get('cache-control'), route.endsWith('/feed/route.ts') ? 'no-store' : 'public, s-maxage=300, stale-while-revalidate=3600');
     assert.equal((await after.json()).items.length, 0);
   });
 }

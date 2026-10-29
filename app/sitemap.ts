@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/about' },
     { path: '/install' },
   ];
-  const indexableLocalities = localities.filter((item) => item.businessCount > 0 || Boolean(getVillageArticle(item.name)));
+  const indexableLocalities = localities.filter((item) => item.name !== 'مركز نقادة' && (item.businessCount > 0 || Boolean(getVillageArticle(item.name))));
   const indexableActivities = activityLandings.filter((activity) => getBusinessesForActivity(activity).length >= 2);
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();
 
@@ -92,6 +92,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
     ...localCategoryPages.map((item) => ({ url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`), lastModified: item.lastModified })),
     ...businesses.filter((item) => !item.id.startsWith('owner:')).map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
-    ...ownerListings.map((item) => ({ url: sitemapUrl(ownerActivityHref(item)), lastModified: new Date(item.updated_at) })),
+    ...ownerListings.filter(item => item.reviewed_at && item.copy_reviewed_at).map((item) => ({ url: sitemapUrl(ownerActivityHref(item)), lastModified: new Date(item.updated_at) })),
   ];
 }

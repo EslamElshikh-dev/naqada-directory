@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/villages-slug.css';
 import { ShareActions } from '@/components/share-actions';
 import { NUMBER_LOCALE } from '@/lib/format-number';
@@ -5,7 +6,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { DirectoryExplorer } from '@/components/directory-explorer';
-import { BrandMark } from '@/components/site-shell';
+import { BrandMark } from '@/components/brand-mark';
 import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getLocalityBySlug, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { publicBusinessHref } from '@/lib/business-links';
@@ -17,13 +18,14 @@ import knowledgeStyles from './reference.module.css';
 import pageStyles from './village-hero.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const locality = getLocalityBySlug(slug);
   if (!locality) return {};
+  if (locality.name === 'مركز نقادة') return { title: 'قرى مركز نقادة', alternates: { canonical: '/villages/' } };
   const article = getVillageArticle(locality.name);
   const path = `/villages/${locality.slug}`;
   const socialImage = { url: siteConfig.url + '/villages/' + encodeURIComponent(locality.slug) + '/opengraph-image/', alt: locality.name, width: 1200, height: 630, type: 'image/jpeg' };
@@ -47,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocalityPage({ params }: Props) {
   const { slug } = await params;
+  if (['مركز-نقاده','مركز-نقادة'].includes(decodeURIComponent(slug))) permanentRedirect('/villages/');
   const canonicalAlias = getCanonicalLocalitySlugAlias(slug);
   if (canonicalAlias) permanentRedirect(`/villages/${encodeURIComponent(canonicalAlias)}`);
   const locality = getLocalityBySlug(slug);
@@ -297,3 +300,5 @@ export default async function LocalityPage({ params }: Props) {
     </main>
   );
 }
+
+export function generateStaticParams() { return localities.filter(item => item.name !== 'مركز نقادة').map(item => ({ slug: item.slug })); }

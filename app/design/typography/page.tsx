@@ -1,6 +1,7 @@
 import '@/app/route-styles/design-typography.css';
 import type { Metadata } from 'next';
-import { plexFont, readexFont } from '@/app/fonts';
+import { plexFont } from '@/app/fonts';
+import { readexFont } from './readex-font';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { businessSummary, cleanPhone, formatDate } from '@/lib/site';
 import styles from './typography.module.css';

@@ -1,6 +1,8 @@
 'use client';
+import { useEffect } from 'react';
 import { setMarketingConsent, useMarketingConsent } from '@/lib/marketing-consent';
-export function PrivacyPreferences() {
+export function PrivacyPreferences({ initialChoice }: { initialChoice?: 'granted' | 'denied' }) {
+  useEffect(() => { if (initialChoice) setMarketingConsent(initialChoice); }, [initialChoice]);
   const choice = useMarketingConsent();
   return <section className="privacy-preferences" aria-labelledby="marketing-choice-title">
     <h2 id="marketing-choice-title">تفضيلات قياس الإعلانات</h2>

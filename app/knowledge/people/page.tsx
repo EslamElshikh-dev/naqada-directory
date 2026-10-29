@@ -26,3 +26,5 @@ export default function KnowledgePeoplePage() {
     </div>
   </main>;
 }
+
+export const revalidate = 3600;

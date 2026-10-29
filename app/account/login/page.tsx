@@ -1,7 +1,7 @@
 import '@/app/route-styles/account-login.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BrandMark } from '@/components/site-shell';
+import { BrandMark } from '@/components/brand-mark';
 import { LoginForm } from '@/components/auth/auth-forms';
 
 export const metadata: Metadata = { title: 'تسجيل الدخول', robots: { index: false, follow: false } };

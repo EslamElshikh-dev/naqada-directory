@@ -149,7 +149,7 @@
   transition: background .2s ease, color .2s ease;
 }
 
-.control span { font: 800 .68rem/1 sans-serif; letter-spacing: normal; }
+.control span { font: 600 .68rem/1 sans-serif; letter-spacing: normal; }
 .control:hover, .control:focus-visible { background: rgba(239, 203, 121, .12); color: var(--text-on-dark-accent); }
 .control:focus-visible { outline: 2px solid #f0c66d; outline-offset: -4px; }
 

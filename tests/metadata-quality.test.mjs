@@ -69,9 +69,46 @@ test('business schema omits unstructured hours and map viewports', () => {
   assert.equal(schema.fullTimeHours('ليس 24 ساعة'), undefined);
   assert.equal(schema.fullTimeHours('24 ساعة عدا الجمعة'), undefined);
   assert.equal(schema.fullTimeHours('24 ساعة')[0].opens, '00:00');
+  assert.equal(schema.fullTimeHours('مفتوح 24 ساعة يوميًا')[0].closes, '23:59');
   assert.equal(schema.verifiedMapCoordinates('https://www.google.com/maps/@25.9,32.7,15z'), undefined);
   assert.equal(schema.verifiedMapCoordinates('https://example.com/maps?q=25,32'), undefined);
   assert.equal(schema.verifiedMapCoordinates('https://maps.google.com/?q=95,32'), undefined);
   const pin = schema.verifiedMapCoordinates('https://www.google.com/maps/search/?api=1&query=25.9,32.7');
   assert.equal(pin.latitude, 25.9);assert.equal(pin.longitude, 32.7);
+});
+
+test('reviewed activity slugs redirect legacy ids once and never invent identity', () => {
+  const id='121fb926-58e2-4433-b740-b0321c4ecc3d';
+  const href=paths.ownerActivityHref({id});
+  assert.equal(paths.reviewedActivityRedirect(id),href);
+  assert.equal(paths.reviewedActivityRedirect('old-name-'+id),href);
+  assert.equal(paths.reviewedActivityRedirect(href.split('/')[2]),null);
+  assert.equal(paths.ownerActivityId('%2F'+id),null);
+  assert.equal(paths.reviewedActivityRedirect('00000000-0000-4000-8000-000000000001'),null);
+});
+
+test('place schema uses an exact verified pin and omits unresolved place ids', () => {
+  const pins=JSON.parse(readFileSync(new URL('../data/business-geo.json',import.meta.url)));
+  assert.equal(Object.keys(pins).length,262);
+  const [placeId,pin]=Object.entries(pins)[0];
+  const geo=schema.verifiedMapCoordinates('https://www.google.com/maps/search/?api=1&query=test&query_place_id='+placeId);
+  assert.equal(geo.latitude,pin.latitude);assert.equal(geo.longitude,pin.longitude);
+  assert.equal(schema.verifiedMapCoordinates('https://www.google.com/maps/search/?api=1&query=test&query_place_id=ChIJ9R8oMB1ISRQR9B3Gbpmd7M'),undefined);
+});
+
+test('source edits invalidate the public-copy review without changing the owner submission', () => {
+  const copy=loadModule('./lib/owner-listing-copy');
+  const review=JSON.parse(readFileSync(new URL('../data/owner-copy-review.json',import.meta.url)));
+  const item=review.items[0],row={id:item.id,...item.before};
+  const display=copy.publicOwnerCopy(row);
+  assert.equal(display.name,item.after.name);assert.ok(display.copy_reviewed_at);
+  assert.equal(row.name,item.before.name);
+  assert.equal(copy.publicOwnerCopy({...row,description:row.description+' تعديل'}).copy_reviewed_at,undefined);
+});
+
+test('aggregate ratings require direct user votes and omit zero, failed or invalid summaries', () => {
+  for(const value of [null,undefined,{count:0,average:0},{count:-1,average:5},{count:1,average:6},{count:1.5,average:4}])assert.equal(schema.directoryAggregateRating(value),undefined);
+  const rating=schema.directoryAggregateRating({count:1,average:5});
+  assert.equal(rating.ratingCount,1);assert.equal(rating.ratingValue,5);
+  assert.equal(rating.reviewCount,undefined,'A star vote is not a written review');
 });

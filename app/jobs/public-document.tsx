@@ -1,0 +1,77 @@
+import '@/app/route-styles/jobs.css';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { localities } from '@/lib/data';
+import { getJobs } from '@/lib/jobs';
+import { LOCAL_PLACES, LUXOR_PLACES } from '@/supabase/functions/naqada-jobs/places';
+import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
+import { JobsBoard } from './jobs-board';
+import styles from './jobs.module.css';
+
+const jobsSocialImage = new URL('/images/social/naqada-jobs-share-2026.jpg', siteConfig.url).toString();
+
+export const metadata: Metadata = {
+  title: 'وظائف نقادة وقنا والأقصر وقراها | فرص عمل وباحثون عن وظيفة',
+  description: 'فرص عمل في نقادة وقراها، ومحافظتي قنا والأقصر بمراكزها وقراها مع مكان الوظيفة ورابط التقديم. أضف وظيفة أو اعرض خبراتك للبحث عن شغل.',
+  alternates: { canonical: '/jobs' },
+  openGraph: {
+    title: 'وظائف نقادة وقنا والأقصر | دليل نقادة',
+    description: 'دوّر على فرصة عمل قريبة، أو اعرض وظيفة وخبرتك في نقادة وقنا والأقصر.',
+    url: absoluteUrl('/jobs'),
+    locale: siteConfig.locale,
+    type: 'website',
+    siteName: siteConfig.shortName,
+    images: [{
+      url: jobsSocialImage,
+      width: 1200,
+      height: 630,
+      type: 'image/jpeg',
+      alt: 'وظائف نقادة وقنا والأقصر في دليل نقادة — شغلك الجاي يمكن يكون هنا',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'وظائف نقادة وقنا والأقصر | دليل نقادة',
+    description: 'دوّر على فرصة عمل قريبة، أو اعرض وظيفة وخبرتك في نقادة وقنا والأقصر.',
+    images: [jobsSocialImage],
+  },
+};
+
+export default async function JobsPage({ searchParams }: { searchParams: Promise<{ q?: string | string[]; view?: string | string[] }> }) {
+  const [{ jobs, state, available }, params] = await Promise.all([getJobs(), searchParams]);
+  const initialQuery = (Array.isArray(params.q) ? params.q[0] : params.q || '').trim().slice(0, 100);
+  const view = Array.isArray(params.view) ? params.view[0] : params.view;
+  const initialView = view === 'seeker' || view === 'all' ? view : undefined;
+  const offers = jobs.filter((job) => job.kind === 'offer');
+  const seekers = jobs.filter((job) => job.kind === 'seeker');
+  const localitiesList = [...new Set([...LOCAL_PLACES, ...localities.map((locality) => locality.name)])].sort((a, b) => a.localeCompare(b, 'ar'));
+  const localOffers = offers.filter((job) => job.governorate === 'قنا' && localitiesList.includes(job.locality));
+  const regionalOffers = offers.filter((job) => job.governorate === 'قنا' && !localitiesList.includes(job.locality));
+  const luxorOffers = offers.filter((job) => job.governorate === 'الأقصر');
+  const luxorLocalities = [...LUXOR_PLACES].sort((a, b) => a.localeCompare(b, 'ar'));
+  const structuredData = {
+    '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'وظائف نقادة وقنا والأقصر وقراها', url: absoluteUrl('/jobs'),
+    description: 'فرص عمل في مركز نقادة وقراه، وفرص أخرى في محافظتي قنا والأقصر بمراكزهما وقراهما مع توضيح مكان العمل.', inLanguage: 'ar-EG',
+    mainEntity: { '@type': 'ItemList', itemListElement: offers.map((job, index) => ({ '@type': 'ListItem', position: index + 1, name: job.title, url: `${absoluteUrl('/jobs')}#job-${job.id}` })) },
+  };
+  return <main id="main-content" className={styles.page}>
+    <section className={styles.hero}>
+      <div className={`shell ${styles.heroShell}`}>
+        <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/">الرئيسية</Link><span aria-hidden="true">/</span><span>وظائف نقادة</span></nav>
+        <div className={styles.heroGrid}>
+          <div className={styles.heroCopy}>
+            <span className={styles.eyebrow}><i aria-hidden="true" /> باب رزق من قلب البلد</span>
+            <h1>شغلك الجاي <em>يمكن يكون هنا.</em></h1>
+            <p>شوف فرص نقادة وقراها، ووسّع الدايرة لفرص قنا والأقصر ومراكزها وقراها. كل إعلان خارجي معاه مكانه ورابطه الأصلي، وعندك شغل للناس؟ انشر التفاصيل هنا.</p>
+            <div className={styles.heroActions}><a href="#opportunities" className={styles.primary}>دوّر على فرصة <span aria-hidden="true">↙</span></a><a href="#participate" className={styles.secondary}>اعرض وظيفة أو خبرتك <span aria-hidden="true">←</span></a></div>
+          </div>
+          <div className={styles.heroVisual} aria-hidden="true"><span className={styles.orbitOne} /><span className={styles.orbitTwo} /><Image src="/images/jobs/job-seekers-duo.webp" width={840} height={840} alt="" className={styles.heroArtwork} sizes="(max-width: 760px) 260px, (max-width: 950px) 305px, 415px" priority /><span className={styles.floatOne}>فرصة قريبة</span><span className={styles.floatTwo}>من أهل البلد</span><span className={styles.floatThree}>خطوتك الجاية</span></div>
+        </div>
+      </div>
+    </section>
+    <div className={`shell ${styles.ribbon}`} aria-label="كيف يعمل قسم الوظائف"><span><b>01</b> شوف الوظائف القريبة</span><i aria-hidden="true" /><span><b>02</b> افتح الإعلان الأصلي أو تواصل</span><i aria-hidden="true" /><span><b>03</b> اعرض فرصتك أو خبرتك</span></div>
+    <JobsBoard jobs={jobs} offers={localOffers.length} regionalOffers={regionalOffers.length} luxorOffers={luxorOffers.length} seekers={seekers.length} state={state} available={available} localities={localitiesList} luxorLocalities={luxorLocalities} initialQuery={initialQuery} initialView={initialView} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
+  </main>;
+}

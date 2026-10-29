@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/blog-slug.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -10,7 +11,7 @@ import { villageArticleAuthor } from '@/lib/village-articles';
 import { EditorialPostArticle } from './article-view';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
 
 
@@ -86,3 +87,5 @@ export default async function EditorialPostPage({ params }: Props) {
   if (!post) notFound();
   return <EditorialPostArticle post={post} />;
 }
+
+export async function generateStaticParams() { return (await getPublicEditorialPosts()).map(item => ({ slug: item.slug })); }

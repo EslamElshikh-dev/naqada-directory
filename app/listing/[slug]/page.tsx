@@ -1,5 +1,7 @@
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import '@/app/route-styles/listing-slug.css';
-import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import { directoryAggregateRating, fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
+import { getListingRatingSummary } from '@/lib/listing-rating-summary';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -13,11 +15,11 @@ import { ShareActions } from '@/components/share-actions';
 import { getBusinessMedia } from '@/lib/business-media';
 import { canonicalLocalityName, getCanonicalBusinessSlugAlias, relatedBusinesses } from '@/lib/data';
 import { getEffectiveBusiness } from '@/lib/curated-content';
-import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
+import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate, isSafeExternalUrl, jsonLdStringify, localityContext, schemaTypeForBusiness, siteConfig, slugify, truncateMetaDescription, verificationLabel, whatsappUrl } from '@/lib/site';
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 function resolveSeoKeywordSearch(keyword: string) {
   const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);
@@ -54,6 +56,7 @@ export default async function ListingPage({ params }: Props) {
   const listing = await getEffectiveBusiness(slug);
   if (!listing) notFound();
   if (listing.id.startsWith('owner:')) permanentRedirect(`/activity/${listing.id.slice(6)}/`);
+  const ratingSummary = await getListingRatingSummary(listing.slug);
   const media = getBusinessMedia(listing.id);
   const ownerPhotoPaths = listing.ownerPhotoPaths || [];
   const locality = canonicalLocalityName(listing.locality);
@@ -84,7 +87,7 @@ export default async function ListingPage({ params }: Props) {
       question: `ما موقع ${listing.name}؟`,
       answer: listing.address
         ? `العنوان المنشور في دليل نقادة هو: ${listing.address}.`
-        : `الموضع المنشور هو ${locality}، مركز نقادة، محافظة قنا، ولا يتوفر عنوان تفصيلي منشور حتى الآن.`,
+        : `الموضع المنشور هو ${localityContext(locality, '، ')}، محافظة قنا، ولا يتوفر عنوان تفصيلي منشور حتى الآن.`,
     },
     {
       question: `هل يوجد رقم هاتف لـ ${listing.name}؟`,
@@ -116,7 +119,8 @@ export default async function ListingPage({ params }: Props) {
         image: (media ? new URL(media.imageUrl, siteConfig.url).href : undefined) || (ownerPhotoPaths[0] ? `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}` : undefined),
         telephone: phone || undefined,
         openingHoursSpecification: fullTimeHours(listing.hours),
-        geo: verifiedMapCoordinates(listing.mapsUrl),
+        geo: listing.latitude !== undefined && listing.longitude !== undefined ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude } : verifiedMapCoordinates(listing.mapsUrl),
+        aggregateRating: directoryAggregateRating(ratingSummary),
         address: {
           '@type': 'PostalAddress',
           streetAddress: listing.address || undefined,
@@ -125,9 +129,9 @@ export default async function ListingPage({ params }: Props) {
           addressCountry: 'EG',
         },
         hasMap: safeMapsUrl || undefined,
-        description: listing.description || (listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${locality}، مركز نقادة.` : `${listing.category} في ${locality}، مركز نقادة.`),
+        description: listing.description || (listing.subcategory ? `${listing.subcategory} ضمن ${listing.category} في ${localityContext(locality)}.` : `${listing.category} في ${localityContext(locality)}.`),
         mainEntityOfPage: canonicalUrl,
-        areaServed: { '@type': 'AdministrativeArea', name: `${locality}، مركز نقادة، محافظة قنا` },
+        areaServed: { '@type': 'AdministrativeArea', name: `${localityContext(locality, '، ')}، محافظة قنا` },
         dateModified: listing.checked || undefined,
       },
       {
@@ -148,7 +152,7 @@ export default async function ListingPage({ params }: Props) {
             <nav className={styles.breadcrumbs} aria-label="مسار التنقل"><Link prefetch={false} href="/directory">الدليل</Link><span>/</span><Link prefetch={false} href={`/directory/${slugify(listing.category)}`}>{listing.category}</Link><span>/</span><span>{listing.name}</span></nav>
             <div className={styles.badges}><span>{listing.subcategory || listing.category}</span><Link prefetch={false} href={`/villages/${slugify(locality)}`}>{locality}</Link></div>
             <h1>{listing.name}</h1>
-            <p>{listing.address || `${locality}، مركز نقادة، محافظة قنا`}</p>
+            <p>{listing.address || `${localityContext(locality, '، ')}، محافظة قنا`}</p>
             <ListingPrimaryActions phone={phone} whatsapp={whatsapp} mapsUrl={safeMapsUrl} locality={locality} category={listing.category} listingSlug={listing.slug} />
           </div>
           <aside className={styles.summary}>
@@ -235,3 +239,5 @@ export default async function ListingPage({ params }: Props) {
     </main>
   );
 }
+
+export async function generateStaticParams() { const { businesses } = await getPublicBusinessCatalog(); return businesses.filter(item => !item.id.startsWith('owner:')).map(item => ({ slug: item.slug })); }

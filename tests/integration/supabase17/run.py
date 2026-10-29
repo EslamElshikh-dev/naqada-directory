@@ -113,11 +113,16 @@ def main():
             sql(source)
         except subprocess.CalledProcessError as error:
             raise RuntimeError(f"Migration {file.name}: {error.stderr}") from error
-    check("all 33 migrations replay on PostgreSQL 17.6", len(files) == 33)
-    check("23 application tables have RLS", sql("select count(*)=23 and bool_and(rowsecurity) from pg_tables where schemaname='public';") == "t")
+    check(f"all {len(files)} migrations replay on PostgreSQL 17.6", len(files) >= 35)
+    check("24 application tables have RLS", sql("select count(*)=24 and bool_and(rowsecurity) from pg_tables where schemaname='public';") == "t")
+    check("webhook state stays outside exposed schemas", sql("select not has_schema_privilege('anon','naqada_private','usage') and not has_schema_privilege('authenticated','naqada_private','usage');") == "t")
     check("no privileged accounts seeded", sql("select (select count(*) from public.directory_admins)+(select count(*) from public.directory_member_roles)+(select count(*) from public.directory_contributor_accounts);") == "0")
     subprocess.run([*COMPOSE, "up", "-d", "rest"], check=True)
     ready("rest", "directory_contributors?select=id&limit=0")
+    sql("insert into public.directory_business_locations(place_id,latitude,longitude,source_url,source_name,checked_at) values('isolated-place',25.9,32.7,'https://www.google.com/maps/?q=isolated','Isolated acceptance',now());")
+    coordinates = request("rest", "directory_business_locations?select=place_id,latitude,longitude")
+    check("verified coordinates readable through public API", len(coordinates) == 1 and coordinates[0]["place_id"] == "isolated-place")
+    denied("visitors cannot modify verified coordinates", "directory_business_locations?place_id=eq.isolated-place", method="PATCH", data={"latitude": 0})
 
     users = []
     for index in range(4):
@@ -248,7 +253,7 @@ def main():
     denied("service intake deletion remains denied", f"directory_contributions?id=eq.{cid}", service, "DELETE")
     invalid = request("rest", "rpc/is_directory_admin", "POST", {}, "invalid-jwt", (401,))
     check("invalid JWT rejected", invalid["code"].startswith("PGRST"))
-    print(json.dumps({"postgres": "17.6", "migrations": len(files), "rls_tables": 23,
+    print(json.dumps({"postgres": "17.6", "migrations": len(files), "rls_tables": 24,
         "passed": len(RESULTS), "cases": RESULTS, "environment": "disposable local services; no managed resources"}), flush=True)
 
 

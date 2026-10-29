@@ -1,9 +1,10 @@
+import { publicOwnerCopy } from '@/lib/owner-listing-copy';
 import { ownerActivityHref } from '@/lib/activity-path';
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo';
 import type { DirectoryItem } from '@/lib/types';
 import { cache } from 'react';
-import { connection } from 'next/server';
+import { unstable_cache } from 'next/cache';
 import { PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
 
 export type OwnerListing = {
@@ -22,24 +23,24 @@ export type OwnerListing = {
   status: 'pending' | 'published' | 'rejected';
   created_at: string;
   updated_at: string;
+  reviewed_at?: string | null;
+  copy_reviewed_at?: string | null;
 };
 
-export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at';
+export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at,reviewed_at';
 
-export const getPublishedOwnerListings = cache(async () => {
-  await connection();
+export const getPublishedOwnerListings = cache(unstable_cache(async () => {
   return retryPublicRead(async (): Promise<OwnerListing[]> => {
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/directory_owner_listings?status=eq.published&select=${ownerListingSelect}&order=created_at.desc&limit=500`,
     { headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS) },
   );
   if (!response.ok) throw Object.assign(Error('PUBLIC_ACTIVITIES_UNAVAILABLE'), { status: response.status });
-  return response.json() as Promise<OwnerListing[]>;
+  return (await response.json() as OwnerListing[]).map(publicOwnerCopy);
   }, 'owner-catalog');
-});
+}, ['published-owner-catalog-v2'], { revalidate: 3600, tags: ['naqada-public-content'] }));
 
-export const getPublishedOwnerListing = cache(async (id: string) => {
-  await connection();
+const getPublishedOwnerListingById = unstable_cache(async (id: string) => {
   return retryPublicRead(async (): Promise<OwnerListing | null> => {
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/directory_owner_listings?id=eq.${encodeURIComponent(id)}&status=eq.published&select=${ownerListingSelect}&limit=1`,
@@ -47,8 +48,13 @@ export const getPublishedOwnerListing = cache(async (id: string) => {
   );
   if (!response.ok) throw Object.assign(Error('PUBLIC_ACTIVITY_UNAVAILABLE'), { status: response.status });
   const rows = await response.json() as OwnerListing[];
-  return rows[0] || null;
+  return rows[0] ? publicOwnerCopy(rows[0]) : null;
   }, 'owner-activity');
+}, ['published-owner-listing-v2'], { revalidate: 3600, tags: ['naqada-public-content'] });
+
+export const getPublishedOwnerListing = cache(async (id: string) => {
+  const rows = await getPublishedOwnerListings();
+  return rows.find(row => row.id === id) || getPublishedOwnerListingById(id);
 });
 
 export function ownerListingDirectoryItem(listing: OwnerListing): DirectoryItem {

@@ -42,3 +42,5 @@ export default function KnowledgePage() {
     </div>
   </main>;
 }
+
+export const revalidate = 3600;

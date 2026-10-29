@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/directory-category.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
@@ -12,7 +13,7 @@ import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ category: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -104,3 +105,5 @@ export default async function CategoryPage({ params }: Props) {
     </main>
   );
 }
+
+export function generateStaticParams() { return categories.map(item => ({ category: item.slug })); }

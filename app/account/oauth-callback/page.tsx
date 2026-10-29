@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { safeAuthReturn } from '@/lib/auth/return-path';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BrandMark } from '@/components/site-shell';
+import { BrandMark } from '@/components/brand-mark';
 import { setClientSessionUser, type ClientSessionUser } from '@/components/auth/client-session';
 
 type CallbackState = 'working' | 'error';

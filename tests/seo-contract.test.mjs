@@ -18,7 +18,7 @@ const activityPage = read('app/activities/[slug]/page.tsx');
 const activityData = read('lib/activity-landings.ts');
 const listingPage = read('app/listing/[slug]/page.tsx');
 const businesses05 = read('data/businesses-05.json');
-const directoryPage = read('app/directory/page.tsx');
+const directoryPage = read('app/directory/public-document.tsx');
 const directoryExplorer = read('components/directory-explorer.tsx');
 const globalNotFound = read('app/global-not-found.tsx');
 const nextConfig = read('next.config.ts');
@@ -125,7 +125,7 @@ test('search landing pages connect activity intent to published business names',
   assert.ok(activities.includes("title: 'دليل خدمات وأنشطة نقادة | صيدليات وأطباء ومدارس ومطاعم'"));
   assert.ok(activities.includes('دليل خدمات وأنشطة <em>نقادة</em>'));
   assert.ok(activities.includes('activityLandings.map'));
-  assert.ok(activityPage.includes("export const dynamic = 'force-dynamic'"));
+  assert.ok(activityPage.includes("export const revalidate = 3600"));
   assert.ok(activityPage.includes("'@type': 'ItemList'"));
   assert.ok(activityPage.includes('activityKeywords(activity.name, activity.searchLabel)'));
   assert.ok(activityPage.includes('<h2>دليل {activity.name}: الأسماء والعناوين</h2>'));
@@ -208,6 +208,7 @@ test('legacy village names redirect with header-safe canonical URLs', () => {
   }
 });
 
-test('deprecated sitelinks SearchAction markup is not emitted', () => {
-  assert.ok(!layout.includes("'@type': 'SearchAction'"));
+test('WebSite declares the real directory search without promising a Google sitelinks box', () => {
+  assert.ok(layout.includes("'@type': 'SearchAction'"));
+  assert.ok(layout.includes('/directory/?q={search_term_string}'));
 });
