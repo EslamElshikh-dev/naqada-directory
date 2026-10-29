@@ -5,7 +5,8 @@ import { buildJobHeadlines } from '@/lib/job-headlines';
 import { sameOrigin, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from '@/lib/auth/supabase-rest';
 
 export const runtime = 'nodejs';
-export const dynamic = 'force-static';
+// GET uses the explicit CDN policy below. force-static also empties POST headers
+// in Next and would bypass the existing Origin check on the submission handler.
 export const revalidate = 300;
 
 export async function GET() {

@@ -18,6 +18,8 @@ await check('public ISR and dynamic query policies',async()=>{
  assert.equal(query.r.status,200);assert.match(query.r.headers.get('cache-control')||'',/no-store/);
  assert.match(query.r.headers.get('content-security-policy'),/'strict-dynamic'/);assert.match(query.text,/<script[^>]*nonce="[^"]+"/);
  for(const path of ['/api/news/','/api/jobs/']){const {r}=await html(path);assert.equal(r.status,200);assert.match(r.headers.get('cache-control')||'',/s-maxage=300/);}
+ const localPost=await fetch(base+'/api/jobs/',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:'null'});assert.equal(localPost.status,400);
+ const foreignPost=await fetch(base+'/api/jobs/',{method:'POST',headers:{Origin:'https://invalid.example','Content-Type':'application/json'},body:'null'});assert.equal(foreignPost.status,403);
  return documents;
 });
 await check('exactly two font preloads',async()=>{
