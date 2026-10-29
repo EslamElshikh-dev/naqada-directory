@@ -19,7 +19,12 @@ try {
       const requests = [], responses = [];
       page.on('request', request => { if (request.url().includes('naqada-home')) requests.push(request.url()); });
       page.on('response', response => { if (response.url().includes('naqada-home')) responses.push(response); });
-      await page.goto(base, { waitUntil: 'domcontentloaded' });
+      const document = await page.goto(base, { waitUntil: 'domcontentloaded' });
+      const markup = await document.text();
+      const head = markup.slice(0, markup.indexOf('</head>'));
+      const initialHints = [...head.matchAll(/<link\b[^>]*type="image\/avif"[^>]*>/g)];
+      assert.equal(initialHints.length, 2, 'Both responsive hero preloads must arrive in the initial head');
+      for (const [hint] of initialHints) assert.match(hint, /href="\/images\/home-hero\/[^"]+\.avif"/);
       await page.evaluate(() => document.fonts.ready);
       const photo = page.locator('img[alt="مشهد تعبيري من البيئة الريفية في مركز نقادة بمحافظة قنا"]');
       await photo.evaluate(node => node.decode());
@@ -42,7 +47,7 @@ try {
       assert.equal(await photo.evaluate(node => getComputedStyle(node).objectPosition), '50% 53%');
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
       await page.screenshot({ path: `${folder}/${format}-${width}.png` });
-      results.push({ width, format, currentSrc, bytes, selectedPhotoRequests: selected.length, totalRequests: requests.length });
+      results.push({ width, format, currentSrc, bytes, selectedPhotoRequests: selected.length, totalRequests: requests.length, preloadsInInitialHead: initialHints.length });
       await page.close();
     }
   }
