@@ -1,3 +1,4 @@
+import { getBusinessLocations } from '@/lib/business-locations';
 import { cache } from 'react';
 import { businesses, canonicalLocalityName, parentLocalityName } from '@/lib/data';
 import { getPublicCurated, type CuratedRecord } from '@/lib/auth/moderator';
@@ -70,8 +71,8 @@ export function directoryItems(source: Business[]): DirectoryItem[] {
 }
 
 export const getPublicBusinessCatalog = cache(async () => {
-  const [rows, ownerListings] = await Promise.all([getPublicCurated('business'), getPublishedOwnerListings()]);
-  const curated = mergeBusinessCatalog(businesses, rows);
+  const [rows, ownerListings, pins] = await Promise.all([getPublicCurated('business'), getPublishedOwnerListings(), getBusinessLocations()]);
+  const curated = mergeBusinessCatalog(businesses, rows).map(item => item.placeId && pins[item.placeId] ? { ...item, ...pins[item.placeId] } : item);
   return {
     businesses: [...curated, ...ownerBusinesses(ownerListings)],
     directoryBusinesses: [...directoryItems(curated), ...ownerListings.map(ownerListingDirectoryItem)],

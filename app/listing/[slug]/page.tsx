@@ -117,7 +117,8 @@ export default async function ListingPage({ params }: Props) {
         image: (media ? new URL(media.imageUrl, siteConfig.url).href : undefined) || (ownerPhotoPaths[0] ? `${siteConfig.url}/api/directory/photo?path=${encodeURIComponent(ownerPhotoPaths[0])}` : undefined),
         telephone: phone || undefined,
         openingHoursSpecification: fullTimeHours(listing.hours),
-        geo: verifiedMapCoordinates(listing.mapsUrl),
+        geo: listing.latitude !== undefined && listing.longitude !== undefined ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude } : verifiedMapCoordinates(listing.mapsUrl),
+        aggregateRating: listing.reviews && listing.reviews > 0 && listing.rating && listing.rating >= 1 && listing.rating <= 5 ? { '@type': 'AggregateRating', ratingValue: listing.rating, reviewCount: listing.reviews } : undefined,
         address: {
           '@type': 'PostalAddress',
           streetAddress: listing.address || undefined,

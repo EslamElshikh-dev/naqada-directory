@@ -16,6 +16,8 @@ export type Business = {
   sourceUrl?: string | null;
   sourceReferences?: { label: string; url: string }[];
   placeId: string | null;
+  latitude?: number;
+  longitude?: number;
   verification: string | null;
   status: string;
   checked: string | null;

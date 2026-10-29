@@ -1,3 +1,4 @@
+import { organizationLinks } from '@/lib/organization';
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import { BODY_FONT, bodyFontVariable, displayFontVariable } from '@/app/fonts';
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         inLanguage: 'ar-EG',
         description: siteConfig.description,
         publisher: { '@id': `${homeUrl}#organization` },
+        potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: `${siteConfig.url}/directory/?q={search_term_string}` }, 'query-input': 'required name=search_term_string' },
       },
       {
         '@type': 'Organization',
@@ -86,6 +88,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         alternateName: ['الموسوعة المحلية لمركز نقادة', ...siteConfig.alternateNames],
         url: homeUrl,
         logo: { '@type': 'ImageObject', url: siteConfig.logoImage, width: 192, height: 192 },
+        sameAs: organizationLinks.map(link => link.url),
         contactPoint: { '@type': 'ContactPoint', contactType: 'تصحيح بيانات الدليل', url: absoluteUrl('/contribute'), availableLanguage: 'ar' },
         areaServed: { '@type': 'AdministrativeArea', name: 'مركز نقادة، محافظة قنا، مصر' },
       },

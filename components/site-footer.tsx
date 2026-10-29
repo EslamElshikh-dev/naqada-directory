@@ -1,3 +1,4 @@
+import { organizationLinks } from '@/lib/organization';
 import { DeferredPreferences as PrivacyPreferences } from './widget-placeholders';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
@@ -93,6 +94,7 @@ export function Footer() {
           </aside>
         </div>
 
+        <nav aria-label="الحضور الرسمي للدليل">{organizationLinks.map(link => <a key={link.url} href={link.url} target="_blank" rel="me noopener noreferrer">{link.label}</a>)}</nav>
         <PrivacyPreferences />
         <div className={footerStyles.bottom}>
           <div className={footerStyles.bottomInfo}>
