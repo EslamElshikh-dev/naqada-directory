@@ -49,6 +49,8 @@ test('district summaries do not describe Naqada district as contained in itself'
     assert.ok(!summary.includes('مركز نقادة، مركز نقادة'));
   }
   assert.ok(businessSummary({ ...sample, locality: 'بشلاو / الأوسط قمولا' }).includes('في بشلاو ضمن مركز نقادة بمحافظة قنا.'));
+  assert.equal(localityContext('بشلاو', '، '), 'بشلاو، مركز نقادة');
+  assert.equal(localityContext('مركز نقادة', '، '), 'مركز نقادة');
   assert.ok(businessSummary({ ...sample, locality: 'بشلاو', address: 'عنوان منشور' }).includes('العنوان المنشور: عنوان منشور.'));
 });
 

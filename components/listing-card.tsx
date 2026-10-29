@@ -2,7 +2,7 @@ import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { canonicalLocalityName } from '@/lib/locality-name';
 import type { DirectoryItem } from '@/lib/types';
-import { cleanPhone, isSafeExternalUrl, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
+import { cleanPhone, isSafeExternalUrl, localityContext, slugify, verificationLabel, whatsappUrl } from '@/lib/site';
 import { BusinessMedia } from './business-media';
 import { CategoryVisual } from './category-visual';
 import { ActionIcon } from './action-icon';
@@ -42,7 +42,7 @@ export function ListingCard({ listing, compact = false }: { listing: DirectoryIt
       </div>
       <div className={styles.body}>
         <h3><Link prefetch={false} href={detailHref}>{listing.name}</Link></h3>
-        <p className={styles.location}><ActionIcon name="map" /> <span>{listing.address || `${locality}، مركز نقادة، قنا`}</span></p>
+        <p className={styles.location}><ActionIcon name="map" /> <span>{listing.address || `${localityContext(locality, '، ')}، قنا`}</span></p>
         <div className={styles.meta}>
           <Link prefetch={false} href={localityHref}>{locality}</Link>
           {typeof listing.rating === 'number' && <span className={styles.rating} title="التقييم لدى مصدر البيانات؛ التفاصيل في صفحة النشاط" aria-label={`التقييم لدى المصدر ${listing.rating} من 5`}>★ {listing.rating.toLocaleString(NUMBER_LOCALE)}{listing.reviews ? ` (${listing.reviews.toLocaleString(NUMBER_LOCALE)})` : ''}</span>}

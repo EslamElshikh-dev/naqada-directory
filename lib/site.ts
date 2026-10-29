@@ -191,15 +191,15 @@ export function cleanPhone(phone: string | null) {
   return value || null;
 }
 
-export function localityContext(value?: string | null) {
+export function localityContext(value?: string | null, separator = ' ضمن ') {
   const name = canonicalLocalityName(value);
-  return /^مركز نقاد[ةه]$/u.test(name) ? 'مركز نقادة' : `${name} ضمن مركز نقادة`;
+  return /^مركز نقاد[ةه]$/u.test(name) ? 'مركز نقادة' : `${name}${separator}مركز نقادة`;
 }
 
 export function businessSummary(listing: Pick<Business, 'name' | 'category' | 'subcategory' | 'locality' | 'address' | 'phone' | 'mapsUrl' | 'checked'>) {
   const locality = localityContext(listing.locality);
   const kind = listing.subcategory || listing.category;
-  const location = listing.address || `${locality}، محافظة قنا`;
+  const location = listing.address || `${localityContext(listing.locality, '، ')}، محافظة قنا`;
   const access = listing.phone && listing.mapsUrl
     ? 'تتوفر في الصفحة وسيلة اتصال ورابط مباشر للخريطة.'
     : listing.phone
