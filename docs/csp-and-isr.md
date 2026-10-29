@@ -32,7 +32,7 @@ The authenticated webhook expires the tag and document layout immediately, then
 expires them again after older reads have had time to finish. Public source reads
 default to a five-second timeout with one idempotent retry. This is bounded eventual
 consistency for concurrent ISR regeneration, not an instantaneous withdrawal
-guarantee. NAQADA_PUBLIC_READ_TIMEOUT_MS can be set between 5000 and 30000 for a
+guarantee. NAQADA_PUBLIC_READ_TIMEOUT_MS can be set between 5000 and 20000 for a
 slower proxy/build environment; the follow-up purge accounts for that interval.
 Social images retain no-store. A secret shorter than 32 characters returns 503;
 invalid authorization returns 401. CSP reports have bounded size/rate and log no
