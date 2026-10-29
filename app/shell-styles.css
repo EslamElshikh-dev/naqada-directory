@@ -125,7 +125,7 @@ body.encyclopedia-ui {
   --ink:var(--text-strong);
   --muted:var(--text-muted);
 }
-html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
+html[data-body-font] { --font-display:'Noto Kufi Arabic',var(--font-display-fallback),sans-serif; --font-plex:'IBM Plex Sans Arabic',var(--font-plex-fallback); --font-readex:'Readex Pro',var(--font-readex-fallback); }
 html[data-body-font='plex'] { --font-body:var(--font-plex); }
 html[data-body-font='readex'] { --font-body:var(--font-readex); }
 
@@ -201,8 +201,8 @@ img,svg { display:block; max-width:100%; }
   --ink:var(--text-strong);
   --muted:var(--text-muted);
 }
-/* Explicit family keeps local font naming consistent between both Next bundlers. */
-html[data-body-font] { --font-display:'Noto Kufi Arabic',sans-serif; --font-plex:'IBM Plex Sans Arabic'; --font-readex:'Readex Pro'; }
+/* Keep the public family aliases and Next's metric-adjusted fallback stack. */
+html[data-body-font] { --font-display:'Noto Kufi Arabic',var(--font-display-fallback),sans-serif; --font-plex:'IBM Plex Sans Arabic',var(--font-plex-fallback); --font-readex:'Readex Pro',var(--font-readex-fallback); }
 html[data-body-font='plex'] { --font-body:var(--font-plex); }
 html[data-body-font='readex'] { --font-body:var(--font-readex); }
 body, body.encyclopedia-ui {

@@ -60,6 +60,13 @@ try {
       page.on('pageerror', error => errors.push(error.message));
       page.on('response', response => { if (response.url().startsWith(base) && response.status() >= 400) networkErrors.push({ url: response.url(), status: response.status() }); });
       try {
+        if (width === 390 && name === 'directory') {
+          // Different font arrival orders used to move a metric to another row.
+          await page.route('**/*.woff2', async route => {
+            await new Promise(resolve => setTimeout(resolve, route.request().url().includes('_400-') ? 700 : 100));
+            await route.continue();
+          });
+        }
         const response = await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
         await settled(page);
         const initial = await page.evaluate(() => ({ ...window.qaTiming, ttfb: performance.getEntriesByType('navigation')[0].responseStart, dom: performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd }));
