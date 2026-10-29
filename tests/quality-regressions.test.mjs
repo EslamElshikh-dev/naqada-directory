@@ -37,6 +37,21 @@ const robots = loadModule('./app/robots').default;
 const priorities = loadModule('./lib/seo-priorities');
 const now = Date.parse('2026-10-19T05:00:00Z');
 
+test('district summaries do not describe Naqada district as contained in itself', () => {
+  const { businessSummary, localityContext } = loadModule('./lib/site');
+  const sample = { name: 'نشاط تجريبي', category: 'خدمات', subcategory: null, address: null, phone: null, mapsUrl: null, checked: null };
+  for (const locality of [null, '', 'مركز نقادة', 'مركز نقاده']) {
+    const summary = businessSummary({ ...sample, locality });
+    assert.equal(localityContext(locality), 'مركز نقادة');
+    assert.ok(summary.includes('في مركز نقادة بمحافظة قنا.'));
+    assert.ok(summary.includes('العنوان المنشور: مركز نقادة، محافظة قنا.'));
+    assert.ok(!summary.includes('مركز نقادة ضمن مركز نقادة'));
+    assert.ok(!summary.includes('مركز نقادة، مركز نقادة'));
+  }
+  assert.ok(businessSummary({ ...sample, locality: 'بشلاو / الأوسط قمولا' }).includes('في بشلاو ضمن مركز نقادة بمحافظة قنا.'));
+  assert.ok(businessSummary({ ...sample, locality: 'بشلاو', address: 'عنوان منشور' }).includes('العنوان المنشور: عنوان منشور.'));
+});
+
 test('live stories outside the newest archive window receive bounded safe snapshot lookups', () => {
   const latest = Array.from({ length: 60 }, (_, index) => ({ id: `recent-${index}` }));
   const old = Array.from({ length: 53 }, (_, index) => ({ id: `old-${index}` }));

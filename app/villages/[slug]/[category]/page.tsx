@@ -11,7 +11,7 @@ import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
 import { canonicalLocalityName, categories, getCanonicalLocalitySlugAlias, getCategoryBySlug, getLocalityBySlug, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
-import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
+import { buildPageMetadata, jsonLdStringify, localityContext, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
 export const revalidate = 3600;
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { businesses: currentBusinesses } = await getPublicBusinessCatalog();
   const count = currentBusinesses.filter((item) => canonicalLocalityName(item.locality) === locality.name && item.category === category.name).length;
   if (count < MIN_LOCAL_CATEGORY_RESULTS) return { robots: { index: false, follow: true } };
-  const description = `دليل ${category.shortLabel} في ${locality.name} بمركز نقادة: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`;
+  const description = `دليل ${category.shortLabel} في ${localityContext(locality.name)}: ${count} نتيجة منشورة مع بيانات الوصول والهاتف والخريطة حسب المتاح.`;
   return buildPageMetadata({
     title: `${category.shortLabel} في ${locality.name} — نقادة`,
     description,
@@ -53,8 +53,8 @@ export default async function LocalCategoryPage({ params }: Props) {
         '@type': 'CollectionPage',
         name: `${category.shortLabel} في ${locality.name}`,
         url: pageUrl,
-        description: `نتائج ${category.shortLabel} المنشورة في ${locality.name} ضمن مركز نقادة.`,
-        about: { '@type': 'Place', name: `${locality.name}، مركز نقادة، قنا` },
+        description: `نتائج ${category.shortLabel} المنشورة في ${localityContext(locality.name)}.`,
+        about: { '@type': 'Place', name: `${localityContext(locality.name)}، قنا` },
         mainEntity: {
           '@type': 'ItemList',
           numberOfItems: scoped.length,
