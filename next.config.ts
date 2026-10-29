@@ -1,11 +1,19 @@
 import type { NextConfig } from 'next';
 import bundleAnalyzer from '@next/bundle-analyzer';
+import { contentSecurityPolicy } from './lib/security-policy';
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
   poweredByHeader: false,
   async headers() {
     return [{
+      // The homepage is public ISR; these constant headers need no regional Proxy.
+      source: '/',
+      headers: [
+        { key: 'Content-Security-Policy', value: contentSecurityPolicy(undefined, process.env.VERCEL === '1') },
+        { key: 'Reporting-Endpoints', value: 'csp-endpoint="/api/csp-report/"' },
+      ],
+    }, {
       // The generator versions this path from the photograph and encoding settings.
       source: '/images/home-hero/:version/:file',
       headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
