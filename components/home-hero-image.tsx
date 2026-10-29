@@ -6,6 +6,7 @@ const mobile = '(min-width: 375px) and (max-width: 760px)';
 const full = '(max-width: 374px), (min-width: 761px)';
 const srcSet = (format: string, crop: string) => media.variants.filter(image => image.format === format && image.crop === crop)
   .map(image => `${image.path} ${image.width}w`).join(', ');
+const preloadSrc = (crop: string) => media.variants.find(image => image.format === 'avif' && image.crop === crop && image.width === 750)!.path;
 
 export function HomeHeroImage() {
   // Preserve Next's responsive JPEG fallback for browsers without either modern
@@ -17,8 +18,10 @@ export function HomeHeroImage() {
   });
   return (
     <>
-      <link rel="preload" as="image" type="image/avif" media={mobile} imageSrcSet={srcSet('avif', 'mobile')} imageSizes={sizes} fetchPriority="high" />
-      <link rel="preload" as="image" type="image/avif" media={full} imageSrcSet={srcSet('avif', 'full')} imageSizes={sizes} fetchPriority="high" />
+      {/* A concrete href lets React hoist each hint into the initial head.
+          Responsive browsers still select from imageSrcSet; media/type avoid extra downloads. */}
+      <link rel="preload" href={preloadSrc('mobile')} as="image" type="image/avif" media={mobile} imageSrcSet={srcSet('avif', 'mobile')} imageSizes={sizes} fetchPriority="high" />
+      <link rel="preload" href={preloadSrc('full')} as="image" type="image/avif" media={full} imageSrcSet={srcSet('avif', 'full')} imageSizes={sizes} fetchPriority="high" />
       <picture>
         <source media={mobile} type="image/avif" srcSet={srcSet('avif', 'mobile')} sizes={sizes} />
         <source media={mobile} type="image/webp" srcSet={srcSet('webp', 'mobile')} sizes={sizes} />
