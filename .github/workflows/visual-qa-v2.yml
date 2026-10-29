@@ -94,6 +94,13 @@ jobs:
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/reading-quality-qa.mjs
 
+      - name: Verify ISR, nonce CSP, motion and full Chrome history restoration
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        env:
+          QA_BASE_URL: http://127.0.0.1:3000
+          NAQADA_QA_FULL_CHROME: '1'
+        run: node .github/performance-followup-qa.mjs
+
       - name: Verify withdrawal during an older in-flight read without database writes
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/withdrawal-qa.mjs

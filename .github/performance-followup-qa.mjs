@@ -40,9 +40,9 @@ await check('factual business geo, hours, ratings, site search and contact schem
  const page=await html(listing);assert.equal(page.r.status,200);const entity=schemas(page.text).find(x=>x.geo);assert.ok(entity);assert.equal(entity.geo.latitude,pins[row.placeId].latitude);assert.equal(entity.geo.longitude,pins[row.placeId].longitude);assert.equal(entity.openingHoursSpecification[0].opens,'00:00');assert.equal(entity.openingHoursSpecification[0].closes,'23:59');
  if(entity.aggregateRating)assert.ok(entity.aggregateRating.ratingCount>0);
  const site=schemas(home.text);assert.ok(site.find(x=>x['@type']==='WebSite').potentialAction.target.urlTemplate.endsWith('/directory/?q={search_term_string}'));const org=site.find(x=>x['@type']==='Organization');assert.ok(org.contactPoint.url);assert.ok(org.sameAs.length);
- return {path:listing,entity,verifiedPins:Object.keys(pins).length,officialRichResultsTest:'Not run: unpublished local URL'};
+ return {path:listing,entity,verifiedPins:Object.keys(pins).length,officialRichResultsTest:'Not run by this automated check'};
 });
-const browser=await chromium.launch({headless:true,ignoreDefaultArgs:['--disable-back-forward-cache']});
+const browser=await chromium.launch({headless:true,...(process.env.NAQADA_QA_FULL_CHROME==='1'?{channel:'chromium'}:{}),ignoreDefaultArgs:['--disable-back-forward-cache']});
 try{
  await check('RTL layout and named landmarks at five widths',async()=>{
   const results=[];
@@ -65,7 +65,7 @@ try{
  });
  await check('public history restoration has no blocking reason',async()=>{
   const page=await browser.newPage({viewport:{width:390,height:900},serviceWorkers:'allow'});const reasons=[];const cdp=await page.context().newCDPSession(page);await cdp.send('Page.enable');cdp.on('Page.backForwardCacheNotUsed',e=>reasons.push(e.notRestoredExplanations));await page.addInitScript(()=>{window.addEventListener('pageshow',e=>{window.__restored=e.persisted;});});await page.goto(base);await page.goto(base+'/about/');await page.goBack({waitUntil:'commit'});await page.waitForTimeout(500);const restored=await page.evaluate(()=>window.__restored);await page.close();
-  if(!restored&&reasons.flat().some(x=>x.reason==='BackForwardCacheDisabledForDelegate'))return {restored:false,verified:false,blockedByEnvironment:true,reasons,requires:'Full Chrome on the hosted deployment. This runner cannot start full Chrome and headless-shell disables BFCache.'};
+  if(!restored&&process.env.NAQADA_QA_FULL_CHROME!=='1'&&reasons.flat().some(x=>x.reason==='BackForwardCacheDisabledForDelegate'))return {restored:false,verified:false,blockedByEnvironment:true,reasons,requires:'Full Chrome on the hosted deployment. This runner cannot start full Chrome and headless-shell disables BFCache.'};
   assert.equal(restored,true,JSON.stringify(reasons));return {restored,verified:true,reasons};
  });
  await check('Arabic OG images render with the logo and bounded output',async()=>{
