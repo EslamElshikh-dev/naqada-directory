@@ -9,6 +9,8 @@ on:
       - 'lib/home-hero-media.json'
       - 'public/images/home-hero/**'
       - '.github/home-lcp-qa.mjs'
+      - '.github/performance-transport.mjs'
+      - '.github/with-http2.mjs'
       - '.github/workflows/home-lcp-comparison.yml'
 
 permissions:
@@ -62,7 +64,7 @@ jobs:
             if curl -fsS http://127.0.0.1:3001/ >/dev/null; then break; fi
             sleep 1
           done
-          LCP_QA_BASE_URL=http://127.0.0.1:3001 LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/before node ../candidate/.github/home-lcp-qa.mjs
+          LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/before node ../candidate/.github/with-http2.mjs http://127.0.0.1:3001 node ../candidate/.github/home-lcp-qa.mjs
       - name: Build candidate
         run: npm run build
       - name: Measure candidate with the same browser and throttling
@@ -74,7 +76,7 @@ jobs:
             if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
             sleep 1
           done
-          LCP_QA_EXPECT_HERO=preencoded LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/after node .github/home-lcp-qa.mjs
+          LCP_QA_EXPECT_HERO=preencoded LCP_QA_REPRESENTATIVE=1 LCP_QA_OUTPUT=../artifacts/home-lcp/after node .github/with-http2.mjs http://127.0.0.1:3000 node .github/home-lcp-qa.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

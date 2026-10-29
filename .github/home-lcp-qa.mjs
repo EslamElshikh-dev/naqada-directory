@@ -2,6 +2,7 @@ import { chromium } from 'playwright';
 import lighthouse from 'lighthouse';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
+import { localTlsBrowserArgs, verifyPerformanceTransport } from './performance-transport.mjs';
 
 const base = process.env.LCP_QA_BASE_URL || 'http://127.0.0.1:3000';
 const folder = process.env.LCP_QA_OUTPUT || 'artifacts/home-lcp';
@@ -17,13 +18,14 @@ const reports = [];
 for (let index = 0; index < paths.length; index++) {
   for (let run = 1; run <= Number(process.env.LCP_QA_RUNS || 3); run++) {
     const browser = await chromium.launch({ headless: true,
-      args: ['--remote-debugging-port=9222', ...(process.env.LCP_QA_PROXY ? ['--proxy-server=' + process.env.LCP_QA_PROXY] : [])] });
+      args: ['--remote-debugging-port=9222', ...localTlsBrowserArgs(base), ...(process.env.LCP_QA_PROXY ? ['--proxy-server=' + process.env.LCP_QA_PROXY] : [])] });
     try {
       const result = await lighthouse(new URL(paths[index], base).href, {
         port: 9222, logLevel: 'error', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
         blockedUrlPatterns: ['*://connect.facebook.net/*', '*://www.facebook.com/*', '*/api/analytics/*', '*://*/_vercel/insights/*', '*://*/_vercel/speed-insights/vitals*'],
       });
       if (!result?.lhr) throw Error('No Lighthouse report');
+      verifyPerformanceTransport(result.lhr);
       const file = `${folder}/page-${index}-run-${run}.json`;
       await writeFile(file, JSON.stringify(result.lhr));
       reports.push(file);

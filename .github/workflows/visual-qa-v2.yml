@@ -115,7 +115,7 @@ jobs:
 
       - name: Enforce measured CSS transfer budget and valid LCP
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
-        run: node .github/performance-budget.mjs
+        run: node .github/with-http2.mjs http://127.0.0.1:3000 node .github/performance-budget.mjs
 
       - name: Upload visual QA artifacts
         if: always()
