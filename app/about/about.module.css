@@ -46,7 +46,7 @@
 .metrics small { margin-top: 4px; color: var(--text-muted); font-size: var(--fs-xs); }
 .storySection { display: grid; grid-template-columns: 110px minmax(0, 1.15fr) minmax(300px, .62fr); gap: clamp(34px, 5vw, 72px); align-items: start; padding-bottom: 120px; }
 .sectionMark { display: flex; gap: 12px; align-items: center; padding-top: 8px; color: var(--text-muted); font-size: var(--fs-xs); }
-.sectionMark span { color: var(--text-accent); font: 800 .76rem Arial, sans-serif; }
+.sectionMark span { color: var(--text-accent); font: 600 .76rem Arial, sans-serif; }
 .sectionMark::after { content: ''; width: 40px; height: 1px; background: var(--line); }
 .storyCopy h2, .sectionHeader h2, .workflowIntro h2 { margin: 0; color: var(--text-strong); font-size: var(--fs-display); font-weight: 600; line-height: 1.08; letter-spacing: normal; }
 .storyCopy h2 em, .sectionHeader h2 em, .workflowIntro h2 em { color: var(--text-accent); font-style: normal; font-weight: 700; }
@@ -90,7 +90,7 @@
 .experienceShade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(180deg, rgba(2, 27, 22, .12), rgba(2, 27, 22, .35) 48%, rgba(2, 27, 22, .95)), linear-gradient(90deg, rgba(2, 27, 22, .5), transparent 60%); }
 .experienceCard::after { content: ''; position: absolute; z-index: -1; width: 190px; height: 190px; inset: auto -72px -82px auto; border: 1px solid rgba(244, 223, 165, .18); border-radius: 50%; box-shadow: 0 0 0 28px rgba(244, 223, 165, .035), 0 0 0 56px rgba(244, 223, 165, .02); transition: transform .65s ease; }
 .experienceTop { position: absolute; inset: 19px 20px auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
-.experienceTop > small { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 12px; background: rgba(5, 44, 35, .42); color: var(--text-on-dark-accent); font: 800 .65rem Arial, sans-serif; backdrop-filter: blur(10px); }
+.experienceTop > small { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 12px; background: rgba(5, 44, 35, .42); color: var(--text-on-dark-accent); font: 600 .65rem Arial, sans-serif; backdrop-filter: blur(10px); }
 .experienceTop > b { display: grid; justify-items: end; color: var(--text-on-dark); font: 900 clamp(1.5rem, 3vw, 2.25rem)/1 Arial, sans-serif; text-shadow: 0 3px 20px rgba(0, 0, 0, .35); }
 .experienceTop em { margin-top: 5px; color: var(--text-on-dark); font-size: var(--fs-xs); font-style: normal; font-weight: 700; line-height: 1.4; }
 .experienceCopy { position: absolute; inset: auto 25px 24px; display: grid; gap: 8px; }
@@ -111,7 +111,7 @@
 .principlesGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .principlesGrid article { min-height: 250px; padding: 27px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 25px 7px 25px 25px; background: rgba(255, 255, 255, .045); animation: revealUp linear both; animation-timeline: view(); animation-range: entry 8% cover calc(30% + var(--i) * .4%); }
 .principlesGrid article:nth-child(even) { border-radius: 7px 25px 25px 25px; }
-.principlesGrid span { color: var(--text-on-dark-accent); font: 800 .72rem Arial, sans-serif; }
+.principlesGrid span { color: var(--text-on-dark-accent); font: 600 .72rem Arial, sans-serif; }
 .principlesGrid h3 { margin: 49px 0 9px; color: var(--text-on-dark); font-size: var(--fs-2xl); }
 .principlesGrid p { max-width: 520px; margin: 0; color: var(--text-on-dark); font-size: var(--fs-xs); line-height: 1.85; }
 .workflowSection { display: grid; grid-template-columns: .68fr 1.32fr; gap: clamp(50px, 8vw, 120px); padding-block: 120px; }

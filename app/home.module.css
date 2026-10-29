@@ -44,10 +44,10 @@
 .section { padding-block:70px; scroll-margin-top:100px; }
 .sectionHead { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:16px; }
 .sectionHead > div { max-width:760px; }
-.sectionHead > div > span,.placesPanel header > span,.knowledgePanel header > span,.updates header > span,.community > div > span { display:block; color:var(--text-accent); font-size:var(--fs-xs); font-weight:700; margin-bottom:8px; }
+.sectionHead > div > span,.placesPanel [data-section-heading] > span,.knowledgePanel [data-section-heading] > span,.updates [data-section-heading] > span,.community > div > span { display:block; color:var(--text-accent); font-size:var(--fs-xs); font-weight:700; margin-bottom:8px; }
 .sectionHead h2,.placesPanel h2,.knowledgePanel h2,.updates h2,.community h2 { margin:0 0 10px; font-size:var(--fs-3xl); line-height:1.65; color:var(--text-strong); }
-.sectionHead p,.placesPanel header p,.knowledgePanel header p,.community p { margin:0; color:var(--text-muted); font-size:var(--fs-base); line-height:1.9; }
-.sectionHead > a,.panelLink,.updates header > a { display:inline-flex; align-items:center; justify-content:center; gap:10px; flex:0 0 auto; min-height:44px; font-size:var(--fs-sm); font-weight:700; color:var(--text-link); }
+.sectionHead p,.placesPanel [data-section-heading] p,.knowledgePanel [data-section-heading] p,.community p { margin:0; color:var(--text-muted); font-size:var(--fs-base); line-height:1.9; }
+.sectionHead > a,.panelLink,.updates [data-section-heading] > a { display:inline-flex; align-items:center; justify-content:center; gap:10px; flex:0 0 auto; min-height:44px; font-size:var(--fs-sm); font-weight:700; color:var(--text-link); }
 .page a svg { width:18px; height:18px; flex-shrink:0; }
 .serviceGrid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; }
 .serviceItem { position:relative; display:flex; flex-direction:column; min-width:0; border:1px solid var(--home-line); border-radius:14px; overflow:hidden; background:white; transition:transform .2s,border-color .2s,box-shadow .2s; }
@@ -63,7 +63,7 @@
 .discoveryBand { padding:0 0 20px; }
 .discoveryGrid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
 .placesPanel,.knowledgePanel { position:relative; min-width:0; padding:34px; border-radius:18px; border:1px solid var(--home-line); background:#f1f5ee; }
-.placesPanel header,.knowledgePanel header { margin-bottom:22px; }
+.placesPanel [data-section-heading],.knowledgePanel [data-section-heading] { margin-bottom:22px; }
 .placeList { display:grid; gap:1px; }
 .placeList a { display:flex; align-items:center; gap:15px; padding:13px 0; border-bottom:1px solid #d8e2d5; transition:padding .2s; }
 .placeList a:hover { padding-inline:7px; }
@@ -74,9 +74,9 @@
 .placeList b { font-size:var(--fs-sm); font-weight:600; background:#fff; padding:4px 9px; border-radius:6px; }
 .panelLink { margin-top:22px; }
 .knowledgePanel { display:flex; flex-direction:column; background:#113f32; border-color:#113f32; color:var(--text-on-dark); overflow:hidden; }
-.knowledgePanel header > span { color:var(--text-on-dark-accent); }
+.knowledgePanel [data-section-heading] > span { color:var(--text-on-dark-accent); }
 .knowledgePanel h2 { color:var(--text-on-dark); }
-.knowledgePanel header p { color:var(--text-on-dark-muted); }
+.knowledgePanel [data-section-heading] p { color:var(--text-on-dark-muted); }
 .knowledgeTopics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:8px 0 26px; }
 .knowledgeTopics a { min-width:0; display:flex; flex-direction:column; padding:22px 14px; border:1px solid #ffffff24; border-radius:10px; background:#ffffff05; transition:background .2s; }
 .knowledgeTopics a:hover { background:#ffffff12; }
@@ -176,7 +176,7 @@
  .leadStory > div { padding:20px; }
  .leadStory h3 { font-size:var(--fs-lg); }
  .updates { grid-template-columns:1fr; gap:15px; }
- .updates header > a { margin-top:0; }
+ .updates [data-section-heading] > a { margin-top:0; }
  .updates > div > a { gap:12px; }
  .updates time { font-size:var(--fs-xs); }
  .community { align-items:start; flex-direction:column; gap:22px; padding-block:36px; }

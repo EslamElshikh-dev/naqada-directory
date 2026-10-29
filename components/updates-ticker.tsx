@@ -149,10 +149,10 @@ export function UpdatesTicker({ initialPaused = false }: { initialPaused?: boole
         type="button"
         className={styles.control}
         aria-pressed={paused}
-        aria-label={paused ? 'استئناف حركة شريط الأخبار' : 'إيقاف حركة شريط الأخبار'}
+        aria-label={paused ? 'تشغيل الشريط' : 'إيقاف الشريط'}
         onClick={() => setPaused((value) => !value)}
       >
-        <span aria-hidden="true">{paused ? '▶' : 'Ⅱ'}</span>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">{paused ? <path d="M7 4.8a1 1 0 0 1 1.52-.85l11 7.2a1 1 0 0 1 0 1.7l-11 7.2A1 1 0 0 1 7 19.2V4.8Z"/> : <><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></>}</svg>
       </button>
     </section>
   );

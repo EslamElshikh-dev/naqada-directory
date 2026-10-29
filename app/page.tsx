@@ -85,7 +85,7 @@ export default function HomePage() {
 
   return (
     <main id="main-content" className={styles.page}>
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="home-title">
         <div className={styles.heroMesh} aria-hidden="true" />
         <div className={`shell ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
@@ -94,7 +94,7 @@ export default function HomePage() {
               <span className={styles.location}>مركز نقادة · محافظة قنا</span>
             </div>
             <span className={styles.heroEyebrow}>من أهل البلد، لأهل البلد</span>
-            <h1>محتاج إيه <em>في نقادة؟</em></h1>
+            <h1 id="home-title">محتاج إيه <em>في نقادة؟</em></h1>
             <p>دوّر على خدمة، شوف فرصة شغل، أو اعرف أخبار بلدك وحكاياتها.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <nav className={styles.quickLinks} aria-label="وصول سريع">
@@ -135,24 +135,24 @@ export default function HomePage() {
 
       </section>
 
-      <section className={`shell ${styles.section}`} id="home-services">
-        <header className={styles.sectionHead}>
-          <div><span>قريب منك</span><h2>مشوارك على فين النهارده؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختار طلبك، وسيب اللفّة علينا.</p></div>
+      <section className={`shell ${styles.section}`} id="home-services" aria-labelledby="home-services-title">
+        <div data-section-heading className={styles.sectionHead}>
+          <div><span>قريب منك</span><h2 id="home-services-title">مشوارك على فين النهارده؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختار طلبك، وسيب اللفّة علينا.</p></div>
           <Link prefetch={false} href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
-        </header>
+        </div>
         <Suspense fallback={<HomeSectionStatus>جارٍ تجهيز الخدمات…</HomeSectionStatus>}><HomeServiceGrid activities={featuredActivities} /></Suspense>
       </section>
 
-      <section className={styles.discoveryBand}>
+      <section className={styles.discoveryBand} aria-labelledby="home-localities-title home-knowledge-title">
         <div className={`shell ${styles.discoveryGrid}`}>
           <article className={styles.placesPanel}>
-            <header><span>ابدأ من مكانك</span><h2>قرى نقادة ونجوعها</h2><p>اختار بلدك، تلاقي خدماتها ومعلوماتها قدامك في صفحة واحدة.</p></header>
+            <div data-section-heading><span>ابدأ من مكانك</span><h2 id="home-localities-title">قرى نقادة ونجوعها</h2><p>اختار بلدك، تلاقي خدماتها ومعلوماتها قدامك في صفحة واحدة.</p></div>
             <Suspense fallback={<p className={styles.contentStatus}>جارٍ تجهيز خدمات القرى…</p>}><HomePlaces /></Suspense>
             <Link prefetch={false} href="/villages" className={styles.panelLink}>كل القرى والنجوع <ActionIcon name="arrow" /></Link>
           </article>
 
           <article className={styles.knowledgePanel}>
-            <header><span>موسوعة نقادة</span><h2>اعرف بلدك زين</h2><p>أماكن وناس وتراث من بلدنا، وكل معلومة معاها مصدرها. عشان الحكاية تبقى على بيّنة.</p></header>
+            <div data-section-heading><span>موسوعة نقادة</span><h2 id="home-knowledge-title">اعرف بلدك زين</h2><p>أماكن وناس وتراث من بلدنا، وكل معلومة معاها مصدرها. عشان الحكاية تبقى على بيّنة.</p></div>
             <div className={styles.knowledgeTopics}>
               <Link prefetch={false} href="/knowledge/places"><span>الأماكن</span><strong>{knowledgePlaces.length.toLocaleString(NUMBER_LOCALE)}</strong><small>موضعًا</small></Link>
               <Link prefetch={false} href="/knowledge/people"><span>الأعلام</span><strong>{knowledgePeople.length.toLocaleString(NUMBER_LOCALE)}</strong><small>شخصية</small></Link>
@@ -168,13 +168,13 @@ export default function HomePage() {
 
       <Suspense fallback={null}><HomeRecent /></Suspense>
 
-      <section className={`shell ${styles.community}`}>
-        <div><span>دليل يبنيه أهله</span><h2>لقيت معلومة ناقصة؟ قول لنا.</h2><p>عينك معانا. ابعت التصحيح ومصدره، وإحنا نراجعه قبل ما ينزل.</p></div>
+      <section className={`shell ${styles.community}`} aria-labelledby="home-community-title">
+        <div><span>دليل يبنيه أهله</span><h2 id="home-community-title">لقيت معلومة ناقصة؟ قول لنا.</h2><p>عينك معانا. ابعت التصحيح ومصدره، وإحنا نراجعه قبل ما ينزل.</p></div>
         <Link prefetch={false} href="/contribute"><ActionIcon name="add" /> أضف نشاطك</Link>
       </section>
 
-      <section className={`shell ${styles.faq}`}>
-        <header className={styles.sectionHead}><div><span>لو لسه بتسأل</span><h2>سؤالك عندنا وجوابه معاه</h2></div></header>
+      <section className={`shell ${styles.faq}`} aria-labelledby="home-faq-title">
+        <div data-section-heading className={styles.sectionHead}><div><span>لو لسه بتسأل</span><h2 id="home-faq-title">سؤالك عندنا وجوابه معاه</h2></div></div>
         <div>{faq.map((item) => <details key={item.question}><summary>{item.question}<ActionIcon name="chevron" /></summary><p>{item.answer}</p></details>)}</div>
       </section>
 
@@ -265,11 +265,11 @@ async function HomeEditorial() {
       }))} />
 
       {leadArticle ? (
-        <section className={`shell ${styles.section} ${styles.stories}`}>
-          <header className={styles.sectionHead}>
-            <div><span>من داخل المكان</span><h2>حكاوي بلدنا تحلّي القعدة</h2><p>هات كوباية الشاي، واقرأ عن ناس نقادة وبلادها وحكاياتها.</p></div>
+        <section className={`shell ${styles.section} ${styles.stories}`} aria-labelledby="home-stories-title">
+          <div data-section-heading className={styles.sectionHead}>
+            <div><span>من داخل المكان</span><h2 id="home-stories-title">حكاوي بلدنا تحلّي القعدة</h2><p>هات كوباية الشاي، واقرأ عن ناس نقادة وبلادها وحكاياتها.</p></div>
             <Link prefetch={false} href="/blog">كل الحكايات <ActionIcon name="arrow" /></Link>
-          </header>
+          </div>
           <div className={styles.storyGrid}>
             <Link prefetch={false} href={`/blog/${leadArticle.slug}`} className={styles.leadStory}>
               <Image unoptimized={leadArticle.hero.asset.startsWith('/api/article-media/')} src={editorialImagePath(leadArticle.hero.asset)} width={leadArticle.hero.width} height={leadArticle.hero.height} alt={leadArticle.hero.alt} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" />
@@ -305,9 +305,9 @@ async function HomeRecent() {
   if (!catalog) return null;
   const recentlyReviewed = [...catalog.businesses].filter(item => Boolean(item.checked)).sort((a, b) => (b.checked || '').localeCompare(a.checked || '') || (b.reviews || 0) - (a.reviews || 0)).slice(0, 3);
   return (
-      <section className={styles.updateBand}>
+      <section className={styles.updateBand} aria-labelledby="home-updates-title">
         <div className={`shell ${styles.updates}`}>
-          <header><span>الدليل يتجدد</span><h2>معلومات راجعناها مؤخرًا</h2><Link prefetch={false} href="/updates">سجل التحديثات <ActionIcon name="arrow" /></Link></header>
+          <div data-section-heading><span>الدليل يتجدد</span><h2 id="home-updates-title">معلومات راجعناها مؤخرًا</h2><Link prefetch={false} href="/updates">سجل التحديثات <ActionIcon name="arrow" /></Link></div>
           <div>
             {recentlyReviewed.map((item) => (
               <Link prefetch={false} key={item.id} href={publicBusinessHref(item)}>

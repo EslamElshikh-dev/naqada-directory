@@ -404,7 +404,7 @@ body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even) {
 body.encyclopedia-ui nav.breadcrumbs > span:nth-child(even)::before {
   content: '←';
   color: var(--text-muted);
-  font: 800 .65rem/1 sans-serif;
+  font: 600 .65rem/1 sans-serif;
 }
 
 body.encyclopedia-ui nav.breadcrumbs > :last-child {
