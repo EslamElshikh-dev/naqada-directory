@@ -8,6 +8,9 @@ on:
       - 'tests/helpers/supabase-postgres.mjs'
       - 'tests/integration/supabase17/**'
       - 'tests/*.sql'
+      - 'tests/database-replay.test.mjs'
+      - 'lib/business-locations.ts'
+      - 'lib/auth/supabase-rest.ts'
       - 'lib/auth/contributor.ts'
       - '.github/workflows/database-http.yml'
   push:
@@ -19,6 +22,9 @@ on:
       - 'tests/helpers/supabase-postgres.mjs'
       - 'tests/integration/supabase17/**'
       - 'tests/*.sql'
+      - 'tests/database-replay.test.mjs'
+      - 'lib/business-locations.ts'
+      - 'lib/auth/supabase-rest.ts'
       - 'lib/auth/contributor.ts'
       - '.github/workflows/database-http.yml'
   workflow_dispatch:
