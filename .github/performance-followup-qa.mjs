@@ -9,6 +9,13 @@ async function check(name,run){try{const detail=await run();checks.push({name,pa
 async function html(path){const r=await fetch(new URL(path,base));return {r,text:await r.text()};}
 function schemas(text){return [...text.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap(m=>{const j=JSON.parse(m[1]);return j['@graph']||[j];});}
 const home=await html('/');
+await check('public homepage retains CSP without a request nonce',async()=>{
+ const policy=home.r.headers.get('content-security-policy')||'';
+ assert.match(policy,/frame-ancestors 'self'/);assert.match(policy,/script-src-attr 'none'/);
+ assert.match(policy,/report-to csp-endpoint/);assert.ok(!policy.includes("'nonce-"));
+ const endpoint=home.r.headers.get('reporting-endpoints')?.match(/csp-endpoint="([^"]+)"/)?.[1];
+ assert.ok(endpoint);assert.equal(new URL(endpoint,base).pathname,'/api/csp-report/');
+});
 await check('public ISR and dynamic query policies',async()=>{
  const documents=[];
  for(const path of ['/','/about/','/install/','/coverage/','/updates/','/directory/','/villages/','/villages/'+encodeURIComponent('الخطاره')+'/']){

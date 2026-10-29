@@ -34,4 +34,5 @@ export function proxy(request: NextRequest) {
   if (dynamic) response.headers.set('Cache-Control','private, no-store, max-age=0');
   return response;
 }
-export const config = { matcher: ['/((?!api/|_next/|.*\\.(?:ico|svg|png|jpg|jpeg|webp|avif|js|css|woff2|txt|xml)$|.*opengraph-image).*)'] };
+// The homepage keeps the same public policy through next.config headers.
+export const config = { matcher: ['/((?!$|api/|_next/|.*\\.(?:ico|svg|png|jpg|jpeg|webp|avif|js|css|woff2|txt|xml)$|.*opengraph-image).*)'] };
