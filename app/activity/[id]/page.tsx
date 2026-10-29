@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildPageMetadata({
     title: `${listing.name} في ${listing.locality}`,
     description: truncateMetaDescription(listing.description), path: ownerActivityHref(listing),
+    robots: { index: Boolean(listing.reviewed_at && listing.copy_reviewed_at), follow: true },
     socialImage: { url: siteConfig.url + ownerActivityHref(listing) + 'opengraph-image/', alt: listing.name, width: 1200, height: 630, type: 'image/jpeg' },
   });
 }

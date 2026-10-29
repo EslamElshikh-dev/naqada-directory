@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const locality = getLocalityBySlug(slug);
   if (!locality) return {};
+  if (locality.name === 'مركز نقادة') return { title: 'قرى مركز نقادة', alternates: { canonical: '/villages/' } };
   const article = getVillageArticle(locality.name);
   const path = `/villages/${locality.slug}`;
   const socialImage = { url: siteConfig.url + '/villages/' + encodeURIComponent(locality.slug) + '/opengraph-image/', alt: locality.name, width: 1200, height: 630, type: 'image/jpeg' };
@@ -48,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocalityPage({ params }: Props) {
   const { slug } = await params;
+  if (['مركز-نقاده','مركز-نقادة'].includes(decodeURIComponent(slug))) permanentRedirect('/villages/');
   const canonicalAlias = getCanonicalLocalitySlugAlias(slug);
   if (canonicalAlias) permanentRedirect(`/villages/${encodeURIComponent(canonicalAlias)}`);
   const locality = getLocalityBySlug(slug);

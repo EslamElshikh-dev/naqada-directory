@@ -1,3 +1,4 @@
+import { publicOwnerCopy } from '@/lib/owner-listing-copy';
 import { ownerActivityHref } from '@/lib/activity-path';
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
 import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo';
@@ -22,9 +23,11 @@ export type OwnerListing = {
   status: 'pending' | 'published' | 'rejected';
   created_at: string;
   updated_at: string;
+  reviewed_at?: string | null;
+  copy_reviewed_at?: string | null;
 };
 
-export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at';
+export const ownerListingSelect = 'id,owner_user_id,name,phone,hours,address,description,category,locality,photo_paths,cover_path,maps_url,status,created_at,updated_at,reviewed_at';
 
 export const getPublishedOwnerListings = cache(unstable_cache(async () => {
   return retryPublicRead(async (): Promise<OwnerListing[]> => {
@@ -33,7 +36,7 @@ export const getPublishedOwnerListings = cache(unstable_cache(async () => {
     { headers: restHeaders(), cache: 'no-store', signal: AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS) },
   );
   if (!response.ok) throw Object.assign(Error('PUBLIC_ACTIVITIES_UNAVAILABLE'), { status: response.status });
-  return response.json() as Promise<OwnerListing[]>;
+  return (await response.json() as OwnerListing[]).map(publicOwnerCopy);
   }, 'owner-catalog');
 }, ['published-owner-catalog-v2'], { revalidate: 3600, tags: ['naqada-public-content'] }));
 
@@ -45,7 +48,7 @@ const getPublishedOwnerListingById = unstable_cache(async (id: string) => {
   );
   if (!response.ok) throw Object.assign(Error('PUBLIC_ACTIVITY_UNAVAILABLE'), { status: response.status });
   const rows = await response.json() as OwnerListing[];
-  return rows[0] || null;
+  return rows[0] ? publicOwnerCopy(rows[0]) : null;
   }, 'owner-activity');
 }, ['published-owner-listing-v2'], { revalidate: 3600, tags: ['naqada-public-content'] });
 
