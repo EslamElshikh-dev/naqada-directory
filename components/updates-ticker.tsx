@@ -21,8 +21,8 @@ const fallbackUpdates: TickerItem[] = [
   { href: '/updates', tag: 'سند', text: 'تطوير المساعد الذكي سند وتحسين وصوله السريع على الهاتف' },
 ];
 
-export function UpdatesTicker() {
-  const [paused, setPaused] = useState(false);
+export function UpdatesTicker({ initialPaused = false }: { initialPaused?: boolean }) {
+  const [paused, setPaused] = useState(initialPaused);
   const [liveItems, setLiveItems] = useState<TickerItem[]>([]);
   const [feedLoaded, setFeedLoaded] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);

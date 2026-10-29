@@ -23,7 +23,7 @@ function BellIcon() {
   );
 }
 
-export function HeaderNotifications() {
+export function HeaderNotifications({ initialOpen = false }: { initialOpen?: boolean }) {
   const [styles, setStyles] = useState<Record<string, string>>(triggerStyles);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
@@ -176,6 +176,8 @@ export function HeaderNotifications() {
     }
     setOpen((value) => !value);
   }
+
+  useEffect(() => { if (initialOpen) { void import('./header-notifications.module.css').then(m => { setStyles(m.default); setOpen(true); }); } }, [initialOpen]);
 
   return (
     <div ref={rootRef} className={styles.root}>

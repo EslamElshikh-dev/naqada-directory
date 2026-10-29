@@ -14,8 +14,8 @@ export type FeaturedRoleModel = {
   photo?: RoleModelPhoto;
 };
 
-export function RoleModelFeature({ people }: { people: FeaturedRoleModel[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export function RoleModelFeature({ people, initialStep = 0 }: { people: FeaturedRoleModel[]; initialStep?: number }) {
+  const [activeIndex, setActiveIndex] = useState(people.length ? (initialStep + people.length) % people.length : 0);
   const [paused, setPaused] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
   const [playRequested, setPlayRequested] = useState(false);

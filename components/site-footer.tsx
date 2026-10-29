@@ -1,8 +1,8 @@
-import { PrivacyPreferences } from './privacy-preferences';
+import { DeferredPreferences as PrivacyPreferences } from './widget-placeholders';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import Link from 'next/link';
 import { meta } from '@/lib/data';
-import { BrandMark } from './site-shell';
+import { BrandMark } from './brand-mark';
 import { ActionIcon } from './action-icon';
 import { FooterBusinessCount } from './footer-business-count';
 import { InstallBanner } from './pwa-setup';
