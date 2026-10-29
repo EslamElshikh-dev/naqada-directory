@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import integrity from '@/data/script-integrity.json';
 import { organizationLinks } from '@/lib/organization';
 import type { Metadata, Viewport } from 'next';
@@ -112,7 +113,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <MobileNav />
         <SanadAssistant />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(websiteSchema) }} />
-        {process.env.VERCEL === '1' && <><script defer src="/scripts/speed-insights-bootstrap.js" /><script defer src="/_vercel/speed-insights/script.js" /></>}
+        {process.env.VERCEL === '1' && <><Script src="/scripts/speed-insights-bootstrap.js" integrity={integrity['/scripts/speed-insights-bootstrap.js']} crossOrigin="anonymous" strategy="afterInteractive" /><Script src="/_vercel/speed-insights/script.js" strategy="afterInteractive" /></>}
       </body>
     </html>
   );

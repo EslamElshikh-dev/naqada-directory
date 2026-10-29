@@ -2,7 +2,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const PUBLIC_CONTENT_TAG = 'naqada-public-content';
 export const PUBLIC_CONTENT_TTL = 3600;
-const configuredReadTimeout = Number(process.env.NAQADA_PUBLIC_READ_TIMEOUT_MS);
+const configuredReadTimeout = typeof process !== 'undefined' ? Number(process.env.NAQADA_PUBLIC_READ_TIMEOUT_MS) : 0;
 export const PUBLIC_READ_TIMEOUT_MS = Number.isFinite(configuredReadTimeout) && configuredReadTimeout >= 5000 && configuredReadTimeout <= 30000 ? configuredReadTimeout : 5000;
 
 // Only idempotent public reads may retry; moderation writes never pass here.

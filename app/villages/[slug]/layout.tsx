@@ -63,4 +63,4 @@ export default async function LocalityLayout({ children, params }: Props) {
   );
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;

@@ -72,11 +72,11 @@ try {
 
     const dismissInstall = page.getByRole('button', { name: 'إغلاق تنبيه تثبيت التطبيق', exact: true });
     if (await dismissInstall.isVisible()) await dismissInstall.click();
-    await page.getByRole('button', { name: 'إيقاف حركة شريط الأخبار', exact: true }).click();
+    await page.getByRole('button', { name: 'إيقاف الشريط', exact: true }).click();
     const beforePause = await readMotion(page);
     await page.waitForTimeout(500);
     assert.ok(Math.abs((await readMotion(page)).x - beforePause.x) < 1, `${name}: pause holds position`);
-    await page.getByRole('button', { name: 'استئناف حركة شريط الأخبار', exact: true }).click();
+    await page.getByRole('button', { name: 'تشغيل الشريط', exact: true }).click();
     const beforeResume = await readMotion(page);
     await page.waitForTimeout(500);
     assert.ok((await readMotion(page)).x > beforeResume.x + 8, `${name}: resumes toward the right`);

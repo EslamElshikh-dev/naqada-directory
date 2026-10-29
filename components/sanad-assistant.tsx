@@ -32,7 +32,7 @@ export function SanadAssistant({ initialOpen = false }: { initialOpen?: boolean 
     const loaded = await import('./sanad-assistant.module.css');
     setStyles(loaded.default); setOpen(true);
   }, []);
-  useEffect(() => { if (initialOpen) void show(); }, [initialOpen, show]);
+  useEffect(() => { if (!initialOpen) return; const timer = setTimeout(() => void show(),0); return () => clearTimeout(timer); }, [initialOpen, show]);
   useEffect(() => {
     const key = 'naqada-sanad-hint';
     try { if (sessionStorage.getItem(key)) return; } catch {}

@@ -107,8 +107,8 @@ test('village counts follow the visible public catalog, including new owner acti
 test('owner activities keep their published canonical URL in cards, homepage updates and structured data', () => {
   const { publicBusinessHref } = loadModule('./lib/business-links');
   const id = '7828410d-1d6b-4ab9-8394-6a266d0bcf2e';
-  assert.equal(publicBusinessHref({ id: `owner:${id}`, slug: `owner-${id}` }), `/activity/${id}/`);
-  assert.equal(publicBusinessHref({ id: `owner-${id}`, slug: id }), `/activity/${id}/`);
+  assert.equal(publicBusinessHref({ id: `owner:${id}`, slug: `owner-${id}` }), loadModule('./lib/activity-path').ownerActivityHref({id}));
+  assert.equal(publicBusinessHref({ id: `owner-${id}`, slug: id }), loadModule('./lib/activity-path').ownerActivityHref({id}));
   assert.equal(publicBusinessHref({ id: 'static:1', slug: 'صيدلية-مؤمن' }), `/listing/${encodeURIComponent('صيدلية-مؤمن')}/`);
 });
 

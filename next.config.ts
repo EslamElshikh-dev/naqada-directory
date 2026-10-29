@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     // Ephemeral QA filesystems can opt out without changing the hosted build default.
     turbopackFileSystemCacheForBuild: process.env.NAQADA_DISABLE_BUILD_CACHE !== '1',
     // Share styles by route instead of pulling unrelated component styles into large common chunks.
-    cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 1000 },
+    cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 6000 },
   },
   async rewrites() {
     return { beforeFiles: [

@@ -11,7 +11,7 @@ function escapeMarkup(value: string) {
 export async function socialCard(title: string, subtitle: string) {
   const fontfile = join(process.cwd(), 'app/fonts/noto-kufi-arabic-og.ttf');
   const bodyFontfile = join(process.cwd(), 'app/fonts/ibm-plex-sans-arabic-og.ttf');
-  const [headingFont, bodyFont, logoBytes] = await Promise.all([readFile(fontfile),readFile(bodyFontfile),readFile(join(process.cwd(),'public/icon.svg'))]);
+  const [headingFont, bodyFont, logoBytes] = await Promise.all([readFile(fontfile),readFile(bodyFontfile),readFile(join(process.cwd(),'app/icon.svg'))]);
   const clean = (value: string) => value.replace(/[\p{Extended_Pictographic}\uFE0F]/gu,'').replace(/[·•]/g,'،').replace(/\s+/g,' ').trim();
   const logo = 'data:image/svg+xml;base64,' + logoBytes.toString('base64');
   const text = async (value: string, size: number, height: number, color: string, body = false) => {
