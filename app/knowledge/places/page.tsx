@@ -27,3 +27,5 @@ export default function KnowledgePlacesPage() {
     </div>
   </main>;
 }
+
+export const revalidate = 3600;

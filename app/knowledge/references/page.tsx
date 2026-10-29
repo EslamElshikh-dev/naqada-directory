@@ -26,3 +26,5 @@ export default function ReferencesPage() {
     </div>
   </main>;
 }
+
+export const revalidate = 3600;

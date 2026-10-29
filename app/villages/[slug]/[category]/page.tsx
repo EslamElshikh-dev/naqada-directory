@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/villages-slug-category.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
@@ -13,7 +14,7 @@ import { MIN_LOCAL_CATEGORY_RESULTS } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string; category: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -110,3 +111,5 @@ export default async function LocalCategoryPage({ params }: Props) {
     </main>
   );
 }
+
+export async function generateStaticParams() { const { businesses } = await getPublicBusinessCatalog(); return localities.flatMap(place => categories.filter(category => businesses.filter(item => canonicalLocalityName(item.locality) === place.name && item.category === category.name).length >= MIN_LOCAL_CATEGORY_RESULTS).map(category => ({ slug: place.slug, category: category.slug }))); }

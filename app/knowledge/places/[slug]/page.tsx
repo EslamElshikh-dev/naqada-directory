@@ -54,3 +54,5 @@ export default async function KnowledgePlacePage({ params }: Props){
     </div>
   </main>;
 }
+
+export const revalidate = 86400;

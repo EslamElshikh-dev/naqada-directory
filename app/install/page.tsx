@@ -73,3 +73,5 @@ export default function InstallPage() {
     </main>
   );
 }
+
+export const revalidate = 3600;

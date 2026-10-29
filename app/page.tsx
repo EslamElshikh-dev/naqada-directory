@@ -60,7 +60,7 @@ const faq = [
   { question: 'الموسوعة فيها كل قرى نقادة؟', answer: 'يشمل الهيكل المواضع الموثقة، وتُضاف التفاصيل والخدمات تدريجيًا كلما اكتملت مراجعتها.' },
 ];
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export default function HomePage() {
   const priorityActivities = priorityActivityNames

@@ -45,3 +45,5 @@ export default async function PersonPage({params}:Props){
     </div>
   </main>;
 }
+
+export const revalidate = 86400;

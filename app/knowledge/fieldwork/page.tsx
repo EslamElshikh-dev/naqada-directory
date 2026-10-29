@@ -25,3 +25,5 @@ export default function FieldworkPage() {
     </div>
   </main>;
 }
+
+export const revalidate = 3600;

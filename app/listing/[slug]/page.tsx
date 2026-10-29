@@ -1,3 +1,4 @@
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import '@/app/route-styles/listing-slug.css';
 import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
 import { NUMBER_LOCALE } from '@/lib/format-number';
@@ -17,7 +18,7 @@ import { absoluteUrl, buildPageMetadata, businessSummary, cleanPhone, formatDate
 import styles from './listing-detail.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 function resolveSeoKeywordSearch(keyword: string) {
   const isNurseryKeyword = /حضان|أطفال|رياض/.test(keyword);
@@ -235,3 +236,5 @@ export default async function ListingPage({ params }: Props) {
     </main>
   );
 }
+
+export async function generateStaticParams() { const { businesses } = await getPublicBusinessCatalog(); return businesses.filter(item => !item.id.startsWith('owner:')).map(item => ({ slug: item.slug })); }

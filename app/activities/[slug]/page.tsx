@@ -1,3 +1,4 @@
+import { activityLandings } from '@/lib/activity-landings';
 import '@/app/route-styles/activities-slug.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
@@ -13,7 +14,7 @@ import { localCategoryHref } from '@/lib/discovery-routing';
 import { buildPageMetadata, jsonLdStringify, siteConfig } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 
 function activityKeywords(name: string, searchLabel: string) {
@@ -131,3 +132,5 @@ export default async function ActivityPage({ params }: Props) {
     </main>
   );
 }
+
+export function generateStaticParams() { return activityLandings.map(item => ({ slug: item.slug })); }

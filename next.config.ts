@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
     // Share styles by route instead of pulling unrelated component styles into large common chunks.
     cssChunking: process.env.ANALYZE === 'true' ? true : { type: 'graph', requestCost: 1000 },
   },
+  async rewrites() {
+    return { beforeFiles: [
+      ...['q','category','locality','sort','page'].map(key => ({ source: '/directory/', has: [{ type: 'query' as const, key }], destination: '/directory-query/' })),
+      { source: '/news/', has: [{ type: 'query' as const, key: 'section' }], destination: '/news-query/' },
+      ...['q','view'].map(key => ({ source: '/jobs/', has: [{ type: 'query' as const, key }], destination: '/jobs-query/' })),
+    ], afterFiles: [], fallback: [] };
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

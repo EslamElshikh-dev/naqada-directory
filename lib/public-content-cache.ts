@@ -1,8 +1,9 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const PUBLIC_CONTENT_TAG = 'naqada-public-content';
-export const PUBLIC_CONTENT_TTL = 60;
-export const PUBLIC_READ_TIMEOUT_MS = 5000;
+export const PUBLIC_CONTENT_TTL = 3600;
+const configuredReadTimeout = Number(process.env.NAQADA_PUBLIC_READ_TIMEOUT_MS);
+export const PUBLIC_READ_TIMEOUT_MS = Number.isFinite(configuredReadTimeout) && configuredReadTimeout >= 5000 && configuredReadTimeout <= 30000 ? configuredReadTimeout : 5000;
 
 // Only idempotent public reads may retry; moderation writes never pass here.
 export async function retryPublicRead<T>(read: () => Promise<T>, kind: string): Promise<T> {
@@ -22,4 +23,7 @@ export async function retryPublicRead<T>(read: () => Promise<T>, kind: string): 
 export function invalidatePublicContent() {
   revalidateTag(PUBLIC_CONTENT_TAG, { expire: 0 });
   revalidatePath('/', 'layout');
+  revalidatePath('/api/news');
+  revalidatePath('/api/jobs');
+  revalidatePath('/api/news/feed');
 }

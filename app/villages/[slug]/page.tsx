@@ -1,3 +1,4 @@
+
 import '@/app/route-styles/villages-slug.css';
 import { ShareActions } from '@/components/share-actions';
 import { NUMBER_LOCALE } from '@/lib/format-number';
@@ -17,7 +18,7 @@ import knowledgeStyles from './reference.module.css';
 import pageStyles from './village-hero.module.css';
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -297,3 +298,5 @@ export default async function LocalityPage({ params }: Props) {
     </main>
   );
 }
+
+export function generateStaticParams() { return localities.filter(item => item.name !== 'مركز نقادة').map(item => ({ slug: item.slug })); }

@@ -1,3 +1,4 @@
+import { getPublishedOwnerListings } from '@/lib/owner-listings';
 import '@/app/route-styles/activity-id.css';
 import { ownerActivityHref, ownerActivityId, ownerActivityNeedsRedirect } from '@/lib/activity-path';
 import { fullTimeHours, verifiedMapCoordinates } from '@/lib/business-schema';
@@ -17,7 +18,7 @@ import { buildPageMetadata, cleanPhone, jsonLdStringify, siteConfig, slugify, tr
 import styles from './activity.module.css';
 
 type Props = { params: Promise<{ id: string }> };
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id: requestedId } = await params;
@@ -118,3 +119,5 @@ export default async function ActivityPage({ params }: Props) {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
   </main>;
 }
+
+export async function generateStaticParams() { return (await getPublishedOwnerListings()).map(item => ({ id: decodeURIComponent(ownerActivityHref(item).split('/')[2]) })); }
