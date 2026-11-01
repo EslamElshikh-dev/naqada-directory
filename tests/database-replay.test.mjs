@@ -10,6 +10,47 @@ test('fresh database preserves explicit grants, contributor isolation and review
  try {
   const files=await replayMigrations(db);assert.ok(files.length>=30);
   await assertRls(db,24);
+  await db.exec(fs.readFileSync(new URL('data-api-privileges.sql',import.meta.url),'utf8'));
+  // Execute the real coordinate reader and header helper against the rebuilt
+  // database. Cache storage alone is stubbed; no request leaves this process.
+  const loadModule=(path,require,globals={})=>{
+   const source=fs.readFileSync(new URL(path,import.meta.url),'utf8');
+   const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText;
+   const exports={};vm.runInNewContext(compiled,{exports,require,...globals});return exports;
+  };
+  const auth=loadModule('../lib/auth/supabase-rest.ts',name=>{
+   assert.equal(name,'@/lib/auth/password-policy');return {PASSWORD_MIN_LENGTH:12};
+  },{process:{env:{NODE_ENV:'test'}}});
+  await db.exec("insert into public.directory_business_locations(place_id,latitude,longitude,source_url,source_name,checked_at) values('isolated-client-place',25.9,32.7,'https://www.google.com/maps/?q=isolated','Isolated client test',now())");
+  let locationReads=0;
+  const locations=loadModule('../lib/business-locations.ts',name=>{
+   if(name==='next/cache')return {unstable_cache:fn=>fn};
+   if(name==='@/lib/auth/supabase-rest')return auth;
+   assert.equal(name,'@/lib/public-content-cache');return {PUBLIC_CONTENT_TAG:'isolated',PUBLIC_READ_TIMEOUT_MS:10000};
+  },{AbortSignal,fetch:async(input,options)=>{
+   locationReads++;
+   const url=new URL(input);
+   assert.equal(url.origin,auth.SUPABASE_URL);
+   assert.equal(url.pathname,'/rest/v1/directory_business_locations');
+   assert.equal(url.searchParams.get('select'),'place_id,latitude,longitude');
+   assert.equal(url.searchParams.get('limit'),'1000');
+   assert.equal(options.headers.apikey,auth.SUPABASE_PUBLISHABLE_KEY);
+   assert.equal(options.headers.Authorization,`Bearer ${auth.SUPABASE_PUBLISHABLE_KEY}`);
+   const rows=(await asRole(db,'anon',null,'select place_id,latitude,longitude from public.directory_business_locations limit 1000')).rows;
+   return Response.json(rows);
+  }});
+  assert.equal(JSON.stringify(await locations.getBusinessLocations()),JSON.stringify({'isolated-client-place':{latitude:25.9,longitude:32.7}}));
+  assert.equal(locationReads,1,'The real application reader must exercise the database');
+  assert.equal((await asRole(db,'authenticated',null,'select place_id from public.directory_business_locations')).rows.length,1);
+  // No code path uses a service key for coordinates. Keep that unused access
+  // denied in fresh installs instead of granting it merely for symmetry.
+  await denied(db,'service_role',null,'select place_id from public.directory_business_locations');
+  for(const role of ['anon','authenticated','service_role']) {
+   await denied(db,role,null,"insert into public.directory_business_locations(place_id,latitude,longitude,source_url,source_name,checked_at) values('forged',0,0,'https://www.google.com/maps/?q=forged','Forged',now())");
+   await denied(db,role,null,'update public.directory_business_locations set latitude=0');
+   await denied(db,role,null,'delete from public.directory_business_locations');
+  }
+  assert.equal((await db.query("select latitude::text from public.directory_business_locations where place_id='isolated-client-place'")).rows[0].latitude,'25.9000000');
   assert.equal((await db.query('select (select count(*) from public.directory_admins)+(select count(*) from public.directory_member_roles)+(select count(*) from public.directory_contributor_accounts) as privileged_seeds')).rows[0].privileged_seeds,0,'A fresh environment must not enroll production identities');
   // The server must be able to read the data used by the application's backend,
   // even when table creation supplies no automatic grants. Browser access and

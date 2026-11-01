@@ -115,14 +115,27 @@ def main():
             raise RuntimeError(f"Migration {file.name}: {error.stderr}") from error
     check(f"all {len(files)} migrations replay on PostgreSQL 17.6", len(files) >= 35)
     check("24 application tables have RLS", sql("select count(*)=24 and bool_and(rowsecurity) from pg_tables where schemaname='public';") == "t")
+    sql((ROOT / "tests/data-api-privileges.sql").read_text())
+    check("72 role/table contracts and closed table/sequence defaults", True)
     check("webhook state stays outside exposed schemas", sql("select not has_schema_privilege('anon','naqada_private','usage') and not has_schema_privilege('authenticated','naqada_private','usage');") == "t")
     check("no privileged accounts seeded", sql("select (select count(*) from public.directory_admins)+(select count(*) from public.directory_member_roles)+(select count(*) from public.directory_contributor_accounts);") == "0")
     subprocess.run([*COMPOSE, "up", "-d", "rest"], check=True)
     ready("rest", "directory_contributors?select=id&limit=0")
     sql("insert into public.directory_business_locations(place_id,latitude,longitude,source_url,source_name,checked_at) values('isolated-place',25.9,32.7,'https://www.google.com/maps/?q=isolated','Isolated acceptance',now());")
-    coordinates = request("rest", "directory_business_locations?select=place_id,latitude,longitude")
+    # Exact projection/limit from lib/business-locations.ts, which calls
+    # restHeaders() without a user JWT or service key and therefore uses anon.
+    coordinate_path = "directory_business_locations?select=place_id,latitude,longitude&limit=1000"
+    coordinates = request("rest", coordinate_path)
     check("verified coordinates readable through public API", len(coordinates) == 1 and coordinates[0]["place_id"] == "isolated-place")
-    denied("visitors cannot modify verified coordinates", "directory_business_locations?place_id=eq.isolated-place", method="PATCH", data={"latitude": 0})
+    service = local_service_jwt()
+    denied("unused service coordinate reads denied despite BYPASSRLS", coordinate_path, service)
+    forged_location = {"place_id": "forged-place", "latitude": 0, "longitude": 0,
+                       "source_url": "https://www.google.com/maps/?q=forged", "source_name": "Forged",
+                       "checked_at": "2026-10-29T00:00:00Z"}
+    for role, token in (("anon", None), ("service_role", service)):
+        denied(role + " cannot insert verified coordinates", "directory_business_locations", token, "POST", forged_location)
+        denied(role + " cannot update verified coordinates", "directory_business_locations?place_id=eq.isolated-place", token, "PATCH", {"latitude": 0})
+        denied(role + " cannot delete verified coordinates", "directory_business_locations?place_id=eq.isolated-place", token, "DELETE")
 
     users = []
     for index in range(4):
@@ -140,6 +153,12 @@ def main():
     aid, bid, gid = a["id"], b["id"], gold["id"]
     at, bt, gt, dt = a["token"], b["token"], gold["token"], admin["token"]
     rep = {"Prefer": "return=representation"}
+    member_coordinates = request("rest", coordinate_path, token=at)
+    check("real authenticated JWT reads verified coordinates", member_coordinates == coordinates)
+    denied("authenticated cannot insert verified coordinates", "directory_business_locations", at, "POST", forged_location)
+    denied("authenticated cannot update verified coordinates", "directory_business_locations?place_id=eq.isolated-place", at, "PATCH", {"latitude": 0})
+    denied("authenticated cannot delete verified coordinates", "directory_business_locations?place_id=eq.isolated-place", at, "DELETE")
+    check("denied coordinate writes leave rows unchanged", request("rest", coordinate_path) == coordinates)
     check("editable metadata cannot create an admin", request("rest", "rpc/is_directory_admin", "POST", {}, at) is False)
     check("editable metadata cannot create a reviewer", request("rest", "rpc/can_moderate_naqada", "POST", {}, at) is False)
     check("no privileged signup seeds", sql("select (select count(*) from public.directory_admins)+(select count(*) from public.directory_member_roles)+(select count(*) from public.directory_contributor_accounts);") == "0")
@@ -169,7 +188,6 @@ def main():
     check("member can edit own profile", len(request("rest", f"member_profiles?id=eq.{aid}", "PATCH", {"full_name": "Updated isolated member"}, at, headers=rep)) == 1)
     check("foreign profile edit affects no rows", request("rest", f"member_profiles?id=eq.{aid}", "PATCH", {"full_name": "Forged"}, bt, headers=rep) == [])
 
-    service = local_service_jwt()
     # Exercise server access through HTTP without publishing a production catalog.
     for table in ("member_profiles", "directory_owner_listings", "directory_curated_content",
                   "directory_request_notifications", "analytics_pageviews"):
