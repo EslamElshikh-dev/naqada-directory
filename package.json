@@ -20,7 +20,7 @@
     "sharp": "0.35.5"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.5.11",
+    "@electric-sql/pglite": "0.5.13",
     "@next/bundle-analyzer": "16.4.2",
     "@types/node": "^20",
     "@types/react": "^19",
