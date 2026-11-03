@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '22.23.4'
+          node-version: '24.22.1'
           cache: npm
 
       - name: Install dependencies
@@ -48,6 +48,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Type-check application
+        run: npm run typecheck
 
       - name: Build application
         run: npm run build
