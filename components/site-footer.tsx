@@ -1,3 +1,4 @@
+import { EslamDeveloperSignature } from "./eslam-developer-credit";
 import { organizationLinks } from '@/lib/organization';
 import { DeferredPreferences as PrivacyPreferences } from './widget-placeholders';
 import { NUMBER_LOCALE } from '@/lib/format-number';
@@ -101,7 +102,7 @@ export function Footer() {
             <span className={footerStyles.location}><i aria-hidden="true" /> مركز نقادة · محافظة قنا</span>
             <div className={footerStyles.legal}><span>© {new Date().getFullYear()} دليل نقادة</span><Link prefetch={false} href="/privacy">الخصوصية</Link><Link prefetch={false} href="/about">عن الدليل</Link></div>
           </div>
-          <Link prefetch={false} href="/developer" className={footerStyles.signature}><span>تصميم وتطوير</span><b>المهندس إسلام الشيخ</b><span aria-hidden="true">←</span></Link>
+          <EslamDeveloperSignature />
         </div>
       </div>
     </footer>

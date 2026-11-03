@@ -17,6 +17,7 @@ import './shell-styles.css';
 
 
 export const metadata: Metadata = {
+  creator: "المهندس إسلام الشيخ",
   metadataBase: new URL(siteConfig.url),
   title: { default: siteConfig.name, template: '%s | دليل نقادة' },
   description: siteConfig.description,
