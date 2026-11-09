@@ -53,7 +53,7 @@ try {
     assert.ok((await page.locator('link[rel="canonical"]').getAttribute('href')).endsWith('?page=2'));
     await page.locator('.listing-grid').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `artifacts/indexing-pagination-${viewport}.png` });
-    await page.getByLabel('الترتيب', { exact: true }).selectOption('name');
+    await page.getByLabel('الترتيب').selectOption('name');
     await page.waitForURL(url => url.searchParams.get('sort') === 'name');
     const sortedPath = new URL(page.url()).pathname + new URL(page.url()).search;
     await page.reload({ waitUntil: 'networkidle' });
