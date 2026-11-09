@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import {readFile,mkdir,writeFile,readdir} from 'node:fs/promises';
 import {chromium} from 'playwright';
 import sharp from 'sharp';
+import {readJsonLd as schemas} from './read-jsonld.mjs';
 const base=process.env.QA_BASE_URL||'http://127.0.0.1:3000';
 const folder='artifacts/performance-followup';await mkdir(folder,{recursive:true});
 const checks=[];let failures=0;
 async function check(name,run){try{const detail=await run();checks.push({name,passed:detail?.blockedByEnvironment?null:true,detail});console.log(detail?.blockedByEnvironment?'BLOCKED':'PASS',name);}catch(e){failures++;checks.push({name,passed:false,error:e.message});console.log('FAIL',name,e.message);}}
 async function html(path){const r=await fetch(new URL(path,base));return {r,text:await r.text()};}
-function schemas(text){return [...text.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap(m=>{const j=JSON.parse(m[1]);return j['@graph']||[j];});}
 const home=await html('/');
 await check('public homepage retains CSP without a request nonce',async()=>{
  const policy=home.r.headers.get('content-security-policy')||'';
@@ -50,7 +50,7 @@ await check('factual business geo, hours, ratings, site search and contact schem
  const row=records.find(x=>pins[x.placeId]&&/24|٢٤|طوال اليوم/.test(x.hours||''));assert.ok(row);listing='/listing/'+encodeURIComponent(row.slug)+'/';
  const page=await html(listing);assert.equal(page.r.status,200);const entity=schemas(page.text).find(x=>x.geo);assert.ok(entity);assert.equal(entity.geo.latitude,pins[row.placeId].latitude);assert.equal(entity.geo.longitude,pins[row.placeId].longitude);assert.equal(entity.openingHoursSpecification[0].opens,'00:00');assert.equal(entity.openingHoursSpecification[0].closes,'23:59');
  if(entity.aggregateRating)assert.ok(entity.aggregateRating.ratingCount>0);
- const site=schemas(home.text);assert.ok(site.find(x=>x['@type']==='WebSite').potentialAction.target.urlTemplate.endsWith('/directory/?q={search_term_string}'));const org=site.find(x=>x['@type']==='Organization');assert.ok(org.contactPoint.url);assert.ok(org.sameAs.length);
+ const site=schemas(home.text);const website=site.find(x=>x['@type']==='WebSite');assert.ok(website?.potentialAction,'WebSite must expose its SearchAction');assert.equal(website.potentialAction['@type'],'SearchAction');assert.ok(website.potentialAction.target.urlTemplate.endsWith('/directory/?q={search_term_string}'));const org=site.find(x=>x['@type']==='Organization');assert.ok(org.contactPoint.url);assert.ok(org.sameAs.length);
  return {path:listing,entity,verifiedPins:Object.keys(pins).length,officialRichResultsTest:'Not run by this automated check'};
 });
 const browser=await chromium.launch({headless:true,...(process.env.NAQADA_QA_FULL_CHROME==='1'?{channel:'chromium'}:{}),ignoreDefaultArgs:['--disable-back-forward-cache']});
