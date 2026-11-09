@@ -121,6 +121,7 @@ jobs:
             throw new Error(`Sitemap URL does not match trailing-slash canonical format: ${missingTrailingSlash}`);
           }
           NODE
+          node scripts/verify-directory-pagination.mjs
 
       - name: Smoke-test production intake endpoint without writes
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

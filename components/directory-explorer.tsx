@@ -3,10 +3,9 @@ import { NUMBER_LOCALE } from '@/lib/format-number';
 
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import type { Category, DirectoryItem, LocalityPage } from '@/lib/types';
-import { hasBusinessMedia } from '@/lib/business-media';
+import { DIRECTORY_PAGE_SIZE, filterDirectoryMatches, type DirectorySort } from '@/lib/directory-state';
 import { normalizeSearchFields, prepareSearchQuery, scoreNormalizedSearchFields } from '@/lib/search-ranking';
 import { trackEvent } from '@/lib/analytics-client';
 import { trackCompletedSearch } from '@/lib/search-tracking';
@@ -15,7 +14,7 @@ import { isFamilySearchQuery, searchFamilyPages, type FamilySearchPage } from '@
 import { ListingCard } from './listing-card';
 import styles from './directory-explorer.module.css';
 
-type SortMode = 'recommended' | 'rating' | 'name';
+type SortMode = DirectorySort;
 
 type FacetItem = {
   name: string;
@@ -25,6 +24,7 @@ const noFamilyPages: FamilySearchPage[] = [];
 
 export function DirectoryExplorer({
   businesses,
+  basePath,
   familyPages = noFamilyPages,
   categories: sourceCategories,
   localities: sourceLocalities,
@@ -37,6 +37,7 @@ export function DirectoryExplorer({
   lockedLocality = false,
 }: {
   businesses: DirectoryItem[];
+  basePath: string;
   familyPages?: FamilySearchPage[];
   categories: Category[];
   localities: LocalityPage[];
@@ -50,8 +51,7 @@ export function DirectoryExplorer({
 }) {
   const categories = useMemo(() => sourceCategories.map(item => ({ ...item, count: businesses.filter(business => business.category === item.name).length })), [businesses, sourceCategories]);
   const localities = useMemo(() => sourceLocalities.map(item => ({ ...item, businessCount: businesses.filter(business => business.locality === item.name).length })), [businesses, sourceLocalities]);
-  const pathname = usePathname();
-  const routePath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+  const routePath = `${basePath.replace(/\/+$/, '')}/`;
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory);
   const [locality, setLocality] = useState(initialLocality);
@@ -62,21 +62,17 @@ export function DirectoryExplorer({
   const deferredQuery = useDeferredValue(query);
   const jobResult = jobSearchIntent(deferredQuery);
   const familyResults = useMemo(() => !category && !locality ? searchFamilyPages(deferredQuery, familyPages) : [], [category, deferredQuery, familyPages, locality]);
-  const pageSize = 12;
+  const pageSize = DIRECTORY_PAGE_SIZE;
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
     let cancelled = false;
-
     queueMicrotask(() => {
       if (cancelled) return;
-      setQuery(initialQuery || searchParams.get('q') || '');
-      setCategory(lockedCategory ? initialCategory : (initialCategory || searchParams.get('category') || ''));
-      setLocality(lockedLocality ? initialLocality : (initialLocality || searchParams.get('locality') || ''));
-      const requestedSort = searchParams.get('sort');
-      setSort(initialSort !== 'recommended' ? initialSort : requestedSort === 'rating' || requestedSort === 'name' ? requestedSort : 'recommended');
-      const requestedPage = Number.parseInt(searchParams.get('page') || '', 10);
-      setPage(initialPage > 1 ? initialPage : Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1);
+      setQuery(initialQuery);
+      setCategory(initialCategory);
+      setLocality(initialLocality);
+      setSort(initialSort);
+      setPage(initialPage);
       setHydratedFromUrl(true);
     });
 
@@ -109,26 +105,9 @@ export function DirectoryExplorer({
       .filter(({ rank }) => rank >= 0);
   }, [deferredQuery, indexedBusinesses, localities]);
 
-  const filtered = useMemo(() => {
-    const hasQuery = Boolean(deferredQuery.trim());
-    const matches = rankedQueryMatches
-      .filter(({ item }) => {
-        if (category && item.category !== category) return false;
-        if (locality && (item.locality || 'مركز نقادة') !== locality) return false;
-        return true;
-      });
-
-    matches.sort((a, b) => {
-      if (sort === 'name') return a.item.name.localeCompare(b.item.name, 'ar');
-      if (sort === 'rating') return (b.item.rating || 0) - (a.item.rating || 0) || (b.item.reviews || 0) - (a.item.reviews || 0);
-      if (hasQuery && b.rank !== a.rank) return b.rank - a.rank;
-      const mediaPriority = Number(Boolean(b.item.imageUrl) || hasBusinessMedia(b.item.id)) - Number(Boolean(a.item.imageUrl) || hasBusinessMedia(a.item.id));
-      if (mediaPriority) return mediaPriority;
-      return (b.item.reviews || 0) - (a.item.reviews || 0) || (b.item.rating || 0) - (a.item.rating || 0) || a.item.name.localeCompare(b.item.name, 'ar');
-    });
-
-    return matches.map(({ item }) => item);
-  }, [category, deferredQuery, locality, rankedQueryMatches, sort]);
+  const filtered = useMemo(() => filterDirectoryMatches(rankedQueryMatches, {
+    q: deferredQuery, category, locality, sort,
+  }), [category, deferredQuery, locality, rankedQueryMatches, sort]);
 
   const facets = useMemo(() => {
     if (!deferredQuery.trim()) return { categories: [] as FacetItem[], localities: [] as FacetItem[] };

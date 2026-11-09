@@ -2,6 +2,7 @@ import '@/app/route-styles/directory.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { buildPageMetadata, siteConfig } from '@/lib/site';
+import { resolveDirectoryState, type DirectorySearchParams } from '@/lib/directory-state';
 import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { UtilityPageHeader } from '@/components/utility-page-header';
@@ -9,41 +10,14 @@ import { categories, familySearchPages, localities } from '@/lib/data';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import Link from 'next/link';
 
-type DirectorySearchParams = Promise<{
-  q?: string | string[];
-  category?: string | string[];
-  locality?: string | string[];
-  sort?: string | string[];
-  page?: string | string[];
-}>;
+type Props = { searchParams: Promise<DirectorySearchParams> };
 
-type Props = { searchParams: DirectorySearchParams };
-
-const pageSize = 12;
 const description = 'ابحث وصَفِّ الأنشطة والخدمات المنشورة في مدينة نقادة وقراها ونجوعها بحسب الاسم والتصنيف والمكان.';
-
-function firstValue(value?: string | string[]) {
-  return Array.isArray(value) ? value[0] || '' : value || '';
-}
-
-function resolveDirectoryState(params: Awaited<DirectorySearchParams>, businessCount: number) {
-  const q = firstValue(params.q).trim().slice(0, 100);
-  const requestedCategory = firstValue(params.category);
-  const requestedLocality = firstValue(params.locality);
-  const requestedSort = firstValue(params.sort);
-  const category = categories.some((item) => item.name === requestedCategory) ? requestedCategory : '';
-  const locality = localities.some((item) => item.name === requestedLocality) ? requestedLocality : '';
-  const sort = requestedSort === 'rating' || requestedSort === 'name' ? requestedSort : 'recommended';
-  const requestedPage = Number.parseInt(firstValue(params.page), 10);
-  const totalPages = Math.max(1, Math.ceil(businessCount / pageSize));
-  const page = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), totalPages) : 1;
-  return { q, category, locality, sort, page, totalPages } as const;
-}
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const [params, catalog] = await Promise.all([searchParams, getPublicBusinessCatalog()]);
-  const state = resolveDirectoryState(params, catalog.directoryBusinesses.length);
-  const hasFilters = Boolean(state.q || state.category || state.locality || state.sort !== 'recommended');
+  const state = resolveDirectoryState(params, catalog.directoryBusinesses, { categories, localities });
+  const hasFilters = state.hasFilters;
   const pageLabel = state.page > 1 ? ` – صفحة ${state.page.toLocaleString(NUMBER_LOCALE)}` : '';
   const pageHref = state.page > 1 ? `/directory/?page=${state.page}` : '/directory/';
 
@@ -68,7 +42,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 export default async function DirectoryPage({ searchParams }: Props) {
   const [params, catalog] = await Promise.all([searchParams, getPublicBusinessCatalog()]);
   const { businesses, directoryBusinesses } = catalog;
-  const state = resolveDirectoryState(params, directoryBusinesses.length);
+  const state = resolveDirectoryState(params, directoryBusinesses, { categories, localities });
   const mapped = businesses.filter((item) => item.mapsUrl).length;
   const phoned = businesses.filter((item) => item.phone).length;
   return (
@@ -86,6 +60,7 @@ export default async function DirectoryPage({ searchParams }: Props) {
         <Suspense fallback={<div className="loading-state" style={{ minHeight: '100svh' }}>جارٍ تجهيز الدليل…</div>}>
           <DirectoryExplorer
             key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
+            basePath="/directory/"
             businesses={directoryBusinesses}
             familyPages={familySearchPages}
             categories={categories}
