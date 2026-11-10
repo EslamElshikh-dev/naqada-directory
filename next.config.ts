@@ -28,6 +28,9 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return { beforeFiles: [
+      // Match specific paths first; path parameter names must not collide with query filters.
+      ...['/villages/:placeSlug/:categorySlug/', '/villages/:placeSlug/', '/directory/:categorySlug/'].flatMap(source =>
+        ['q','category','locality','sort','page'].map(key => ({ source, has: [{ type: 'query' as const, key }], destination: `${source}results/` }))),
       ...['q','category','locality','sort','page'].map(key => ({ source: '/directory/', has: [{ type: 'query' as const, key }], destination: '/directory-query/' })),
       { source: '/news/', has: [{ type: 'query' as const, key: 'section' }], destination: '/news-query/' },
       ...['q','view'].map(key => ({ source: '/jobs/', has: [{ type: 'query' as const, key }], destination: '/jobs-query/' })),

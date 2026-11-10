@@ -76,6 +76,10 @@ jobs:
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/search-quality-qa.mjs
 
+      - name: Verify scoped directory pagination before and after hydration
+        if: ${{ !cancelled() && steps.server.outcome == 'success' }}
+        run: node .github/directory-pagination-qa.mjs
+
       - name: Verify ticker startup, direction and reading speed
         if: ${{ !cancelled() && steps.server.outcome == 'success' }}
         run: node .github/ticker-motion-qa.mjs

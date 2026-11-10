@@ -66,7 +66,7 @@ test('news previews preserve attribution and send readers to the original publis
 });
 
 test('temporary story previews defer indexing authority to the original article', () => {
-  assert.ok(storyPage.includes('alternates: { canonical: item.isOriginal ? `/news/${item.id}` : item.url }'));
+  assert.ok(storyPage.includes('alternates: { canonical: item.isOriginal ? absoluteUrl(`/news/${item.id}`) : item.url }'));
   assert.ok(storyPage.includes('index: Boolean(item.isOriginal)'));
   assert.ok(storyPage.includes("'@type': 'WebPage'"));
   assert.ok(!storyPage.includes("'@type': 'NewsArticle'"));

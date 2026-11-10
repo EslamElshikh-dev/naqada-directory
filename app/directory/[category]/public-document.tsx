@@ -1,0 +1,118 @@
+
+import '@/app/route-styles/directory-category.css';
+import { NUMBER_LOCALE } from '@/lib/format-number';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
+import { UtilityPageHeader } from '@/components/utility-page-header';
+import { DirectoryExplorer } from '@/components/directory-explorer';
+import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
+import { canonicalLocalityName, categories, getCategoryBySlug, localities } from '@/lib/data';
+import { getPublicBusinessCatalog } from '@/lib/curated-content';
+import { localCategoryHref } from '@/lib/discovery-routing';
+import { absoluteUrl, buildPageMetadata, jsonLdStringify } from '@/lib/site';
+
+import { DIRECTORY_PAGE_SIZE, directoryPageMetadata, directoryResults, resolveDirectoryState, type DirectorySearchParams } from '@/lib/directory-state';
+import { publicBusinessHref } from '@/lib/business-links';
+type Props = { params: Promise<{ category: string }>; searchParams: Promise<DirectorySearchParams> };
+export const revalidate = 3600;
+
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const { category: slug } = await params;
+  const category = getCategoryBySlug(slug);
+  if (!category) return {};
+  const scoped = (await getPublicBusinessCatalog()).directoryBusinesses.filter((item) => item.category === category.name);
+  const count = scoped.length;
+  const state = resolveDirectoryState(await searchParams, scoped, { categories, localities, lockedCategory: category.name });
+  const description = `${category.description} تصفح ${count} نتيجة منشورة داخل مدينة نقادة وقراها.`;
+  const metadata = buildPageMetadata({
+    title: `${state.page > 1 ? `صفحة ${state.page} — ` : ''}${category.shortLabel} في نقادة`,
+    description,
+    path: `/directory/${category.slug}`,
+  });
+  return directoryPageMetadata(metadata, `/directory/${category.slug}`, state);
+}
+
+export default async function CategoryPage({ params, searchParams }: Props) {
+  const { category: slug } = await params;
+  const category = getCategoryBySlug(slug);
+  if (!category) notFound();
+  const { businesses, directoryBusinesses } = await getPublicBusinessCatalog();
+  const scoped = businesses.filter((item) => item.category === category.name);
+  const scopedDirectory = directoryBusinesses.filter((item) => item.category === category.name);
+  const localityCount = new Set(scoped.map((item) => canonicalLocalityName(item.locality))).size;
+  const localityCounts = new Map<string, number>();
+  for (const item of scopedDirectory) {
+    const name = canonicalLocalityName(item.locality);
+    localityCounts.set(name, (localityCounts.get(name) || 0) + 1);
+  }
+  const topLocalities = [...localityCounts.entries()]
+    .map(([name, count]) => ({ locality: localities.find((item) => item.name === name), count }))
+    .filter((item): item is { locality: NonNullable<typeof item.locality>; count: number } => Boolean(item.locality))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+  const localityDiscoveryItems = topLocalities.map(({ locality, count }) => ({
+    name: locality.name,
+    count,
+    href: localCategoryHref(category.name, locality.name),
+  }));
+  const basePath = `/directory/${encodeURIComponent(category.slug)}/`;
+  const state = resolveDirectoryState(await searchParams, scopedDirectory, { categories, localities, lockedCategory: category.name });
+  const results = directoryResults(scopedDirectory, state, localities.map(item => item.name));
+  const offset = (state.page - 1) * DIRECTORY_PAGE_SIZE;
+  const pageUrl = absoluteUrl(basePath) + (!state.hasFilters && state.page > 1 ? `?page=${state.page}` : '');
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        name: `${category.shortLabel} في نقادة`,
+        url: pageUrl,
+        description: category.description,
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: results.length,
+          itemListElement: results.slice(offset, offset + DIRECTORY_PAGE_SIZE).map((item, index) => ({
+            '@type': 'ListItem',
+            position: offset + index + 1,
+            name: item.name,
+            url: absoluteUrl(publicBusinessHref(item)),
+          })),
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'دليل نقادة', item: absoluteUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'الدليل', item: absoluteUrl('/directory/') },
+          { '@type': 'ListItem', position: 3, name: category.shortLabel, item: pageUrl },
+        ],
+      },
+    ],
+  };
+  return (
+    <main id="main-content" className="page-main">
+      <UtilityPageHeader current={category.shortLabel} parent={{ href: '/directory', label: 'الدليل' }}
+        title={<>{category.shortLabel} <em>في نقادة</em></>} description={category.description}
+        metrics={[
+          { value: scopedDirectory.length.toLocaleString(NUMBER_LOCALE), label: 'نشاط منشور' },
+          { value: localityCount.toLocaleString(NUMBER_LOCALE), label: 'موضع' },
+        ]} />
+      <section className="shell page-section">
+        <ServiceLocalityDiscovery compact
+          title={`${category.shortLabel} حسب القرية والنجع`}
+          description={`ابدأ من المكان الأقرب لك للوصول مباشرة إلى نتائج ${category.shortLabel} المنشورة داخله، بدل إعادة ضبط الفلاتر يدويًا.`}
+          items={localityDiscoveryItems}
+          resultsHref="#category-results"
+        />
+        <div id="category-results">
+          <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer key={`${state.q}|${state.locality}|${state.sort}|${state.page}`} basePath={basePath} businesses={scopedDirectory} categories={categories} localities={localities} initialQuery={state.q} initialCategory={state.category} initialLocality={state.locality} initialSort={state.sort} initialPage={state.page} lockedCategory /></Suspense>
+        </div>
+      </section>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />
+    </main>
+  );
+}
+
+export function generateStaticParams() { return categories.map(item => ({ category: item.slug })); }

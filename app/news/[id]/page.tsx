@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NewsImage } from '@/components/news-image';
 import { getExpandedNewsBody, getLatestNews, getNewsItem, type ExternalNewsItem } from '@/lib/news';
-import { jsonLdStringify, siteConfig } from '@/lib/site';
+import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
 import { NewsShare } from './news-share';
 
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   return {
     title: item.title,
     description: item.description || `معاينة خبر منشور لدى ${item.source} مع رابط مباشر إلى المصدر الأصلي.`,
-    alternates: { canonical: item.isOriginal ? `/news/${item.id}` : item.url },
+    alternates: { canonical: item.isOriginal ? absoluteUrl(`/news/${item.id}`) : item.url },
     robots: {
       index: Boolean(item.isOriginal),
       follow: true,

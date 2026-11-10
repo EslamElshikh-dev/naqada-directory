@@ -25,8 +25,8 @@ const nextConfig = read('next.config.ts');
 const knowledge = read('lib/knowledge.ts');
 const dataSource = read('lib/data.ts');
 const knowledgePlacePage = read('app/knowledge/places/[slug]/page.tsx');
-const villagePage = read('app/villages/[slug]/page.tsx');
-const villageCategoryPage = read('app/villages/[slug]/[category]/page.tsx');
+const villagePage = read('app/villages/[slug]/public-document.tsx');
+const villageCategoryPage = read('app/villages/[slug]/[category]/public-document.tsx');
 const villageArticleIndex = read('lib/village-articles/index.ts');
 
 const officialOrigin = 'https://naqada-directory.vercel.app';
@@ -99,7 +99,7 @@ test('thin encyclopedia place records stay available but out of the search index
 });
 
 test('directory pagination has server state and crawlable links', () => {
-  assert.ok(directoryPage.includes('searchParams: DirectorySearchParams'));
+  assert.ok(directoryPage.includes('searchParams: Promise<DirectorySearchParams>'));
   assert.ok(directoryPage.includes('initialPage={state.page}'));
   assert.ok(directoryPage.includes('pagination: hasFilters ? undefined'));
   assert.ok(directoryExplorer.includes('className="pagination__link"'));

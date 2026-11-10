@@ -57,7 +57,7 @@ export function buildWidgetStyles(root) {
   const featureCss = selectRules(source, selector => selectorCanMatch(selector, moduleUsage(names)));
   writeFileSync(new URL('components/role-model-feature.module.css', root), featureCss);
 
-  const village = readFileSync(new URL('app/villages/[slug]/page.tsx', root), 'utf8');
+  const village = readFileSync(new URL('app/villages/[slug]/public-document.tsx', root), 'utf8');
   const knowledgeNames = new Set([...village.matchAll(/knowledgeStyles\.([\w]+)/g)].map(match => match[1]));
   const knowledgeCss = readFileSync(new URL('app/knowledge/knowledge.module.css', root), 'utf8');
   writeFileSync(new URL('app/villages/[slug]/knowledge-summary.module.css', root), selectRules(knowledgeCss, selector => selectorCanMatch(selector, moduleUsage(knowledgeNames))));
