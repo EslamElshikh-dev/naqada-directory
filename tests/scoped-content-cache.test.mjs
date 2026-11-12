@@ -171,3 +171,13 @@ test('archive changes use a distinct explicit tag from news sources and curated 
   assert.deepEqual(h.invalidations.map(item => item.tag), ['naqada-public-content:news-archive']);
   assert.deepEqual(h.paths, [{ path: '/api/news', type: undefined }]);
 });
+
+
+test('legacy authenticated empty-body webhooks retain full invalidation compatibility', async () => {
+  const h = harness();
+  const response = await h.post(undefined);
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).revalidated, true);
+  assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length);
+  assert.equal(h.afters.length, 1);
+});

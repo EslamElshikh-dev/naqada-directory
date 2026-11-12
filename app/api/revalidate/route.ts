@@ -12,7 +12,9 @@ export async function POST(request: Request) {
   if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const scopes = revalidationScopes(await request.json().catch(() => null));
+  // Older authenticated callers (including the withdrawal QA) send no body.
+  const body = await request.text().then(text => text.trim() ? JSON.parse(text) : {}).catch(() => null);
+  const scopes = revalidationScopes(body);
   if (!scopes) return Response.json({ error: 'Invalid revalidation scopes' }, { status: 400 });
   if (!scopes.length) return Response.json({ revalidated: false, scopes });
   invalidatePublicContent(scopes);
