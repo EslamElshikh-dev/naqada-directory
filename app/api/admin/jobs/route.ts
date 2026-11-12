@@ -15,6 +15,6 @@ export async function POST(request: Request) {
   if (!session || !(await isDirectoryAdmin(session.accessToken))) return NextResponse.json({ ok: false }, { status: 403 });
   const reply = await fetch(`${SUPABASE_URL}/rest/v1/rpc/moderate_naqada_job`, { method: 'POST', cache: 'no-store', headers: restHeaders(session.accessToken, true), body: JSON.stringify({ p_id: body.id, p_status: body.status }) });
   const ok = reply.ok && (await reply.json().catch(() => false)) === true;
-  if (ok) invalidatePublicContent();
+  if (ok) invalidatePublicContent(['jobs']);
   return NextResponse.json({ ok }, { status: reply.ok ? 200 : 502 });
 }

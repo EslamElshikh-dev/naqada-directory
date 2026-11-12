@@ -26,7 +26,7 @@ test('fresh database preserves explicit grants, contributor isolation and review
   const locations=loadModule('../lib/business-locations.ts',name=>{
    if(name==='next/cache')return {unstable_cache:fn=>fn};
    if(name==='@/lib/auth/supabase-rest')return auth;
-   assert.equal(name,'@/lib/public-content-cache');return {PUBLIC_CONTENT_TAG:'isolated',PUBLIC_READ_TIMEOUT_MS:10000};
+   assert.equal(name,'@/lib/public-content-cache');return {publicContentTag:scope=>'isolated:'+scope,PUBLIC_READ_TIMEOUT_MS:10000};
   },{AbortSignal,fetch:async(input,options)=>{
    locationReads++;
    const url=new URL(input);

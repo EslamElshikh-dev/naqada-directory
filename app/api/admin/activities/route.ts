@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       console.error('owner_activity_review_failed', { code: 'UNEXPECTED_RESULT' });
       return saveFailed(session);
     }
-    invalidatePublicContent();
+    invalidatePublicContent(['owner-listings']);
     return sessionJson({ ok: true, status: result.status }, session);
   } catch {
     console.error('owner_activity_review_failed', { code: 'REQUEST_FAILED' });

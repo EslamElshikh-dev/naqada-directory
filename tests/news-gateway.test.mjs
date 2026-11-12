@@ -30,7 +30,7 @@ function harness({ status = 200, content = brief, finishReason = 'stop', token =
     'next/cache': { unstable_cache: fn => fn },
     './news-article': article,
     './site': {}, './news-editorial': {}, './auth/moderator': {},
-    './auth/supabase-rest': {}, './public-content-cache': {}, './news-feed-quality': {},
+    './auth/supabase-rest': {}, './public-content-cache': { publicContentTag: scope => `naqada-public-content:${scope}` }, './news-feed-quality': {},
   }, {
     process: { env: { AI_GATEWAY_API_KEY: token, VERCEL_OIDC_TOKEN: oidc } },
     console: { warn: (...args) => warnings.push(args) },

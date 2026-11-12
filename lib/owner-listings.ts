@@ -5,7 +5,7 @@ import { ownerListingCoverPath, ownerPhotoUrl } from '@/lib/owner-listing-photo'
 import type { DirectoryItem } from '@/lib/types';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
-import { PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
+import { PUBLIC_READ_TIMEOUT_MS, retryPublicRead, publicContentTag } from '@/lib/public-content-cache';
 
 export type OwnerListing = {
   id: string;
@@ -38,7 +38,7 @@ export const getPublishedOwnerListings = cache(unstable_cache(async () => {
   if (!response.ok) throw Object.assign(Error('PUBLIC_ACTIVITIES_UNAVAILABLE'), { status: response.status });
   return (await response.json() as OwnerListing[]).map(publicOwnerCopy);
   }, 'owner-catalog');
-}, ['published-owner-catalog-v2'], { revalidate: 3600, tags: ['naqada-public-content'] }));
+}, ['published-owner-catalog-v3'], { revalidate: 3600, tags: [publicContentTag('owner-listings')] }));
 
 const getPublishedOwnerListingById = unstable_cache(async (id: string) => {
   return retryPublicRead(async (): Promise<OwnerListing | null> => {
@@ -50,7 +50,7 @@ const getPublishedOwnerListingById = unstable_cache(async (id: string) => {
   const rows = await response.json() as OwnerListing[];
   return rows[0] ? publicOwnerCopy(rows[0]) : null;
   }, 'owner-activity');
-}, ['published-owner-listing-v2'], { revalidate: 3600, tags: ['naqada-public-content'] });
+}, ['published-owner-listing-v3'], { revalidate: 3600, tags: [publicContentTag('owner-listings')] });
 
 export const getPublishedOwnerListing = cache(async (id: string) => {
   const rows = await getPublishedOwnerListings();

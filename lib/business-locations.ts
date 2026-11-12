@@ -1,6 +1,6 @@
 import { unstable_cache } from 'next/cache';
 import { SUPABASE_URL, restHeaders } from '@/lib/auth/supabase-rest';
-import { PUBLIC_CONTENT_TAG, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
+import { publicContentTag, PUBLIC_READ_TIMEOUT_MS } from '@/lib/public-content-cache';
 type Pin = { latitude: number; longitude: number };
 export const getBusinessLocations = unstable_cache(async (): Promise<Record<string,Pin>> => {
   try {
@@ -15,4 +15,4 @@ export const getBusinessLocations = unstable_cache(async (): Promise<Record<stri
         ? [[row.place_id,{latitude,longitude}]] : [];
     }));
   } catch { return {}; }
-}, ['verified-business-pins-v1'], { revalidate: 3600, tags: [PUBLIC_CONTENT_TAG] });
+}, ['verified-business-pins-v2'], { revalidate: 3600, tags: [publicContentTag('business')] });
