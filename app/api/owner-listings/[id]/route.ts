@@ -53,7 +53,7 @@ export async function PATCH(request: Request, { params }: Props) {
     );
     if (!response.ok) throw new Error('update');
     const [listing] = await response.json() as OwnerListing[];
-    if (listing) invalidatePublicContent();
+    if (listing) invalidatePublicContent(['owner-listings']);
     return sessionJson(listing ? { listing } : { error: 'النشاط غير موجود في حسابك.' }, session, listing ? 200 : 404);
   } catch {
     return sessionJson({ error: 'تعذر حفظ التعديل. حاول تاني.' }, session, 502);

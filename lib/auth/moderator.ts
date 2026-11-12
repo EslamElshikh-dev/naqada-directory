@@ -1,7 +1,7 @@
 import { SUPABASE_URL, restHeaders, SupabaseAuthError } from '@/lib/auth/supabase-rest';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
-import { invalidatePublicContent, PUBLIC_READ_TIMEOUT_MS, retryPublicRead } from '@/lib/public-content-cache';
+import { invalidatePublicContent, PUBLIC_READ_TIMEOUT_MS, retryPublicRead, publicContentTag, type PublicContentScope } from '@/lib/public-content-cache';
 
 export type CuratedKind = 'business' | 'news' | 'article' | 'role_model';
 export type CuratedRecord = {
@@ -51,11 +51,11 @@ export async function assertMemberAllowed(token: string) {
   }
 }
 
-// Anonymous content has a shared tagged cache; authenticated/editor RPCs stay request-bound.
+// Anonymous content has a separate tag per kind; authenticated/editor RPCs stay request-bound.
 const publicReaders = Object.fromEntries((['business','news','article','role_model'] as const).map(kind => [kind,
   unstable_cache(() => retryPublicRead(() => rpc<CuratedRecord[]>('get_public_naqada_content', undefined,
-    { p_kind: kind }, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)), kind), ['public-curated-v2',kind],
-    { revalidate: kind === 'article' || kind === 'role_model' ? 86400 : 3600, tags: ['naqada-public-content'] })
+    { p_kind: kind }, AbortSignal.timeout(PUBLIC_READ_TIMEOUT_MS)), kind), ['public-curated-v3',kind],
+    { revalidate: kind === 'article' || kind === 'role_model' ? 86400 : 3600, tags: [publicContentTag(kind)] })
 ])) as Record<CuratedKind, () => Promise<CuratedRecord[]>>;
 export const getPublicCurated = cache((kind: CuratedKind) => publicReaders[kind]());
 
@@ -115,6 +115,14 @@ export async function getGoldModeratorNotifications(token: string) {
 
 export async function callModeratorAction(token: string, name: string, body: Record<string, unknown>) {
   const result = await rpc<unknown>(name, token, body);
-  invalidatePublicContent();
+  let scopes: PublicContentScope[] | undefined;
+  if ((name === 'save_naqada_editor_content' || name === 'save_naqada_article_document') &&
+    ['business', 'news', 'article', 'role_model'].includes(String(body.p_kind))) scopes = [body.p_kind as PublicContentScope];
+  else if (name === 'publish_naqada_contribution') scopes = ['business'];
+  else if (name === 'moderate_naqada_submission') {
+    scopes = body.p_kind === 'business' ? ['owner-listings'] : body.p_kind === 'review' ? ['business'] : [];
+  } else if (name === 'moderate_naqada_member') scopes = ['business'];
+  // Unknown future mutation types retain the conservative all-content fallback.
+  invalidatePublicContent(scopes);
   return result;
 }

@@ -5,7 +5,7 @@ import { extractPublisherArticle, isOriginalBrief } from './news-article';
 import { localNewsBriefs } from './news-editorial';
 import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
-import { PUBLIC_CONTENT_TAG, PUBLIC_CONTENT_TTL } from './public-content-cache';
+import { publicContentTag, PUBLIC_CONTENT_TTL } from './public-content-cache';
 import { deduplicateNews, missingNewsSnapshotQueries, reconcileNewsCopies, selectLatestNews } from './news-feed-quality';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
@@ -475,8 +475,8 @@ async function loadNewsSources(): Promise<NewsFeedResult> {
 }
 
 // External source work can be shared; moderation visibility is always applied later.
-const cachedNewsSources = unstable_cache(loadNewsSources, ['naqada-news-sources-v3'], {
-  revalidate: FEED_REVALIDATE_SECONDS, tags: [PUBLIC_CONTENT_TAG],
+const cachedNewsSources = unstable_cache(loadNewsSources, ['naqada-news-sources-v4'], {
+  revalidate: FEED_REVALIDATE_SECONDS, tags: ['naqada-news-sources'],
 });
 
 async function loadLiveNews(): Promise<NewsFeedResult> {
@@ -521,7 +521,7 @@ const cachedArchive = unstable_cache(async (query: string): Promise<ExternalNews
   if (!response.ok) throw Error('NEWS_ARCHIVE_UNAVAILABLE');
   return ((await response.json()) as ArchivedNews[]).map(row => row.payload)
     .filter(row => row?.id && row?.url && !/^(نتائج? البحث|بحث عن|الصفحة الرئيسية)/.test(row.title));
-}, ['naqada-news-archive-v1'], { revalidate: PUBLIC_CONTENT_TTL, tags: [PUBLIC_CONTENT_TAG] });
+}, ['naqada-news-archive-v2'], { revalidate: PUBLIC_CONTENT_TTL, tags: [publicContentTag('news-archive')] });
 
 async function readArchive(query: string): Promise<ExternalNewsItem[]> {
   try { return await cachedArchive(query); }

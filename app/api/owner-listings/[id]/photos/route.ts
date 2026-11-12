@@ -42,7 +42,7 @@ async function saveMedia(listing: OwnerListing, token: string, patch: { photo_pa
   if (!response.ok) throw new Error('save');
   const [updated] = await response.json() as OwnerListing[];
   if (!updated) throw new Error('conflict');
-  invalidatePublicContent();
+  invalidatePublicContent(['owner-listings']);
   return updated;
 }
 

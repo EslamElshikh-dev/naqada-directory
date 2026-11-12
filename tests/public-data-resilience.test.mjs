@@ -59,7 +59,7 @@ test('anonymous reads share the tagged cache while authenticated reads remain se
   assert.equal(calls[2].headers.Authorization, 'Bearer editor-a');
   assert.equal(calls[3].headers.Authorization, 'Bearer editor-b');
   assert.equal(cache.registrations.length, 4);
-  assert.ok(cache.registrations.every(item => item.options.tags.includes('naqada-public-content')));
+  assert.ok(cache.registrations.every(item => item.options.tags.some(tag => tag.startsWith('naqada-public-content:'))));
   assert.ok(cache.registrations.some(item => item.options.revalidate === 86400));
 });
 
@@ -74,10 +74,10 @@ test('a successful moderation decision expires old public rows without serving t
     return Response.json([{ slug: 'listing', status: hidden ? 'hidden' : 'published' }]);
   } });
   assert.equal((await moderator.getPublicCurated('business'))[0].status, 'published');
-  await moderator.callModeratorAction('editor', 'save_naqada_editor_content', {});
+  await moderator.callModeratorAction('editor', 'save_naqada_editor_content', { p_kind: 'business' });
   assert.equal((await moderator.getPublicCurated('business'))[0].status, 'hidden');
   assert.equal(cache.invalidations.length, 1);
-  assert.equal(cache.invalidations[0].tag, cache.publicCache.PUBLIC_CONTENT_TAG);
+  assert.equal(cache.invalidations[0].tag, cache.publicCache.publicContentTag('business'));
   assert.equal(cache.invalidations[0].profile.expire, 0);
 });
 
@@ -118,7 +118,7 @@ test('job expiry is checked on each read even while the shared source is cached'
   now += 20_000;
   assert.equal((await jobs.getJobs()).jobs.length, 0);
   assert.equal(calls, 3);
-  assert.equal(cache.registrations.length, 1);
+  assert.equal(cache.registrations.length, 2);
 });
 
 test('cancelled job reads preserve the unavailable state and do not populate the shared cache', async () => {
