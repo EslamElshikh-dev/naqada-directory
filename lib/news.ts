@@ -6,7 +6,7 @@ import { localNewsBriefs } from './news-editorial';
 import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
 import { publicContentTag, PUBLIC_CONTENT_TTL } from './public-content-cache';
-import { deduplicateNews, missingNewsSnapshotQueries, reconcileNewsCopies, selectLatestNews } from './news-feed-quality';
+import { deduplicateNews, missingNewsSnapshotQueries, reconcileNewsCopies, restoreNewsPublicationDate, selectLatestNews } from './news-feed-quality';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -548,8 +548,14 @@ export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | 
   ]);
   const revision = curated.find(item => item.slug === id);
   if (revision?.status === 'hidden') return null;
-  const item = archived[0] || (await getLatestNews()).items.find(story => story.id === id);
+  let item = archived[0] || (await getLatestNews()).items.find(story => story.id === id);
   if (!item) return null;
+  if (!Number.isFinite(Date.parse(item.publishedAt))) {
+    // Reuse the same cached sources as the list only for incomplete snapshots.
+    // Source failures must not make an otherwise readable archive unavailable.
+    const live = await getLiveNews().catch(() => null);
+    item = restoreNewsPublicationDate(item, live?.items || []);
+  }
   if (revision?.status === 'published') return {
     ...item, title: revision.payload.title || item.title,
     description: revision.payload.summary || item.description,

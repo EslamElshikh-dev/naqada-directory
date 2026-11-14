@@ -30,6 +30,16 @@ export function reconcileNewsCopies(live: readonly ExternalNewsItem[], archived:
   return [...previews, ...archived];
 }
 
+// An incomplete archive must not hide the original date already used on its
+// live preview. Match the publisher article, never a similar title or an archive
+// ingestion timestamp, and keep every other published snapshot field intact.
+export function restoreNewsPublicationDate(snapshot: ExternalNewsItem, live: readonly ExternalNewsItem[]) {
+  if (Number.isFinite(Date.parse(snapshot.publishedAt))) return snapshot;
+  const key = articleKey(snapshot);
+  const source = live.find(item => articleKey(item) === key && Number.isFinite(Date.parse(item.publishedAt)));
+  return { ...snapshot, publishedAt: source?.publishedAt || '' };
+}
+
 function eventTokens(item: ExternalNewsItem) {
   const stop = new Set(['في', 'من', 'علي', 'الي', 'عن', 'مع', 'بعد', 'قبل', 'خلال', 'ضمن', 'اليوم', 'صور', 'فيديو']);
   return new Set(normalizeArabic(item.title).replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(word => (word.length > 2 || /\p{N}/u.test(word)) && !stop.has(word)));

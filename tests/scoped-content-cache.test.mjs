@@ -15,8 +15,8 @@ function load(path, modules, globals = {}) {
   return record.exports;
 }
 
-function harness() {
-  const values = new Map(), registrations = [], invalidations = [], paths = [], afters = [], delays = [];
+function harness({ logFailure = false } = {}) {
+  const values = new Map(), registrations = [], invalidations = [], paths = [], afters = [], delays = [], logs = [];
   const nextCache = {
     unstable_cache(fn, keys, options) {
       registrations.push({ keys, options });
@@ -44,12 +44,13 @@ function harness() {
   }, {
     process: { env: { CONTENT_REVALIDATION_SECRET: 'synthetic-test-secret-with-at-least-32-characters' } },
     setTimeout: (fn, ms) => { delays.push(ms); fn(); },
+    console: { ...console, info: (...entry) => { if (logFailure) throw Error('synthetic log failure'); logs.push(entry); } },
   });
   const post = (body, authorized = true) => api.POST(new Request('https://directory.invalid/api/revalidate', {
     method: 'POST', headers: { authorization: authorized ? 'Bearer synthetic-test-secret-with-at-least-32-characters' : 'Bearer invalid' },
     body: JSON.stringify(body),
   }));
-  return { nextCache, publicCache, api, post, values, registrations, invalidations, paths, afters, delays };
+  return { nextCache, publicCache, api, post, values, registrations, invalidations, paths, afters, delays, logs };
 }
 
 function readers(h, read) {
@@ -180,4 +181,58 @@ test('legacy authenticated empty-body webhooks retain full invalidation compatib
   assert.equal((await response.json()).revalidated, true);
   assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length);
   assert.equal(h.afters.length, 1);
+});
+
+test('revalidation telemetry reports both phases using only fixed fields and validated scope names', async () => {
+  const h = harness();
+  const response = await h.post({ source: 'supabase', version: 123, scopes: ['jobs', 'jobs'], payload: { phone: 'private-fixture-value' }, recordId: 'private-record' });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { revalidated: true, scopes: ['jobs'] });
+  assert.equal(h.logs.length, 1);
+  await h.afters[0]();
+  assert.equal(h.logs.length, 2);
+  assert.deepEqual(h.logs.map(entry => entry[1].phase), ['immediate', 'delayed']);
+  for (const [event, data] of h.logs) {
+    assert.equal(event, 'PUBLIC_CONTENT_REVALIDATION');
+    assert.deepEqual(Object.keys(data).sort(), ['contract', 'durationMs', 'phase', 'reason', 'result', 'scopes', 'source']);
+    assert.equal(data.contract, 'scoped'); assert.equal(data.source, 'supabase');
+    assert.equal(data.result, 'completed'); assert.equal(data.reason, 'scoped_request');
+    assert.equal(JSON.stringify(data.scopes), '["jobs"]');
+    assert.ok(Number.isFinite(data.durationMs) && data.durationMs >= 0);
+  }
+  assert.doesNotMatch(JSON.stringify(h.logs), /private-fixture|private-record|Bearer|synthetic-test-secret/);
+});
+
+test('logging failures cannot change acknowledgements, cache scopes or the delayed race-protection purge', async () => {
+  const h = harness({ logFailure: true });
+  const response = await h.post({ scopes: ['owner-listings'] });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { revalidated: true, scopes: ['owner-listings'] });
+  assert.equal(h.afters.length, 1);
+  await h.afters[0]();
+  assert.deepEqual(h.invalidations.map(item => item.tag), ['naqada-public-content:owner-listings', 'naqada-public-content:owner-listings']);
+  assert.deepEqual(h.delays, [20000]);
+});
+
+test('unauthorized and malformed requests do not generate telemetry; empty scopes and legacy requests are explicit', async () => {
+  const h = harness();
+  await h.post({ scopes: ['jobs'] }, false); await h.post({ scopes: ['private-invalid-scope'] });
+  assert.equal(h.logs.length, 0);
+  assert.equal((await h.post({ source: 'private-untrusted-source', scopes: [] })).status, 200);
+  assert.equal(h.logs[0][1].source, 'authenticated');
+  assert.equal(h.logs[0][1].result, 'no_changes'); assert.equal(h.afters.length, 0);
+  await h.post(undefined);
+  assert.equal(h.logs[1][1].contract, 'legacy');
+  assert.equal(h.logs[1][1].reason, 'legacy_request');
+  assert.doesNotMatch(JSON.stringify(h.logs), /private-untrusted-source|private-invalid-scope/);
+});
+
+test('an invalidation failure is still thrown and recorded without exposing its error message', async () => {
+  const h = harness();
+  const failure = Error('private-upstream-error');
+  h.publicCache.invalidatePublicContent = () => { throw failure; };
+  await assert.rejects(h.post({ scopes: ['jobs'] }), error => error === failure);
+  assert.equal(h.afters.length, 0);
+  assert.equal(h.logs[0][1].result, 'failed');
+  assert.doesNotMatch(JSON.stringify(h.logs), /private-upstream-error/);
 });
