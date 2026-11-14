@@ -28,4 +28,8 @@ No TTL, cache key, tag, database migration, schedule, resource, region or billin
 
 On 2026-11-14, preview commit `26dbde5a542b7f1ba935a8c66d32b865603170c3` built successfully on Vercel with the live public data (808 generated pages). Its decision was `build_missing_successful_baseline`, confirming that the first preview is not skipped. The local production-server integration also verified publication, withdrawal, hidden-news 404, API freshness and both purge phases with every upstream intercepted by synthetic fixtures.
 
-This documentation-only follow-up exercises the existing-preview skip path. Review the Vercel build decision and the still-running GitHub verification before production rollout; a canceled documentation-only preview is expected, while production must build normally.
+The documentation-only follow-up `d8809e2c6cd6fb4ed29294f2ec558862e1a6b0ff` correctly canceled its Vercel preview before dependency installation with `skip_preview_docs_tests_only`. GitHub verification still ran. Production must build normally, and application changes such as the publication-date prerequisite below must also build.
+
+## Publication date prerequisite
+
+The preview's content-consistency check found an existing archive record with an empty payload publication date: its list card uses the valid source date, while its detail page previously kept the empty archive value. After approval, detail reads now restore only a missing/invalid date from the same publisher article in the existing cached live feed. A valid archive date remains authoritative, all other snapshot fields remain intact, and the hidden-item check still runs first. Source failures preserve archive access; an unavailable original date is never replaced by the current time or the archive ingestion timestamp. No database rows, cache keys, lifetimes or source-fetch schedules change.
