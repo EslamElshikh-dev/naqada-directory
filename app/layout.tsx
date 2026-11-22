@@ -42,8 +42,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: siteConfig.locale,
     url: absoluteUrl('/'),
-    title: 'دليل نقادة | بلدنا كلها في مكان واحد',
-    description: 'خدمات نقادة وقراها، الأماكن والوظائف وحكايات ناسها في دليل واحد. قول عاوز إيه.. وهنوصّلك، من أهل البلد لأهل البلد.',
+    title: siteConfig.name,
+    description: siteConfig.description,
     siteName: siteConfig.shortName,
     images: [{
       url: siteConfig.socialImage,
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'دليل نقادة | بلدنا كلها في مكان واحد',
-    description: 'خدمات نقادة وقراها، الأماكن والوظائف وحكايات ناسها في مكان واحد. قول عاوز إيه.. وهنوصّلك.',
+    title: siteConfig.name,
+    description: siteConfig.description,
     images: [siteConfig.socialImage],
   },
 };

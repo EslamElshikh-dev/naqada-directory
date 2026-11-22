@@ -94,8 +94,8 @@ export default function HomePage() {
               <span className={styles.location}>مركز نقادة · محافظة قنا</span>
             </div>
             <span className={styles.heroEyebrow}>من أهل البلد، لأهل البلد</span>
-            <h1 id="home-title">محتاج إيه <em>في نقادة؟</em></h1>
-            <p>دوّر على خدمة، شوف فرصة شغل، أو اعرف أخبار بلدك وحكاياتها.</p>
+            <h1 id="home-title">دليل <em>نقادة</em></h1>
+            <p>دليلك المحلي لخدمات مدينة نقادة وقراها ونجوعها بمحافظة قنا. دوّر على صيدلية أو طبيب أو مدرسة أو محل، وشوف فرص الشغل وأخبار البلد وحكايات أهلها.</p>
             <div className={styles.searchWrap}><HomeSmartSearch compact /></div>
             <nav className={styles.quickLinks} aria-label="وصول سريع">
               <span>على طول</span>
