@@ -7,7 +7,7 @@ const siteOrigin = configuredOrigin ? new URL(configuredOrigin).origin : 'https:
 if (!siteOrigin.startsWith('https://')) throw new Error('NEXT_PUBLIC_SITE_URL must use HTTPS');
 
 export const siteConfig = {
-  name: 'دليل الخدمات والأنشطة والقرى والنجوع | دليل نقادة',
+  name: 'دليل نقادة | خدمات وأنشطة وقرى مركز نقادة بقنا',
   shortName: 'دليل نقادة',
   alternateNames: ['دليل مركز نقادة', 'دليل خدمات نقادة', 'موسوعة نقادة المحلية'],
   url: siteOrigin,
