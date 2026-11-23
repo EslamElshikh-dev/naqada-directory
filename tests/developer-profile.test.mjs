@@ -6,6 +6,7 @@ const page = readFileSync('app/developer/page.tsx', 'utf8');
 const formerPage = readFileSync('app/about/developer/page.tsx', 'utf8');
 const legacyPage = readFileSync('app/knowledge/developer/page.tsx', 'utf8');
 const aboutPage = readFileSync('app/about/page.tsx', 'utf8');
+const layout = readFileSync('app/layout.tsx', 'utf8');
 const aboutCss = readFileSync('app/about/about.module.css', 'utf8');
 const css = readFileSync('app/knowledge/developer/developer.module.css', 'utf8');
 const pageCss = readFileSync('app/developer/developer.module.css', 'utf8');
@@ -31,7 +32,7 @@ test('developer has a standalone canonical route and legacy links redirect', () 
   assert.match(formerPage, /permanentRedirect\('\/developer'\)/);
   assert.match(page, /const pagePath = '\/developer'/);
   assert.match(aboutPage, /مشروع محلي <em>خدمي وتطوعي ومجاني<\/em>/);
-  assert.match(aboutPage, /isAccessibleForFree: true/);
+  assert.match(layout, /isAccessibleForFree: true/);
   assert.match(nav, /current: KnowledgeSection/);
 });
 

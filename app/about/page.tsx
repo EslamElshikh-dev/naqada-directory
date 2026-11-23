@@ -73,15 +73,6 @@ const schema = {
       mainEntity: { '@id': `${siteConfig.url}/#website` },
     },
     {
-      '@type': 'WebSite',
-      '@id': `${siteConfig.url}/#website`,
-      url: `${siteConfig.url}/`,
-      name: 'دليل نقادة',
-      inLanguage: 'ar',
-      isAccessibleForFree: true,
-      areaServed: 'مركز نقادة، محافظة قنا، مصر',
-    },
-    {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'الرئيسية', item: `${siteConfig.url}/` },
