@@ -16,16 +16,6 @@ const developerCredit = {
       "sameAs": [
         "https://github.com/EslamElshikh-dev"
       ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://naqada-directory.vercel.app/#website",
-      "url": "https://naqada-directory.vercel.app/",
-      "creator": {
-        "@id": "https://www.eslam-elshikh.com/#person"
-      },
-      "creditText": "تصميم وبرمجة وتطوير الموقع: المهندس إسلام الشيخ — https://www.eslam-elshikh.com/",
-      "name": "دليل نقادة"
     }
   ]
 };
