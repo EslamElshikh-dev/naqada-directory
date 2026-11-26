@@ -168,7 +168,8 @@ test('scoped webhook outbox preserves public freshness without feed housekeeping
         await denied(db, role, null, 'select naqada_private.dispatch_content_revalidation()');
       }
       for (const body of await requests()) {
-        assert.deepEqual(Object.keys(body).sort(), ['scopes','source','version']);
+        assert.deepEqual(Object.keys(body).filter(key => key !== 'newsItems').sort(), ['scopes','source','version']);
+        if (body.newsItems) assert.ok(body.newsItems.length > 0 && body.newsItems.length <= 100);
         assert.equal(body.source, 'supabase');
         assert.ok(!JSON.stringify(body).includes('MUST_NOT_LEAVE_DATABASE'));
       }
