@@ -105,7 +105,7 @@ test('empty/invalid webhook scopes do not purge content; legacy payload stays co
   assert.equal(h.afters.length, 0);
   const legacy = await h.post({ source: 'supabase', version: 23 });
   assert.equal(legacy.status, 200);
-  assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length);
+  assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length + 1);
   assert.ok(!h.paths.some(item => item.path === '/' || item.type === 'layout'));
 });
 
@@ -169,7 +169,7 @@ test('archive changes use a distinct explicit tag from news sources and curated 
   assert.match(news, /tags: \['naqada-news-sources'\]/);
   assert.match(news, /tags: \[publicContentTag\('news-archive'\)\]/);
   h.publicCache.invalidatePublicContent(['news-archive']);
-  assert.deepEqual(h.invalidations.map(item => item.tag), ['naqada-public-content:news-archive']);
+  assert.deepEqual(h.invalidations.map(item => item.tag), ['naqada-public-content:news-archive', 'naqada-public-content:news-items']);
   assert.deepEqual(h.paths, [{ path: '/api/news', type: undefined }]);
 });
 
@@ -179,7 +179,7 @@ test('legacy authenticated empty-body webhooks retain full invalidation compatib
   const response = await h.post(undefined);
   assert.equal(response.status, 200);
   assert.equal((await response.json()).revalidated, true);
-  assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length);
+  assert.equal(h.invalidations.length, h.publicCache.PUBLIC_CONTENT_SCOPES.length + 1);
   assert.equal(h.afters.length, 1);
 });
 
@@ -235,4 +235,28 @@ test('an invalidation failure is still thrown and recorded without exposing its 
   assert.equal(h.afters.length, 0);
   assert.equal(h.logs[0][1].result, 'failed');
   assert.doesNotMatch(JSON.stringify(h.logs), /private-upstream-error/);
+});
+
+test('targeted news webhooks expire exactly the affected items through both phases, without logging IDs', async () => {
+  const h = harness();
+  const response = await h.post({ source: 'supabase', scopes: ['news-archive'], newsItems: ['specific-public-story', 'specific-public-story'] });
+  assert.equal(response.status, 200);
+  await h.afters[0]();
+  assert.deepEqual(h.invalidations.map(item => item.tag), [
+    'naqada-public-content:news-archive', 'naqada-public-content:news-items:specific-public-story',
+    'naqada-public-content:news-archive', 'naqada-public-content:news-items:specific-public-story',
+  ]);
+  assert.ok(h.invalidations.every(item => item.profile.expire === 0));
+  assert.ok(h.logs.every(entry => entry[1].newsItemCount === 1));
+  assert.doesNotMatch(JSON.stringify(h.logs), /specific-public-story/);
+});
+
+test('incomplete, oversized or unrelated news targeting is rejected rather than acknowledged', async () => {
+  const h = harness();
+  for (const newsItems of [null, [], 'story', ['a'], ['bad),id.gt.0'], [null], Array(101).fill('story-one')]) {
+    assert.equal((await h.post({ scopes: ['news'], newsItems })).status, 400);
+  }
+  assert.equal((await h.post({ scopes: ['jobs'], newsItems: ['story-one'] })).status, 400);
+  assert.equal((await h.post({ scopes: [], newsItems: ['story-one'] })).status, 400);
+  assert.equal(h.invalidations.length, 0); assert.equal(h.afters.length, 0); assert.equal(h.logs.length, 0);
 });

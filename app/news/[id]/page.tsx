@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { NewsImage } from '@/components/news-image';
-import { getExpandedNewsBody, getLatestNews, getNewsItem, type ExternalNewsItem } from '@/lib/news';
+import { getExpandedNewsBody, getRelatedNewsItems, getNewsItem, type ExternalNewsItem } from '@/lib/news';
 import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import styles from './story.module.css';
 import { NewsShare } from './news-share';
@@ -82,11 +82,7 @@ async function ExpandedStorySummary({ item }: { item: ExternalNewsItem }) {
 }
 
 async function RelatedStories({ item }: { item: ExternalNewsItem }) {
-  const feed = await getLatestNews().catch(() => null);
-  if (!feed) return null;
-  const related = feed.items
-    .filter((story) => story.id !== item.id && (story.category === item.category || story.isNaqada === item.isNaqada))
-    .slice(0, 3);
+  const related = await getRelatedNewsItems(item);
   return related.length ? (
     <section className={styles.related} aria-labelledby="related-news-title">
       <div className="shell">

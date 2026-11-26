@@ -28,6 +28,15 @@ function harness({ archived = snapshot, live = [liveStory], curated = [], source
   const calls = { archive: 0, sources: 0, curated: 0 };
   const site = { siteConfig: { url: 'https://directory.invalid' }, normalizeArabic: value => value };
   const quality = load('../lib/news-feed-quality.ts', { './site': site });
+  const publicCache = load('../lib/public-content-cache.ts', { 'next/cache': {} });
+  const itemCache = load('../lib/news-item-cache.ts', {
+    react: { cache: fn => fn }, 'next/cache': { unstable_cache: fn => fn },
+    './public-content-cache': publicCache, './news-editorial': { localNewsBriefs: {} },
+    './auth/supabase-rest': { SUPABASE_URL: 'https://database.invalid', restHeaders: () => ({}) },
+  }, { fetch: async url => {
+    if (url.endsWith('get_public_naqada_content')) { calls.curated++; return Response.json(curated); }
+    calls.archive++; return Response.json(archived ? [{ payload: archived }] : []);
+  } });
   const news = load('../lib/news.ts', {
     react: { cache: fn => fn },
     'next/cache': { unstable_cache: (fn, keys) => keys[0] === 'naqada-news-sources-v4' ? async () => {
@@ -40,6 +49,7 @@ function harness({ archived = snapshot, live = [liveStory], curated = [], source
     './auth/supabase-rest': { SUPABASE_URL: 'https://database.invalid', restHeaders: () => ({}) },
     './public-content-cache': { PUBLIC_CONTENT_TTL: 3600, publicContentTag: scope => scope },
     './news-feed-quality': quality,
+    './news-item-cache': itemCache,
   }, { process: { env: {} }, fetch: async url => {
     assert.equal(new URL(url).pathname, '/rest/v1/naqada_news_archive');
     calls.archive++;

@@ -7,6 +7,8 @@ import { getPublicCurated } from './auth/moderator';
 import { SUPABASE_URL, restHeaders } from './auth/supabase-rest';
 import { publicContentTag, PUBLIC_CONTENT_TTL } from './public-content-cache';
 import { deduplicateNews, missingNewsSnapshotQueries, reconcileNewsCopies, restoreNewsPublicationDate, selectLatestNews } from './news-feed-quality';
+import { getNewsSnapshot, projectNewsSnapshot } from './news-item-cache';
+export { getRelatedNewsItems } from './news-item-cache';
 
 export type NewsCategory = 'محليات' | 'خدمات' | 'تعليم' | 'صحة' | 'مجتمع';
 
@@ -541,7 +543,7 @@ async function loadLatestNews(): Promise<NewsFeedResult> {
 }
 export const getLatestNews = cache(loadLatestNews);
 
-export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | null> => {
+async function legacyNewsItem(id: string): Promise<ExternalNewsItem | null> {
   if (!/^[a-z0-9-]{3,90}$/i.test(id)) return null;
   const [archived, curated] = await Promise.all([
     readArchive(`id=eq.${encodeURIComponent(id)}&limit=1`), getPublicCurated('news'),
@@ -562,6 +564,31 @@ export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | 
     editorialBody: revision.payload.body || localNewsBriefs[item.id],
   };
   return item.isOriginal ? item : { ...item, editorialBody: localNewsBriefs[item.id] || item.editorialBody };
+}
+
+export const getNewsItem = cache(async (id: string): Promise<ExternalNewsItem | null> => {
+  if (!/^[a-z0-9-]{3,90}$/i.test(id)) return null;
+  let snapshot;
+  try { snapshot = await getNewsSnapshot(id); }
+  catch {
+    // Keep the existing bounded archive/live fallback during upstream failures;
+    // a failed per-item read is never persisted as an empty or hidden snapshot.
+    return legacyNewsItem(id);
+  }
+  if (snapshot.revision?.status === 'hidden') return null;
+  let item = projectNewsSnapshot(snapshot);
+  // Unarchived live stories and undated snapshots retain the source behavior
+  // from #218. Complete archived/original stories never depend on that feed.
+  if (!item) {
+    const live = (await getLatestNews()).items.find(story => story.id === id);
+    item = live ? projectNewsSnapshot({ archived: live, revision: snapshot.revision }) : null;
+  }
+  if (!item) return null;
+  if (!Number.isFinite(Date.parse(item.publishedAt))) {
+    const live = await getLiveNews().catch(() => null);
+    item = restoreNewsPublicationDate(item, live?.items || []);
+  }
+  return item;
 });
 
 export async function getArchivedNews(page: number) {

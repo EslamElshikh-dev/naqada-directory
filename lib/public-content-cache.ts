@@ -4,6 +4,20 @@ export const PUBLIC_CONTENT_TAG = 'naqada-public-content';
 export const PUBLIC_CONTENT_SCOPES = ['business', 'owner-listings', 'jobs', 'news', 'news-archive', 'article', 'role_model'] as const;
 export type PublicContentScope = typeof PUBLIC_CONTENT_SCOPES[number];
 export function publicContentTag(scope: PublicContentScope) { return `${PUBLIC_CONTENT_TAG}:${scope}`; }
+export const NEWS_ITEMS_TAG = `${PUBLIC_CONTENT_TAG}:news-items`;
+export const MAX_NEWS_REVALIDATION_ITEMS = 100;
+export function isPublicNewsId(value: unknown): value is string { return typeof value === 'string' && /^[a-z0-9-]{3,90}$/i.test(value); }
+export function newsItemTag(id: string) { return `${NEWS_ITEMS_TAG}:${id}`; }
+
+// Absence is the conservative legacy/all-news contract. A targeted request must
+// be bounded, complete and associated with a news scope before it can be acked.
+export function revalidationNewsItems(body: object, scopes: readonly PublicContentScope[]): string[] | undefined | null {
+  if (!('newsItems' in body)) return undefined;
+  const items = (body as { newsItems: unknown }).newsItems;
+  if (!scopes.some(scope => scope === 'news' || scope === 'news-archive') ||
+    !Array.isArray(items) || !items.length || items.length > MAX_NEWS_REVALIDATION_ITEMS || items.some(id => !isPublicNewsId(id))) return null;
+  return [...new Set(items)] as string[];
+}
 
 // Missing scopes are the old database webhook contract. An explicit empty list
 // means no public content changed; malformed/unknown scopes must not be acked.
@@ -36,9 +50,16 @@ export async function retryPublicRead<T>(read: () => Promise<T>, kind: string): 
 // Tags also invalidate dependent rendered pages. Never purge the root layout:
 // changing one feed must not rebuild every directory/article/village page.
 // expire: 0 is required for moderation (no stale-while-revalidate of hidden rows).
-export function invalidatePublicContent(scopes: readonly PublicContentScope[] = PUBLIC_CONTENT_SCOPES) {
+export function invalidatePublicContent(scopes: readonly PublicContentScope[] = PUBLIC_CONTENT_SCOPES, newsItems?: readonly string[]) {
   for (const scope of new Set(scopes)) revalidateTag(publicContentTag(scope), { expire: 0 });
   // Keep the explicit route/CDN invalidation for the two public headline APIs.
-  if (scopes.includes('news') || scopes.includes('news-archive')) revalidatePath('/api/news');
+  if (scopes.includes('news') || scopes.includes('news-archive')) {
+    // Index tags never appear on the independent item snapshots. Missing IDs
+    // intentionally retain the full purge for old callers and emergencies.
+    if (newsItems?.length && newsItems.length <= MAX_NEWS_REVALIDATION_ITEMS && newsItems.every(isPublicNewsId)) {
+      for (const id of new Set(newsItems)) revalidateTag(newsItemTag(id), { expire: 0 });
+    } else revalidateTag(NEWS_ITEMS_TAG, { expire: 0 });
+    revalidatePath('/api/news');
+  }
   if (scopes.includes('jobs')) revalidatePath('/api/jobs');
 }
