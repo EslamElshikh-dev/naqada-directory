@@ -4,7 +4,6 @@ import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { Suspense } from 'react';
 import { CategoryVisual } from '@/components/category-visual';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { LocalCategoryDiscovery } from '@/components/local-category-discovery';
@@ -111,9 +110,7 @@ export default async function LocalCategoryPage({ params, searchParams }: Props)
           scoped={scoped}
         />
         <div id="local-category-results">
-          <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}>
             <DirectoryExplorer key={`${state.q}|${state.sort}|${state.page}`} basePath={basePath} businesses={scopedDirectory} categories={categories} localities={localities} initialQuery={state.q} initialCategory={state.category} initialLocality={state.locality} initialSort={state.sort} initialPage={state.page} lockedCategory lockedLocality />
-          </Suspense>
         </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />

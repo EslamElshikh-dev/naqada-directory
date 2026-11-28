@@ -47,7 +47,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     title: `${state.page > 1 ? `صفحة ${state.page} — ` : ''}دليل ${locality.name} — مركز نقادة`,
     description,
     path, socialImage,
-    robots: locality.businessCount > 0 ? { index: true, follow: true } : { index: false, follow: true },
+    robots: scoped.length > 0 ? { index: true, follow: true } : { index: false, follow: true },
   }), path, state);
 }
 

@@ -15,7 +15,6 @@
 .breadcrumbs { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 25px; font-size: var(--fs-xs); }
 .detail-hero { background: linear-gradient(130deg, #0d261f, #1a4437); }
 .detail-hero p { max-width: 760px; line-height: 2; font-size: var(--fs-sm); }
-.loading-state { min-height: 240px; display: grid; place-items: center; color: var(--text-muted); }
 
 .category-hero__grid { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
 .category-hero__grid > div { flex: 1; }
