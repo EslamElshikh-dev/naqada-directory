@@ -3,7 +3,6 @@ import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { buildPageMetadata, siteConfig } from '@/lib/site';
 import { resolveDirectoryState, type DirectorySearchParams } from '@/lib/directory-state';
-import { Suspense } from 'react';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { UtilityPageHeader } from '@/components/utility-page-header';
 import { categories, familySearchPages, localities } from '@/lib/data';
@@ -57,7 +56,6 @@ export default async function DirectoryPage({ searchParams }: Props) {
           { value: phoned.toLocaleString(NUMBER_LOCALE), label: 'رقم اتصال' },
         ]} />
       <section className="shell page-section">
-        <Suspense fallback={<div className="loading-state" style={{ minHeight: '100svh' }}>جارٍ تجهيز الدليل…</div>}>
           <DirectoryExplorer
             key={`${state.q}|${state.category}|${state.locality}|${state.sort}|${state.page}`}
             basePath="/directory/"
@@ -71,7 +69,6 @@ export default async function DirectoryPage({ searchParams }: Props) {
             initialSort={state.sort}
             initialPage={state.page}
           />
-        </Suspense>
       </section>
       <section className="shell directory-activity-cta" aria-label="تصفح أنواع الأنشطة">
         <div><span className="eyebrow eyebrow--dark">تصفّح حسب نوع الخدمة</span><h2>تفضّل تختار القسم؟</h2><p>صيدليات وأطباء ومدارس ومطاعم وبقية الخدمات المحلية.</p></div>

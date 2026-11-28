@@ -82,9 +82,9 @@ test('utility workflows are noindex-follow and excluded from the sitemap', () =>
 });
 
 test('sitemap remains focused on canonical content collections and listings', () => {
-  assert.ok(sitemap.includes('...categories.map'));
+  assert.ok(sitemap.includes('...indexableCategories.map'));
   assert.ok(sitemap.includes('indexableActivities'));
-  assert.ok(sitemap.includes('getBusinessesForActivity(activity).length >= 2'));
+  assert.ok(sitemap.includes('getBusinessesForActivity(activity, businesses).length >= 2'));
   assert.ok(sitemap.includes('...indexableLocalities.map'));
   assert.ok(sitemap.includes('item.count >= 3'));
   assert.ok(sitemap.includes("...businesses.filter((item) => !item.id.startsWith('owner:')).map"));

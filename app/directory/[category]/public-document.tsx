@@ -3,7 +3,6 @@ import '@/app/route-styles/directory-category.css';
 import { NUMBER_LOCALE } from '@/lib/format-number';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 import { UtilityPageHeader } from '@/components/utility-page-header';
 import { DirectoryExplorer } from '@/components/directory-explorer';
 import { ServiceLocalityDiscovery } from '@/components/service-locality-discovery';
@@ -30,6 +29,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     title: `${state.page > 1 ? `صفحة ${state.page} — ` : ''}${category.shortLabel} في نقادة`,
     description,
     path: `/directory/${category.slug}`,
+    ...(count === 0 ? { robots: { index: false, follow: true } } : {}),
   });
   return directoryPageMetadata(metadata, `/directory/${category.slug}`, state);
 }
@@ -107,7 +107,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           resultsHref="#category-results"
         />
         <div id="category-results">
-          <Suspense fallback={<div className="loading-state">جارٍ تجهيز النتائج…</div>}><DirectoryExplorer key={`${state.q}|${state.locality}|${state.sort}|${state.page}`} basePath={basePath} businesses={scopedDirectory} categories={categories} localities={localities} initialQuery={state.q} initialCategory={state.category} initialLocality={state.locality} initialSort={state.sort} initialPage={state.page} lockedCategory /></Suspense>
+          <DirectoryExplorer key={`${state.q}|${state.locality}|${state.sort}|${state.page}`} basePath={basePath} businesses={scopedDirectory} categories={categories} localities={localities} initialQuery={state.q} initialCategory={state.category} initialLocality={state.locality} initialSort={state.sort} initialPage={state.page} lockedCategory />
         </div>
       </section>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(structuredData) }} />

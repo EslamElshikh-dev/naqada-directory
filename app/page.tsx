@@ -20,9 +20,8 @@ import { getActivityMedia } from '@/lib/category-media';
 import { getPublicBusinessCatalog } from '@/lib/curated-content';
 import { publicBusinessHref } from '@/lib/business-links';
 import { localitiesWithPublicCounts } from '@/lib/public-localities';
-import { PublicBusinessCount } from '@/components/public-business-count';
 import { knowledgeHeritage, knowledgePeople, knowledgePlaces, primaryKnowledgeContributor } from '@/lib/knowledge';
-import { absoluteUrl, siteConfig } from '@/lib/site';
+import { absoluteUrl, jsonLdStringify, siteConfig } from '@/lib/site';
 import { priorityActivityNames, priorityLocalityNames } from '@/lib/seo-priorities';
 import { villageArticleAuthor } from '@/lib/village-articles';
 import styles from './home.module.css';
@@ -62,7 +61,10 @@ const faq = [
 
 export const revalidate = 3600;
 
-export default function HomePage() {
+export default async function HomePage() {
+  // The directory's primary links and counts belong in the document itself.
+  // Optional editorial sections can still stream independently below them.
+  const catalog = await getHomeCatalog();
   const priorityActivities = priorityActivityNames
     .map((name) => activityLandings.find((item) => item.name === name))
     .filter((item): item is (typeof activityLandings)[number] => Boolean(item));
@@ -70,6 +72,15 @@ export default function HomePage() {
     ...priorityActivities,
     ...activityLandings.filter((item) => !priorityActivityNames.includes(item.name)),
   ].slice(0, 6);
+  const places = catalog ? localitiesWithPublicCounts(localities, catalog.businesses) : localities;
+  const official = new Set(officialLocalities.map(item => item.name));
+  const topLocalities = places.filter(item => official.has(item.name) && item.businessCount > 0).slice(0, 10);
+  const priorityLocalities = priorityLocalityNames.map(name => places.find(item => item.name === name)).filter((item): item is typeof places[number] => Boolean(item));
+  const featuredLocalityGuides = [...priorityLocalities, ...topLocalities.filter(item => !priorityLocalityNames.includes(item.name))].slice(0, 5);
+  const discoveryLinks = [
+    ...featuredActivities.map(activity => ({ name: activity.name, url: absoluteUrl(`/activities/${encodeURIComponent(activity.slug)}`) })),
+    ...featuredLocalityGuides.map(item => ({ name: `دليل ${item.name}`, url: absoluteUrl(`/villages/${encodeURIComponent(item.slug)}`) })),
+  ];
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -80,6 +91,11 @@ export default function HomePage() {
     isPartOf: { '@id': absoluteUrl('/') + '#website' },
     about: { '@type': 'Place', name: 'مركز نقادة، محافظة قنا، مصر', address: { '@type': 'PostalAddress', addressRegion: 'قنا', addressCountry: 'EG' } },
     contributor: { '@type': 'Person', name: primaryKnowledgeContributor.name, url: absoluteUrl(`/contributors/${primaryKnowledgeContributor.slug}`) },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: discoveryLinks.length,
+      itemListElement: discoveryLinks.map((item, index) => ({ '@type': 'ListItem', position: index + 1, ...item })),
+    },
   };
   const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) };
 
@@ -112,7 +128,7 @@ export default function HomePage() {
       </nav>
 
             <div className={styles.trust} aria-label="إحصاءات الدليل">
-              <span><b><Suspense fallback="…"><PublicBusinessCount /></Suspense></b><small>خدمة ونشاط</small></span>
+              <span><b>{catalog ? catalog.businesses.length.toLocaleString(NUMBER_LOCALE) : '—'}</b><small>خدمة ونشاط</small></span>
               <span><b>{meta.localityCount.toLocaleString(NUMBER_LOCALE)}</b><small>قرية وموضعًا</small></span>
               <span><b>{(meta.peopleCount + meta.landmarkCount).toLocaleString(NUMBER_LOCALE)}</b><small>علمًا ومعلمًا</small></span>
             </div>
@@ -137,17 +153,17 @@ export default function HomePage() {
 
       <section className={`shell ${styles.section}`} id="home-services" aria-labelledby="home-services-title">
         <div data-section-heading className={styles.sectionHead}>
-          <div><span>قريب منك</span><h2 id="home-services-title">مشوارك على فين النهارده؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. اختار طلبك، وسيب اللفّة علينا.</p></div>
+          <div><span>قريب منك</span><h2 id="home-services-title">مشوارك على فين النهارده؟</h2><p>صيدليات وأطباء ومدارس ومطاعم ومحلات في نقادة. افتح الخدمة للوصول إلى الأسماء والعناوين وأرقام التواصل وروابط الخرائط حسب البيانات المنشورة، أو ابدأ بدليل قريتك.</p></div>
           <Link prefetch={false} href="/activities">كل الخدمات <ActionIcon name="arrow" /></Link>
         </div>
-        <Suspense fallback={<HomeSectionStatus>جارٍ تجهيز الخدمات…</HomeSectionStatus>}><HomeServiceGrid activities={featuredActivities} /></Suspense>
+        <HomeServiceGrid activities={featuredActivities} catalog={catalog} />
       </section>
 
       <section className={styles.discoveryBand} aria-labelledby="home-localities-title home-knowledge-title">
         <div className={`shell ${styles.discoveryGrid}`}>
           <article className={styles.placesPanel}>
             <div data-section-heading><span>ابدأ من مكانك</span><h2 id="home-localities-title">قرى نقادة ونجوعها</h2><p>اختار بلدك، تلاقي خدماتها ومعلوماتها قدامك في صفحة واحدة.</p></div>
-            <Suspense fallback={<p className={styles.contentStatus}>جارٍ تجهيز خدمات القرى…</p>}><HomePlaces /></Suspense>
+            <HomePlaces places={featuredLocalityGuides} catalogAvailable={Boolean(catalog)} />
             <Link prefetch={false} href="/villages" className={styles.panelLink}>كل القرى والنجوع <ActionIcon name="arrow" /></Link>
           </article>
 
@@ -180,8 +196,8 @@ export default function HomePage() {
 
       <SiteReviews />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdStringify(faqSchema) }} />
     </main>
   );
 }
@@ -196,8 +212,7 @@ function HomeSectionStatus({ children }: { children: ReactNode }) {
   return <div className={`shell ${styles.contentStatus}`} role="status">{children}</div>;
 }
 
-async function HomeServiceGrid({ activities: featuredActivities }: { activities: typeof activityLandings }) {
-  const catalog = await getHomeCatalog();
+function HomeServiceGrid({ activities: featuredActivities, catalog }: { activities: typeof activityLandings; catalog: Awaited<ReturnType<typeof getHomeCatalog>> }) {
   return (
         <div className={styles.serviceGrid}>
           {featuredActivities.map((activity, index) => {
@@ -227,20 +242,14 @@ async function HomeServiceGrid({ activities: featuredActivities }: { activities:
   );
 }
 
-async function HomePlaces() {
-  const catalog = await getHomeCatalog();
-  const places = catalog ? localitiesWithPublicCounts(localities, catalog.businesses) : localities;
-  const official = new Set(officialLocalities.map(item => item.name));
-  const topLocalities = places.filter(item => official.has(item.name) && item.businessCount > 0).slice(0, 10);
-  const priorityLocalities = priorityLocalityNames.map(name => places.find(item => item.name === name)).filter((item): item is typeof places[number] => Boolean(item));
-  const featuredLocalityGuides = [...priorityLocalities, ...topLocalities.filter(item => !priorityLocalityNames.includes(item.name))].slice(0, 5);
+function HomePlaces({ places, catalogAvailable }: { places: typeof localities; catalogAvailable: boolean }) {
   return (
             <div className={styles.placeList}>
-              {featuredLocalityGuides.map((item, index) => (
+              {places.map((item, index) => (
                 <Link prefetch={false} key={item.slug} href={`/villages/${item.slug}`}>
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <div><strong>دليل {item.name}</strong><small>{item.type}</small></div>
-                  <b>{catalog ? item.businessCount.toLocaleString(NUMBER_LOCALE) : '←'}</b>
+                  <b>{catalogAvailable ? item.businessCount.toLocaleString(NUMBER_LOCALE) : '←'}</b>
                 </Link>
               ))}
             </div>

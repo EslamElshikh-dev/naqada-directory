@@ -122,6 +122,7 @@ jobs:
           }
           NODE
           node scripts/verify-directory-pagination.mjs
+          node scripts/verify-public-discovery.mjs
 
       - name: Verify news ISR isolation without hosted writes
         run: node scripts/verify-news-item-cache.mjs

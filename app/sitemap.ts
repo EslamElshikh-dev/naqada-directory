@@ -11,6 +11,7 @@ import { activityLandings, getBusinessesForActivity } from '@/lib/activity-landi
 import { indexableKnowledgePlaces, indexableKnowledgeHeritage, indexableKnowledgePeople, primaryKnowledgeContributor } from '@/lib/knowledge';
 import { getPublishedOwnerListings } from '@/lib/owner-listings';
 import { getHomeLastModified } from '@/lib/home-content';
+import { localitiesWithPublicCounts } from '@/lib/public-localities';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const latestBusinessDate = latestDate(businesses);
   const latestEditorialDate = editorialPosts.length ? new Date(Math.max(...editorialPosts.map((post) => Date.parse(post.modifiedAt)), ...newArticles.map((post) => Date.parse(post.updatedAt)))) : fallbackDate;
   const baseRoutes: Array<{ path: string; lastModified?: Date }> = [
-    { path: '', lastModified: getHomeLastModified(editorialPosts, roleModels) },
+    { path: '', lastModified: getHomeLastModified(editorialPosts, roleModels, businesses) },
     { path: '/directory', lastModified: latestBusinessDate },
     { path: '/activities', lastModified: latestBusinessDate },
     { path: '/news' },
@@ -44,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/jobs' },
     { path: '/blog', lastModified: latestEditorialDate },
     { path: '/role-models', lastModified: new Date(Math.max(Date.parse('2026-09-04'), ...roleModels.map((person) => Date.parse(person.modifiedAt)))) },
-    { path: '/villages', lastModified: fallbackDate },
+    { path: '/villages', lastModified: latestBusinessDate },
     { path: '/families' },
     { path: '/heritage' },
     { path: '/landmarks', lastModified: fallbackDate },
@@ -62,8 +63,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/about' },
     { path: '/install' },
   ];
-  const indexableLocalities = localities.filter((item) => item.name !== 'مركز نقادة' && (item.businessCount > 0 || Boolean(getVillageArticle(item.name))));
-  const indexableActivities = activityLandings.filter((activity) => getBusinessesForActivity(activity).length >= 2);
+  const indexableLocalities = localitiesWithPublicCounts(localities, businesses).filter((item) => item.name !== 'مركز نقادة' && (item.businessCount > 0 || Boolean(getVillageArticle(item.name))));
+  const indexableActivities = activityLandings.filter((activity) => getBusinessesForActivity(activity, businesses).length >= 2);
+  const indexableCategories = categories.filter((category) => businesses.some((business) => business.category === category.name));
   const comboCounts = new Map<string, { localitySlug: string; categorySlug: string; count: number; lastModified: Date }>();
 
   for (const business of businesses) {
@@ -87,9 +89,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...newArticles.map((post) => ({ url: sitemapUrl(`/blog/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),
     ...newNews.map((post) => ({ url: sitemapUrl(`/news/${encodeURIComponent(post.slug)}`), lastModified: new Date(post.updatedAt) })),
     ...roleModels.map((person) => ({ url: sitemapUrl('/role-models/' + encodeURIComponent(person.slug)), lastModified: new Date(person.modifiedAt + 'T00:00:00.000Z') })),
-    ...categories.map((item) => ({ url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`), lastModified: latestDate(businesses.filter((business) => business.category === item.name)) })),
-    ...indexableActivities.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity)) })),
-    ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(article.modifiedAt) : latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)) }; }),
+    ...indexableCategories.map((item) => ({ url: sitemapUrl(`/directory/${encodeURIComponent(item.slug)}`), lastModified: latestDate(businesses.filter((business) => business.category === item.name)) })),
+    ...indexableActivities.map((activity) => ({ url: sitemapUrl(`/activities/${encodeURIComponent(activity.slug)}`), lastModified: latestDate(getBusinessesForActivity(activity, businesses)) })),
+    ...indexableLocalities.map((item) => { const article = getVillageArticle(item.name); const businessDate = latestDate(businesses.filter((business) => canonicalLocalityName(business.locality) === item.name)); return { url: sitemapUrl(`/villages/${encodeURIComponent(item.slug)}`), lastModified: article ? new Date(Math.max(Date.parse(article.modifiedAt), businessDate.getTime())) : businessDate }; }),
     ...localCategoryPages.map((item) => ({ url: sitemapUrl(`/villages/${encodeURIComponent(item.localitySlug)}/${encodeURIComponent(item.categorySlug)}`), lastModified: item.lastModified })),
     ...businesses.filter((item) => !item.id.startsWith('owner:')).map((item) => ({ url: sitemapUrl(`/listing/${encodeURIComponent(item.slug)}`), lastModified: item.checked ? new Date(item.checked) : fallbackDate })),
     ...ownerListings.filter(item => item.reviewed_at && item.copy_reviewed_at).map((item) => ({ url: sitemapUrl(ownerActivityHref(item)), lastModified: new Date(item.updated_at) })),

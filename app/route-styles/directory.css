@@ -7,7 +7,6 @@
 .category-visual--lg { width: 92px; height: 92px; border-radius: 28px; }
 .category-visual--lg b { font-size: var(--fs-sm); }
 .category-visual--lg i { width: 55px; height: 55px; border-width: 10px; }
-.loading-state { min-height: 240px; display: grid; place-items: center; color: var(--text-muted); }
 .eyebrow { color: var(--text-on-dark-accent); }
 .eyebrow--dark { color: var(--text-accent); }
 
